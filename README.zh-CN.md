@@ -10,13 +10,15 @@
 
 架构基线为 **v1.0**。完整评测、候选采样与 dev 选优目前仅支持排序任务。真实训练已验证 pairs/SDPA；dense tree 用于正确性对照。RL、多卡训练与稀疏后端尚未实现。
 
-## 架构
+## 方法
 
-共享评分路径连接数据、模型与任务决策；监督训练和推理分别展示。
+每个候选都经过同一个 Qwen3 Base 和 MLP 评分头得到一个分数，再按任务进行排序、单选或多选。训练时，用标签计算损失，更新 LoRA 和评分头。
 
-![Metis 架构：共享评分、监督训练与推理](docs/architecture/figures/metis-architecture-zh.png)
+![Metis 方法：蓝色输入、紫色表示、橙色评分头参数和红色分数](docs/architecture/figures/metis-method-zh.png)
 
-[原尺寸图片](docs/architecture/figures/metis-architecture-zh.png) · [矢量 PDF](docs/architecture/figures/metis-architecture-zh.pdf) · [架构说明](docs/architecture/framework.md)
+[原尺寸图片](docs/architecture/figures/metis-method-zh.png) · [矢量 PDF](docs/architecture/figures/metis-method-zh.pdf) · [工程架构与方法说明](docs/architecture/framework.md)
+
+浅色背景区分输入、模型和决策，内部色块区分 token、隐藏向量、评分头参数与分数。图中数值仅用于演示决策规则；模型输出是原始分数，不是经过校准的概率。完整的模型适配、训练管理和导出流程保留在[工程架构图](docs/architecture/figures/metis-architecture-zh.png)。
 
 ## 快速开始
 

@@ -6,6 +6,8 @@ Metis 面向需要在 Agent 和业务流程中使用专用模型的开发者，�
 
 产品与代号为 **Metis**，安装包、Python import 和 CLI 使用 `metis`。当前能力见[项目状态](status.md)。
 
+v2 升级已完成准备，按[实施方案](../development/v2-upgrade.md)先补单选生产闭环，再建设概率校准和轻量模型对照。以下 v1 架构仍是当前实现，升级计划不计为已经提供的能力。
+
 ## 架构 v1.0
 
 v1.0 固定当前计算架构：结构化候选输入经 pairs 或 dense tree 编译，由 Qwen3 Base + 独立 MLP ScoreHead 输出候选分数，再由任务决策返回候选 ID。Qwen3 Reranker yes/no 保留为另一种适配器，两者不是串联模型。

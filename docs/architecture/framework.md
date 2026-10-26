@@ -4,7 +4,29 @@ Metis 将候选打分任务拆为数据、任务目标、输入编译、模型�
 
 候选打分接口统一排序、单选与多选任务。共享前缀与 Tree Mask 的教学参考见[来源致谢](../../ACKNOWLEDGEMENTS.md)。源码与合成示例为独立实现。
 
-## 架构总览
+## 方法：候选输入、表示、分数与决策
+
+主路径可以写成：
+
+$$
+x_i=\operatorname{compile}(q,u,c_i),\qquad
+h_i=f_{\theta_0,\Delta\theta}(x_i)[\ell_i-1,:],\qquad
+s_i=\operatorname{MLP}_{\phi}(h_i).
+$$
+
+其中，$q$ 为问题，$u$ 为可选上下文，$c_i$ 为候选正文，$\ell_i$ 为有效 token 数。每个候选共用相同基座与评分头，输出一个原始标量。排序按分数排列，单选取最大值，多选应用阈值。
+
+![Metis 方法：从输入 token 到候选分数与任务决策](figures/metis-method-zh.png)
+
+[中文 PDF](figures/metis-method-zh.pdf) · [英文预览](figures/metis-method-en.png) · [英文 PDF](figures/metis-method-en.pdf) · [共用源文件](figures/metis-method-common.tex)
+
+浅色背景表示输入、模型、决策和训练区域。蓝色块是输入 token，紫色块是末尾位置的隐藏向量，橙色块是评分头参数，红色块是分数或损失，灰色块是监督标签。矩阵色深与数值仅供示意，不代表测量结果。
+
+R 表示现有 `\n<Relevance>:` 后缀最后一个 token 的读出位置，不是额外可学习 token；候选 ID 在模型文本外保留。候选可以分批或分块计算，图中的共用模型不表示一次前向处理全部候选。多选示例的概率阈值 $\tau=0.5$ 等价于 raw logit 阈值 $s_i\geq0$，不表示概率已经校准。
+
+图中训练部分采用 LoRA 配方：标签仅进入 $\mathcal{L}(\boldsymbol{s},\boldsymbol{y})$，反向传播更新 $\Delta\theta$ 与评分头 $\phi$，原始基座权重 $\theta_0$ 冻结。推理只使用上方前向与决策路径；排序、argmax 和阈值不是训练损失的反向入口。全量微调与另一种 yes/no 适配器见下方工程图。
+
+## 工程架构
 
 以下图稿描述架构 v1.0：当前模型读出、候选可见性和评分契约保持固定。训练方法与执行后端的扩展另列于文末，不属于图中已实现路径。
 
@@ -31,7 +53,7 @@ Metis 将候选打分任务拆为数据、任务目标、输入编译、模型�
 
 ## 任务与输出
 
-当前任务接口为 `f(query, context, candidates) -> scores`，每个候选具有稳定 ID 和一个分数。
+当前任务接口接收 query、可选 context 和 candidates，返回与稳定候选 ID 对齐的 scores。
 
 | 任务 | 监督目标 | 决策方式 |
 |---|---|---|

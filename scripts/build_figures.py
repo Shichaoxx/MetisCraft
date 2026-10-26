@@ -11,6 +11,8 @@ import tempfile
 
 
 FIGURES = (
+    "metis-method-en",
+    "metis-method-zh",
     "metis-architecture-en",
     "metis-architecture-zh",
     "metis-tensor-training",
@@ -22,7 +24,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--figure", choices=FIGURES, action="append",
                         help="Build only this figure; repeat to select several")
-    parser.add_argument("--engine", default="xelatex", help="XeLaTeX executable")
+    parser.add_argument("--engine", default="xelatex", help="XeLaTeX or Tectonic executable")
     parser.add_argument("--dpi", type=int, default=300)
     parser.add_argument("--output-directory", type=Path,
                         help="Defaults to docs/architecture/figures")
@@ -38,16 +40,25 @@ def main() -> int:
     with tempfile.TemporaryDirectory(prefix="metis-figures-") as temporary:
         build = Path(temporary)
         for name in args.figure or FIGURES:
+            if Path(args.engine).name == "tectonic":
+                command = [args.engine, "-X", "compile", "--keep-logs",
+                           f"--outdir={build}", f"{name}.tex"]
+            else:
+                command = [args.engine, "-halt-on-error", "-interaction=nonstopmode",
+                           f"-output-directory={build}", f"{name}.tex"]
             result = subprocess.run(
-                [args.engine, "-halt-on-error", "-interaction=nonstopmode",
-                 f"-output-directory={build}", f"{name}.tex"],
+                command,
                 cwd=sources, text=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
             )
             if result.returncode:
                 print(result.stdout)
                 return result.returncode
-            if "Missing character:" in result.stdout:
-                print(f"Missing glyphs in {name}:\n{result.stdout}")
+            log_path = build / f"{name}.log"
+            diagnostics = result.stdout
+            if log_path.is_file():
+                diagnostics += log_path.read_text(encoding="utf-8", errors="replace")
+            if "Missing character:" in diagnostics:
+                print(f"Missing glyphs in {name}:\n{diagnostics}")
                 return 1
             subprocess.run(
                 ["pdftoppm", "-png", "-r", str(args.dpi), "-singlefile",

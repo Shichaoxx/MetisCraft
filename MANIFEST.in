@@ -10,7 +10,7 @@ recursive-include docs/architecture/figures *.tex *.pdf *.png *.json
 recursive-include docs/development *.md
 recursive-include docs/learning *.md
 recursive-include docs/project *.md
-recursive-include docs/research *.md
+recursive-include docs/research *.md *.json
 recursive-include docs/usage *.md
 recursive-include scripts *.py
 prune docs/history

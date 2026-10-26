@@ -46,13 +46,17 @@ python scripts/check_distribution.py dist/*.whl dist/*.tar.gz
 
 ## 重建架构图
 
-论文架构图的英文与中文版本共用几何和模块关系，图中只描述已实现路径。安装 XeLaTeX（含 `ctex`/Fandol、TikZ、standalone）和 Poppler 后执行：
+方法图和工程架构图的英文、中文版本分别共用几何和模块关系，图中只描述已实现路径。安装 XeLaTeX（含 `ctex`/Fandol、TikZ、standalone）和 Poppler 后执行：
 
 ```bash
 python scripts/build_figures.py
 ```
 
 输出为可编辑 LaTeX、矢量 PDF 和 PNG；命令更新 PDF/PNG，源文件位于 `docs/architecture/figures/`。可用 `--figure metis-architecture-en` 单独导出，`--engine` 指定 XeLaTeX 路径。提交前检查中英文标签、箭头、图例和 PDF 元数据。
+
+也支持 Tectonic：`python scripts/build_figures.py --figure metis-method-zh --figure metis-method-en --engine tectonic`。方法图需要系统字体 `Noto Sans CJK SC` 与 `DejaVu Sans`；首次使用 Tectonic 可能需要下载 TeX 资源。方法图用浅色背景标识阶段、用内部色块标识 token、隐藏向量、参数、分数和标签。示意数值与实际实验结果分开标注。
+
+训练与推理张量图共用 `metis-tensor-style.tex`，使用相同色表、前向布局和维度标注；另需 `DejaVu Sans Mono` 与 `Noto Sans Mono CJK SC`。单独重建可指定 `--figure metis-tensor-training --figure metis-tensor-inference`。跨行使用同名张量引用，主链用直线，梯度另设从右到左的虚线行。改公共样式后同时重建两图，检查维度标签、公式、文字边界及箭头，避免只更新其中一张。
 
 ## 文档约定
 

@@ -4,7 +4,11 @@
 
 本文对应 Metis 的 `qwen3_score_head` 适配器。项目目标见[核心设计](../project/core.md)，实现见[模型](../../src/metis/model.py)、[输入编译](../../src/metis/compiler.py)和[模型工厂](../../src/metis/model_registry.py)。Tree Mask 与张量化讲解受到五道口纳什教学资料启发，来源见[致谢](../../ACKNOWLEDGEMENTS.md)。
 
-以下两图展开首轮排序配方的架构与张量变化。`b` 是候选微批大小，`N` 是单个 query 的全部候选数；图中的色块示意轴结构，不代表实际维数或实验数值。两图统一配色：青色为离散输入或二值支持，紫色为隐藏激活，橙色为 Head 参数，红色为 raw logits 或损失，灰色为位置、标签或字符串列表。训练图的差分矩阵另用红、紫、白表示正、负、零；红色虚线表示反向梯度。
+以下两图展开首轮排序配方的张量变化，使用同一份[绘图样式与公共前向布局](figures/metis-tensor-style.tex)。$b$ 是候选微批大小，$N$ 是单个 query 的全部候选数，$J$ 是其中已标注候选数。色格数量、深浅只作示意，不代表实际维数或实验数值。
+
+两图统一使用蓝色输入或二值支持、紫色隐藏激活、橙色可训练参数、红色 raw logits 或损失、灰色位置与标签、绿色选中 ID。训练图的差分矩阵用同一红色系并显式标出 $+/-/0$，避免与隐藏激活的紫色混淆。
+
+主链实线从左向右，训练梯度虚线从右向左。跨行的同名 $Z$ 与 $s_{\mathrm{chunk}}$ 表示同一结果的引用，用名称接续代替绕整页的折线；训练时没有 detach，也没有额外重算。标签、索引和候选 ID 不进入模型文本。
 
 ## 训练张量流
 
@@ -22,20 +26,39 @@
 
 [矢量 PDF](figures/metis-tensor-inference.pdf) · [可编辑 LaTeX](figures/metis-tensor-inference.tex)
 
+## 维度与梯度约定
+
+| 张量 | 形状与含义 |
+|---|---|
+| $X,M,P$ | $[b,L]$，int64；token ID、padding 支持和逻辑位置；$M$ 不是完整因果注意力矩阵 |
+| $E,H$ | $[b,L,D]$；$H$ 已包含最终 RMSNorm，叠层表示 $b$，矩阵面表示 $L\times D$ |
+| $Z$ | $[b,D]$；每条候选序列最后一个有效后缀位置的表示 |
+| $W_1^{\mathsf T},W_2^{\mathsf T}$ | 矩乘展示形状为 $[D,h]$、$[h,1]$；实际存储为 $[h,D]$、$[1,h]$ |
+| $b_1,b_2,U,A,v$ | bias 为 $[h]$、$[1]$，沿候选行广播；$U,A$ 为 $[b,h]$，$v$ 为 $[b,1]$ |
+| $s_{\mathrm{chunk}},\boldsymbol s$ | squeeze 后显式转 FP32 的 $[b]$，以及所有微批拼成的 $[N]$ |
+| $t,g,C,\Delta$ | 已标注分数与 grade 为 $[J]$；严格偏好支持与分数差矩阵为 $[J,J]$ |
+| $\mathcal L_q,\mathcal L$ | 标量；先按 query 计算，再对 query batch 取均值 |
+
+首轮配方中 $D=1024$、$h=256$、$b\leq4$、$L\leq2048$，训练候选 $N\leq8$；query batch 为 $1$，与候选微批 $b$ 不同。最后一个候选微批可以更小。
+
+训练图的反向泳道按上方张量名对应：损失通过已标注位置回到全量分数，cat 再把梯度切回各微批；随后经过 Head、$Z$、$H$ 和 Decoder，更新 LoRA 与两个线性层的权重和 bias。参数梯度与参数同形；未标注位置的直接分数梯度为零。冻结 $\theta_0$ 不等于切断激活梯度，$X,M,P,g,C$ 和索引不求梯度。
+
+训练保留 FP32 主参数，以 BF16 autocast 执行受支持的计算；不能把所有中间激活一概标为 BF16。图中分数和损失是 FP32。推理采用 `eval()` 与 `no_grad()`，无反向或参数更新，加载 dtype 与外部 autocast 设置另行决定；最终分数仍显式转 FP32。
+
 ## 一次前向，三个张量
 
 当前[训练配方](../../recipes/nfcorpus/qwen3_base_score_head_06b.json)使用 **Qwen3-0.6B-Base + 256 维 MLP**。基座通过 `AutoModel` 加载，不附带 LM head；MLP 是新建、需要训练的任务头。**本轮训练使用 pairs/SDPA；tree 是单独的正确性预检，没有参与这轮训练质量或加速对照。**
 
 `B` 是一次 backbone 前向的物理 batch 大小，`L` 是该执行块的 token 长度，`D` 来自模型配置，`C` 是该块的有效候选数。它们不等于训练时的业务 query batch：pairs 可以一次放多个独立序列；tree 通常是一个物理序列包含多个候选分支。分块结果最终按输入候选顺序拼回。
 
-对第 (i) 个候选，读出位置为 ((b_i,r_i))：
+对第 $i$ 个候选，读出位置为 $(b_i,r_i)$：
 
-\[
+$$
 h_i=H[b_i,r_i,:],\qquad
 s_i=W_2\operatorname{GELU}(W_1h_i+b_1)+b_2.
-\]
+$$
 
-其中 (W_1\in\mathbb{R}^{256\times D})、(W_2\in\mathbb{R}^{1\times256})。输出 `raw_relevance_logit` 是未约束的标量；排序可直接使用它，sigmoid 后的值也不自动成为经过校准的概率。`256` 是本配方的设置；`head_hidden_size` 可配置，未指定时为 `max(1, D // 4)`。
+其中 $W_1\in\mathbb{R}^{256\times D}$、$W_2\in\mathbb{R}^{1\times256}$。输出 `raw_relevance_logit` 是未约束的标量；排序可直接使用它，sigmoid 后的值也不自动成为经过校准的概率。$256$ 是本配方的设置；`head_hidden_size` 可配置，未指定时为 `max(1, D // 4)`。
 
 ## 读出放在候选之后
 
@@ -87,16 +110,16 @@ Tree 在**一个物理 chunk 内**复用前缀的隐藏状态和 K/V 计算，�
 
 [当前配方](../../recipes/nfcorpus/qwen3_base_score_head_06b.json)的 ranking 目标是：
 
-\[
+$$
 \mathcal L=0.1\,\mathcal L_{\mathrm{BCE}}+1.0\,\mathcal L_{\mathrm{pair}},
-\]
+$$
 
-\[
+$$
 \mathcal L_{\mathrm{BCE}}=\frac1{|J|}\sum_{i\in J}
 \operatorname{BCEWithLogits}(s_i,\mathbf1[g_i>0]),\qquad
 \mathcal L_{\mathrm{pair}}=\frac1{|R|}\sum_{(i,j)\in R}
 \operatorname{softplus}(-(s_i-s_j)),
-\]
+$$
 
 `J` 只包含数据中提供了标签的候选；`R={(i,j): g_i>g_j}`，所以分级标签中的 `2 > 1` 也参与排序。没有严格等级差的 query，其 pairwise 项为 0。先对每个 query 的候选／候选对取均值，再对 query batch 取均值。Loss 不把缺失标签自行当作负例；数据准备中的 train-only 弱负例仍需按数据协议记录和解释。权重 `0.1 / 1.0` 属于这次配方，不是框架对所有任务的固定规定。
 

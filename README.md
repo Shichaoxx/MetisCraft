@@ -10,13 +10,15 @@ Metis is a task-specific post-training toolkit: train models that take queries, 
 
 The architecture baseline is **v1.0**. Complete evaluation, candidate sampling and dev-set checkpoint selection currently support ranking only. Real training has been validated with pairs/SDPA; dense tree is a correctness reference. RL, multi-GPU training and sparse backends are not implemented.
 
-## Architecture
+## Method
 
-Data preparation, input compilation, model readout, training and inference share the same candidate IDs and input contract.
+Each candidate passes through the same Qwen3 Base and MLP ScoreHead to produce a score. The task then ranks, chooses or thresholds candidates. During LoRA training, labels define the loss used to update LoRA and the head.
 
-![Metis toolkit architecture](docs/architecture/figures/metis-architecture-en.png)
+![Metis method: input tokens, hidden vectors, head weights, scores and decisions](docs/architecture/figures/metis-method-en.png)
 
-[Full-size PNG](docs/architecture/figures/metis-architecture-en.png) · [PDF](docs/architecture/figures/metis-architecture-en.pdf) · [Architecture guide](docs/architecture/framework.md)
+[Full-size PNG](docs/architecture/figures/metis-method-en.png) · [PDF](docs/architecture/figures/metis-method-en.pdf) · [Method and architecture guide](docs/architecture/framework.md)
+
+Background regions group input, model and decision stages; colored cells distinguish tokens, hidden vectors, head weights and scores. Values illustrate the decision rules and are not measured predictions or calibrated probabilities. Adapter choices, training management and exports remain in the [engineering architecture](docs/architecture/figures/metis-architecture-en.png).
 
 ## Quick start
 
