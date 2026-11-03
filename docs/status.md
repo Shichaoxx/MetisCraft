@@ -4,7 +4,7 @@
 
 ## 当前阶段
 
-重写开始，尚无代码。新版本的包版本号从 `0.2.0.dev0` 起。
+重写开始，尚无代码。MetisCraft 是新名字、新包，版本号从 `0.1.0.dev0` 重新开始。开发在 `toolkit-rewrite` 分支，升级完成后再接替 `main`。
 
 ## 目标
 
@@ -19,7 +19,7 @@
 
 ## 早期版本 Metis 0.1.0（已归档）
 
-tag `v0.1.0`，提交 `fac3a4d`。内容：Qwen3 Base + MLP ScoreHead 候选打分、NFCorpus 排序闭环、BoolQ 读出研究，以及未实现的 v2 升级方案。
+tag `metis-v0.1.0`，提交 `fac3a4d`。内容：Qwen3 Base + MLP ScoreHead 候选打分、NFCorpus 排序闭环、BoolQ 读出研究，以及未实现的 v2 升级方案。
 
 重写原因：
 
