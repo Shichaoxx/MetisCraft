@@ -1,4 +1,4 @@
-# Metis 状态
+# MetisCraft 状态
 
 更新：2026-11-03
 
@@ -15,9 +15,9 @@
 
 设计理念的方向是"训练有素的直觉"：把大模型的慢思考训练成又快、又知道自己有多准的判断。具体措辞待定。
 
-项目名保留 Metis（2026-11-03 确定）。希腊语 mētis 指因时因地的实践智慧，与"训练有素的直觉"同义。
+项目名定为 **MetisCraft**（2026-11-03 确定）：包名、import、命令行统一为 `metiscraft`，PyPI、GitHub、Hugging Face 均无同名。希腊语 mētis 指工匠与航海者因时因地的实践智慧，兼有手艺与机巧两层；英语 craft 同样兼有这两层，是它的译名。原名 `metis` 在 PyPI 已被 METIS 图划分库的封装占用，AI 领域同名项目也多。
 
-## 早期版本 0.1.0（已归档）
+## 早期版本 Metis 0.1.0（已归档）
 
 tag `v0.1.0`，提交 `fac3a4d`。内容：Qwen3 Base + MLP ScoreHead 候选打分、NFCorpus 排序闭环、BoolQ 读出研究，以及未实现的 v2 升级方案。
 
@@ -32,12 +32,11 @@ tag `v0.1.0`，提交 `fac3a4d`。内容：Qwen3 Base + MLP ScoreHead 候选打�
 
 ## 下一步
 
-1. 定 PyPI 包名：`metis` 已被 METIS 图划分库的封装占用。
-2. 调研 Jev 类开源实现以及 verl、LlamaFactory 的架构，确定新版本范围。
-3. 按调研结果写新版本设计，再写代码。
+1. 调研 Jev 类开源实现以及 verl、LlamaFactory 的架构，确定新版本范围。
+2. 按调研结果写新版本设计，再写代码。
 
 ## 未决
 
-- PyPI 包名。
+- 口号与吉祥物。候选：口号点出 System One 与 unthink（不经长推理直接判断），吉祥物用雅典娜的猫头鹰。
 - 从 0.1.0 带回哪些部分。
 - 许可证：仓库至今没有 `LICENSE`。
