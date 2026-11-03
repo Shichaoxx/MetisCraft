@@ -18,23 +18,15 @@ htmlcov/
 /logs
 /.metis
 /.local
-/workspace.local.json
 
-# Machine and editor state
+# Machine, editor and agent state
 /.agents
+/.claude
 /.codex
+/AGENTS.md
+/CLAUDE.md
+/HANDOFF.md
 .env
 .env.*
 !.env.example
 .DS_Store
-
-# Local supervision and historical documents
-/AGENTS.md
-/CORE.md
-/HANDOFF.md
-/JUPITER.md
-/ops/
-/docs/operations/
-/docs/history/
-/docs/sota-assessment.md
-/docs/research/sota-assessment.md
