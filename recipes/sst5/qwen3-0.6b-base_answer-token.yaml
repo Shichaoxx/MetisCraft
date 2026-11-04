@@ -1,0 +1,13 @@
+# SST-5 (score, five ordered levels), answer-token readout with digit level codes.
+task: sst5
+data: {dataset: sst5}
+model:
+  base: qwen3/0.6b-base
+  dtype: bf16
+  max_length: 256
+  finetune: {kind: lora, r: 16, alpha: 32, dropout: 0.05, targets: all-linear}
+readout: {kind: answer_token}
+objective: {kind: cross_entropy}
+train: {epochs: 3, batch_size: 16, grad_accum: 1, lr: 2.0e-4, head_lr: 1.0e-3, warmup_ratio: 0.03, seed: 42, bf16: true, logging_steps: 20}
+calibrate: {method: temperature, split: calib}
+eval: {splits: [dev, test], baselines: [prior]}

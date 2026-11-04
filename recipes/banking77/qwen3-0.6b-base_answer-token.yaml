@@ -1,0 +1,14 @@
+# Banking77 (77 intents, choice) with the answer-token readout (①): options are listed with
+# single-token codes and the code logits are read at the answer position.
+task: banking77
+data: {dataset: banking77}
+model:
+  base: qwen3/0.6b-base
+  dtype: bf16
+  max_length: 1024
+  finetune: {kind: lora, r: 16, alpha: 32, dropout: 0.05, targets: all-linear}
+readout: {kind: answer_token}
+objective: {kind: cross_entropy}
+train: {epochs: 2, batch_size: 8, grad_accum: 2, lr: 2.0e-4, head_lr: 1.0e-3, warmup_ratio: 0.03, seed: 42, bf16: true, logging_steps: 20}
+calibrate: {method: temperature, split: calib}
+eval: {splits: [dev, test], baselines: [prior]}

@@ -15,7 +15,7 @@ MetisCraft 是训练 Jev 类（System One）决策模型的工具包，做这个
 | 判断有类型 | 类型决定输出语义、损失、指标和校准方式（§5） |
 | 能从反馈中学 | v0.1 只预留与 TRL `reward_funcs` 同形的奖励签名，并用一个形状测试守住 |
 
-工程原则：部件可换（读出、类型、损失、校准器、基座是独立的轴，用注册表组合）；一事一处；有据可查（每个数字能追到一次运行）；借力成熟库（训练循环用 HF `Trainer`，适配器用 PEFT，下载用 `huggingface_hub`）；看得见（每个读出都有张量图，图与代码对齐，见 [`readouts/`](readouts/)）。
+工程原则：部件可换（读出、类型、损失、校准器、基座是独立的轴，用注册表组合）；一事一处；有据可查（每个数字能追到一次运行）；借力成熟库（模型与调度器用 transformers，适配器用 PEFT，下载用 `huggingface_hub`）；看得见（每个读出都有张量图，图与代码对齐，见 [`readouts/`](readouts/)）。
 
 ## 2. v0.1 范围
 
@@ -26,7 +26,7 @@ MetisCraft 是训练 Jev 类（System One）决策模型的工具包，做这个
 | 读出对照 | 选择题上 ① 与 ③ 只改配置即可互换，同协议出对照表 | — |
 | 基座 | Qwen3 0.6B–4B，首发 0.6B；CI 用微型随机初始化模型，覆盖 2 种架构 | 4B 以上、第二个真实基座族（可选） |
 | 微调 | LoRA（默认）与全参 | 量化、QLoRA |
-| 训练 | `Trainer` 子类，单卡与多卡 DDP | RL |
+| 训练 | 自写的最小训练循环（AdamW、线性调度、bf16），单卡与多卡 DDP | RL |
 | 校准 | 按（任务，类型）的温度缩放 | Platt、isotonic、分桶 |
 | 数据 | 注册表、Jev 格式原生读取、首批转换器、去重 | 排序类转换器（NFCorpus、MS MARCO） |
 | 部署 | Predictor + 兼容 `/v1/systemone` 请求格式的 HTTP 服务 | vLLM、SGLang、llama.cpp 导出；ms-swift / HF 适配层 |
@@ -52,7 +52,7 @@ src/metiscraft/
     backbone.py     # 加载基座、分词器、PEFT
     prompts.py      # 把记录渲染成输入序列
     readouts/       # answer_token.py（①）、candidate_scalar.py（③）
-  train/            # collator、Trainer 子类、训练入口
+  train/            # collator、训练循环
   calibrate.py      # 温度缩放
   evaluate/         # 指标、报告
   trace.py          # 运行目录、产物封存、NOTICE
@@ -163,8 +163,8 @@ tests/              # pytest；微型随机初始化模型，不占 GPU
 
 ## 7. 训练
 
-- 训练循环用 HF `Trainer` 子类，只重写损失计算和优化器分组（LoRA 与头两组学习率）；`remove_unused_columns=False`。
-- 损失按全局问题数归一：问题数跨卡 all-reduce，而不是按每张卡平均；用微型模型测试梯度累积与多卡下的等价性。
+- 训练循环是一个约 200 行的最小实现（`train/loop.py`）：AdamW，LoRA 与头两组学习率，transformers 的线性调度，bf16 autocast，梯度裁剪。不套 HF `Trainer`：它对梯度累积与多卡的损失缩放在不同版本间改过多次，而下一条是验收硬指标。
+- 损失按全局问题数归一：一个优化步内所有微批、所有卡的问题数先 all-reduce，每个微批回传 `损失总和 × 卡数 / 全局问题数`，DDP 求平均后即为全局均值；用微型模型测试梯度累积（含大小不均的微批）下的等价性。
 - 多卡用 `torchrun` 启动 DDP。
 - 默认超参不写死在代码里，全部在配方中显式给出；新配方先过 sanity 阶梯：小子集过拟合 → 学习率扫描 → 学习曲线。
 - 随机种子、数据顺序、LoRA 初始化都由配方里的种子决定，并写进运行目录。
@@ -236,6 +236,8 @@ eval:      {splits: [dev], baselines: [prior]}
 | 部署 | Predictor + HTTP 服务；引擎导出推到 v0.2 | 11-04 | 引擎只施加单一温度，按类型校准只能在自家服务里保证 |
 | 数据 | 注册表与主流数据集是必需项；原生读取 Jev 格式；首批名单与验收基准见 §4.2、§12 | 11-04、11-05 | [`research/datasets.md`](research/datasets.md) |
 | 配置系统 | pydantic + YAML + 点号覆盖 | 11-05 | pydantic 随 fastapi 已在依赖里，校验严格 |
+| 训练循环 | 自写最小循环，不用 HF `Trainer` | 11-05 | 全局问题数归一是验收硬指标，`Trainer` 的损失缩放随版本变化，难以保证 |
+| 首发基座 | Qwen3-0.6B-Base | 11-05 | 没有对话模板与思考模式的干扰，适合训练判断；旧版也用它 |
 | ① 多选项 | 从分词器里挑单 token 的选项码 | 11-05 | 让 ① 在几十个选项时也能用，读出对照才能在 Banking77 上做 |
 | 序数损失 | 只做相邻软目标一种 | 11-05 | 先保证主线 |
 | Unsloth | 只读不拷，不做适配（决策代码是 AGPL-3.0） | 11-04 | [`research/build-routes.md`](research/build-routes.md) |
