@@ -1,9 +1,10 @@
 # MetisCraft 设计草案（2026-11-04，待用户拍板）
 
-> **已定（2026-11-04）**，以下三条优先于正文；正文等卡 1–3 拍板后统一改写。
+> **已定（2026-11-04）**，以下四条优先于正文；正文等卡 1–3 拍板后统一改写。
 > 1. **定位第 ① 部分改为"支持矩阵"**：不单独发布 Awesome 清单。MetisCraft 内收录约 10–20 个当前较好的 Jev 类项目，每行标出能否用 MetisCraft 训练、复现、部署，首批做 3–5 个；清单草稿（AW）只作素材。取代 §1.1 表中的 ① 行、§3.5 和卡 5。
 > 2. **部署**：v0.1 交付 Predictor，外加一层沿用 `/v1/systemone` 请求格式的 HTTP 服务，保留按类型的校准；vLLM、SGLang、llama.cpp 的引擎导出放 v0.2，随卡 3 的基座选择。取代决策点 14 的待定状态。
 > 3. **通用优先**：MetisCraft 面向通用的类型化判断，不以某个业务任务为中心。不设单一业务旗舰，Schema Linking 只是场景之一，取代卡 4 的推荐；v0.1 验收改为每种判断类型各用一个公开基准，具体基准待拍板（建议见卡 4）。正文里把 Schema Linking 当旗舰或验收用例的地方（§0 第 3 条、§2、卡 2–4、§6）待改写。
+> 4. **数据注册表和主流数据集支持是 v0.1 必需项**：MetisCraft 用开源数据集训练和验收。`datasets/registry.yaml`（§3.4）收录主流通用数据集和 Jev 类数据集，每条写明来源与固定 revision、判断类型映射、转换器、许可证与条款标记、split 角色、上游来源（用于去重防泄漏）。首批名单、是否原生读取 Jev 类型化判断格式待拍板，建议见 §3.4 末尾。
 >
 > 路径约定：`docs/` 下的文件在仓库内；其余 `drafts/`、`partial/`、`research/`、`landscape/` 等路径指维护者本机的调研目录，不随仓库发布。
 
@@ -175,6 +176,22 @@ trace:    {strict: true}
 ```
 
 约束：配方只引用注册名，不内嵌代码；默认超参不写死在代码里，新配方先过 sanity 阶梯（过拟合检查 → 学习率扫描 → 学习曲线，DP 一-12）；每个配方附一份 `README` 说明许可证、预期数字的来源和证据级别。首批配方顺序见 EN §5.2（意图识别作冒烟 → Schema Linking → 检索重排 → 内容审核）。
+
+**首批数据集（建议，2026-11-04，待拍板）**：
+
+| 用途 | 数据集 | 判断类型 | 要点（核查见本机 VL） |
+|---|---|---|---|
+| Jev 类训练 | `ZefanCai/Open-Jev` | 是非、选择、独立多标签、等级 | `release-v2-redistributable` 共 113,568 条，多为合成，英中土三语；CC0 只覆盖作者生成的内容，部分题面取自 TypeSafe 文档 |
+| Jev 类训练 | `tasksource/tasksource-jev-typed-decisions` | 多种 | 默认配置 train 999,832 条；标签来自源数据标注或确定性变换，大多是硬标签；许可证按源数据逐行记录；与 Decision Index 至少 11 个基准同源，评测前要按上游去重 |
+| Jev 类冒烟与校准评测 | `LocalLLaMA/typed-decisions` | 多种 | 4 个工作流，train 1,200 / test 400 个 case；Apache-2.0；`state` + `questions` 正是 `/v1/systemone` 请求体 |
+| 是非 | BoolQ | noul | 旧版已有转换与协议 |
+| 选择 | Banking77、CLINC150、AG News | choice | 有 encoder 强基线可对照 |
+| 等级 | SST-5 | score | |
+| 排序 | NFCorpus、MS MARCO | ranking | NFCorpus 旧版已有闭环 |
+| 多标签 | Open-Jev 的独立标签题；通用基准待补 | multi_label | 调研还没覆盖通用多标签基准 |
+| 只评测 | Decision Index 公开套件、JevBench | — | DI 只测 choice / noul，公开套件约 11 万个请求，官方一键运行要 96 GB 卡、72 小时；JevBench 输入封存，不能完整复现 |
+
+另建议契约原生读取 Jev 类型化判断格式（`state` + `questions` + 目标），与 v0.1 HTTP 服务的请求格式一致；三份 Jev 类数据集的字段要逐个核对。来源是 Jev / TypeSafe 输出的数据集（如 jimothy、Jevstiller）按 §3.1 一律不收。
 
 ### 3.5 Awesome 清单：以现有草稿为准，只列差异与待定项
 
