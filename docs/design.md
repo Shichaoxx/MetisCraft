@@ -1,4 +1,4 @@
-# MetisCraft 设计草案（2026-11-04，待用户拍板）
+# MetisCraft 设计草案（开发版，2026-11-04）
 
 > **已定（2026-11-04）**，以下四条优先于正文；正文等卡 1–3 拍板后统一改写。
 > 1. **定位第 ① 部分改为"支持矩阵"**：不单独发布 Awesome 清单。MetisCraft 内收录约 10–20 个当前较好的 Jev 类项目，每行标出能否用 MetisCraft 训练、复现、部署，首批做 3–5 个；清单草稿（AW）只作素材。取代 §1.1 表中的 ① 行、§3.5 和卡 5。
@@ -9,7 +9,7 @@
 > 路径约定：`docs/` 下的文件在仓库内；其余 `drafts/`、`partial/`、`research/`、`landscape/` 等路径指维护者本机的调研目录，不随仓库发布。
 
 > **05:20 外部核查**：6 条承重说法已经对抗核查。其中 ranking 不再是差异点，ExSL 证据变弱，"层级多标签没人做"被削弱，卡 1–4 的把握或表述都要随之调整。见文末"外部核查"一节，以及 `drafts/design-verify-frameworks.md`、`design-verify-evidence.md`。正文尚未逐处改写，以文末一节为准。
-> 状态：草稿，§0–§7 已写完；已按 `drafts/design-critic.md`（2026-11-04）修订，不同意或改了做法的条目见文末“评审记录”。所有"推荐"只是建议，不替用户做决定；最需要拍板的是 §5 卡 1（构建路线）、卡 3（首发基座族）和决策点 6（v0.1 是否必须有可对照的读出对）。
+> 状态：草稿，§0–§7 已写完；已按 `drafts/design-critic.md`（2026-11-04）修订，不同意或改了做法的条目见文末“评审记录”。所有"推荐"只是建议，尚未定论；最需要拍板的是 §5 卡 1（构建路线）、卡 3（首发基座族）和决策点 6（v0.1 是否必须有可对照的读出对）。
 > 清单草稿缩写：AW = `drafts/awesome/README.md`（本机草稿；已定不单独发布清单，只作支持矩阵的素材）。字段名、包路径、YAML 键名均为示意，未实现、未测试。
 > 来源缩写：DP = `research/decision-points.md`；VL = `partial/verify-landscape.md`；VE = `partial/verify-external.md`；RQ = [`docs/research/build-routes.md`](research/build-routes.md)；EN = [`docs/research/scenarios.md`](research/scenarios.md)；SL = [`docs/research/schema-linking.md`](research/schema-linking.md)；SOTA = [`docs/research/decision-model-sota.md`](research/decision-model-sota.md)；S / K = `research/metis-v0.1.0-salvage.md` / `-critique.md`；R = `research/metiscraft-research.md`（v1，部分已推翻）。
 
@@ -47,7 +47,7 @@
 
 - **部件可换**：读出、判断类型、损失、校准器、基座是相互独立的轴，用注册表组合；"同一数据、同一基座、换读出"是一条配置差异，而不是换一个仓库。
 - **一事一处**：类型语义只在类型模块定义，指标只在评测模块定义，配方只引用名字。
-- **有据可查**：每次运行记录配置、git 提交（含 dirty diff）、环境、数据集版本、权重版本（宪法 §4.1）；产物带 `SHA256SUMS` 与许可证 NOTICE（借鉴 systemone-builder，VL §2.1）。
+- **有据可查**：每次运行记录配置、git 提交（含 dirty diff）、环境、数据集版本、权重版本；产物带 `SHA256SUMS` 与许可证 NOTICE（借鉴 systemone-builder，VL §2.1）。
 - **借力成熟库**：训练循环用 HF `Trainer`/Accelerate，适配器用 PEFT，数据用 `datasets`，指标对拍 sklearn / ir_measures；不自建模板 DSL。
 - **看得见**：每步计算都能画成张量图，图与代码对齐（§3.6）。
 
@@ -100,7 +100,7 @@
 - 选库是一个独立的 `choice`（或 pointer）子问题，不和列混在一个多标签集合里（SL §5.3 ④ 行）。
 - 小库全量候选；大库允许"两段式"：召回器产出的候选子集写进 `provenance.recall`，第一阶段 SRR 单独报告（SL §5.2）。
 
-**数据集 manifest**：对接宪法的版本目录（`dataset.yaml` + `SHA256SUMS`）；逐 split 校验哈希；manifest 声明 task 规格和 **split 角色**（train / calib / dev / test / eval_only），防泄漏按角色判断并比较 id 与内容哈希，不再只看 split 名是否等于 "test"（S 表"防泄漏与划分"、M2；S:293）。数据身份哈希只覆盖内容，不混入适配器名等元数据（S H6）。
+**数据集 manifest**：对接本地的数据版本目录（`dataset.yaml` + `SHA256SUMS`）；逐 split 校验哈希；manifest 声明 task 规格和 **split 角色**（train / calib / dev / test / eval_only），防泄漏按角色判断并比较 id 与内容哈希，不再只看 split 名是否等于 "test"（S 表"防泄漏与划分"、M2；S:293）。数据身份哈希只覆盖内容，不混入适配器名等元数据（S H6）。
 
 **转换器许可与泄漏**（DP 二-E；EN §6.1）：转换器输出 `license` 字段；Spider / BIRD 派生数据沿用 CC-BY-SA；非商用源（ToxicChat 等）可以用于研究对照，但默认不进"可商用"产物；按 DI 公开套件的源做去重或留出是否默认开启，待定（决策卡 §5）。
 
@@ -138,7 +138,7 @@
 
 **评测口径固定**（SOTA §4.3"Same Answer, Different Confidence"；K#20）：
 
-- ECE（口径为本稿建议，待用户确认；各家 10 / 15 bin、等宽 / 等质量不一，SOTA §6）：置信度 = 预测类别的概率（多类）/ 正类概率（二元与逐候选）；15 个等宽分桶；同时报 NLL、Brier，并输出可靠性图。口径作为常量写在一处，报告头部打印。
+- ECE（口径为本稿建议，待定；各家 10 / 15 bin、等宽 / 等质量不一，SOTA §6）：置信度 = 预测类别的概率（多类）/ 正类概率（二元与逐候选）；15 个等宽分桶；同时报 NLL、Brier，并输出可靠性图。口径作为常量写在一处，报告头部打印。
 - 多类 Brier 用全向量定义；macro-F1 的类集合预先声明；单类情况下 balanced accuracy 的处理写明。
 - 排序指标以 ir_measures / pytrec_eval 为准，分类与校准以 sklearn 为准；自写版本只用于教学并对拍（DP 一-8）。
 - 每个配方必须带无信息基线（多数类 / 先验）和至少一个强基线（encoder 或 BM25 / cross-encoder）；单选打不过无信息基线时暂停加结构（K#2 旧 `v2-upgrade.md:98`）。
@@ -146,7 +146,7 @@
 
 **评测门禁**（S:334；旧 `prepare_boolq_readout_protocol.py`）：打开 test / 封存 split 之前必须存在覆盖全部 arms × seeds 的实验计划和选择锁；`eval` 默认 split 不是 test。是默认开启还是 opt-in 的"严格模式"，见决策卡。
 
-**可追溯**（宪法 §4.1；S:325；VL §2.1 systemone-builder）：
+**可追溯**（S:325；VL §2.1 systemone-builder）：
 
 - 每次运行目录：完整解析后的配置（及其 sha）、git 提交号 + dirty diff、环境（conda 名、关键包版本、CUDA）、数据 manifest 哈希、基座 `SOURCE.json` 与 revision、随机种子。
 - 产物 `artifact.json`：判断类型规格、概率语义、校准器、配置哈希、数据哈希、基座身份、git 提交；文件清单 + SHA-256；拒绝符号链接与路径穿越（S 表"产物封存与校验"）。
@@ -197,11 +197,11 @@ trace:    {strict: true}
 
 > **已定（2026-11-04）**：不单独发布清单，改为支持矩阵（见文首）。本节保留，供整理素材时参考。
 
-清单正文以 AW（`drafts/awesome/README.md`，约 82 KB）及同目录 `CONTRIBUTING.md` 为准，本节不再给一份并行的结构规格（一事一处）。以哪份为准、下列差异怎么处理，由用户定（决策点 27）。
+清单正文以 AW（`drafts/awesome/README.md`，约 82 KB）及同目录 `CONTRIBUTING.md` 为准，本节不再给一份并行的结构规格（一事一处）。以哪份为准、下列差异怎么处理，待定（决策点 27）。
 
 AW 现状（据 design-critic §1.3 的核对，本次未重读全文）：结构为 Official APIs → Open-Weight Models（按读出分组）→ Training Code → Datasets → Benchmarks → Serving & Formats → Papers → Business Scenarios → Tutorials & Community → Related Lists；证据用徽标（📄 / 🗣️）表示；手写 Markdown，没有 `entries.yaml`。
 
-| 待定项 | AW 现状 | 本稿建议（不替用户定） |
+| 待定项 | AW 现状 | 本稿建议（待定） |
 |---|---|---|
 | 源格式 | 手写 README | 未推荐。`entries.yaml` + 生成脚本便于校验固定链接与证据级别，但一人维护多一层工具；也可以只写一个校验现有 README 的脚本 |
 | 是否加 Readout taxonomy 节 | 无独立节，读出只作为模型分组 | 加：每类读出链到张量图和代表实现，是清单与工具包的连接点 |
@@ -225,7 +225,7 @@ AW 现状（据 design-critic §1.3 的核对，本次未重读全文）：结�
 
 - **记号一处定义**：`readout-0-notation` 的符号表（`B, T, d, V, K, L, M, t*` 等）就是代码里的形状注释用语；代码注释写 `# [B, T, d]`，图上标同样的轴名。
 - **图码对齐**：每张图对应一个函数或模块；图的 `.tex` 头注释写源文件路径与提交号，代码 docstring 反向引用图名；CI 用一个小脚本检查双向引用存在（不检查语义）。
-- **形状可执行**：每个读出模块带一个 tiny 配置下的形状测试，测试里的形状与图中轴名一致；图的物理边长现状为 `readout-style.tex` 第 2–3 行的取值（T=12、d=5、V=12、K=L=3、B=2、d_h=4）。**这是现状，不是约定**：HANDOFF 第 74 行写明张量图风格待用户定，见决策点 22。
+- **形状可执行**：每个读出模块带一个 tiny 配置下的形状测试，测试里的形状与图中轴名一致；图的物理边长现状为 `readout-style.tex` 第 2–3 行的取值（T=12、d=5、V=12、K=L=3、B=2、d_h=4）。**这是现状，不是约定**：张量图风格待定，见决策点 22。
 - **注意力可见性**用 `\Mask` 的 5 种模式表示（树前缀 / 双向 / pointer / 普通因果 / 独立块），与代码里的 mask 构造函数一一对应。
 - `metiscraft viz` 在核心闭环之后实现（DP 一-16）。未定：是否另出 SVG 给网页；默认语言用英文还是中文。
 
@@ -251,7 +251,7 @@ metiscraft/
 - **HF PR 合并与否**：
   - 合并：路线 A 从"不可行"变为"可行但受限"；对齐成本下降，用户安装体验最好（`pip` 原生）。
   - 不合并或大改：路线 A 直接失效，已写代码大部分作废。
-  - 无论合并与否，multi_label / ranking 都不在上游，需要新 PR（会产生公开发帖，属红线 2，需用户批准）。
+  - 无论合并与否，multi_label / ranking 都不在上游，需要新 PR（要在上游公开发帖，待定）。
 
 ### 路线 B：做 ms-swift 插件（TRL 版等同路线 A，不单列）
 
@@ -269,7 +269,7 @@ metiscraft/
 - **风险**：`ScoringHead` / `ScoringOutput` / `decision_meta` 10-13 才合并、无稳定承诺；用户要手动传插件文件路径，没有 pip 即生效；绑定 ms-swift 参数体系与 Qwen3.5 主导的模型矩阵；**"每列一个 noul"没有集合交互，⑤ 做不到**；差异化（类型语义）在这条路线上被削弱成"变通"。
 - **HF PR 合并与否**：对路线 B 本身影响小；但若 HF 标准化成功，ms-swift 很可能跟进对齐，插件需要再迁一次。
 
-### 路线 C：自建可组合核心（RQ 的推荐；本稿不替用户选）
+### 路线 C：自建可组合核心（RQ 的推荐；本稿未选定）
 
 - **Schema Linking 怎么跑通**：自有 `Readout` / `QuestionType` / `Objective` / `Calibrator` 注册表；`candidate_scalar` 读出 + `list` 布局 + `multi_label` 类型 + BCE / listwise / hierarchy 损失；训练循环用 HF `Trainer` 子类（只重写 `compute_loss` / `create_optimizer`，DP 一-7）；Predictor 与产物自有。另写两个**薄适配层**：导出为 HF `AutoModelForDecision` 兼容格式（`decision.json` 字段命名对齐 #50054）、导出为 ms-swift 可加载的 `scoring_head` 布局。
 - **包结构（不同部分）**：
@@ -334,22 +334,22 @@ metiscraft/
   - a. **Qwen3（0.6B–4B）走答案 token / 逐候选标量头**：标准因果注意力、生态成熟；引擎上只能走答案 token，**引擎服务拿不到校准**，llama.cpp 不支持；可靠路径是自家 Predictor。
   - b. **Qwen3.5 小模型（d3-edge / lite 尺寸）走引擎可读布局（pplx / d3 255 码 readout）**：三家引擎都认的布局，d3 的模型卡自报"小 Qwen3.5 + 255 码 readout"可行（author-reported，VE §2 第 8 条）；但混合注意力、pplx 要求 SDPA、引擎只施加单一温度、提示词被引擎绑定。
   - c. 两者都做，但只把一个作为验收基座。
-- **推荐**：倾向 a 作为 v0.1 验收基座（Schema Linking 的 ③-list 只需普通因果注意力，Qwen3 生态成熟）。**注意：以 ③ 作 v0.1 主线与 SOTA §5 的默认相反**。SOTA §5 的默认配方是"选项字母读出 + soft-CE + 小权重 Brier"，pointer / 标量头、encoder 打分、RL 都默认关闭，直到同骨干同数据自跑出消融。支持 ③-list 的证据只有 SL §5.3 和 ExSL（doc-verified；DeepSeek-Coder-6.7B 全参数微调；代码未找到）。所以选 ③ 是在没有自家消融的情况下押注，§6 验收的"可组合性"行用来尽早在冒烟任务上拿到 ① vs ③ 的消融。第二基座族只用于冒烟配方上的可组合性测试（Gemma 3 等标准注意力族，或 Qwen3.5）；b 的引擎布局只在用户确实需要引擎服务时进 v0.1。**这是本稿最需要用户拍板的一张**。
+- **推荐**：倾向 a 作为 v0.1 验收基座（Schema Linking 的 ③-list 只需普通因果注意力，Qwen3 生态成熟）。**注意：以 ③ 作 v0.1 主线与 SOTA §5 的默认相反**。SOTA §5 的默认配方是"选项字母读出 + soft-CE + 小权重 Brier"，pointer / 标量头、encoder 打分、RL 都默认关闭，直到同骨干同数据自跑出消融。支持 ③-list 的证据只有 SL §5.3 和 ExSL（doc-verified；DeepSeek-Coder-6.7B 全参数微调；代码未找到）。所以选 ③ 是在没有自家消融的情况下押注，§6 验收的"可组合性"行用来尽早在冒烟任务上拿到 ① vs ③ 的消融。第二基座族只用于冒烟配方上的可组合性测试（Gemma 3 等标准注意力族，或 Qwen3.5）；b 的引擎布局只在确实需要引擎服务时进 v0.1。**这是本稿最需要拍板的一张**。
 - **把握**：低（原为中低，因与 SOTA 默认相反而下调）。a 的代价是"引擎可服务"这一卖点后移；b 的代价是首发就要处理混合架构和提示词绑定。
 - **证据**：VE §2 第 1–3、8 条，§3"C.5 第 3 条要重写"；SOTA §5 默认配方（反向证据）；SL §5.3 ③-list 行；ExSL（doc-verified）。
 - **能否反悔**：读出与基座解耦是本项目的设计目标，换基座应只是换配置；但导出层（pplx 布局）是额外工作，不是可逆的"开关"。
-- **什么会改变结论**：用户业务要求必须用 vLLM / SGLang 服务；Qwen3.5 在 4×3090 上 LoRA 显存或 SDPA 兼容性实测有问题；引擎支持按类型温度。
+- **什么会改变结论**：业务要求必须用 vLLM / SGLang 服务；Qwen3.5 在 4×3090 上 LoRA 显存或 SDPA 兼容性实测有问题；引擎支持按类型温度。
 
 ### 卡 4　旗舰场景（卡住：部分，决定第一个转换器和验收用例）
 
 > **已定（2026-11-04）**：不设单一业务旗舰，见文首第 3 条。v0.1 验收建议（待拍板）：是非用 BoolQ，选择用 Banking77（CLINC150 作对照），等级打分用 SST-5，排序用 NFCorpus（旧版已有闭环）；多标签的公开基准调研还没覆盖，待补。以下保留当时的分析。
 
 - **选项**：a. Schema Linking 作旗舰 + 意图识别作冒烟；b. 检索重排作旗舰（数据最丰富）；c. 意图识别作旗舰（最简单）。
-- **推荐**：a。Schema Linking 是用户最初场景，且正好落在官方原语和竞品之外；意图识别只作为管线冒烟和同协议对照（诚实结果可能是 encoder 更好）。
+- **推荐**：a。Schema Linking 是项目最初的场景，且正好落在官方原语和竞品之外；意图识别只作为管线冒烟和同协议对照（诚实结果可能是 encoder 更好）。
 - **把握**：高（锚点业务 + 差异化一致）；工作量是主要不确定性。
 - **证据**：EN §5.1、§5.2；SL §1 第 1、4、5 条。
 - **能否反悔**：可以；配方层面互不依赖。
-- **什么会改变结论**：用户补充的实际业务约束（SL §4.1：库规模、方言、延迟、语言）与 BIRD 差太远；CC-BY-SA 再分发问题无法接受。
+- **什么会改变结论**：补充的实际业务约束（SL §4.1：库规模、方言、延迟、语言）与 BIRD 差太远；CC-BY-SA 再分发问题无法接受。
 
 ### 卡 5　Awesome 清单的名字和位置（卡住：否，但首发前必须定）
 
@@ -357,19 +357,19 @@ metiscraft/
 
 - **选项**：
   - 位置：a. 本仓库 `awesome/` 子目录；b. 单独仓库。
-  - 名字（单独仓库时）：如 `awesome-jev-like`、`awesome-decision-models` 类（与现有重名风险）、`awesome-typed-decisions`；具体名字由用户定。
-  - 本卡只讨论位置和名字，前提是自建（定位第 ① 部分）。"不自建、只向 AnotiaWang/awesome-decision-models（681★）或 andyrewlee/awesome-system-one（42★）贡献"等于删掉定位第 ① 部分，是修改已定定位，不作为本卡选项；用户若想走这条路需单独确认。
-- **推荐**：倾向 b，差异点是证据分级、固定链接、读出分类、核实过的数字、链接到场景配方；另外可以把勘误以 PR 回馈现有列表（不替代自建；公开发帖，红线 2）。
+  - 名字（单独仓库时）：如 `awesome-jev-like`、`awesome-decision-models` 类（与现有重名风险）、`awesome-typed-decisions`；具体名字待定。
+  - 本卡只讨论位置和名字，前提是自建（定位第 ① 部分）。"不自建、只向 AnotiaWang/awesome-decision-models（681★）或 andyrewlee/awesome-system-one（42★）贡献"等于删掉定位第 ① 部分，是修改已定定位，不作为本卡选项；若走这条路需单独确认。
+- **推荐**：倾向 b，差异点是证据分级、固定链接、读出分类、核实过的数字、链接到场景配方；另外可以把勘误以 PR 回馈现有列表（不替代自建；需要公开发帖）。
 - **把握**：中。自建的价值取决于能否持续维护；一人维护两仓库有成本。
 - **证据**：DP 二-F；coverage-map §1 (i)、§2.1 第 3 条。
 - **能否反悔**：位置可迁（`git subtree`）；名字发布后改代价较高。
-- **什么会改变结论**：现有列表维护者接受证据分级等结构性改动；用户希望品牌集中在 MetisCraft 一个仓库。
+- **什么会改变结论**：现有列表维护者接受证据分级等结构性改动；希望品牌集中在 MetisCraft 一个仓库。
 
 ### 其余决策点（去重后，按"卡住骨架"程度排序）
 
-| # | 决策点 | 选项 | 推荐（不替用户定） | 卡住骨架？ | 证据 |
+| # | 决策点 | 选项 | 推荐（待定） | 卡住骨架？ | 证据 |
 |---|---|---|---|---|---|
-| 6 | v0.1 读出范围：**是否必须有一个可对照的读出对** | 甲：①③ 各服务不同类型（① 管 noul/choice，③ 管 multi_label），不构成读出对照；乙：在同一类型、同一数据、同一基座上至少一对读出可只改配置互换（如 choice 上 ① vs ③，③ 逐候选标量头加 softmax 即可服务 choice，推断）；丙：乙 + ②（视卡 3） | 倾向乙（VL §4 建议把"读出 × 基座解耦 + 同协议对照"放进 v0.1 核心；否则头号差异点无法验证）；接口按 ④⑤ 留，⑤ 作 ③-list 上的可选插件；由用户定 | 是 | DP 一-2；VL §4；SL §5.3；design-critic §1.1 |
+| 6 | v0.1 读出范围：**是否必须有一个可对照的读出对** | 甲：①③ 各服务不同类型（① 管 noul/choice，③ 管 multi_label），不构成读出对照；乙：在同一类型、同一数据、同一基座上至少一对读出可只改配置互换（如 choice 上 ① vs ③，③ 逐候选标量头加 softmax 即可服务 choice，推断）；丙：乙 + ②（视卡 3） | 倾向乙（VL §4 建议把"读出 × 基座解耦 + 同协议对照"放进 v0.1 核心；否则头号差异点无法验证）；接口按 ④⑤ 留，⑤ 作 ③-list 上的可选插件；待定 | 是 | DP 一-2；VL §4；SL §5.3；design-critic §1.1 |
 | 7 | 布局 | pairs / ③-list / tree | ③-list 主推，pairs 作正确性参照，tree 推迟；顺序敏感度 >0.05 则提前做 tree | 是 | SL §5.8；DP 一-5 |
 | 8 | 与 HF 决策接口的关系 | 对齐字段 / 自定义后写适配 | 对齐字段命名（随卡 1） | 是（随卡 1） | DP 二-A；RQ §2.2 |
 | 9 | 配置系统 | dataclass + OmegaConf / pydantic | 未推荐；dataclass 与 LlamaFactory / TRL 同族，pydantic 校验更严；JSON 不需 PyYAML | 是 | DP 一-8 |
@@ -380,22 +380,22 @@ metiscraft/
 | 14 | 导出 | Predictor / + HF CausalLM / + 引擎布局 / + SeqCls | **已定（11-04）**：v0.1 做 Predictor + HTTP 服务，引擎导出放 v0.2，见文首。原推荐：v0.1 只承诺自家 Predictor；"合并 CausalLM"只对 ① 有意义（③ 的产物是骨干 + 独立头文件，只能由 Predictor 加载）；引擎布局随卡 3 | 否 | DP 一-9；VE §3 |
 | 15 | Schema Linking 工作量计入 v0.1 | 计入 / 推到 v0.2 | 计入（转换器本身是成果） | 否 | DP 二-D；SL §5.1 |
 | 16 | 数据许可与泄漏策略 | 默认过滤非商用 + 按 DI 源去重 / 只标注 | 未推荐；至少默认输出许可证与泄漏报告 | 否 | DP 二-E；VL §3 第 2–3 条 |
-| 17 | 外部评测与旧基准重跑 | DI 子集 / Banking77 协议 / 重跑 NFCorpus、BoolQ | Banking77 协议作第二个真实任务候选；重跑需 GPU，属红线 3 | 否 | DP 一-10；K#2 |
+| 17 | 外部评测与旧基准重跑 | DI 子集 / Banking77 协议 / 重跑 NFCorpus、BoolQ | Banking77 协议作第二个真实任务候选；重跑需 GPU，要先确认资源 | 否 | DP 一-10；K#2 |
 | 18 | 默认超参 | 写死 / 配方显式 + sanity 扫描 | 配方显式 + 扫描 | 否 | DP 一-12 |
-| 19 | RL / 反馈接口 | 只留奖励签名 / 预留 Policy / Experience | 只留签名。**v0.1 对"能从反馈中学"这条理念只做到一个签名形状测试**（能按 TRL `reward_funcs` 的形状被调用），用户是否接受 | 否 | DP 一-13；SOTA §1 第 4 条 |
+| 19 | RL / 反馈接口 | 只留奖励签名 / 预留 Policy / Experience | 只留签名。**v0.1 对"能从反馈中学"这条理念只做到一个签名形状测试**（能按 TRL `reward_funcs` 的形状被调用），是否接受 | 否 | DP 一-13；SOTA §1 第 4 条 |
 | 20 | 违反条款项目的收录 | 排除 / 收录并标注 | 未推荐 | 否 | DP 二-G |
 | 21 | 旧内容处置 | 并入 `Shichaoxx/Archive` / 只靠 tag | 未推荐；私有忽略项放 `.git/info/exclude` | 否 | DP 一-15 |
-| 22 | 张量图风格、SVG 与默认语言 | 风格（现 `readout-style.tex` 取值是否沿用）；只 PDF/PNG / 另出 SVG；英 / 中 | 未推荐（HANDOFF 第 74 行：风格待用户定） | 否 | DP 一-16 |
+| 22 | 张量图风格、SVG 与默认语言 | 风格（现 `readout-style.tex` 取值是否沿用）；只 PDF/PNG / 另出 SVG；英 / 中 | 未推荐（风格待定） | 否 | DP 一-16 |
 | 23 | Unsloth 只读不拷、不做适配 | 确认 / 否 | 建议确认（AGPL）；并规定不对照 Unsloth 决策代码写同功能实现（读后重写仍有衍生作品风险），只参考 Apache-2.0 的 ms-swift `ScoringHead` | 否 | RQ §5 第 3 条；VL §4 |
-| 24 | 是否向 ms-swift / HF 提议新 kind | 提 / 不提 | 需用户批准（公开发帖，红线 2） | 否 | RQ §5 第 4 条 |
+| 24 | 是否向 ms-swift / HF 提议新 kind | 提 / 不提 | 待定（需要公开发帖） | 否 | RQ §5 第 4 条 |
 | 25 | DuSQL / Chase 是否纳入 | 纳入 / 先核许可证 | 先核许可证 | 否 | SL §1 第 8 条 |
-| 26 | 实际业务约束 | 用户补充 | — | 否（影响卡 3、卡 4） | SL §4.1 |
+| 26 | 实际业务约束 | 待补充 | — | 否（影响卡 3、卡 4） | SL §4.1 |
 | 27 | 清单以哪份为准、怎么补差异 | 以 AW 为准 / 按 §3.5 旧规格重做 | 以 AW 为准，只处理 §3.5 表里的差异 | 否（首发前定） | design-critic §1.3 |
 | 28 | 卡 1 推荐 C 的两个适配层（`hf_decision.py`、`swift.py`） | 进 v0.1 / 推到 v0.2 | 推到 v0.2；v0.1 只做字段命名对齐 | 否（随卡 1） | design-critic §2.5 |
 
 ## 6. v0.1 范围与验收标准
 
-范围以卡 1–4 和决策点 6 的推荐为假设写出；用户改了哪张卡，这里跟着改。
+范围以卡 1–4 和决策点 6 的推荐为假设写出；哪张卡改了，这里跟着改。
 
 **在范围内**：§3 全部契约与协议；类型 noul / choice / score / multi_label（ranking 视卡 2）；读出 ①③，且至少一对可对照（决策点 6 乙；②视卡 3）；冒烟配方上 2 个基座族（第二基座只用于可组合性测试）；③-list 布局 + pairs 参照；`Trainer` 子类训练（单卡与 4 卡 DDP）；温度校准；评测报告；自家 Predictor（①的合并 CausalLM 导出可选）；配方：意图识别（冒烟）、Schema Linking（旗舰）；Awesome 清单首版（以 AW 为准）；7 类读出张量图入文档；奖励签名形状测试。
 
@@ -413,7 +413,7 @@ metiscraft/
 
 **砍件顺序**（时间不够时从上往下砍）：ranking → 第二基座（砍掉后"可组合性"降为"1 基座 × 2 读出"，README 写明跨基座未验证）→ 适配层（已默认推迟）→ 评测门禁严格模式。
 
-**验收标准**（全部为可自动运行的测试或报告；涉及真实训练的项需用户批准 GPU 使用，宪法红线 3）：
+**验收标准**（全部为可自动运行的测试或报告；涉及真实训练的项要先确认 GPU 资源）：
 
 | 类别 | 标准 | 依据 |
 |---|---|---|
@@ -424,7 +424,7 @@ metiscraft/
 | 校准 | 报告默认输出 NLL、Brier、ECE（口径常量打印在报告头）、可靠性图；温度缩放前后 argmax 不变的测试；校准器只在 calib split 拟合的测试；Schema Linking 的 calib / test 与 train 库不相交的测试 | §3.3；SOTA §4.3 |
 | Schema Linking 端到端 | 一条命令从 BIRD（及 Spider）原始文件 → 转换器（sqlglot 推 gold，`parse_ok` 统计）→ 训练 → 按 level 校准 → 报告（表 / 列 Recall@5/10/20、SRR@k、SRR@τ、目标 SRR 下保留列数、PR/ROC AUC、F6、逐列 ECE / Brier、"整题漏召回"校准）；与 BM25 和 cross-encoder 基线同表；顺序敏感度报告；产物可被 Predictor 加载。**不设绝对数字门槛，但设相对且预先登记的门槛**：列级 Recall@10 不低于 BM25 基线；校准后 ECE 不高于校准前；顺序敏感度（不同排列下的标准差）报告值不超过 0.05，超过即触发 tree（SL §5.8 阈值）。不过线时报告照常发布（负结果也是证据），但该配方不标为推荐配方。ExSL 的 BIRD-dev 列级 PR AUC 93.77（doc-verified；DeepSeek-Coder-6.7B 全参数）只作参照，不同基座规模不可直接比 | SL §3.4、§5.5、§5.6、§5.8；SL §1 第 2 条 |
 | 冒烟与对照 | 意图识别（Banking77 协议 80/10/10）走通全流程，并输出与 encoder 基线的同协议对照表（含校准列） | EN §5.2；SOTA §5 复现目标 1；K#2 |
-| 可追溯 | 任一报告数字可追到运行目录；运行目录含配置、git 提交 + diff、环境、数据与基座身份；产物带 SHA256SUMS 与 NOTICE；NOTICE 自动带上基座许可证，配方 README 必填基座许可证（如 Qwen3-1.7B 的许可证需在配方里写明） | 宪法 §4.1；§3.3 |
+| 可追溯 | 任一报告数字可追到运行目录；运行目录含配置、git 提交 + diff、环境、数据与基座身份；产物带 SHA256SUMS 与 NOTICE；NOTICE 自动带上基座许可证，配方 README 必填基座许可证（如 Qwen3-1.7B 的许可证需在配方里写明） | §3.3 |
 | 清单 | 首版每条都有固定链接、许可证、证据级别；校验脚本通过（源格式见决策点 27） | §3.5 |
 
 ## 7. 风险
@@ -442,7 +442,7 @@ metiscraft/
 | 9 | **小模型能力上限**：≤5B 与 Jev 差距明显 | 结果不好看 | 目标定为"同协议对照 + 校准"，不追 Jev 分数 | SOTA §1 第 2 条 |
 | 10 | **全判肯定等旧问题原因未明** | 新核心复现旧缺陷 | 默认不用"零输出权重 + LoRA B=0"；sanity 阶梯先过 | DP 一-3；K#6 |
 | 11 | **调研缺口**：ModelScope 系统搜索、国内大厂 API、两份同类 awesome 列表的非训练小节未覆盖（Schema Linking 文献已由 SL 补上，中文生态在 AW 已有条目） | 清单与竞品判断有盲区 | 首发前补一轮；"不存在"类结论保持两渠道 | coverage-map §2.1（00:45 版，已部分过时）；SL；AW |
-| 12 | **算力**：能验证的基座上限未测；GPU 共享 | 大基座结论无法自证 | 只承诺 0.6B–4B；真实实验先申请（红线 3） | 无来源（原"约 9B"已删） |
+| 12 | **算力**：能验证的基座上限未测；GPU 共享 | 大基座结论无法自证 | 只承诺 0.6B–4B；真实实验先申请 GPU | 无来源（原"约 9B"已删） |
 | 13 | **软标签与参考实现的条款污染**：教师分布来自 Jev / TypeSafe API；对照 AGPL 代码重写 | 产物违反 TypeSafe 条款；代码被认定为 AGPL 衍生 | `provenance` 必填教师身份与许可证，转换器拒收 Jev 来源软标签；不对照 Unsloth 决策代码写同功能实现 | design-critic §2.8 |
 
 ## 评审记录（2026-11-04，对照 `drafts/design-critic.md`）

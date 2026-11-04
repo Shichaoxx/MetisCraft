@@ -244,7 +244,7 @@ p = s.softmax(-1)
 | ⑥ | 同编码时全可见；双塔或交叉编码时不可见 | 1（双塔的标签可缓存） | `[B, K]` |
 | ⑦ | 同①，还能看见生成的理由 | 1+G | `[B, L]` |
 
-## 来源与致谢（待用户确认）
+## 来源与致谢（待确认）
 
 - ③中共享前缀树 mask、分支位置 id 的讲解思路，参考了 Bilibili 创作者"五道口纳什"的视频（[作者主页](https://space.bilibili.com/59807853)）和 GitHub 课件 [wdkns/modern_genai_bilibili `slides/jev_architecture-v2.pdf`](https://github.com/wdkns/modern_genai_bilibili/blob/6b8729b923d17863014ac6e0ff7715fc84473300/slides/jev_architecture-v2.pdf)（版本 `6b8729b`）。说法与旧版 tag `metis-v0.1.0` 的 `ACKNOWLEDGEMENTS.md` 一致。具体视频标题和 BV 号仍待补齐。本目录的图都是独立绘制，没有使用原课件素材；这项致谢不表示 tree attention 算法是该作者首创。
 - ④按 [jaredpalmer/kev @2074cc4](https://github.com/jaredpalmer/kev/tree/2074cc44256200bb37540103fa4572901faa10f3) 的 `kev/model.py` 画（`encode`、`branch_mask_batch`、`PointerHead`）。
@@ -254,7 +254,7 @@ p = s.softmax(-1)
 
 ## 未完成
 
-9 张图都已编译成 PDF 和 PNG，并逐张看过渲染。没有剩下的步骤，只有以下几点待用户决定：
+9 张图都已编译成 PDF 和 PNG，并逐张看过渲染。没有剩下的步骤，只有以下几点待定：
 - 是否加大标题和分区底色；
 - 图里的类别编号写成"读出 N"（字体缺 ①–⑦），这份说明里写 ①–⑦，是否接受；
 - 各图示意用的 T 不统一，是否要统一；

@@ -12,7 +12,7 @@
 3. **v0.1 范围建议**（§4.3）：noul / choice / score 的完整语义 + **multi_label + pointwise/listwise ranking** + 校准；**官方 Box（图像）不做**，只有 GUI 场景需要；span 与 pointer 放 v0.2。需要 multi_label 的场景 5 个，需要 ranking 的 3 个（检索类集中）。
 4. **诚实的警告**：有标签时 encoder 通常胜出（CLINC：BGE-small + LR 0.948 > Jev 0.913；Banking77 零样本 Jev 约 0.82 对监督约 0.94），信息抽取、事实核查、重排等场景已有强专用 encoder。自训练的理由只能落在私有化、校准、多标签/排序和菜单可变，不能写成"更准"。
 5. **许可证雷区**：Spider/BIRD/NFCorpus 为 CC-BY-SA；ToxicChat/BeaverTails/PKU-SafeRLHF/工单集为非商用；LLM-AggreFact 为禁止演绎；不能用 Jev 输出训练。详见 §6.1。
-6. **要用户决定**：①v0.1 是否纳入 ranking（建议纳入 pointwise + ListNet）；②Schema Linking 的公开数据只能自己转换，工作量是否接受；③是否接受"意图识别"作为对照基线而非卖点。
+6. **待定**：①v0.1 是否纳入 ranking（建议纳入 pointwise + ListNet）；②Schema Linking 的公开数据只能自己转换，工作量是否接受；③是否接受"意图识别"作为对照基线而非卖点。
 
 ## 1. 场景清单（18 个）
 
@@ -55,7 +55,7 @@
 | SOTA / 强基线 | RSL-SQL：双向 schema linking，BIRD 上严格召回 94%、输入列减少 83%，BIRD 执行准确率 67.2%、Spider 87.9%（GPT-4o；arXiv 2411.00073v2 摘要，doc-verified）；CHESS 严格召回 89.7%、MCS-SQL 89.8%（RSL-SQL 论文对比，经检索摘录转述，unverified）。小模型端：LitE-SQL（向量式链接 + 7B 微调，BIRD 72.10% / Spider 88.45%，arXiv 2510.09014v2，author-reported，检索摘要）；CodeS 1B–15B 开源（arXiv 2402.16347，doc-verified）。"Death of Schema Linking?"（arXiv 2408.07702）认为强推理模型下链接可省略——这是需求侧的风险，见下。 |
 | 现有方案与不直接用的理由 | 向量检索/embedding 召回（LitE-SQL 类）、encoder 打分（RESDSQL 类，记忆，unverified）、prompt 大模型（RSL-SQL）、直接调 Jev API。自训练理由：**私有化**（库结构是机密）、**多标签**（Jev 只能逐列调用，成本随列数线性增长）、**按自家库分布校准**（召回优先，阈值要可调）、**延迟**（几百列的大库）。 |
 | 零样本余量 | 无公开 Jev 零样本数字（unverified）。间接信号：Jev 在 Mind2Web 候选选择上 0.543 < 监督 0.8B 的 0.579（author-reported）。 |
-| 需求证据 | 用户本人的业务场景；RSL-SQL 把"遗漏必需列"列为核心风险（arXiv 2411.00073 摘要）；LitE-SQL、CHS-SQL（arXiv 2607.22624，检索结果日期与编号对不上，需复核）都在做"小模型 + 链接"。反证：2408.07702 主张可省略链接。 |
+| 需求证据 | 项目最初的业务场景；RSL-SQL 把"遗漏必需列"列为核心风险（arXiv 2411.00073 摘要）；LitE-SQL、CHS-SQL（arXiv 2607.22624，检索结果日期与编号对不上，需复核）都在做"小模型 + 链接"。反证：2408.07702 主张可省略链接。 |
 | 评分 | F4 · M5 · D3 · R3 · E5 · G5 |
 
 ### 场景 2　检索重排 / RAG 段落筛选（必选）
@@ -291,7 +291,7 @@ F = 一次前向是否合适；M = 多标签/排序需求强度（越高越是�
 | 18 | 行业 / 文档分类 | 5 | 3 | 4 | 4 | 5 | 5 | 26 |
 
 读表：
-- 合计只作粗排，不替代判断。1 号 Schema Linking 合计只有 25，被"公开数据 3、需求证据 3"拖低；它仍列首位是因为它是用户的锚点业务，并且最能展示"逐候选多标签 + 自写转换器"。
+- 合计只作粗排，不替代判断。1 号 Schema Linking 合计只有 25，被"公开数据 3、需求证据 3"拖低；它仍列首位是因为它是项目最初的锚点业务，并且最能展示"逐候选多标签 + 自写转换器"。
 - 需求证据列大多来自 TypeSafe 自家 cookbook、论文摘要或博客，**不是独立的付费需求证据**，R=5 不等于有人愿意为此买单。
 - M 分最高（5）的是 1、2、5、15：恰好是官方四原语填不了的场景，也是 ms-swift 的 `generic_decision`（单选读出）覆盖不到的地方。
 
@@ -370,7 +370,7 @@ F = 一次前向是否合适；M = 多标签/排序需求强度（越高越是�
 
 | 优先级 | 场景 | 读出 × 损失 | 理由 | 主要风险 |
 |---|---|---|---|---|
-| 1 | Schema Linking | ③ 逐候选 BCE，共享整库前缀，校准召回阈值 | 用户的锚点业务；多标签是官方原语和 ms-swift 单选读出都覆盖不了的差异点；没有现成 Jev 格式数据，转换器本身是可展示的成果；评测（strict recall/precision）可全自动，gold 来自 SQL | 公开数据只能 Spider/BIRD 自己转；2408.07702 主张强推理模型下可省略链接，需用"召回/成本"论证；CC-BY-SA 需处理再分发 |
+| 1 | Schema Linking | ③ 逐候选 BCE，共享整库前缀，校准召回阈值 | 项目最初的锚点业务；多标签是官方原语和 ms-swift 单选读出都覆盖不了的差异点；没有现成 Jev 格式数据，转换器本身是可展示的成果；评测（strict recall/precision）可全自动，gold 来自 SQL | 公开数据只能 Spider/BIRD 自己转；2408.07702 主张强推理模型下可省略链接，需用"召回/成本"论证；CC-BY-SA 需处理再分发 |
 | 2 | 检索重排 / RAG 段落筛选 | ③ pointwise + listwise，query 前缀共享，足够性头 | 与场景 1 共用同一读出和前缀机制，边际成本最低；数据最丰富（NFCorpus、MS MARCO、BRIGHT、ESCI）；nDCG 现成；校准与"段落集合筛选"是专用 reranker 缺的东西 | Qwen3-Reranker 等专用模型很强，不能以绝对 nDCG 取胜；MS MARCO 条款未核 |
 | 3 | 意图识别 / 模型路由 | ① 答案 token（≤26）与 ② 槽位（≤255），CE + 温度缩放，OOS 拒识 | 实现最简单，适合做**管线冒烟测试和"同协议对照"**（Banking77/CLINC 上对比 encoder 与 Jev）；数据许可证干净；诚实结果可能是 encoder 更好——这本身是对用户有价值的结论 | 与 ms-swift 重叠；encoder 在有标签时胜出（CLINC：BGE-small + LR 0.948 > Jev 0.913） |
 | 4 | 内容审核 / 安全护栏 | ② 多槽位一次读出，逐类别 BCE，逐类阈值校准 | 多标签 + 校准 + 自家政策，需求证据强；WildGuardMix（ODC-By）+ Aegis 2.0（CC-BY-4.0）可商用 | ToxicChat/BeaverTails/PKU-SafeRLHF 非商用，不能进正式权重训练；与专用 guard 模型正面竞争 |

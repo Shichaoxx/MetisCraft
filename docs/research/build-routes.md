@@ -16,7 +16,7 @@
 5. **Unsloth 的决策代码是 AGPL-3.0-only**（逐文件 SPDX 头），虽然 README 说"核心 Apache、Studio AGPL"。MetisCraft 是 Apache-2.0，不能拷贝或链接它的决策代码；`DECISION_HEADS = ("clef",)` 也没有注册机制。**排除 Unsloth 插件路线**，只当对照。
 6. **竞品其实在帮我们**：三家（ms-swift、HF、Unsloth）都在抢"训练"，没有人做"Awesome 调研清单 + 业务场景（Schema Linking）配置 + 跨读出对比评测 + 统一导出"。自建核心的价值应放在这里，不在再造一个训练器。
 
-要用户决定的事见 §5。
+待定事项见 §5。
 
 ## 1. ms-swift：第三方 pip 包能否不 fork 注册读出头、判断类型、损失、回调
 
@@ -152,7 +152,7 @@
 ### 路线 C：自建可组合核心（推荐）
 - **MetisCraft 要写**：(1) 读出、判断类型、损失、校准、评测的独立接口（至少覆盖本文 7 类读出里 Schema Linking 需要的子集，含 multi_label、ranking）；(2) 业务场景配置（Luce 的 YAML 分段、systemone-builder 的 `DomainSpec` 可借鉴，见 partial/verify-landscape.md）；(3) 到 ms-swift 与 HF `AutoModelForDecision` 的适配层，和 `decision.json` / `scoring_head.safetensors` 导出；(4) 跨读出对照评测；(5) Awesome 清单。
 - **可复用**：HF `Trainer` / PEFT / Accelerate / `datasets`；ms-swift 的头和损失可按"适配层"调用，不拷代码（Apache-2.0 允许，仍保留署名）；HF `Question` / `DecisionConfig` 的字段命名，便于将来合并；社区仓库（JevForge、Kev、lev、Luce 等）的读出实现只读参考，许可证逐个看。
-- **风险**：(1) 一人维护两套适配层，上游一改就要跟；(2) 容易重复造轮子，要克制，训练循环用 `Trainer`，不自写；(3) 在 ms-swift、HF 已有的情况下，用户为什么还选 MetisCraft，需要靠"多读出对比 + 业务场景配置 + 清单"站住；(4) 4×3090 24GB 下只能验证到约 9B 以内的 LoRA（宪法的算力限制，推断）。
+- **风险**：(1) 一人维护两套适配层，上游一改就要跟；(2) 容易重复造轮子，要克制，训练循环用 `Trainer`，不自写；(3) 在 ms-swift、HF 已有的情况下，用户为什么还选 MetisCraft，需要靠"多读出对比 + 业务场景配置 + 清单"站住；(4) 4×3090 24GB 下只能验证到约 9B 以内的 LoRA（本地算力限制，推断）。
 
 ### 对照表
 
@@ -167,12 +167,12 @@
 | 用户安装体验 | `pip` 原生 | `--external_plugins 文件` | `pip` |
 | 开发量 | 大且依赖他人 | 小 | 中到大 |
 
-## 5. 需要用户决定的事
+## 5. 待定事项
 
 1. 是否采纳"路线 C 为主，B 作为第一个适配层，A 等 #50054 合并后再单点贡献"？
 2. Schema Linking 的多标签与排序：接受先用"逐列 noul / 逐候选 score"的编码在 ms-swift 与 HF 上跑通，还是一开始就自建集合交互读出？
 3. Unsloth：是否确认"只读不拷"，不做 Unsloth 适配？
-4. 是否在后面某一轮去问 ms-swift 与 HF 维护者，要不要把 ranking / multi_label 作为新 kind（会产生公开发帖，属于红线 2，需要你批准）。
+4. 是否在后面某一轮去问 ms-swift 与 HF 维护者，要不要把 ranking / multi_label 作为新 kind（会产生公开发帖，待定）。
 
 ## 6. 未验证与局限
 

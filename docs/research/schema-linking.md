@@ -2,7 +2,7 @@
 
 > 设计前调研材料（2026-11-04）。设计结论以 [`docs/design.md`](../design.md) 为准；文中引用的 coverage-map、`notes/`、`partial/`、`landscape/` 等是维护者本机的调研材料，不随仓库发布。
 
-> 作者：小克（schema-linking 检索代理）；日期 2026-11-04；状态：完成。条目见本机调研目录的 `landscape/scenario-schema-linking.jsonl`。
+> 日期 2026-11-04；状态：完成。条目见本机调研目录的 `landscape/scenario-schema-linking.jsonl`。
 > 证据级别：source-verified / doc-verified / author-reported / unverified。数字未注明协议的一律视为 author-reported。
 
 ## 1. 结论先行
@@ -14,7 +14,7 @@
 5. **数据**：没有现成的逐列多标签、按库划分的 schema linking 数据集（HF API 加 verify-landscape 两个渠道确认）。要自己写 Spider、BIRD、CSpider（以及 DuSQL）→ multi_label 的 converter：用 sqlglot `qualify` 从 gold SQL 推导表和列。Spider 和 BIRD 是 **CC-BY-SA-4.0**，派生数据要沿用 SA。
 6. **指标口径要固定**：Recall@k、SRR（RSL-SQL 的 strict recall，BIRD 上 94%）、F6、列级 ROC/PR AUC、逐列 ECE 和 Brier，再加下游 EX 对照（全 schema、预测子集、gold 子集）。各家口径不同，外部数字不能直接放在一起比。
 7. **数据契约**只加可选字段（level、parent、meta、group.split_key、roles、provenance），旧 JSONL 仍然合法。同一配方换掉 converter 就能用于**工具选择**。
-8. **要用户决定**：①实际业务约束（§4.1）；②v0.1 是否接受"list 主推、tree 推迟"；③DuSQL 和 Chase 许可证没核实，是否纳入。
+8. **待定**：①实际业务约束（§4.1）；②v0.1 是否接受"list 主推、tree 推迟"；③DuSQL 和 Chase 许可证没核实，是否纳入。
 
 ## 2. 方法与 SOTA
 
@@ -114,7 +114,7 @@ ExSL 用的是 mo-sql-parsing；RESDSQL 和 CodeS 的预处理脚本也能抽出
 
 ## 4. 工业规模
 
-公开方法在"上千张表、中文字段、低延迟"场景下的共同做法如下。没有标证据的是小克的工程判断，未验证。
+公开方法在"上千张表、中文字段、低延迟"场景下的共同做法如下。没有标证据的是本文的工程判断，未验证。
 
 1. **分层漏斗**。先选库或主题域（LinkAlign 的 LA），再选表，最后选列。每一层都设召回预算，比如表层要求 SRR 不低于 98%，再交给下一层。CRUSH4SQL 和 LinkAlign 都是这个思路。第一层用 BM25 加向量检索（LinkAlign 用 bge-large-en-v1.5；中文可以换 bge-m3），保证候选数不超过几百，后面两层用决策模型打分。
 2. **值索引**。问题里出现的实体值（例如"北京"、"2024 年 Q3"）往往是定位列的最强信号。CHESS 用 LSH 加向量检索数据库里的值，CodeS 用 BM25 加 LCS。匹配到的值要作为候选列的附加文本（`examples` 或 `matched_values`）放进输入。
@@ -123,7 +123,7 @@ ExSL 用的是 mo-sql-parsing；RESDSQL 和 CodeS 的预处理脚本也能抽出
 5. **低延迟**。schema 对每个库是静态的，按"schema → 问题 → 候选标记"的顺序排布时，**schema 部分的 KV 可以按库缓存**（vLLM / SGLang 都有 prefix caching）。这样每次查询只需算问题和候选列表的几百到几千个 token，一次前向就能得到全部列的概率。比生成式 linking 快 20 倍以上（ExSL 的定性说法）。这一点要靠 §5 的布局设计来保证。
 6. **业务兜底**。阈值按召回预算设定，置信度低时回退到"整张表全部列"或"全 schema"，这是 RSL-SQL 双模式投票的简化版。这里需要**校准过的概率**，而不是排序分数。
 
-### 4.1 待用户补充：实际业务约束
+### 4.1 待补充：实际业务约束
 
 - 库、表、列的规模：单库最多多少表，单表最多多少列，有多少个库或主题域。
 - 字段命名：中文名、拼音缩写还是英文代码？注释覆盖率多少？有没有数据字典或指标口径文档？
@@ -166,7 +166,7 @@ ExSL 用的是 mo-sql-parsing；RESDSQL 和 CodeS 的预处理脚本也能抽出
 - `meta` 放类型、注释、主外键和示例值；序列化模板由配方决定，参考 M-Schema。
 - `group.split_key` 让划分器**强制按库划分**，校准集和测试集都必须是没见过的库。
 - `supervision.kind` 新增 `multi_label`；`roles` 可选，对应 ExSLf。
-- `provenance` 记录 gold 是怎么推出来的，满足宪法 §4.1 的可追溯要求。
+- `provenance` 记录 gold 是怎么推出来的，满足可追溯要求。
 
 ### 5.2 候选生成
 
@@ -210,7 +210,7 @@ ExSL 用的是 mo-sql-parsing；RESDSQL 和 CodeS 的预处理脚本也能抽出
 ### 5.7 效率与 4×3090 算力（估算，未测）
 
 - 序列长度：BIRD 用 M-Schema 序列化，加问题和候选列表，约 2–4k token；ExSL 的上限是 3000。Spider 约 1–2k。
-- 训练量：BIRD train 约 9.4k 题 × 3k ≈ 28M token 每 epoch，Spider 7k × 1.5k ≈ 10M。Qwen3-1.7B/4B 加 LoRA、bf16、梯度检查点，按每卡每秒 2–3k token 粗算，4 张卡一个 epoch 不到 1 小时。0.6B 可以全参数训练。**这些是估算，需要实测**；正式跑之前按宪法红线 3 先问用户。
+- 训练量：BIRD train 约 9.4k 题 × 3k ≈ 28M token 每 epoch，Spider 7k × 1.5k ≈ 10M。Qwen3-1.7B/4B 加 LoRA、bf16、梯度检查点，按每卡每秒 2–3k token 粗算，4 张卡一个 epoch 不到 1 小时。0.6B 可以全参数训练。**这些是估算，需要实测**；正式跑之前要先确认 GPU 资源。
 - 推理：③-list 每题一次前向。按库缓存 schema 前缀后，每次查询只算问题和候选，几百到几千 token。
 - 对比：pairs 布局要多算约 N 倍（BIRD 约 50 倍），是不可行的。
 
@@ -260,7 +260,7 @@ ExSL 用的是 mo-sql-parsing；RESDSQL 和 CodeS 的预处理脚本也能抽出
 4. **ExSL 代码没有找到**：只查了 GitHub 搜索，arXiv HTML 里也没有链接，复现要自己实现。数字是小模型从 HTML 抽取的，写进正式材料前要人工核对原文表格。
 5. **顺序敏感度未知**：③-list 对候选顺序的敏感程度没有公开数据，§5.8 的实验要先做。
 6. **Spider 2.0 的现实**：端到端的瓶颈在智能体探索和方言，单靠 schema linking 提升有限。MetisCraft 只能宣称自己是"第一道筛子"或"工具"。
-7. **算力估算未实测**；正式训练要先过宪法红线 3。
+7. **算力估算未实测**；正式训练前要先确认 GPU 资源。
 8. **没覆盖到的**：CodeS 的具体 schema linking 数字、Chase 的规模和许可证、BIRD 的划分数字、AutoLink 的方法和数字、各数据集的平均表列数。这些都标了 unverified，下一轮用 2 个渠道补。
 
 
