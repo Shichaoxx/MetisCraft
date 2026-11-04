@@ -4,7 +4,7 @@
 > 1. **定位第 ① 部分改为"支持矩阵"**：不单独发布 Awesome 清单。MetisCraft 内收录约 10–20 个当前较好的 Jev 类项目，每行标出能否用 MetisCraft 训练、复现、部署，首批做 3–5 个；清单草稿（AW）只作素材。取代 §1.1 表中的 ① 行、§3.5 和卡 5。
 > 2. **部署**：v0.1 交付 Predictor，外加一层沿用 `/v1/systemone` 请求格式的 HTTP 服务，保留按类型的校准；vLLM、SGLang、llama.cpp 的引擎导出放 v0.2，随卡 3 的基座选择。取代决策点 14 的待定状态。
 > 3. **通用优先**：MetisCraft 面向通用的类型化判断，不以某个业务任务为中心。不设单一业务旗舰，Schema Linking 只是场景之一，取代卡 4 的推荐；v0.1 验收改为每种判断类型各用一个公开基准，具体基准待拍板（建议见卡 4）。正文里把 Schema Linking 当旗舰或验收用例的地方（§0 第 3 条、§2、卡 2–4、§6）待改写。
-> 4. **数据注册表和主流数据集支持是 v0.1 必需项**：MetisCraft 用开源数据集训练和验收。`datasets/registry.yaml`（§3.4）收录主流通用数据集和 Jev 类数据集，每条写明来源与固定 revision、判断类型映射、转换器、许可证与条款标记、split 角色、上游来源（用于去重防泄漏）。首批名单、是否原生读取 Jev 类型化判断格式待拍板，建议见 §3.4 末尾。
+> 4. **数据注册表和主流数据集支持是 v0.1 必需项**：MetisCraft 用开源数据集训练和验收。`datasets/registry.yaml`（§3.4）收录主流通用数据集和 Jev 类数据集，每条写明来源与固定 revision、判断类型映射、转换器、许可证与条款标记、split 角色、上游来源（用于去重防泄漏）。契约原生读取 Jev 类型化判断格式（`state` + `questions` + 目标），与 v0.1 HTTP 服务的请求格式一致；首批名单待拍板，建议见 §3.4 末尾。
 >
 > 路径约定：`docs/` 下的文件在仓库内；其余 `drafts/`、`partial/`、`research/`、`landscape/` 等路径指维护者本机的调研目录，不随仓库发布。
 
@@ -191,7 +191,7 @@ trace:    {strict: true}
 | 多标签 | Open-Jev 的独立标签题；通用基准待补 | multi_label | 调研还没覆盖通用多标签基准 |
 | 只评测 | Decision Index 公开套件、JevBench | — | DI 只测 choice / noul，公开套件约 11 万个请求，官方一键运行要 96 GB 卡、72 小时；JevBench 输入封存，不能完整复现 |
 
-另建议契约原生读取 Jev 类型化判断格式（`state` + `questions` + 目标），与 v0.1 HTTP 服务的请求格式一致；三份 Jev 类数据集的字段要逐个核对。来源是 Jev / TypeSafe 输出的数据集（如 jimothy、Jevstiller）按 §3.1 一律不收。
+**已定（2026-11-04）**：契约原生读取 Jev 类型化判断格式（`state` + `questions` + 目标），与 v0.1 HTTP 服务的请求格式一致；它和 §3.1 内部表示的映射待设计，三份 Jev 类数据集的字段要逐个核对。来源是 Jev / TypeSafe 输出的数据集（如 jimothy、Jevstiller）按 §3.1 一律不收。
 
 ### 3.5 Awesome 清单：以现有草稿为准，只列差异与待定项
 
