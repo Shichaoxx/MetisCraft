@@ -1,0 +1,102 @@
+% Readout 3: per-candidate scalar head (old Metis ScoreHead, JevForge, NanoJev).
+% Each candidate is its own row (or a branch of a shared-prefix tree).
+% X:int64[B*K,T]  H:[B*K,T,d]  h:[B*K,d]  W1 stored [d_h,d] shown [d,d_h]
+% w2 stored [1,d_h] shown [d_h,1]  s:[B*K] -> reshape [B,K]
+\input{readout-style.tex}
+\begin{document}
+\begin{tikzpicture}[x=1cm,y=1cm,text=Ink]
+\node[font=\large] at (12.2,3.0)
+  {$h_{b,k}=H^{(b,k)}_{t^\star_{b,k},:},\quad
+    s_{b,k}=w_2^{\mathsf T}\,\mathrm{GELU}(W_1h_{b,k}+b_1)+b_2,\quad
+    p_b=\operatorname{softmax}_k(s_b)\ \ \text{或}\ \ p_{b,k}=\sigma(s_{b,k})$};
+% ---------- stage A: one row per candidate ----------
+\node[stage] at (10.0,2.3) {每个候选独立成行：候选之间互不可见};
+\path[draw=Ink!30,fill=white,rounded corners=.8pt,line width=.4pt]
+  ({1.2+\Off},{-0.45+\Off}) rectangle ++(2.7,0.9);
+\TokRow{1.2}{0.3}{S,S,S,Q,Q,1,1,D,P}
+\TokRow{1.2}{0.0}{S,S,S,Q,Q,2,2,2,D}
+\TokRow{1.2}{-0.3}{S,S,S,Q,Q,3,D,P,P}
+\foreach \k/\y in {1/0.3,2/0.0,3/-0.3}{\node[note,anchor=east] at (1.08,\y) {$k{=}\k$};}
+\draw[brc] (1.22,0.7) -- (2.68,0.7) node[midway,above=3pt,note] {前缀};
+\draw[brc] (2.72,0.7) -- (4.02,0.7) node[midway,above=3pt,note] {候选 $k$};
+\node[sym] at (2.55,-0.72) {$X$};
+\node[shp] at (2.55,-1.05) {$[B{\cdot}K,\,T]$};
+\TokRow{4.7}{1.65}{S,S,S,Q,Q,2,2,2,D}
+\Mask{4.7}{1.35}{9}{0,0,0,0,0,0,0,0,0}{3}
+\node[sym] at (6.05,-1.62) {$M$};
+\node[shp] at (6.05,-1.95) {$[T,T]$，每行独立因果};
+\node[op,minimum width=2.4cm,minimum height=1.3cm] (dec) at (9.2,0)
+  {\textbf{Decoder}\\[2pt]$B{\cdot}K$ 行并行};
+\draw[flow] (7.55,0) -- (dec.west);
+\Tens{H}{11.75}{0}{9}{5}{Hid}{2}{H}{[B{\cdot}K,T,d]}
+\RowMark{11.0}{1.35}{9}{5}{Lgt}
+\draw[flow] (dec.east) -- (H-w);
+\node[op,minimum width=2.1cm,minimum height=1.1cm] (g1) at (14.85,0)
+  {\textbf{Gather}\\[2pt]$H_{i,t^\star_i,:}$};
+\draw[flow] (H-e) -- (g1.west);
+\Slots{13.95}{-1.25}{7,8,6,8,7,8}
+\node[sym] at (14.85,-1.62) {$t^\star$};
+\node[shp] at (14.85,-1.95) {$[B{\cdot}K]$};
+\draw[dflow] (14.85,-1.08) -- (g1.south);
+\Tens{h}{17.9}{0}{6}{5}{Hid}{0}{h}{[B{\cdot}K,d]}
+\draw[flow] (g1.east) -- (h-w);
+% ---------- stage B: equivalent shared-prefix tree ----------
+\node[stage] at (10.0,-2.75) {等价打包（旧 Metis dense tree）：共享前缀 + 分支 mask + 续接位置 id};
+\draw[brc] (1.22,-3.5) -- (2.68,-3.5) node[midway,above=3pt,note] {共享前缀};
+\draw[brc] (2.72,-3.5) -- (3.58,-3.5) node[midway,above=3pt,note] {候选 1};
+\draw[brc] (3.62,-3.5) -- (4.78,-3.5) node[midway,above=3pt,note] {候选 2};
+\draw[brc] (4.82,-3.5) -- (5.38,-3.5) node[midway,above=3pt,note] {3};
+\TokRow{1.2}{-3.75}{S,S,S,Q,Q,1,1,D,2,2,2,D,3,D}
+\Mask{1.2}{-4.05}{14}{0,0,0,0,0,1,1,1,2,2,2,2,3,3}{0}
+\node[note,anchor=east] at (1.08,-8.6) {pos};
+\Slots{1.2}{-8.6}{0,1,2,3,4,5,6,7,5,6,7,8,5,6}
+\node[sym] at (3.3,-8.98) {$M_{\mathrm{tree}}$};
+\node[shp] at (3.3,-9.3) {$[T',T']$};
+\node[op,minimum width=3.7cm,minimum height=1.3cm] (tree) at (8.4,-6.15)
+  {Decoder（同一权重）\\[2pt]gather $t^\star=(7,11,13)$\\[2pt]得到与上行相同的 $h$};
+\draw[flow] (5.55,-6.15) -- (tree.west);
+\node[note,anchor=west,align=left] at (10.6,-6.15)
+  {$M_{ij}=\mathbf 1[j\le i]\cdot\mathbf 1[g_j=0\ \lor\ g_j=g_i]$，$g$ 为分支号（前缀为 0）\\[3pt]
+   分支位置 id 从前缀长度续接，与逐行输入逐 token 等价（tokenizer 边界一致时）\\[3pt]
+   前缀 KV 只算一次；$T'=$ 前缀 $+\sum_k$ 候选长度\\[3pt]
+   来源：共享前缀树 mask 的讲解思路参考 B 站“五道口纳什”视频与课件 jev\_architecture-v2.pdf；本图独立绘制};
+% ---------- stage C: scalar head ----------
+\node[stage] at (12.6,-10.1) {标量头 $d\to d_h\to 1$，再按问题分组归一化};
+\Tens{h2}{1.95}{-11.5}{6}{5}{Hid}{0}{h}{[B{\cdot}K,d]}
+\node[bigop] at (3.15,-11.5) {$\times$};
+\Tens{W1}{4.2}{-11.5}{5}{4}{Wgt}{0}{W_1^{\mathsf T}}{[d,d_h]}
+\Tens{u}{6.3}{-11.5}{6}{4}{Hid}{0}{u}{[B{\cdot}K,d_h]}
+\draw[flow] (W1-e) -- (u-w);
+\node[op,minimum width=1.2cm,minimum height=.8cm] (gelu) at (8.1,-11.5) {GELU};
+\draw[flow] (u-e) -- (gelu.west);
+\Tens{a}{9.9}{-11.5}{6}{4}{Hid}{0}{a}{[B{\cdot}K,d_h]}
+\draw[flow] (gelu.east) -- (a-w);
+\node[bigop] at (10.95,-11.5) {$\times$};
+\Tens{w2}{11.55}{-11.5}{4}{1}{Wgt}{0}{w_2}{[d_h,1]}
+\Tens{s}{12.85}{-11.5}{6}{1}{Lgt}{0}{s}{[B{\cdot}K]}
+\draw[flow] (w2-e) -- (s-w);
+\node[op,minimum width=1.5cm,minimum height=1.1cm] (rs) at (14.45,-11.5)
+  {reshape\\[2pt]$[B,K]$};
+\draw[flow] (s-e) -- (rs.west);
+\Tens{S}{16.35}{-11.5}{2}{3}{Lgt}{0}{s}{[B,K]}
+\draw[flow] (rs.east) -- (S-w);
+\node[op,minimum width=1.9cm,minimum height=1.1cm] (sm) at (18.45,-11.5)
+  {softmax 沿 $K$\\[2pt]或逐个 sigmoid};
+\draw[flow] (S-e) -- (sm.west);
+\Tens{p}{20.5}{-11.5}{2}{3}{Lgt}{0}{p}{[B,K]}
+\draw[flow] (sm.east) -- (p-w);
+\node[op,minimum width=2.4cm,minimum height=1.1cm] (loss) at (23.05,-11.5)
+  {单选：交叉熵\\[2pt]多标签：BCE};
+\draw[flow] (p-e) -- (loss.west);
+\Slots{22.75}{-12.65}{0,2}
+\node[sym] at (23.05,-13.02) {$y$ 或 $Y$};
+\node[shp] at (23.05,-13.35) {$[B]$ 或 $\{0,1\}^{B\times K}$};
+\draw[dflow] (23.05,-12.48) -- (loss.south);
+% ---------- meaning ----------
+\Meaning{0.0}{-14.0}{24.4}
+ {$B$ 问题数；$K$ 每问题候选数（可变长，用 padding 与候选 mask）；$T$ 单行长度；$d$ hidden；$d_h$ 头的中间宽度。}
+ {$X$ token id，每行 = 同一 state/问题 + 一个候选；$t^\star_i$ 第 $i$ 行末个有效 token；$W_1,w_2$ 可训练（存储为 $[d_h,d]$、$[1,d_h]$，图中转置）；$s$ 每候选一个实数分数；$p$ 组内概率或独立概率。}
+ {候选在主干内互不可见，分数只依赖 (state, 问题, 候选自身)：加一个无关候选不改变已有分数；互斥只在组内 softmax 体现。Schema Linking 选表/列属于此类（多标签，用 sigmoid + BCE）。}
+ {读出 3：逐候选标量头@Shichao}
+\end{tikzpicture}
+\end{document}

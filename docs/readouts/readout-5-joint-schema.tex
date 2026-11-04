@@ -1,0 +1,100 @@
+% Readout 5: candidate-set interaction / joint schema head, drawn after the local
+% copy notes/clef-joint_schema_model.py (JointSchemaHead, EvidenceRoutingLayer).
+% Backbone: plain causal LM with a 2D padding mask; one sequence per record:
+% [system, STATE, schema fields (instruction span + option spans), suffix].
+% Per record: H:[T,d]  Mem:[T,w]  C,Lam:[N_q K,d]  Q:[N_q,d]  g:[d]
+% O0,O:[N_q K,w]  F0,F:[N_q,w]  z:[N_q,K]. Shapes drawn per record (depth = R).
+\input{readout-style.tex}
+\begin{document}
+\begin{tikzpicture}[x=1cm,y=1cm,text=Ink]
+\node[font=\large] at (13.5,5.0)
+  {$O^{0}_{k}=W_c\bar h_{\mathcal S_k}+W_\lambda\bar w_{\mathcal S_k}+W_{oq}\bar h_{\mathcal Q_{f(k)}},\quad
+    O=\mathrm{Route}^{2}(O^{0};\mathrm{Mem}),\quad
+    F=\mathrm{TFDec}^{N_s}(F^{0};\mathrm{Mem}),\quad
+    p_f=\operatorname{softmax}_k(z_{f,k})$};
+% ---------- stage A ----------
+\node[stage] at (9.5,4.2) {主干：一条序列含 state 与全部字段（问题 + 选项 span），普通因果 mask};
+\node[sym,anchor=east] at (1.0,3.2) {$X$};
+\node[shp,anchor=east] at (1.0,2.9) {$[R,T]$};
+\TokRow{1.2}{3.05}{S,S,S,Q,1,1,2,2,3,3,Q,1,1,2,2,3,3,D}
+\draw[brc] (1.22,3.26) -- (2.08,3.26) node[midway,above=3pt,note] {state};
+\draw[brc] (2.12,3.26) -- (4.18,3.26) node[midway,above=3pt,note] {字段 1};
+\draw[brc] (4.22,3.26) -- (6.28,3.26) node[midway,above=3pt,note] {字段 2};
+\draw[brc] (6.32,3.26) -- (6.58,3.26) node[midway,above=3pt,note] {末};
+\Mask{1.2}{2.7}{18}{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}{3}
+\node[sym] at (3.9,-2.97) {$M$};
+\node[shp] at (3.9,-3.3) {$[T,T]$ 因果（只另加 padding mask）};
+\node[op,minimum width=2.2cm,minimum height=1.3cm] (dec) at (8.9,0)
+  {\textbf{Decoder}\\[2pt]无改动};
+\draw[flow] (6.75,0) -- (dec.west);
+\Tens{H}{11.65}{0}{18}{5}{Hid}{1}{H}{[R,T,d]}
+\draw[flow] (dec.east) -- (H-w);
+\node[op,minimum width=2.2cm,minimum height=1.1cm] (mp) at (14.75,0)
+  {LayerNorm\\[2pt]$\cdot\,W_{\mathrm{mem}}$};
+\draw[flow] (H-e) -- (mp.west);
+\Tens{Mem}{17.35}{0}{18}{4}{Hid}{0}{\mathrm{Mem}}{[T,w]}
+\draw[flow] (mp.east) -- (Mem-w);
+\node[note,anchor=west,align=left] at (18.4,0)
+  {从 $H$（LayerNorm 后）另取：\\[3pt]
+   $\bar h_{\mathcal S_k}$：选项 span 内 mean-pool\\[3pt]
+   $\bar w_{\mathcal S_k}$：span 内 token 的输出嵌入行均值\\
+   \hphantom{$\bar w_{\mathcal S_k}$：}（lexical anchor）\\[3pt]
+   $\bar h_{\mathcal Q_f}$：问题说明 span 内 mean-pool\\[3pt]
+   $g$：末 token 的 hidden（全局向量）};
+% ---------- stage B ----------
+\node[stage] at (9.5,-4.4) {选项查询：三路投影相加，再经 2 层 evidence routing（只对 Mem 做 cross-attention）};
+\Tens{C}{1.95}{-6.0}{6}{5}{Hid}{0}{C}{[N_qK,d]}
+\node[bigop] at (3.15,-6.0) {$+$};
+\Tens{Lam}{4.35}{-6.0}{6}{5}{Wgt}{0}{\Lambda}{[N_qK,d]}
+\node[bigop] at (5.55,-6.0) {$+$};
+\Tens{Qv}{6.75}{-6.0}{2}{5}{Hid}{0}{Q}{[N_q,d]}
+\node[op,minimum width=2.3cm,minimum height=1.3cm] (sum) at (9.35,-6.0)
+  {各乘 $\mathrm{Linear}(d,w)$\\[2pt]后相加；$Q$ 按\\[2pt]所属字段广播};
+\draw[flow] (Qv-e) -- (sum.west);
+\Tens{O0}{12.0}{-6.0}{6}{4}{Hid}{0}{O^{0}}{[N_qK,w]}
+\draw[flow] (sum.east) -- (O0-w);
+\node[op,minimum width=2.6cm,minimum height=1.3cm] (route) at (14.75,-6.0)
+  {\textbf{Routing} $\times2$\\[2pt]query = 选项\\[2pt]key/value = Mem};
+\draw[flow] (O0-e) -- (route.west);
+\Tens{O}{17.35}{-6.0}{6}{4}{Hid}{0}{O}{[N_qK,w]}
+\draw[flow] (route.east) -- (O-w);
+% ---------- stage C ----------
+\node[stage] at (8.6,-9.3) {字段（问题）表示：汇总本字段选项后，字段之间全可见地交互};
+\node[op,minimum width=4.2cm,minimum height=1.5cm] (f0) at (3.1,-11.0)
+  {\textbf{字段初值}\\[2pt]$F^{0}=QW_q+\mathrm{LN}\big(\sum_k\alpha_kO_k\big)$\\[2pt]
+   $+\,gW_g+E_{\mathrm{type}}$\\[2pt]
+   $\alpha=\operatorname{softmax}_{k\in f}(O_k\cdot QW_q/\sqrt w)$};
+\Tens{F0}{7.0}{-11.0}{2}{4}{Hid}{0}{F^{0}}{[N_q,w]}
+\draw[flow] (f0.east) -- (F0-w);
+\node[op,minimum width=2.6cm,minimum height=1.3cm] (tf) at (10.0,-11.0)
+  {\textbf{TFDecoder} $\times N_s$\\[2pt]字段间 self-attn\\[2pt]+ cross-attn 到 Mem};
+\draw[flow] (F0-e) -- (tf.west);
+\Mask{9.7}{-12.0}{2}{0,0}{1}
+\node[sym] at (10.0,-12.85) {$M_{\mathrm{field}}$};
+\node[shp] at (10.0,-13.18) {$[N_q,N_q]$ 全 1};
+\Tens{F}{12.85}{-11.0}{2}{4}{Hid}{0}{F}{[N_q,w]}
+\draw[flow] (tf.east) -- (F-w);
+\node[op,minimum width=3.2cm,minimum height=1.5cm] (sc) at (16.4,-11.0)
+  {\textbf{打分}\\[2pt]$\pi_{f,k}+\sigma(\gamma)\big[s\cos(F_f,O_k)$\\[2pt]$+\,\mathrm{MLP}(F_f,O_k,F_f{\odot}O_k,|F_f{-}O_k|)\big]$};
+\draw[flow] (F-e) -- (sc.west);
+\draw[dflow] (17.35,-7.75) -- (17.35,-10.25);
+\node[note,anchor=west] at (17.5,-9.0) {$O$};
+\Tens{z}{20.35}{-11.0}{2}{3}{Lgt}{0}{z}{[N_q,K]}
+\draw[flow] (sc.east) -- (z-w);
+\node[op,minimum width=1.6cm,minimum height=1.1cm] (sm) at (22.35,-11.0)
+  {softmax\\[2pt]沿 $K$};
+\draw[flow] (z-e) -- (sm.west);
+\Tens{p}{24.35}{-11.0}{2}{3}{Lgt}{0}{p}{[N_q,K]}
+\draw[flow] (sm.east) -- (p-w);
+\node[op,minimum width=2.6cm,minimum height=1.1cm] (loss) at (27.0,-11.0)
+  {CE $+\lambda$Brier\\[2pt]+ ordinal EMD};
+\draw[flow] (p-e) -- (loss.west);
+\node[note] at (27.0,-12.0) {损失按调研报告的\\clef-finetune 记录，未核实};
+% ---------- meaning ----------
+\Meaning{0.0}{-14.0}{28.4}
+ {$R$ 序列（记录）数；$N_q$ 每条记录的字段（问题）数，全批问题数 $B=R\,N_q$；$K$ 每字段选项数（可变）；$T$ 序列长度；$d$ hidden；$w$ 头宽度；$N_s$ 字段层数。图中按单条记录画形状。}
+ {$\mathcal S_k$ 选项 $k$ 的 token span，$\mathcal Q_f$ 字段 $f$ 的说明 span；$\Lambda$ 选项 token 的输出嵌入（lm\_head 行）均值；$\pi_{f,k}$ 词面先验 $=\tau\cos(\bar w_{\mathcal S_k},\bar h_{\mathcal Q_f}+g)$；$s,\tau,\gamma$ 为可学标量；$z$ logits。}
+ {选项之间在头里不直接 self-attend，而是经“字段汇总 $\sum_k\alpha_kO_k$ $\to$ 与每个 $O_k$ 比较”互相影响：加一个候选会改变其他候选的分数；字段之间经 $M_{\mathrm{field}}$ 全可见。依据为本地 notes 副本，与发布版是否一致未核实。}
+ {读出 5：候选集合交互 / 联合 schema 头（按 Clef 本地源码副本）@Shichao}
+\end{tikzpicture}
+\end{document}

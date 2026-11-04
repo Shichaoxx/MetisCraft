@@ -1,0 +1,101 @@
+% Readout 6: encoder + per-candidate / per-label scoring.
+% (a) uni-encoder (GLiClass-style): labels with marker tokens + SEP + text in one
+%     bidirectional sequence; label markers gathered, text mean-pooled, scored.
+% (b) bi-encoder: text tower u:[B,d], label tower V:[K,d] (cacheable), z=uV^T/tau.
+% Cross-encoder (one (text, candidate) row each) = readout 3 with an encoder.
+\input{readout-style.tex}
+\begin{document}
+\begin{tikzpicture}[x=1cm,y=1cm,text=Ink]
+\node[font=\large] at (11.0,4.05)
+  {$e_{b,k}=H_{b,m_{b,k},:},\ \ u_b=\operatorname{mean}_{t\in\mathcal T_b}H_{b,t,:},\ \
+    z_{b,k}=\langle e_{b,k},u_b\rangle\ \text{（同编码）};\qquad
+    z=UV^{\mathsf T}/\tau\ \text{（双塔）};\qquad p_{b,k}=\sigma(z_{b,k})$};
+% ---------- stage A: uni-encoder ----------
+\node[stage] at (11.0,3.35) {(a) 同编码：标签与文本拼成一条序列，双向注意力，所有 token 互相可见};
+\node[sym,anchor=east] at (1.0,2.3) {$X$};
+\node[shp,anchor=east] at (1.0,2.0) {$[B,T]$};
+\TokRow{1.2}{2.15}{M,1,M,2,M,3,C,T,T,T,T,T}
+\draw[brc] (1.22,2.36) -- (2.98,2.36) node[midway,above=3pt,note] {标签 $\times K$};
+\draw[brc] (3.32,2.36) -- (4.78,2.36) node[midway,above=3pt,note] {文本};
+\node[note,anchor=north] at (3.15,1.98) {};
+\Mask{1.2}{1.8}{12}{0,0,0,0,0,0,0,0,0,0,0,0}{1}
+\node[sym] at (3.0,-2.07) {$M^{\mathrm{bi}}$};
+\node[shp] at (3.0,-2.4) {$[T,T]$ 全 1（padding 除外）};
+\node[op,minimum width=2.6cm,minimum height=1.3cm] (enc) at (6.75,0)
+  {\textbf{Encoder}\\[2pt]双向注意力};
+\draw[flow] (4.95,0) -- (enc.west);
+\Tens{H}{9.35}{0}{12}{5}{Hid}{1}{H}{[B,T,d]}
+\foreach \r in {1,3,5}{\RowMark{8.6}{1.8}{\r}{5}{TokM}}
+\path[draw=Qst,line width=1.1pt,rounded corners=1pt] (8.57,-1.83) rectangle (10.13,-0.27);
+\draw[flow] (enc.east) -- (H-w);
+\node[op,minimum width=2.3cm,minimum height=1.0cm] (go) at (12.4,1.3)
+  {\textbf{Gather 标记}\\[2pt]$H_{b,m_{b,k},:}$};
+\node[op,minimum width=2.3cm,minimum height=1.0cm] (gp) at (12.4,-1.3)
+  {\textbf{mean-pool}\\[2pt]文本位置 $\mathcal T_b$};
+\draw[flow] (H-e) -- (go.west);
+\draw[flow] (H-e) -- (gp.west);
+\Slots{11.95}{2.25}{0,2,4}
+\node[sym,anchor=west] at (12.9,2.25) {$m$\;{\scriptsize\color{Muted}$[B,K]$}};
+\draw[dflow] (12.4,2.08) -- (go.north);
+\Tens{E}{15.4}{1.3}{3}{5}{Hid}{1}{E}{[B,K,d]}
+\Tens{u}{15.4}{-1.3}{2}{5}{Hid}{0}{u}{[B,d]}
+\draw[flow] (go.east) -- (E-w);
+\draw[flow] (gp.east) -- (u-w);
+\node[op,minimum width=2.4cm,minimum height=1.3cm] (sc) at (18.6,0)
+  {\textbf{scorer}\\[2pt]$\langle e_{b,k},u_b\rangle$\\[2pt]（或 MLP 等）};
+\draw[flow] (E-e) -- (sc.north west);
+\draw[flow] (u-e) -- (sc.south west);
+\Tens{za}{21.25}{0}{2}{3}{Lgt}{0}{z}{[B,K]}
+\draw[flow] (sc.east) -- (za-w);
+% ---------- stage B: bi-encoder ----------
+\node[stage] at (11.0,-3.45) {(b) 双塔：文本与标签各自编码，标签向量可离线缓存，候选之间互不可见};
+\node[sym,anchor=east] at (1.0,-4.85) {$X^{\mathrm{txt}}$};
+\node[shp,anchor=east] at (1.0,-5.15) {$[B,T_x]$};
+\TokRow{1.2}{-5.0}{T,T,T,T,T,T,T,T}
+\node[op,minimum width=2.4cm,minimum height=1.0cm] (et) at (5.25,-5.0)
+  {Encoder + pool};
+\draw[flow] (3.55,-5.0) -- (et.west);
+\Tens{ub}{8.35}{-5.0}{2}{5}{Hid}{0}{u}{[B,d]}
+\draw[flow] (et.east) -- (ub-w);
+\node[sym,anchor=east] at (1.0,-7.25) {$X^{\mathrm{lab}}$};
+\node[shp,anchor=east] at (1.0,-7.55) {$[K,T_\ell]$};
+\TokRow{1.2}{-7.1}{C,1,1}
+\TokRow{1.2}{-7.4}{C,2,P}
+\TokRow{1.2}{-7.7}{C,3,3}
+\node[op,minimum width=2.4cm,minimum height=1.0cm] (el) at (5.25,-7.4)
+  {Encoder + pool\\[2pt]{\scriptsize 可离线缓存}};
+\draw[flow] (2.25,-7.4) -- (el.west);
+\Tens{V}{8.35}{-7.4}{3}{5}{Hid}{0}{V}{[K,d]}
+\draw[flow] (el.east) -- (V-w);
+\node[op,minimum width=2.2cm,minimum height=1.1cm] (mm) at (11.6,-6.2)
+  {$uV^{\mathsf T}/\tau$\\[2pt]{\scriptsize $(B{\times}d)(d{\times}K)$}};
+\draw[flow] (ub-e) -- (mm.north west);
+\draw[flow] (V-e) -- (mm.south west);
+\Tens{zb}{14.3}{-6.2}{2}{3}{Lgt}{0}{z}{[B,K]}
+\draw[flow] (mm.east) -- (zb-w);
+% ---------- stage C: normalisation and loss ----------
+\node[stage] at (11.0,-9.3) {(a)(b) 共用：逐标签 sigmoid（多标签自然），单选也可沿 $K$ softmax};
+\Tens{z}{1.95}{-10.8}{2}{3}{Lgt}{0}{z}{[B,K]}
+\node[op,minimum width=2.4cm,minimum height=1.1cm] (sg) at (4.6,-10.8)
+  {逐个 sigmoid\\[2pt]{\scriptsize 或 softmax 沿 $K$}};
+\draw[flow] (z-e) -- (sg.west);
+\Tens{p}{7.25}{-10.8}{2}{3}{Lgt}{0}{p}{[B,K]}
+\draw[flow] (sg.east) -- (p-w);
+\node[op,minimum width=2.4cm,minimum height=1.1cm] (loss) at (9.9,-10.8)
+  {\textbf{BCE}（多标签）\\[2pt]或交叉熵};
+\draw[flow] (p-e) -- (loss.west);
+\Slots{9.45}{-11.9}{1,0,1}
+\Slots{9.45}{-12.2}{0,0,1}
+\node[sym,anchor=west] at (10.45,-12.05) {$Y$\;{\scriptsize\color{Muted}$\{0,1\}^{B\times K}$}};
+\draw[dflow] (9.9,-11.73) -- (loss.south);
+\node[note,anchor=west,align=left] at (12.4,-10.8)
+  {交叉编码（Kenning v0.5、Luce \texttt{cross}）：每个 (文本, 候选) 拼成一行、行内双向，\\[3pt]
+   读 [CLS] 或 pooling 得标量 —— 即读出 3把 decoder 换成 encoder，代价 $B\cdot K$ 行。};
+% ---------- meaning ----------
+\Meaning{0.0}{-12.85}{22.6}
+ {$B$ 问题（文本）数；$K$ 标签 / 候选数；$T$ 同编码序列长度；$T_x,T_\ell$ 双塔中文本、标签长度；$d$ hidden；$\tau$ 温度。}
+ {$m_{b,k}$ 第 $k$ 个标签标记 token 的下标；$\mathcal T_b$ 文本 token 的位置集合；$E$ 标签表示；$u$ 文本表示；$V$ 缓存的标签向量；$Y$ 多标签 0/1 目标。}
+ {同编码时标签之间、标签与文本之间全可见（标签顺序会影响结果，训练常做标签打乱）；双塔时互不可见，标签可增删而不重算文本。encoder 小而快、CPU 可用，但长 state 与算术、规则类任务容量受限。}
+ {读出 6：encoder + 逐候选 / 标签打分@Shichao}
+\end{tikzpicture}
+\end{document}

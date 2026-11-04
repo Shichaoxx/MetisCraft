@@ -1,0 +1,45 @@
+% Notation and colour legend shared by readout-1 ... readout-7 and the overview.
+\input{readout-style.tex}
+\newcommand{\Sw}[1]{\tikz[baseline=-.6ex]\path[fill=#1,draw=Ink!25,line width=.3pt,rounded corners=.6pt] (0,-.11) rectangle (.22,.11);}
+\newcommand{\Msw}{\tikz[baseline=-.6ex]\path[fill=Msk!70,rounded corners=.5pt] (0,-.11) rectangle (.22,.11);}
+\newcommand{\Slw}{\tikz[baseline=-.6ex]\node[draw=Idx!70,fill=Idx!12,rounded corners=1pt,minimum size=.24cm,inner sep=0pt,font=\tiny]{$3$};}
+\renewcommand{\arraystretch}{1.28}
+\begin{document}
+\begin{tikzpicture}[x=1cm,y=1cm,text=Ink]
+\node[stage] at (8.6,0.5) {记号表：七张读出图共用（每个符号只在这里定义一次）};
+\node[anchor=north west,font=\small] (tbl) at (0,0) {%
+\begin{tabular}{@{}l p{6.9cm} p{4.2cm} p{4.4cm}@{}}
+\textbf{符号} & \textbf{含义} & \textbf{类型 / 取值} & \textbf{图中格数}\\\hline
+$B$ & 一批里的决策问题数 & 正整数 & 2 行或 1 层叠片\\
+$R,\ N_q$ & 打包布局（读出 4、5）的序列数、每条序列的问题数，$B=RN_q$ & 正整数 & 叠片\\
+$T$ & 一条输入序列的 token 数 & 正整数 & 12（读出 3 为 9，读出 4、5 为 18，读出 7 为 17）\\
+$d$ & 主干 hidden 宽度 & 正整数 & 5\\
+$V$ & 词表大小 & 正整数 & 12\\
+$K$ & 每问题的选项 / 候选 / 标签数（读出 2 中为槽位上限） & 正整数，可变长时配 padding 与候选 mask & 3\\
+$L$ & 标签 token 集大小（读出 1、7；选项字母时 $L=K$） & 正整数 & 3\\
+$d_h,\ d_p,\ w$ & 标量头中间宽度 / pointer 宽度 / 联合头宽度 & 正整数 & 4\\
+$G$ & 读出 7 采样的理由 token 数 & 正整数 & 5\\\hline
+$X$ & 输入 token id & int64 $[B,T]$ 等 & 彩色方格（见下）\\
+$M$ & 注意力可见性：$M_{ij}=1$ 表示位置 $i$（行，query）可看位置 $j$（列，key） & bool $[T,T]$ & \Msw\ 实心 = 1，空白 = 0\\
+$H$ & 主干末层 hidden states & 实数 $[B,T,d]$ & 紫色叠片\\
+$t^\star,\ t^d,\ o,\ m$ & 读出位置 / decision token / 选项 span 末 token / 标签标记 的下标 & int，$\in\{0,\dots,T-1\}$ & \Slw\ 灰色编号格\\
+$\ell$ & 标签 token 在词表中的 id（有序） & int $[L]$ 或 $[K]$，$\in\{0,\dots,V-1\}$ & \Slw\\
+$z,\ s$ & logits / 分数（未归一化） & 实数 & 红色方格\\
+$p$ & 归一化后的概率 & $[0,1]$ & 红色方格\\
+$y,\ Y$ & 单选正确序号 / 多标签 0-1 目标 & int $[B]$ / $\{0,1\}^{B\times K}$ & \Slw\\\hline
+\end{tabular}};
+\node[anchor=north west,font=\small,align=left] (leg) at ($(tbl.south west)+(0,-0.45)$) {%
+\textbf{token 角色}\quad
+\Sw{TokS} state\quad \Sw{TokQ} 问题 / 文本\quad
+\Sw{Tok1}\,\Sw{Tok2}\,\Sw{Tok3} 选项 1/2/3\quad
+\Sw{TokM} span 末 / 标签标记\quad \Sw{TokD} 读出位、decision、[CLS]/[SEP]\quad
+\Sw{TokG} 生成的理由\quad \Sw{TokP} padding\\[8pt]
+\textbf{张量角色}\quad
+\Sw{Hid!55} hidden\quad \Sw{Wgt!55} 权重\quad \Sw{Lgt!55} logits / 概率 / 损失\quad
+\Sw{Idx!25} 下标与标签\quad \Msw\ mask 支持\quad
+{\color{Lgt}\rule[.2ex]{.5cm}{1.1pt}}/{\color{TokM}\rule[.2ex]{.5cm}{1.1pt}} 方框：被 gather 的行或列\\[8pt]
+\textbf{约定}\quad 格数只示意轴的结构，不是真实尺寸；同一张图里同一轴的物理长度相同。权重按 $x W^{\mathsf T}$ 画成 $[d_{\mathrm{in}},d_{\mathrm{out}}]$，\\
+\hphantom{\textbf{约定}\quad}PyTorch 实际存储为 $[d_{\mathrm{out}},d_{\mathrm{in}}]$。实线为前向数据流，虚线为下标或初始化等辅助输入。};
+\node[font=\scriptsize,text=Ink!45,anchor=north] at ($(leg.south -| tbl.south)+(0,-0.3)$) {读出张量图记号表@Shichao};
+\end{tikzpicture}
+\end{document}
