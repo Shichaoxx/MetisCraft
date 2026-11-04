@@ -35,7 +35,7 @@ MetisCraft 是工具包，不是某个模型或某个任务的项目。它由两
 - **支持矩阵代替单独的清单**：首批收 3–5 个项目，逐步扩到约 10–20 个；先前的 Awesome 清单草稿只作素材。
 - **v0.1 的部署范围**：Predictor，外加一层沿用 `/v1/systemone` 请求格式的 HTTP 服务，保留按类型的校准；vLLM、SGLang、llama.cpp 的引擎导出放到 v0.2，随首发基座的选择而定。
 - **通用 judge 与垂直场景**：支持通用的类型化判断，更重要的是让垂直业务场景也能做成自己的 Jev（场景用配方适配）；不设单一业务旗舰；v0.1 验收每种判断类型各用一个公开基准，具体基准待定。
-- **数据注册表和主流数据集支持是 v0.1 必需项**：用开源数据集训练和验收；注册表收录主流通用数据集和 Jev 类数据集（Open-Jev、tasksource-jev-typed-decisions、LocalLLaMA typed-decisions 等），首批名单待定，建议见 [`design.md`](design.md) §3.4。数据契约原生读取 Jev 类型化判断格式（`state` + `questions` + 目标），与 HTTP 服务的请求格式一致。
+- **数据注册表和主流数据集支持是 v0.1 必需项**：用开源数据集训练和验收；注册表收录主流通用数据集和 Jev 类数据集（Open-Jev、tasksource-jev-typed-decisions、LocalLLaMA typed-decisions 等），首批名单待定，核对与建议见 [`research/datasets.md`](research/datasets.md)。数据契约原生读取 Jev 类型化判断格式（`state` + `questions` + 目标），与 HTTP 服务的请求格式一致。
 
 ## 竞品与空白
 
@@ -58,23 +58,18 @@ tag `metis-v0.1.0`，提交 `fac3a4d`。它是一个候选打分任务的示例�
 
 ## 调研
 
-设计依据在 [`research/`](research/)：Schema Linking 专题、业务场景矩阵、构建路线、开源 SOTA 汇总；七类读出的张量说明和图在 [`readouts/`](readouts/)。原始笔记、检索结果和核查记录留在维护者本机，不随仓库发布。
+设计依据在 [`research/`](research/)：Schema Linking 专题、业务场景矩阵、构建路线、开源 SOTA 汇总、数据集核对与注册表草稿；七类读出的张量说明和图在 [`readouts/`](readouts/)。原始笔记、检索结果和核查记录留在维护者本机，不随仓库发布。
 
 ## 下一步
 
 1. 拍板决策卡 1–3：构建路线、v0.1 判断类型、首发基座（[`design.md`](design.md) §5）。
-2. **补充数据集调研（待做，不能漏）**，产出 `docs/research/datasets.md` 和注册表草稿：
-   - 找 2–3 个许可证干净的通用多标签基准；
-   - 首批主流数据集逐个核对 HF 仓库、revision、许可证、字段和数据切分；
-   - 三份 Jev 类数据集与官方 OpenAPI 的字段对齐，定原生读取的映射；
-   - 列出 tasksource 与各评测集的同源清单，定去重规则。
-3. 定首批注册的数据集、v0.1 验收基准和支持矩阵的首批项目，按决定改写设计稿。
-4. 搭骨架：pyproject、包结构、CLI、配置、测试、CI、社区文件，以及数据层（注册表、Jev 格式读取、转换器、去重检查）。
+2. 定首批注册的数据集、v0.1 验收基准和支持矩阵的首批项目（数据集的核对与建议见 [`research/datasets.md`](research/datasets.md)），按决定改写设计稿。
+3. 搭骨架：pyproject、包结构、CLI、配置、测试、CI、社区文件，以及数据层（注册表、Jev 格式读取、转换器、去重检查）。
 
 ## 未决
 
 - 口号与吉祥物。候选：口号点出 System One 与 unthink（不经长推理直接判断），吉祥物用雅典娜的猫头鹰。
 - 从 0.1.0 带回哪些部分。
-- 支持矩阵首批收哪几个项目；首批注册哪些数据集、v0.1 验收用哪些（通用多标签基准还没调研）。
+- 支持矩阵首批收哪几个项目；首批注册哪些数据集、v0.1 验收用哪些（调研推荐多标签用 GoEmotions `simplified`；AG News、MS MARCO、NFCorpus、SST-5 有条款问题，收不收待定）。
 - v0.1 是否带一个"垂直场景做成 Jev"的端到端示例（用公开数据），选哪个场景。
 - 读出张量图的风格问题，见 [`readouts/README.md`](readouts/README.md) 末尾。

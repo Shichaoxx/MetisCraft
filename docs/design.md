@@ -177,21 +177,13 @@ trace:    {strict: true}
 
 约束：配方只引用注册名，不内嵌代码；默认超参不写死在代码里，新配方先过 sanity 阶梯（过拟合检查 → 学习率扫描 → 学习曲线，DP 一-12）；每个配方附一份 `README` 说明许可证、预期数字的来源和证据级别。首批配方顺序见 EN §5.2（意图识别作冒烟 → Schema Linking → 检索重排 → 内容审核）。
 
-**首批数据集（建议，2026-11-04，待拍板）**：
+**首批数据集（建议，待定）**：逐个核对的结果、许可证与条款、Jev 格式映射、去重规则和注册表草稿见 [`research/datasets.md`](research/datasets.md)（2026-11-04）。摘要：
 
-| 用途 | 数据集 | 判断类型 | 要点（核查见本机 VL） |
-|---|---|---|---|
-| Jev 类训练 | `ZefanCai/Open-Jev` | 是非、选择、独立多标签、等级 | `release-v2-redistributable` 共 113,568 条，多为合成，英中土三语；CC0 只覆盖作者生成的内容，部分题面取自 TypeSafe 文档 |
-| Jev 类训练 | `tasksource/tasksource-jev-typed-decisions` | 多种 | 默认配置 train 999,832 条；标签来自源数据标注或确定性变换，大多是硬标签；许可证按源数据逐行记录；与 Decision Index 至少 11 个基准同源，评测前要按上游去重 |
-| Jev 类冒烟与校准评测 | `LocalLLaMA/typed-decisions` | 多种 | 4 个工作流，train 1,200 / test 400 个 case；Apache-2.0；`state` + `questions` 正是 `/v1/systemone` 请求体 |
-| 是非 | BoolQ | noul | 旧版已有转换与协议 |
-| 选择 | Banking77、CLINC150、AG News | choice | 有 encoder 强基线可对照 |
-| 等级 | SST-5 | score | |
-| 排序 | NFCorpus、MS MARCO | ranking | NFCorpus 旧版已有闭环 |
-| 多标签 | Open-Jev 的独立标签题；通用基准待补 | multi_label | 调研还没覆盖通用多标签基准 |
-| 只评测 | Decision Index 公开套件、JevBench | — | DI 只测 choice / noul，公开套件约 11 万个请求，官方一键运行要 96 GB 卡、72 小时；JevBench 输入封存，不能完整复现 |
+- 建议必收：BoolQ（noul），Banking77 与 CLINC150（choice），SST-5（score），NFCorpus（ranking），GoEmotions `simplified`（multi_label）；Jev 类的 Open-Jev `release-v2-redistributable`、LocalLLaMA typed-decisions、tasksource-jev `default`。可选：MNLI、AG News、MS MARCO v1.1、LexGLUE `eurlex`、Civil Comments。只评测：Decision Index 公开套件；JevBench 输入封存，无法注册。
+- 条款：AG News、MS MARCO 仅限非商业研究；NFCorpus 上游只明示学术用途免费，与 Hub 标的 CC-BY-SA-4.0 冲突；SST-5 未声明许可证。用这四者训练的权重不标"可商用"。
+- 更正此前的说法：Open-Jev 没有原生多标签题（12 个配置只有 choice / noul / score）；LocalLLaMA 的 `state` + `questions` 缺官方必填的 `model`，不是完整请求体；tasksource 与 Decision Index 同源 15 项（计分 12 项），还含与 MNLI validation_matched 直接重叠的 ChaosNLI，训练前必须去重。
 
-**已定（2026-11-04）**：契约原生读取 Jev 类型化判断格式（`state` + `questions` + 目标），与 v0.1 HTTP 服务的请求格式一致；它和 §3.1 内部表示的映射待设计，三份 Jev 类数据集的字段要逐个核对。来源是 Jev / TypeSafe 输出的数据集（如 jimothy、Jevstiller）按 §3.1 一律不收。
+**已定（2026-11-04）**：契约原生读取 Jev 类型化判断格式。官方请求是 `model` + `state` + `questions:{题名:{type, instructions, criteria}}`（OpenAPI 0.2.0），与 v0.1 HTTP 服务的请求格式一致；到 §3.1 内部契约的映射草案见 [`research/datasets.md`](research/datasets.md) §4。来源是 Jev / TypeSafe 输出的数据集（如 jimothy、Jevstiller）按 §3.1 一律不收。
 
 ### 3.5 Awesome 清单：以现有草稿为准，只列差异与待定项
 
