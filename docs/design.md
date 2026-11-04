@@ -1,10 +1,12 @@
 # MetisCraft 设计草案（开发版，2026-11-04）
 
-> **已定（2026-11-04）**，以下四条优先于正文；正文等卡 1–3 拍板后统一改写。
+> **已定（2026-11-04）**，以下六条优先于正文；正文待按这些决定统一改写。
 > 1. **定位第 ① 部分改为"支持矩阵"**：不单独发布 Awesome 清单。MetisCraft 内收录约 10–20 个当前较好的 Jev 类项目，每行标出能否用 MetisCraft 训练、复现、部署，首批做 3–5 个；清单草稿（AW）只作素材。取代 §1.1 表中的 ① 行、§3.5 和卡 5。
 > 2. **部署**：v0.1 交付 Predictor，外加一层沿用 `/v1/systemone` 请求格式的 HTTP 服务，保留按类型的校准；vLLM、SGLang、llama.cpp 的引擎导出放 v0.2，随卡 3 的基座选择。取代决策点 14 的待定状态。
 > 3. **通用 judge 与垂直场景**：MetisCraft 支持通用的 judge（类型化判断）；更重要的目标是让特定的垂直业务场景也能做成自己的 Jev，场景通过配方（§3.4）适配。不以某个业务任务为中心，不设单一业务旗舰，Schema Linking 只是场景之一，取代卡 4 的推荐；v0.1 验收改为每种判断类型各用一个公开基准，具体基准待拍板（建议见卡 4）。正文里把 Schema Linking 当旗舰或验收用例的地方（§0 第 3 条、§2、卡 2–4、§6）待改写。
-> 4. **数据注册表和主流数据集支持是 v0.1 必需项**：MetisCraft 用开源数据集训练和验收。`datasets/registry.yaml`（§3.4）收录主流通用数据集和 Jev 类数据集，每条写明来源与固定 revision、判断类型映射、转换器、许可证与条款标记、split 角色、上游来源（用于去重防泄漏）。契约原生读取 Jev 类型化判断格式（`state` + `questions` + 目标），与 v0.1 HTTP 服务的请求格式一致；首批名单待拍板，建议见 §3.4 末尾。
+> 4. **数据注册表和主流数据集支持是 v0.1 必需项**：MetisCraft 用开源数据集训练和验收。`datasets/registry.yaml`（§3.4）收录主流通用数据集和 Jev 类数据集，每条写明来源与固定 revision、判断类型映射、转换器、许可证与条款标记、split 角色、上游来源（用于去重防泄漏）。契约原生读取 Jev 类型化判断格式（`state` + `questions` + 目标），与 v0.1 HTTP 服务的请求格式一致；首批名单见第 6 条。
+> 5. **卡 1–3 与决策点 6（2026-11-05 定）**：卡 1 选 C，自建可组合核心，ms-swift / HF 适配层推到 v0.2，v0.1 只对齐 HF 字段命名；卡 2 选 b，v0.1 判断类型为 noul / choice / score + multi_label，ranking 推到 v0.2；卡 3 选 a，Qwen3 0.6B–4B 作 v0.1 验收基座；决策点 6 选乙，选择题上 ① 答案 token 与 ③ 逐候选标量头只改配置即可互换，v0.1 必做这对对照。
+> 6. **首批数据集与 v0.1 验收（2026-11-05 定）**：按 [`research/datasets.md`](research/datasets.md) 的建议注册必收、可选、只评测三档，条款受限的 AG News、MS MARCO、NFCorpus、SST-5 也收，带条款标记，用它们训练的权重不标"可商用"。v0.1 验收：是非 BoolQ，选择 Banking77（CLINC150 作对照），等级 SST-5，多标签 GoEmotions `simplified`；排序（NFCorpus）随 ranking 推到 v0.2。
 >
 > 路径约定：`docs/` 下的文件在仓库内；其余 `drafts/`、`partial/`、`research/`、`landscape/` 等路径指维护者本机的调研目录，不随仓库发布。
 
@@ -177,9 +179,9 @@ trace:    {strict: true}
 
 约束：配方只引用注册名，不内嵌代码；默认超参不写死在代码里，新配方先过 sanity 阶梯（过拟合检查 → 学习率扫描 → 学习曲线，DP 一-12）；每个配方附一份 `README` 说明许可证、预期数字的来源和证据级别。首批配方顺序见 EN §5.2（意图识别作冒烟 → Schema Linking → 检索重排 → 内容审核）。
 
-**首批数据集（建议，待定）**：逐个核对的结果、许可证与条款、Jev 格式映射、去重规则和注册表草稿见 [`research/datasets.md`](research/datasets.md)（2026-11-04）。摘要：
+**首批数据集（2026-11-05 定）**：逐个核对的结果、许可证与条款、Jev 格式映射、去重规则和注册表草稿见 [`research/datasets.md`](research/datasets.md)（2026-11-04）。摘要：
 
-- 建议必收：BoolQ（noul），Banking77 与 CLINC150（choice），SST-5（score），NFCorpus（ranking），GoEmotions `simplified`（multi_label）；Jev 类的 Open-Jev `release-v2-redistributable`、LocalLLaMA typed-decisions、tasksource-jev `default`。可选：MNLI、AG News、MS MARCO v1.1、LexGLUE `eurlex`、Civil Comments。只评测：Decision Index 公开套件；JevBench 输入封存，无法注册。
+- 必收：BoolQ（noul），Banking77 与 CLINC150（choice），SST-5（score），NFCorpus（ranking），GoEmotions `simplified`（multi_label）；Jev 类的 Open-Jev `release-v2-redistributable`、LocalLLaMA typed-decisions、tasksource-jev `default`。可选：MNLI、AG News、MS MARCO v1.1、LexGLUE `eurlex`、Civil Comments。只评测：Decision Index 公开套件；JevBench 输入封存，无法注册。
 - 条款：AG News、MS MARCO 仅限非商业研究；NFCorpus 上游只明示学术用途免费，与 Hub 标的 CC-BY-SA-4.0 冲突；SST-5 未声明许可证。用这四者训练的权重不标"可商用"。
 - 更正此前的说法：Open-Jev 没有原生多标签题（12 个配置只有 choice / noul / score）；LocalLLaMA 的 `state` + `questions` 缺官方必填的 `model`，不是完整请求体；tasksource 与 Decision Index 同源 15 项（计分 12 项），还含与 MNLI validation_matched 直接重叠的 ChaosNLI，训练前必须去重。
 
@@ -300,6 +302,8 @@ metiscraft/
 
 ### 卡 1　构建路线（卡住：是，决定包结构和全部依赖）
 
+> **已定（2026-11-05）**：选 C，自建可组合核心；ms-swift / HF 适配层推到 v0.2，v0.1 只对齐 HF 字段命名。以下保留当时的分析。
+
 - **选项**：A 上游优先；B ms-swift 插件；C 自建可组合核心 + 薄适配层（§4）。
 - **推荐**：C，并把 B 的"导出到 ms-swift"和 A 的"对齐 HF 字段命名"作为适配层；A 只在 #50054 合并后做单点贡献。
 - **把握**：中高。类型空白是硬事实（两边都写死三种 kind）；但 C 的"用户为什么选我们"仍是假设，没有用户验证。
@@ -308,6 +312,8 @@ metiscraft/
 - **什么会改变结论**：ms-swift 或 HF 接受 multi_label / ranking 作为新 kind（则 B 或 A 的差异化损失变小，C 的必要性下降）；#50054 合并且损失变为可注册（A 吸引力上升）；有真实用户明确只用 ms-swift。
 
 ### 卡 2　v0.1 判断类型（卡住：是，决定 `core/questions` 与契约 `supervision.kind`）
+
+> **已定（2026-11-05）**：选 b（noul / choice / score + multi_label），ranking 推到 v0.2。以下保留当时的分析。
 
 - **选项**：
   - a. noul / choice / score（与竞品相同）；
@@ -322,6 +328,8 @@ metiscraft/
 
 ### 卡 3　首发基座族（卡住：是，决定读出实现顺序、注意力实现与导出目标）
 
+> **已定（2026-11-05）**：选 a，Qwen3 0.6B–4B 作 v0.1 验收基座；决策点 6 定为乙，选择题上 ① 对 ③ 的消融必做。以下保留当时的分析。
+
 - **选项**：
   - a. **Qwen3（0.6B–4B）走答案 token / 逐候选标量头**：标准因果注意力、生态成熟；引擎上只能走答案 token，**引擎服务拿不到校准**，llama.cpp 不支持；可靠路径是自家 Predictor。
   - b. **Qwen3.5 小模型（d3-edge / lite 尺寸）走引擎可读布局（pplx / d3 255 码 readout）**：三家引擎都认的布局，d3 的模型卡自报"小 Qwen3.5 + 255 码 readout"可行（author-reported，VE §2 第 8 条）；但混合注意力、pplx 要求 SDPA、引擎只施加单一温度、提示词被引擎绑定。
@@ -334,7 +342,7 @@ metiscraft/
 
 ### 卡 4　旗舰场景（卡住：部分，决定第一个转换器和验收用例）
 
-> **已定（2026-11-04）**：不设单一业务旗舰，见文首第 3 条。v0.1 验收建议（待拍板）：是非用 BoolQ，选择用 Banking77（CLINC150 作对照），等级打分用 SST-5，排序用 NFCorpus（旧版已有闭环）；多标签的公开基准调研还没覆盖，待补。以下保留当时的分析。
+> **已定（2026-11-04 / 11-05）**：不设单一业务旗舰，见文首第 3 条。v0.1 验收：是非 BoolQ，选择 Banking77（CLINC150 作对照），等级 SST-5，多标签 GoEmotions `simplified`；排序（NFCorpus）随 ranking 推到 v0.2。以下保留当时的分析。
 
 - **选项**：a. Schema Linking 作旗舰 + 意图识别作冒烟；b. 检索重排作旗舰（数据最丰富）；c. 意图识别作旗舰（最简单）。
 - **推荐**：a。Schema Linking 是项目最初的场景，且正好落在官方原语和竞品之外；意图识别只作为管线冒烟和同协议对照（诚实结果可能是 encoder 更好）。
@@ -361,7 +369,7 @@ metiscraft/
 
 | # | 决策点 | 选项 | 推荐（待定） | 卡住骨架？ | 证据 |
 |---|---|---|---|---|---|
-| 6 | v0.1 读出范围：**是否必须有一个可对照的读出对** | 甲：①③ 各服务不同类型（① 管 noul/choice，③ 管 multi_label），不构成读出对照；乙：在同一类型、同一数据、同一基座上至少一对读出可只改配置互换（如 choice 上 ① vs ③，③ 逐候选标量头加 softmax 即可服务 choice，推断）；丙：乙 + ②（视卡 3） | 倾向乙（VL §4 建议把"读出 × 基座解耦 + 同协议对照"放进 v0.1 核心；否则头号差异点无法验证）；接口按 ④⑤ 留，⑤ 作 ③-list 上的可选插件；待定 | 是 | DP 一-2；VL §4；SL §5.3；design-critic §1.1 |
+| 6 | v0.1 读出范围：**是否必须有一个可对照的读出对**（**已定 11-05：乙**） | 甲：①③ 各服务不同类型（① 管 noul/choice，③ 管 multi_label），不构成读出对照；乙：在同一类型、同一数据、同一基座上至少一对读出可只改配置互换（如 choice 上 ① vs ③，③ 逐候选标量头加 softmax 即可服务 choice，推断）；丙：乙 + ②（视卡 3） | 倾向乙（VL §4 建议把"读出 × 基座解耦 + 同协议对照"放进 v0.1 核心；否则头号差异点无法验证）；接口按 ④⑤ 留，⑤ 作 ③-list 上的可选插件；待定 | 是 | DP 一-2；VL §4；SL §5.3；design-critic §1.1 |
 | 7 | 布局 | pairs / ③-list / tree | ③-list 主推，pairs 作正确性参照，tree 推迟；顺序敏感度 >0.05 则提前做 tree | 是 | SL §5.8；DP 一-5 |
 | 8 | 与 HF 决策接口的关系 | 对齐字段 / 自定义后写适配 | 对齐字段命名（随卡 1） | 是（随卡 1） | DP 二-A；RQ §2.2 |
 | 9 | 配置系统 | dataclass + OmegaConf / pydantic | 未推荐；dataclass 与 LlamaFactory / TRL 同族，pydantic 校验更严；JSON 不需 PyYAML | 是 | DP 一-8 |
