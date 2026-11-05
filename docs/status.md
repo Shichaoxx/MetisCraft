@@ -6,6 +6,8 @@
 
 v0.1 已完成（2026-11-05）。数据层、两种读出、训练、校准、评测、可追溯产物、Predictor 与 HTTP 服务都已实现，CPU 上 85 个测试通过；Qwen3-0.6B 上 7 份验收配方全部跑通：BoolQ、Banking77（① 与 ③ 各一份）、CLINC150、SST-5、GoEmotions 和银行客服分流场景。每份配方目录的 README 写有成绩。
 
+**Cookbook**：[`cookbook/`](cookbook/README.md)，讲原理、把业务做成 Jev 的完整流程和最佳实践。
+
 **交付报告**：[`reports/20261105-v0.1/index.html`](reports/20261105-v0.1/index.html)（用浏览器打开），含全流程图、验收标准逐条对照、各配方结果和垂直场景的真实请求与响应。
 
 验收中发现并修复了一个缺陷：多标签用正样本加权（`pos_weight`）训练后，推理时没有扣回 ln w，概率系统性偏高。GoEmotions 的正式数字来自修复前的运行，离线修正结果和重跑计划见报告。

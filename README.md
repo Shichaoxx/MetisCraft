@@ -11,7 +11,7 @@ A toolkit for training Jev-style System One decision models: typed judgments wit
 - **有据可查、训练过程公开**：每次运行记录配置、git 提交、环境、数据与基座身份；产物带 `SHA256SUMS` 与许可证 `NOTICE`。
 - **兼容官方请求格式**：`metiscraft serve` 提供 `POST /v1/systemone`。
 
-> 开发版（v0.1.0.dev0），接口还会变。设计见 [`docs/design.md`](docs/design.md)，进度见 [`docs/status.md`](docs/status.md)。v0.1 的验收结果写在各配方目录的 README 里，交付报告见 [`docs/reports/20261105-v0.1/`](docs/reports/20261105-v0.1/index.html)。
+> 开发版（v0.1.0.dev0），接口还会变。设计见 [`docs/design.md`](docs/design.md)，进度见 [`docs/status.md`](docs/status.md)。v0.1 的验收结果写在各配方目录的 README 里，交付报告见 [`docs/reports/20261105-v0.1/`](docs/reports/20261105-v0.1/index.html)。原理和最佳实践见 [`docs/cookbook/`](docs/cookbook/README.md)。
 
 ## 安装
 

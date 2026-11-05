@@ -1,0 +1,47 @@
+{
+  "id": "MetisCraft 最佳实践：读出、目标与校准怎么选、怎么查",
+  "top": [
+    "问题：读出、目标或校准选得不对，准确率往往看不出来，概率却会失真",
+    "方案：按题型选读出 → 按数据定目标 → 先比先验、再查校准 → 用真实请求试跑后上线"
+  ],
+  "cols": 4,
+  "lanes": [
+    {"label": "选读出", "nodes": [
+      {"id": "few", "role": "io", "title": "选项少且固定", "lines": ["能编成单 token 码"]},
+      {"id": "r1", "role": "own", "title": "① 答案 token", "lines": ["不加参数，零样本可用", {"text": "Banking77：0.928", "muted": true}]},
+      {"id": "many", "role": "io", "title": "候选多、可变或多标签", "lines": ["如 28 种情绪"]},
+      {"id": "r3", "role": "own", "title": "③ 逐候选标量头", "lines": ["不受码表限制", {"text": "Banking77：0.927", "muted": true}]}
+    ]},
+    {"label": "定目标", "nodes": [
+      {"id": "imb", "role": "io", "title": "多标签正负极不平衡", "lines": ["正样本约占 4%"]},
+      {"id": "pw", "role": "own", "title": "pos_weight=auto", "lines": ["推理时自动扣回 ln w"]},
+      {"id": "ord", "role": "io", "title": "等级题", "lines": ["相邻等级常混淆"]},
+      {"id": "soft", "role": "own", "title": "序数软目标（可选）", "lines": ["以金标为中心的高斯"]}
+    ]},
+    {"label": "查校准", "nodes": [
+      {"id": "prior", "role": "eval", "title": "先比先验", "lines": ["必须明显好于先验"]},
+      {"id": "temp", "role": "eval", "title": "看温度 T", "lines": ["T > 2：过度自信", {"text": "SST-5 2.45，BoolQ 2.05", "muted": true}]},
+      {"id": "worse", "role": "eval", "title": "ECE 校准后变差", "lines": ["是平移不是缩放", "查加权或先验漂移"]},
+      {"id": "null", "role": "eval", "title": "带 null 的题", "lines": ["单独看范围内准确率", "和 null 的召回"]}
+    ]},
+    {"label": "上线", "nodes": [
+      {"id": "seal", "role": "result", "col": 0, "span": 2, "title": "封存产物", "lines": ["SHA256SUMS · 许可证 NOTICE · 温度"]},
+      {"id": "try", "role": "result", "col": 2, "span": 2, "title": "真实请求试跑", "lines": ["POST /v1/systemone，逐题看概率"]}
+    ]}
+  ],
+  "edges": [
+    {"from": "few", "to": "r1"},
+    {"from": "many", "to": "r3"},
+    {"from": "imb", "to": "pw"},
+    {"from": "ord", "to": "soft"},
+    {"from": "prior", "to": "temp"},
+    {"from": "temp", "to": "worse"},
+    {"from": "worse", "to": "null"},
+    {"from": "seal", "to": "try"}
+  ],
+  "notes": [
+    ["先验", "按训练集类别频率给概率、不看输入；CLINC150 的先验准确率 0.182 来自全部判为 null"],
+    ["温度", "只在 calib 上拟合，不改 argmax；v0.1 验收里 T 在 1.17 到 2.45 之间"],
+    ["证据", "各条数字来自 v0.1 验收运行，见各配方目录的 README"]
+  ]
+}

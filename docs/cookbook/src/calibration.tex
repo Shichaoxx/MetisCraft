@@ -1,0 +1,66 @@
+% Inference and calibration for one question (a row of K scores).
+% multi_label trained with pos_weight w: S' = S - ln w, then p = sigma(S'/T) per column.
+% choice / score: p = softmax(S/T) along K. T > 0 is fitted per "task|kind" on the calib split.
+% Code: judgments.prior_shift, evaluate/infer.py (predict, offsets), calibrate.py (fit_calibration,
+% temperature_for), judgments.probabilities.
+\input{../../readouts/readout-style.tex}
+% \Row{id}{cx}{cy}{cols}{color}{symbol}{shape}: a 1 x cols score row with illustrative tones
+\newcommand{\Row}[7]{%
+  \pgfmathsetmacro{\tw}{#4*\U}\pgfmathsetmacro{\tx}{#2-\tw/2}\pgfmathsetmacro{\ty}{#3-\U/2}%
+  \foreach \c in {1,...,#4}{%
+    \pgfmathtruncatemacro{\lv}{mod(int(abs(sin(\c*311.7+#2*97.1+#3*13.3))*1000),3)}%
+    \pgfmathtruncatemacro{\tone}{\lv==0?30:(\lv==1?55:80)}%
+    \path[fill=#5!\tone,rounded corners=.6pt]
+      ({\tx+(\c-1)*\U+.022},{\ty+.022}) rectangle ++({\U-.044},{\U-.044});}%
+  \path[draw=Ink!45,line width=.4pt,rounded corners=.8pt] (\tx,\ty) rectangle ++(\tw,\U);
+  \coordinate (#1-w) at (\tx,#3);\coordinate (#1-e) at ({\tx+\tw},#3);
+  \node[sym] at (#2,{\ty-.27}) {$#6$};
+  \node[shp] at (#2,{\ty-.6}) {$#7$};}
+% \Scalar{id}{x}{y}{symbol}{note}
+\newcommand{\Scalar}[5]{%
+  \node[draw=Idx!70,fill=Idx!12,rounded corners=1pt,minimum width=.32cm,minimum height=.32cm,
+    inner sep=0pt] (#1) at (#2,#3) {};
+  \node[sym,anchor=west] at ($(#1.east)+(.12,0)$) {$#4$\;{\scriptsize\color{Muted}#5}};}
+\begin{document}
+\begin{tikzpicture}[x=1cm,y=1cm,text=Ink]
+% ---------- formula ----------
+\node[font=\large] at (8.0,3.05)
+  {$p=\sigma\!\big((S-\ln w)/T\big)\ \text{（多标签）},\qquad p=\operatorname{softmax}_{k}(S/T)\ \text{（选择、等级）}$};
+\node[font=\large] at (8.0,2.35)
+  {$T=\arg\min_{T>0}\ \mathrm{NLL}_{\text{calib}}\big(S'/T\big),\quad \text{按“任务}|\text{类型”各一个}$};
+% ---------- row A: multi_label with pos_weight ----------
+\node[stage,anchor=west] at (0.2,1.0) {多标签：训练时给正样本加了权 $w$};
+\Row{SA}{1.4}{0}{6}{Lgt}{S}{[K]}
+\node[op,minimum width=1.7cm,minimum height=.9cm] (shift) at (4.1,0) {$-\ln w$\\[1pt]{\footnotesize 撤销加权}};
+\draw[flow] (SA-e) -- (shift.west);
+\Row{SpA}{6.8}{0}{6}{Lgt}{S'}{[K]}
+\draw[flow] (shift.east) -- (SpA-w);
+\node[op,minimum width=1.3cm,minimum height=.9cm] (divA) at (9.4,0) {$\div\,T$};
+\draw[flow] (SpA-e) -- (divA.west);
+\node[op,minimum width=1.7cm,minimum height=.9cm] (sigA) at (11.8,0) {逐列 $\sigma$};
+\draw[flow] (divA.east) -- (sigA.west);
+\Row{PA}{14.5}{0}{6}{Lgt}{p}{[K]}
+\draw[flow] (sigA.east) -- (PA-w);
+% ---------- shared scalars between the rows ----------
+\Scalar{w}{4.1}{-1.55}{w}{训练集负正比}
+\draw[dflow] (w.north) -- (shift.south);
+\Scalar{T}{9.4}{-1.55}{T}{calib 上拟合}
+\draw[dflow] (T.north) -- (divA.south);
+% ---------- row B: choice and score ----------
+\node[stage,anchor=west] at (0.2,-2.9) {选择、等级：不平移，只除温度};
+\Row{SB}{1.4}{-3.9}{6}{Lgt}{S}{[K]}
+\node[op,minimum width=1.3cm,minimum height=.9cm] (divB) at (9.4,-3.9) {$\div\,T$};
+\draw[flow] (SB-e) -- (divB.west);
+\draw[dflow] (T.south) -- (divB.north);
+\node[op,minimum width=1.7cm,minimum height=.9cm] (smB) at (11.8,-3.9) {softmax\\[1pt]{\footnotesize 沿 $K$}};
+\draw[flow] (divB.east) -- (smB.west);
+\Row{PB}{14.5}{-3.9}{6}{Lgt}{p}{[K]}
+\draw[flow] (smB.east) -- (PB-w);
+% ---------- meaning ----------
+\Meaning{0.0}{-5.35}{16.2}
+ {$K$ 是一道题的候选或选项数，一道题一行。}
+ {$S$ 原始打分；$w$ 训练时正样本的权重，标量，只在多标签用了 \texttt{pos\_weight} 时出现；$T$ 温度，标量且 $T>0$；$p$ 概率，多标签各列独立，选择和等级和为 1。}
+ {先平移、再缩放：减去 $\ln w$ 把打分移回数据本身的先验尺度；除以 $T$ 只改变确定程度，不改变 argmax，也不改变 0.5 阈值的判定。}
+ {MetisCraft 推理与校准 · shichao}
+\end{tikzpicture}
+\end{document}
