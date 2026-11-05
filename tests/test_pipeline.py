@@ -138,3 +138,17 @@ def test_http_service_speaks_the_official_format(roots):
     assert body["usage"]["output_tokens"] == 0 and body["usage"]["input_tokens"] > 0
     bad = dict(request, questions={"q": {"type": "choice", "criteria": ["a", "b"]}})
     assert client.post("/v1/systemone", json=bad).status_code == 400
+
+
+def test_evaluate_artifact_matches_the_run(roots, monkeypatch):
+    from metiscraft.pipeline import evaluate_artifact
+
+    monkeypatch.setenv("METISCRAFT_DATA_ROOT", str(roots["data"]))
+    run = run_recipe(recipe(roots, "banking77", {"kind": "candidate_scalar"}))
+    again = evaluate_artifact(run / "artifact", "banking77", splits=["dev"])
+    saved = json.loads((run / "eval" / "metrics.json").read_text())
+    for method in ("model", "model + temperature"):
+        for key in ("accuracy", "nll", "ece"):
+            assert again["dev"][method]["choice"][key] == pytest.approx(
+                saved["dev"][method]["choice"][key], abs=1e-6
+            )

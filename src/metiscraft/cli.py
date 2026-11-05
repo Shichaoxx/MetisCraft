@@ -93,6 +93,27 @@ def _cmd_train(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_eval(args: argparse.Namespace) -> int:
+    from pathlib import Path
+
+    from metiscraft.evaluate.report import render_report
+    from metiscraft.pipeline import evaluate_artifact
+
+    results = evaluate_artifact(
+        Path(args.artifact),
+        args.dataset,
+        version=args.version,
+        splits=args.split,
+        calibration_dir=Path(args.calibration) if args.calibration else None,
+        max_eval=args.max_eval,
+    )
+    header = {"task": f"{args.dataset} evaluated with {args.artifact}"}
+    print(render_report(header, results))
+    if args.output:
+        Path(args.output).write_text(json.dumps(results, indent=2) + "\n", encoding="utf-8")
+    return 0
+
+
 def _cmd_predict(args: argparse.Namespace) -> int:
     from pathlib import Path
 
@@ -149,6 +170,16 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("recipe", help="recipe YAML file")
     p.add_argument("overrides", nargs="*", help="a.b=value overrides")
     p.set_defaults(func=_cmd_train)
+
+    p = sub.add_parser("eval", help="evaluate a sealed artifact on a prepared dataset")
+    p.add_argument("artifact", help="artifact directory of a run")
+    p.add_argument("dataset", help="registered dataset name")
+    p.add_argument("--version", help="dataset version (default: the only one)")
+    p.add_argument("--split", nargs="+", default=["dev"], help="splits to evaluate")
+    p.add_argument("--max-eval", type=int, help="cap rows per split")
+    p.add_argument("--calibration", help="calibration directory (default: the run's)")
+    p.add_argument("--output", help="also write the metrics as JSON here")
+    p.set_defaults(func=_cmd_eval)
 
     p = sub.add_parser("predict", help="answer records or official requests from a JSONL file")
     p.add_argument("artifact", help="artifact directory of a run")

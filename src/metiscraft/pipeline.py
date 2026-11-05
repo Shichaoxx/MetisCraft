@@ -9,6 +9,7 @@ from __future__ import annotations
 import json
 import os
 import random
+from collections.abc import Sequence
 from pathlib import Path
 from typing import Any
 
@@ -257,4 +258,36 @@ def evaluate_run(
         info = json.loads(git.read_text())
         header["git"] = f"{info.get('commit')} ({'dirty' if info.get('dirty') else 'clean'})"
     (run / "report.md").write_text(render_report(header, results), encoding="utf-8")
+    return results
+
+
+def evaluate_artifact(
+    artifact: Path,
+    dataset: str,
+    *,
+    version: str | None = None,
+    splits: Sequence[str] = ("dev",),
+    calibration_dir: Path | None = None,
+    max_eval: int | None = None,
+    batch_size: int = 8,
+) -> dict[str, Any]:
+    """Evaluate a sealed artifact on any prepared dataset; temperatures come from its run."""
+    from metiscraft.serve.predictor import Predictor
+
+    predictor = Predictor.load(artifact, calibration_dir=calibration_dir)
+    dv = resolve_version(require_path(resolve_paths(), "data_root"), dataset, version)
+    dv.verify()
+    results: dict[str, Any] = {}
+    for split in splits:
+        preds = predict(
+            predictor.model,
+            dv.load(split, max_eval),
+            predictor.collator,
+            batch_size=batch_size,
+            device=predictor.device,
+        )
+        methods = {"model": evaluate(preds)}
+        if predictor.calibration is not None:
+            methods["model + temperature"] = evaluate(preds, predictor.calibration)
+        results[split] = methods
     return results
