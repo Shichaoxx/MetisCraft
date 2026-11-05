@@ -239,6 +239,22 @@ def multi_nli(raw: Path) -> None:
         shard(raw, "data", split, rows)
 
 
+def banking77_support(raw: Path) -> None:
+    """Banking77-shaped raw files whose card lists every intent the scenario mapping names."""
+    from metiscraft.data.registry import get_entry
+
+    questions = get_entry("banking77_support").params["questions"]
+    names = sorted({s for sources in questions["queue"]["map"].values() for s in sources})
+    write_card(
+        raw, {"features": [{"name": "text", "dtype": "string"}, class_feature("label", names)]}
+    )
+    used = [names.index(n) for n in ("activate_my_card", "card_arrival", "lost_or_stolen_card")]
+    train = [{"text": f"message number {i}", "label": used[i % 3]} for i in range(60)]
+    test = [{"text": f"another message {i}", "label": used[i % 3]} for i in range(9)]
+    shard(raw, "data", "train", train)
+    shard(raw, "data", "test", test)
+
+
 BUILDERS = {
     "boolq": boolq,
     "banking77": banking77,
@@ -249,6 +265,7 @@ BUILDERS = {
     "open_jev": open_jev,
     "tasksource_jev": tasksource_jev,
     "multi_nli": multi_nli,
+    "banking77_support": banking77_support,
 }
 
 

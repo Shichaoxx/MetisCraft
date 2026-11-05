@@ -132,3 +132,44 @@ def test_registry_entries_are_consistent():
         if entry.converter:
             assert entry.files and entry.splits, name
     assert {e.tier for e in registry.values()} == {"must", "optional", "eval_only"}
+
+
+def test_vertical_scenario_mapping(data_root, tmp_path):
+    dv = prepare_dataset(
+        "banking77_support", data_root, fetcher=fake_fetcher, staging_parent=tmp_path
+    )
+    rows = dv.load("train") + dv.load("test")
+    by_group = {}
+    for row in rows:
+        by_group.setdefault(row["group"]["id"], {})[row["id"].rsplit(":", 1)[1]] = row
+    assert all(set(g) == {"queue", "urgent"} for g in by_group.values())
+    for group in by_group.values():
+        source = group["queue"]["provenance"]["extra"]["source_label"]
+        queue = group["queue"]["supervision"]["labels"]
+        urgent = group["urgent"]["supervision"]["labels"]
+        assert queue == ("security" if source == "lost_or_stolen_card" else "cards")
+        assert urgent is (source == "lost_or_stolen_card")
+    roles = {}
+    for role in dv.meta()["splits"]:
+        for row in dv.load(role):
+            roles.setdefault(row["group"]["id"], set()).add(role)
+    assert all(len(r) == 1 for r in roles.values()), "a request was split across roles"
+
+
+def test_vertical_scenario_rejects_unmapped_labels(data_root, tmp_path):
+    from tests.data.fixtures import class_feature, shard, write_card
+
+    def fetch_with_unknown(entry, data_root, raw_dir):
+        names = ["activate_my_card", "brand_new_intent"]
+        write_card(
+            raw_dir,
+            {"features": [{"name": "text", "dtype": "string"}, class_feature("label", names)]},
+        )
+        shard(raw_dir, "data", "train", [{"text": "hi", "label": 1}])
+        shard(raw_dir, "data", "test", [{"text": "yo", "label": 0}])
+        return ["README.md"]
+
+    with pytest.raises(ValueError, match="brand_new_intent"):
+        prepare_dataset(
+            "banking77_support", data_root, fetcher=fetch_with_unknown, staging_parent=tmp_path
+        )

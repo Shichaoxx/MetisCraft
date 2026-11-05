@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import json
 import math
+import time
 from collections.abc import Sequence
 from contextlib import nullcontext
 from pathlib import Path
@@ -142,6 +143,7 @@ def train_loop(
     log = open(log_path, "a", encoding="utf-8") if (log_path and rank == 0) else None
 
     model.train()
+    start = time.monotonic()
     epoch, step = 0, 0
     batches = iter(loader)
     last: dict[str, Any] = {}
@@ -175,6 +177,7 @@ def train_loop(
             "loss": loss_sum_total / max(n_local, 1),
             "grad_norm": float(grad_norm),
             "lr": scheduler.get_last_lr()[0],
+            "elapsed_s": round(time.monotonic() - start, 2),
         }
         if log is not None and (step % cfg.logging_steps == 0 or step == total):
             log.write(json.dumps(last) + "\n")

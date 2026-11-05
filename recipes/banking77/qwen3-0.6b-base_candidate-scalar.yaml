@@ -3,7 +3,7 @@
 task: banking77
 data: {dataset: banking77}
 model:
-  base: qwen3/0.6b-base
+  base: qwen3/0.6b-base-da87bfb6
   dtype: bf16
   max_length: 768
   finetune: {kind: lora, r: 16, alpha: 32, dropout: 0.05, targets: all-linear}

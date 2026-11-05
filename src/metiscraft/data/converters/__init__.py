@@ -40,6 +40,6 @@ def register(cls: type[Converter]) -> type[Converter]:
 
 
 def get_converter(name: str) -> Converter:
-    from metiscraft.data.converters import classification, jev_sets  # noqa: F401
+    from metiscraft.data.converters import classification, jev_sets, scenario  # noqa: F401
 
     return CONVERTERS.get(name)()
