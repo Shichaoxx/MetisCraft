@@ -75,7 +75,7 @@ v0.1 的里程碑 M0–M5 已于 2026-11-05 全部完成：设计规格、骨架
 
 接下来：
 
-1. 补开源训练过程：起点待定，候选是复现 Tev1（公开数据，最易端到端重建）、Hmm（单卡约 2 小时的最小单元）、jebadiah（配方与 MetisCraft 最接近，有逐题记录可对拍），或直接训练一个数据条款干净、过程全公开的通用小 Jev，在 typed-decisions 上对拍。
+1. 补开源训练过程，第一站是用 MetisCraft 复现 Tev1：方案与进度见 [`reproductions/tev1.md`](reproductions/tev1.md)。之后再考虑 Hmm、jebadiah，以及一个数据条款干净、过程全公开的通用小 Jev。
 2. GoEmotions 用修复后的代码重跑一次（单卡约 80 分钟），等有空闲的 GPU 再跑。
 3. encoder 同协议对照：句向量 + 逻辑回归，划分、指标、校准方式都与模型相同，用来回答"比 encoder 好还是差"。
 4. v0.2 候选（待定）：
