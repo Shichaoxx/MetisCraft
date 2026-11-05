@@ -267,3 +267,68 @@ datasets:
           true_for: [compromised_card, lost_or_stolen_card, lost_or_stolen_phone, card_payment_not_recognised,
                      cash_withdrawal_not_recognised, direct_debit_payment_not_recognised, card_swallowed,
                      transaction_charged_twice, pin_blocked, wrong_amount_of_cash_received]
+
+  # ---------------------------------------------------------------- reproductions
+  # Sources of public projects rebuilt with MetisCraft (docs/reproductions/).
+  # Tev1 pins this copy of Banking77. Its rows (text, label, order) and class names equal
+  # PolyAI/banking77 above (checked 2026-11-06); the parquet files and the card differ.
+  banking77_legacy:
+    tier: optional
+    hf: legacy-datasets/banking77@f54121560de48f2852f90be299010d1d6dc612ec
+    files: [README.md, "data/*.parquet"]
+    judgment: choice
+    converter: text_choice
+    license: cc-by-4.0
+    terms: [attribution]
+    splits: {train: train, test: test}
+    lineage: {family: intent-banking77, used_by: [tev1]}
+    params:
+      text_field: text
+      label_field: label
+      instructions: Which intent does this online-banking customer message express?
+
+  # Tev1-4B-experimental's training data, rebuilt by its own builders at the pinned commit and
+  # accepted only if every published hash matches (docs/reproductions/tev1.md). The splits
+  # follow Tev1: train is new-v1 train; new-v1 dev is halved into calib and dev; test and
+  # eval_only are the 1,000 decision and 300 policy-transfer items its results were reported on.
+  tev1:
+    tier: optional
+    git: togethercomputer/tev1@1dde7782382c9f49d627153759b8d1deab426ce0
+    files:
+      - "data/new-v1/**/*"
+      - data/v1/manifest.json
+      - "data/v1/*/test.jsonl"
+      - "data/v1/*/policy_transfer.jsonl"
+    judgment: [choice, score]
+    converter: tev1
+    license: builders MIT; each public row keeps its source's terms (MultiNLI mixed, BoolQ CC BY-SA 3.0, Banking77 CC BY 4.0, AG News non-commercial, SST-5 unspecified); the synthetic rows come from the builders
+    terms: [non_commercial, license_unspecified, research_only, share_alike, attribution, mixed_per_row]
+    splits: {train: new-v1/train, val: new-v1/dev, test: v1/test, eval_only: v1/policy_transfer}
+    lineage: {family: tev1, built_from: [multi_nli, boolq, banking77_legacy, ag_news, sst5]}
+    params:
+      build:
+        inputs:
+          datasets:
+            nyu-mll/multi_nli: multi_nli
+            google/boolq: boolq
+            legacy-datasets/banking77: banking77_legacy
+            fancyzhx/ag_news: ag_news
+            SetFit/sst5: sst5
+          tokenizers:
+            Qwen/Qwen3.5-2B: qwen3.5/2b
+        steps:
+          - [build_dataset.py]
+          - [validate_dataset.py, data/v1]
+          - [build_v2.py]
+          - [validate_v2.py, data/v2]
+          - [build_v21.py]
+          - [validate_v21.py, data/v2.1]
+          - [build_new_v1.py]
+        # Tev1 claims that a fresh build reproduces the final files and the two evaluation sets;
+        # the input hashes in dataset-manifest.json record its original build's intermediates.
+        verify:
+          - {manifest: runs/new-v1/reproduction.json, key: files, root: data/new-v1}
+          - {manifest: runs/new-v1/dataset-manifest.json, key: input_hashes, root: data, required: false}
+          - manifest: runs/new-v1/evaluation.json
+            key: hashes
+            files: {test: data/v1/records/test.jsonl, policy_transfer: data/v1/records/policy_transfer.jsonl}

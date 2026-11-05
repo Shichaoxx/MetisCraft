@@ -113,7 +113,7 @@ def provenance(
 ) -> dict[str, Any]:
     return {
         "dataset": ctx.entry.name,
-        "source": ctx.entry.hf,
+        "source": ctx.entry.hf or ctx.entry.git,
         "config": ctx.entry.config,
         "split": split,
         "index": index,

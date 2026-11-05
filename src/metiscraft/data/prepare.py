@@ -23,6 +23,7 @@ import yaml
 from metiscraft import __version__
 from metiscraft.data.converters import ConverterContext, get_converter
 from metiscraft.data.dedup import eval_first_filter
+from metiscraft.data.fetch import FetchResult
 from metiscraft.data.registry import DatasetEntry, get_entry
 from metiscraft.data.store import (
     EVAL_ONLY_ROLES,
@@ -31,7 +32,7 @@ from metiscraft.data.store import (
     write_sha256sums,
 )
 
-Fetcher = Callable[[DatasetEntry, Path, Path], list[str]]
+Fetcher = Callable[[DatasetEntry, Path, Path], list[str] | FetchResult]
 
 
 def bucket(row: dict[str, Any]) -> float:
@@ -103,7 +104,9 @@ def prepare_dataset(
     with tempfile.TemporaryDirectory(prefix=f"metiscraft-{name}-", dir=staging_parent) as tmp:
         stage = DatasetVersion(Path(tmp) / name / version)
         stage.raw_dir.mkdir(parents=True)
-        raw_files = fetcher(entry, data_root, stage.raw_dir)
+        fetched = fetcher(entry, data_root, stage.raw_dir)
+        if not isinstance(fetched, FetchResult):
+            fetched = FetchResult(files=list(fetched))
         ctx = ConverterContext(entry=entry, raw_dir=stage.raw_dir, max_rows=max_rows)
         upstream: dict[str, list[dict[str, Any]]] = {}
         for split in dict.fromkeys(entry.splits.values()):
@@ -132,6 +135,9 @@ def prepare_dataset(
         (stage.manifests_dir / "eval_only.json").write_text(
             json.dumps({"files": eval_only}, indent=2) + "\n", encoding="utf-8"
         )
+        for manifest, content in fetched.manifests.items():
+            text = content if isinstance(content, str) else json.dumps(content, indent=2) + "\n"
+            (stage.manifests_dir / manifest).write_text(text, encoding="utf-8")
         if dedup_report is not None:
             (stage.manifests_dir / "dedup_report.json").write_text(
                 json.dumps(dedup_report, indent=2) + "\n", encoding="utf-8"
@@ -145,9 +151,11 @@ def prepare_dataset(
             "tier": entry.tier,
             "source": {
                 "hf": entry.repo if entry.hf else None,
+                **({"git": entry.git} if entry.git else {}),
                 "revision": entry.revision,
                 "config": entry.config,
-                "files": raw_files,
+                "files": fetched.files,
+                **fetched.source,
             },
             "license": entry.license,
             "terms": entry.terms,

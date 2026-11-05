@@ -255,6 +255,54 @@ def banking77_support(raw: Path) -> None:
     shard(raw, "data", "test", test)
 
 
+def tev1(raw: Path) -> None:
+    """Tev1-shaped build outputs: lettered options in a shuffled order, SST-5 levels in order,
+    BoolQ as two options and a policy row with an object state."""
+
+    def row(source: str, split: str, i: int) -> dict:
+        kind, keys = {
+            "mnli": ("choice", ["neutral", "contradicted", "entailed"]),
+            "boolq": ("noul", ["no", "yes"]),
+            "sst5": ("score", ["0", "1", "2", "3", "4"]),
+            "policy": ("choice", ["unknown", "eligible", "ineligible"]),
+        }[source]
+        gold = keys[i % len(keys)]
+        state = f"{split} passage {i} for {source}"
+        if source == "policy":
+            record = {"order_value_usd": i, "item_unopened": None}
+            state = {"record": record, "policy": f"Eligible if unopened ({split})."}
+        options = [
+            {"label": "ABCDE"[j], "key": k, "description": f"{k}."} for j, k in enumerate(keys)
+        ]
+        return {
+            "id": f"{source}:{split}:{i}",
+            "source": source,
+            "split": split,
+            "kind": kind,
+            "group_id": f"{source}:{split}:{i // 2}",
+            "state": state,
+            "question": f"Question about {source}?",
+            "options": options,
+            "answer": "ABCDE"[keys.index(gold)],
+            "answer_key": gold,
+            "provenance": {"generator": "fixture"},
+            "token_count": 40 + i,
+        }
+
+    layout = {
+        ("new-v1", "train"): ["mnli", "boolq", "sst5", "policy"],
+        ("new-v1", "dev"): ["mnli", "boolq", "sst5", "policy"],
+        ("v1", "test"): ["mnli", "boolq", "sst5"],
+        ("v1", "policy_transfer"): ["policy"],
+    }
+    for (build, split), sources in layout.items():
+        n = 12 if split == "train" else 4
+        path = raw / "data" / build / "records" / f"{split}.jsonl"
+        path.parent.mkdir(parents=True, exist_ok=True)
+        rows = [row(source, split, i) for source in sources for i in range(n)]
+        path.write_text("".join(json.dumps(r) + "\n" for r in rows), encoding="utf-8")
+
+
 BUILDERS = {
     "boolq": boolq,
     "banking77": banking77,
@@ -266,6 +314,7 @@ BUILDERS = {
     "tasksource_jev": tasksource_jev,
     "multi_nli": multi_nli,
     "banking77_support": banking77_support,
+    "tev1": tev1,
 }
 
 

@@ -86,11 +86,13 @@ def verify_sha256sums(root: Path) -> int:
 
 
 def write_jsonl(path: Path, rows: Iterable[dict[str, Any]]) -> int:
+    """One JSON object per line. Keys keep their order, so object states stay as the upstream
+    wrote them and a prompt rendered from a record can match the upstream's byte for byte."""
     path.parent.mkdir(parents=True, exist_ok=True)
     count = 0
     with open(path, "w", encoding="utf-8") as fh:
         for row in rows:
-            fh.write(json.dumps(row, ensure_ascii=False, sort_keys=True) + "\n")
+            fh.write(json.dumps(row, ensure_ascii=False) + "\n")
             count += 1
     return count
 

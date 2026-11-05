@@ -46,6 +46,7 @@ src/metiscraft/
     store.py        # 版本化数据目录（§4.1）
     registry.yaml   # 数据注册表（§4.2）
     fetch.py        # 按固定 revision 下载
+    external.py     # 外部构建：按提交运行上游的构建脚本，核对公开哈希（§4.2）
     converters/     # 每个数据集一个转换器
     dedup.py        # 去重与泄漏检查（§4.6）
   modeling/
@@ -96,6 +97,15 @@ tests/              # pytest；微型随机初始化模型，不占 GPU
 
 条款受限的 AG News、MS MARCO、NFCorpus、SST-5 带条款标记；用它们训练的产物在 NOTICE 里标为不可商用。来源是 Jev / TypeSafe API 输出的数据一律不收。
 
+**外部构建**。有的项目不发布数据本身，只发布确定性的构建脚本和产物哈希。这类条目写 `git`（`<owner>/<repo>@<完整提交号>`）和 `params.build`：
+
+- `inputs`：构建脚本要读的 Hugging Face 数据集和分词器，分别映射到已注册的数据集（同一 revision）和权重目录；
+- `steps`：按顺序原样运行的脚本；
+- `verify`：项目在该提交里公开的哈希清单。默认必须一致；项目只当作历史记录、没有声明可复现的哈希（例如最初那次构建的中间文件）标 `required: false`，照样逐个对比并记下结果，但不作为接收条件；
+- `files`：要拷进 `raw/` 的产物。
+
+`data prepare` 先按提交号检出并核对，再把代码复制到暂存目录里运行，不改上游的一行代码。运行时关闭 Hub，由 MetisCraft 的包装层回答脚本的 `load_dataset` 和 `AutoTokenizer.from_pretrained`：只给声明过的输入，revision 不符或未声明的一律拒绝。必须一致的公开哈希全部一致才接收。构建记录（步骤、输入版本、包版本、核对结果）写进 `dataset.yaml` 的 `source.build`，逐文件核对表和构建日志写进 `manifests/`。第一个例子是 Tev1，见 [`reproductions/tev1.md`](reproductions/tev1.md)。
+
 ### 4.3 内部记录契约
 
 一行一题（JSONL），字段：
@@ -119,7 +129,7 @@ tests/              # pytest；微型随机初始化模型，不占 GPU
 
 ### 4.5 转换器
 
-每个转换器把上游 split 转成 §4.3 的记录，并写 `provenance`。v0.1 实现：`bool_noul`（BoolQ）、`cls_choice`（Banking77、CLINC150、可选的 AG News）、`pair_choice`（可选的 MNLI）、`ordinal_score`（SST-5）、`multilabel_cands`（GoEmotions）、`jev_request`（LocalLLaMA）、`open_jev_rows`（Open-Jev）、`jev_flat_rows`（tasksource）。没有官方验证集的数据集，calib 与 dev 从 train 按内容哈希切出（各约 5%），切分规则写进 `dataset.yaml`。
+每个转换器把上游 split 转成 §4.3 的记录，并写 `provenance`。v0.1 实现：`bool_noul`（BoolQ）、`cls_choice`（Banking77、CLINC150、可选的 AG News）、`pair_choice`（可选的 MNLI）、`ordinal_score`（SST-5）、`multilabel_cands`（GoEmotions）、`jev_request`（LocalLLaMA）、`open_jev_rows`（Open-Jev）、`jev_flat_rows`（tasksource）。没有官方验证集的数据集，calib 与 dev 从 train 按内容哈希切出（各约 5%），切分规则写进 `dataset.yaml`。复现用的 `tev1` 读 Tev1 构建出的记录，保留其选项顺序（见 [`reproductions/tev1.md`](reproductions/tev1.md)）。
 
 ### 4.6 去重与泄漏
 
@@ -245,6 +255,7 @@ eval:      {splits: [dev], baselines: [prior]}
 | 支持矩阵首版 | 收 13 个项目；首批 Tev1、jebadiah、Hmm、JevForge 与 typed-decisions（读出都在 ① / ③ 内，有公开数字可对照） | 11-05 | [`support-matrix.md`](support-matrix.md) |
 | 垂直场景示例 | 银行客服分流：Banking77 经映射表改写成"转哪个队列"与"是否紧急"两个业务问题 | 11-05 | `banking77_support`（注册表） |
 | 多标签的正样本加权 | 产物记下实际用到的 `pos_weight`，推理时先减去 ln w 再校准。GoEmotions 验收发现不扣时 NLL、Brier 比先验还差，扣除后 ECE 降到约 0.002 | 11-05 | GoEmotions 验收 |
+| 复现公开项目的数据 | 上游构建脚本原样运行，输入由注册表供给，公开哈希全部一致才接收；不重写上游的生成逻辑 | 11-06 | [`reproductions/tev1.md`](reproductions/tev1.md) |
 
 ## 14. 待定
 

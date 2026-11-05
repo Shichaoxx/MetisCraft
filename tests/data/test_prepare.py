@@ -1,3 +1,4 @@
+import json
 import os
 
 import pytest
@@ -173,3 +174,29 @@ def test_vertical_scenario_rejects_unmapped_labels(data_root, tmp_path):
         prepare_dataset(
             "banking77_support", data_root, fetcher=fetch_with_unknown, staging_parent=tmp_path
         )
+
+
+def test_tev1_records_keep_the_upstream_order(data_root, tmp_path):
+    dv = prepare_dataset("tev1", data_root, fetcher=fake_fetcher, staging_parent=tmp_path)
+    meta = dv.meta()
+    assert {role: info["from"] for role, info in meta["splits"].items()}["eval_only"] == (
+        "v1/policy_transfer"
+    )
+    assert set(meta["splits"]) == {"train", "calib", "dev", "test", "eval_only"}
+    dedup = json.loads((dv.manifests_dir / "dedup_report.json").read_text(encoding="utf-8"))
+    assert dedup["dropped"] == 0
+    rows = {r["id"]: r for role in meta["splits"] for r in dv.load(role)}
+    mnli = rows["tev1:mnli:train:1"]
+    assert [o["id"] for o in mnli["question"]["options"]] == ["neutral", "contradicted", "entailed"]
+    assert mnli["supervision"]["labels"] == "contradicted"
+    assert mnli["task_id"] == "tev1/mnli"
+    assert mnli["provenance"]["extra"]["answer_letter"] == "B"
+    sst = rows["tev1:sst5:train:3"]
+    assert sst["question"]["type"] == "score" and sst["supervision"]["labels"] == 3
+    boolq = rows["tev1:boolq:train:0"]
+    assert boolq["question"]["type"] == "choice"
+    assert boolq["provenance"]["extra"]["tev1_kind"] == "noul"
+    # Object states keep the upstream key order (not sorted), nulls included.
+    policy = rows["tev1:policy:train:0"]["input"]["context"]["state"]
+    assert list(policy) == ["record", "policy"]
+    assert list(policy["record"].items()) == [("order_value_usd", 0), ("item_unopened", None)]
