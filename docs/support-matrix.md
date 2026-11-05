@@ -34,6 +34,25 @@
 | 12 | [Open-Jev][ds-openjev] | 数据集<br>♥115 · 09-20 | — | — | noul / choice / score；release-v2-redistributable 共 113,568 行 | CC0-1.0，仅覆盖作者生成内容 | source-verified | **能**：已注册 `open_jev`；test、ood 标签公开，入模前剔除 metadata_json | — | — |
 | 13 | [typed-decisions][ds-typed] | 基准<br>♥270 · 11-03 | — | — | noul / choice / score；1,200 / 400 case，test 共 2,000 个决策 | Apache-2.0 | source-verified | **仅评测**：已注册 `typed_decisions`，标签是未公开教师的采样均值 | **能**（作评测集）：可与 Hmm、Clef、d3 等榜单数字对拍 | — |
 
+## 训练过程公开程度（2026-11-05 核对）
+
+类 Jev 模型很少把训练过程完整开源。下表只记已核实的内容，"—"表示未核实或未披露。
+
+| 项目 | 训练代码 | 训练数据 | 配方与超参 | 评测记录 | 能否复现训练 |
+|---|---|---|---|---|---|
+| Tev1 | 有，MIT | 公开数据集（MNLI、BoolQ、Banking77、AG News、SST-5），构建脚本锁定源 revision | 实际超参未留存 | 100–250 条开发集抽样，不输出概率 | 基本可以，超参要补 |
+| jebadiah | 有，Apache-2.0 | 开源教师生成的合成数据加 typed-decisions 训练集；合成部分是否公开未核实 | 清楚（soft CE、序数软目标、分题型温度） | 逐题记录随权重公开 | 部分可以 |
+| Hmm | 有，MIT | 仓库不含（合成数据由 DeepSeek 接口生成） | LoRA r=32，单张 3090 约 2 小时，约 3 万题 | 仓库不含结果文件 | 只能近似重建数据 |
+| JevForge | 有（LICENSE 仅一行 MIT 声明），含 RL | — | — | S1MB 自报，含同源暴露 | 需按其协议重做评测 |
+| Kev | 有，Apache-2.0 | 规模与算力远超单机 | pointer 头加 LoRA | 锁定 test、manifest、Brier/ECE | 单机不可行 |
+| mammoth-1 | 无 | 6.21M 条，不可得 | 仅模型卡自述（CE 加 Brier、72×GB300、无 RL），未复核 | 榜单分数 | 不能 |
+| Clef | 未发布 | 来源未披露 | — | — | 不能 |
+| d3 | 无 | 来源未披露 | 训练法未披露 | — | 不能 |
+| KnowLine、GLiDE、Sieve（榜单前列） | 未披露；GLiDE 仓库只有推理代码 | 未披露 | 未披露 | 榜单分数 | 不能 |
+| 官方 Jev | 闭源，只有 API | — | — | — | 不能；TypeSafe 条款禁止用其输出训练 |
+
+规律：榜单越靠前越不透明，27B 级只放权重，训练数据来源一律未披露，无法核对是否用了 Jev 输出；公开训练代码的都是 4B 级项目，且多缺数据或超参；没有一个提供完整可追溯的训练记录（配置、数据版本、提交、环境、逐题评测）。MetisCraft 要补的就是这一块，见 [`status.md`](status.md)。
+
 ## 各列口径
 
 - **收录标准**：近两个月仍在更新，有可核对的证据，对自训 Jev 有参考价值；不收用 Jev / TypeSafe API 输出蒸馏的数据或模型（TypeSafe 条款禁止用 Jev 输出训练）。
