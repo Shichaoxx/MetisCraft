@@ -4,7 +4,7 @@
 
 ## 当前阶段
 
-v0.1 已完成（2026-11-05）。数据层、两种读出、训练、校准、评测、可追溯产物、Predictor 与 HTTP 服务都已实现，CPU 上 91 个测试通过；Qwen3-0.6B 上 7 份验收配方全部跑通：BoolQ、Banking77（① 与 ③ 各一份）、CLINC150、SST-5、GoEmotions 和银行客服分流场景。每份配方目录的 README 写有成绩。
+v0.1 已完成（2026-11-05）。数据层、两种读出、训练、校准、评测、可追溯产物、Predictor 与 HTTP 服务都已实现，CPU 上 102 个测试通过；Qwen3-0.6B 上 7 份验收配方全部跑通：BoolQ、Banking77（① 与 ③ 各一份）、CLINC150、SST-5、GoEmotions 和银行客服分流场景。每份配方目录的 README 写有成绩。
 
 **Cookbook**：[`cookbook/`](cookbook/README.md)，讲原理、把业务做成 Jev 的完整流程和最佳实践。
 
@@ -77,7 +77,7 @@ v0.1 的里程碑 M0–M5 已于 2026-11-05 全部完成：设计规格、骨架
 
 接下来：
 
-1. 补开源训练过程，第一站是用 MetisCraft 复现 Tev1：方案与进度见 [`reproductions/tev1.md`](reproductions/tev1.md)。之后再考虑 Hmm、jebadiah，以及一个数据条款干净、过程全公开的通用小 Jev。
+1. 补开源训练过程，第一站是用 MetisCraft 复现 Tev1：数据已按公开哈希重建，训练要用的提示格式、全词表答案损失和 cosine 调度已补上，配方写好，等 GPU 训练。方案与进度见 [`reproductions/tev1.md`](reproductions/tev1.md)。之后再考虑 Hmm、jebadiah，以及一个数据条款干净、过程全公开的通用小 Jev。
 2. GoEmotions 用修复后的代码重跑一次（单卡约 80 分钟），等有空闲的 GPU 再跑。
 3. encoder 同协议对照：句向量 + 逻辑回归，划分、指标、校准方式都与模型相同，用来回答"比 encoder 好还是差"。
 4. 发布到 PyPI，做到 `pip install metiscraft`。现在已能从源码安装，wheel 也能构建（注册表随包）。发布前还要：
