@@ -88,6 +88,7 @@ code { font-family:"JetBrains Mono","Fira Code",Menlo,Consolas,monospace; font-s
        padding:0 3px; border-radius:3px; }
 pre code { background:none; padding:0; }
 .two { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+.two > div { min-width:0; }
 .note { color:var(--muted); font-size:13px; }
 ul { padding-left:22px; } li { margin:3px 0; }
 footer { margin-top:56px; color:var(--muted); font-size:12px; border-top:1px solid var(--line); padding-top:10px; }
@@ -331,9 +332,9 @@ def build() -> str:
                  + figure("figures/02-support-scenario.png", "图 2　客服分流：映射表把 77 个意图改写成两道业务题", "figures/02-support-scenario.svg"))
     ex = snippets.get("api_example")
     if ex:
-        parts.append(f"<div class=two><div><h3>请求（示例消息为构造）</h3>{code(json.dumps(ex['request'], ensure_ascii=False, indent=2), 'json')}</div>"
-                     f"<div><h3>验收产物 <code>{esc(ex['run'])}</code> 的实际响应</h3>"
-                     f"{code(json.dumps(ex['response'], ensure_ascii=False, indent=2), 'json')}</div></div>")
+        parts.append(f"<h3>请求（示例消息为构造）</h3>{code(json.dumps(ex['request'], ensure_ascii=False, indent=2), 'json')}"
+                     f"<h3>验收产物 <code>{esc(ex['run'])}</code> 的实际响应</h3>"
+                     f"{code(json.dumps(ex['response'], ensure_ascii=False, indent=2), 'json')}")
     parts.append('<p>换成自己的业务，只要在注册表里写一张映射表和题目说明，其余流程不变。详见 '
                  '<a href="../../../recipes/banking77_support/README.md">配方说明</a>。</p></section>')
 
