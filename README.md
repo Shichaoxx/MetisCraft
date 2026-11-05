@@ -40,7 +40,7 @@ metiscraft serve <运行目录>/artifact     # POST /v1/systemone
 | ① 答案 token | 在答案位置读选项码 token 的 logits；不加新层，保留零样本能力 | noul、choice、score |
 | ③ 逐候选标量头 | 每个候选末 token 的隐藏状态经 MLP 得到分数（list / pairs 布局） | 四种全部 |
 
-张量图与公式见 [`docs/readouts/`](docs/readouts/)。
+张量图与公式见 [`docs/readouts/`](docs/readouts/)。当前较好的 Jev 类项目与 MetisCraft 的支持情况见 [`docs/support-matrix.md`](docs/support-matrix.md)。
 
 ## 许可证
 

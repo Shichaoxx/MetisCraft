@@ -241,11 +241,11 @@ eval:      {splits: [dev], baselines: [prior]}
 | ① 多选项 | 从分词器里挑单 token 的选项码 | 11-05 | 让 ① 在几十个选项时也能用，读出对照才能在 Banking77 上做 |
 | 序数损失 | 只做相邻软目标一种 | 11-05 | 先保证主线 |
 | Unsloth | 只读不拷，不做适配（决策代码是 AGPL-3.0） | 11-04 | [`research/build-routes.md`](research/build-routes.md) |
+| 支持矩阵首版 | 收 13 个项目；首批 Tev1、jebadiah、Hmm、JevForge 与 typed-decisions（读出都在 ① / ③ 内，有公开数字可对照） | 11-05 | [`support-matrix.md`](support-matrix.md) |
+| 垂直场景示例 | 银行客服分流：Banking77 经映射表改写成"转哪个队列"与"是否紧急"两个业务问题 | 11-05 | `banking77_support`（注册表） |
 
 ## 14. 待定
 
-- 支持矩阵首批收哪几个项目。
-- "垂直场景做成 Jev"示例用哪个场景。
 - 张量图的风格问题，见 [`readouts/README.md`](readouts/README.md) 末尾。
 - 口号与吉祥物。
 

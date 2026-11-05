@@ -32,7 +32,7 @@ MetisCraft 是工具包，不是某个模型或某个任务的项目。它由两
 
 ## 已定
 
-- **支持矩阵代替单独的清单**：首批收 3–5 个项目，逐步扩到约 10–20 个；先前的 Awesome 清单草稿只作素材。
+- **支持矩阵代替单独的清单**：首版见 [`support-matrix.md`](support-matrix.md)（13 个项目，首批 5 个），逐步扩到约 10–20 个；先前的 Awesome 清单草稿只作素材。
 - **v0.1 的部署范围**：Predictor，外加一层沿用 `/v1/systemone` 请求格式的 HTTP 服务，保留按类型的校准；vLLM、SGLang、llama.cpp 的引擎导出放到 v0.2，随首发基座的选择而定。
 - **通用 judge 与垂直场景**：支持通用的类型化判断，更重要的是让垂直业务场景也能做成自己的 Jev（场景用配方适配）；不设单一业务旗舰；v0.1 验收每种判断类型各用一个公开基准（见下）。
 - **数据注册表和主流数据集支持是 v0.1 必需项**：用开源数据集训练和验收；注册表收录主流通用数据集和 Jev 类数据集（Open-Jev、tasksource-jev-typed-decisions、LocalLLaMA typed-decisions 等），首批名单见下，核对详情见 [`research/datasets.md`](research/datasets.md)。数据契约原生读取 Jev 类型化判断格式（`state` + `questions` + 目标），与 HTTP 服务的请求格式一致。
@@ -77,6 +77,4 @@ v0.1 按里程碑推进（2026-11-05 起；范围与验收标准见 [`design.md`
 
 - 口号与吉祥物。候选：口号点出 System One 与 unthink（不经长推理直接判断），吉祥物用雅典娜的猫头鹰。
 - 从 0.1.0 带回哪些部分。
-- 支持矩阵首批收哪几个项目。
-- v0.1 是否带一个"垂直场景做成 Jev"的端到端示例（用公开数据），选哪个场景。
 - 读出张量图的风格问题，见 [`readouts/README.md`](readouts/README.md) 末尾。
