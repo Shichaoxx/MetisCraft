@@ -6,9 +6,10 @@ import subprocess
 
 import pytest
 
-from metiscraft.data.external import BuildError, checkout, fetch_build, git_source
+from metiscraft.data.external import BuildError, build, checkout, fetch_build, git_source
 from metiscraft.data.prepare import prepare_dataset
 from metiscraft.data.registry import DatasetEntry, get_entry
+from metiscraft.data.store import sha256_file
 from tests.data.fixtures import fake_fetcher
 
 # Counts BoolQ's training rows through the Hub API, as an upstream builder would.
@@ -23,6 +24,18 @@ Path("out").mkdir()
 Path("out/count.txt").write_text(f"{len(rows)}\\n")
 """
 
+# Records which tokenizer class the builder was given.
+TOKENIZER_BUILDER = """
+import sys
+from pathlib import Path
+
+from transformers import AutoTokenizer
+
+tokenizer = AutoTokenizer.from_pretrained(sys.argv[1], revision=sys.argv[2])
+Path("out").mkdir()
+Path("out/tokenizer.txt").write_text(type(tokenizer).__name__ + "\\n")
+"""
+
 
 def git(cwd, *args):
     return subprocess.run(
@@ -34,12 +47,14 @@ def git(cwd, *args):
     ).stdout.strip()
 
 
-def upstream(tmp_path, published: str) -> tuple[str, str]:
+def upstream(
+    tmp_path, published: str, builder: str = BUILDER, output: str = "count.txt"
+) -> tuple[str, str]:
     repo = tmp_path / "project"
     repo.mkdir()
-    (repo / "build.py").write_text(BUILDER, encoding="utf-8")
+    (repo / "build.py").write_text(builder, encoding="utf-8")
     # "history" stands for hashes a project records but does not claim to reproduce.
-    tables = {"files": {"count.txt": published}, "history": {"count.txt": "0" * 64}}
+    tables = {"files": {output: published}, "history": {output: "0" * 64}}
     (repo / "published.json").write_text(json.dumps(tables), encoding="utf-8")
     git(repo, "init", "-q")
     git(repo, "add", ".")
@@ -119,6 +134,37 @@ def test_undeclared_inputs_are_refused(data_root, tmp_path):
     url, commit = upstream(tmp_path, hashlib.sha256(b"60\n").hexdigest())
     with pytest.raises(BuildError, match="not declared in params.build.inputs"):
         fetch_build(entry(url, commit, declared=False), data_root, raw_dir(tmp_path))
+
+
+@pytest.mark.parametrize("declared", [None, "Qwen2Tokenizer"])
+def test_tokenizers_load_as_the_class_the_project_used(tmp_path, declared):
+    from transformers import AutoTokenizer
+
+    from tests.modeling.tiny import tiny_tokenizer
+
+    weights = tmp_path / "models/tiny/tok"
+    tiny_tokenizer().save_pretrained(weights)
+    sums = [f"{sha256_file(path)}  {path.name}" for path in sorted(weights.iterdir())]
+    (weights / "SHA256SUMS").write_text("\n".join(sums) + "\n", encoding="utf-8")
+    pin = {"repo": "org/tiny", "revision": "a" * 40}
+    (weights / "SOURCE.json").write_text(json.dumps(pin), encoding="utf-8")
+    expected = declared or type(AutoTokenizer.from_pretrained(weights)).__name__
+    url, commit = upstream(
+        tmp_path,
+        hashlib.sha256(f"{expected}\n".encode()).hexdigest(),
+        TOKENIZER_BUILDER,
+        "tokenizer.txt",
+    )
+    spec = {"weights": "tiny/tok", **({"class": declared} if declared else {})}
+    params = {
+        "inputs": {"tokenizers": {"org/tiny": spec if declared else "tiny/tok"}},
+        "steps": [["build.py", "org/tiny", "a" * 40]],
+        "verify": [{"manifest": "published.json", "key": "files", "root": "out"}],
+    }
+    toy = entry(url, commit).model_copy(update={"params": {"build": params}})
+    result = build(toy, tmp_path / "data", tmp_path / "models", tmp_path / "work")
+    assert result["inputs"]["tokenizers"]["org/tiny"] == {**spec, "revision": "a" * 40}
+    assert (tmp_path / "work/tree/out/tokenizer.txt").read_text() == f"{expected}\n"
 
 
 def test_git_sources_pin_a_full_commit():

@@ -20,7 +20,7 @@
 
 | # | 项目（固定链接） | 类别 | 读出 | 基座与规模 | 判断类型 | 许可证 | 证据 | 训练 | 复现 | 部署 |
 |---|---|---|---|---|---|---|---|---|---|---|
-| 1 | [Tev1][gh-tev1]<br>[Tev1-4B-experimental][hf-tev1] | 代码+权重<br>★263 · 09-24 | ① 单字母生成，无概率 | Qwen3.5-4B，LoRA SFT | noul / choice / score | 代码 MIT；权重卡未声明 | doc-verified | **能**：同读出同类型，训练源与验收集重合 | **计划**：训练集可按锁定脚本重建（未运行验证），实际超参未留存；数字取自 100–250 条开发集抽样，Banking77 仅 4/6/8 个候选，只作量级对照 | **能**（重训产物） |
+| 1 | [Tev1][gh-tev1]<br>[Tev1-4B-experimental][hf-tev1] | 代码+权重<br>★263 · 09-24 | ① 单字母生成，无概率 | Qwen3.5-4B，LoRA SFT | noul / choice / score | 代码 MIT；权重卡未声明 | doc-verified | **能**：同读出同类型，训练源与验收集重合 | **进行中**：训练集已用 MetisCraft 按锁定脚本重建，公开的 21 个哈希全部一致（见[复现记录](reproductions/tev1.md)）；实际超参未留存；数字取自 100–250 条开发集抽样，Banking77 仅 4/6/8 个候选，只作量级对照 | **能**（重训产物） |
 | 2 | [jebadiah][gh-jebadiah]<br>[4b-v2][hf-jebadiah] | 代码+权重<br>★10 · 10-22 | ① fp32 字母 logits | Qwen3.5-4B / 9B、Qwen3.8-27B，LoRA | noul / choice / score | Apache-2.0（代码与权重） | source-verified | **能**：soft CE、序数软目标、分题型温度，与 v0.1 配方一致 | **计划**：BoolQ、MNLI、Banking77 有逐题记录可对拍；合成训练池是否公开未核实 | **能**（重训产物） |
 | 3 | [Hmm][gh-hmm]<br>[Qwen3.5-4B-Hmm][hf-hmm] | 代码+权重<br>★5 · 09-20 | ① 首 token 选项字母（≤26 个） | Qwen3.5-4B，LoRA r=32 | noul / choice / score | 代码 MIT；权重 Apache-2.0 | doc-verified | **能**：字母 CE，硬软标签各半 | **计划**：typed-decisions 可同协议评测；合成数据需重新生成 | **能**（重训产物） |
 | 4 | [JevForge][gh-jevforge]<br>[JevForge-0.8B][hf-jevforge] | 代码+权重<br>★164 · 10-16 | ③ 每候选一行，两层 GELU 头 | Qwen3.5-0.8B | noul / choice / score | 代码 LICENSE 仅一行 MIT 声明；权重 Apache-2.0 | source-verified | **能**：同为 ③，对应 pairs 布局；其 RL 部分不在 v0.1 | **计划**：S1MB 数字含自报同源暴露，须按其协议重做 | **能**（重训产物） |

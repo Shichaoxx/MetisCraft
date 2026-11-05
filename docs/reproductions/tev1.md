@@ -57,19 +57,32 @@ metiscraft data prepare tev1
 这一条命令依次：
 
 1. 按提交号检出 Tev1 并核对代码树；
-2. 准备 5 个输入：注册表里同一 revision 的 `multi_nli`、`boolq`、`banking77_legacy`、`ag_news`、`sst5`；分词器取自 `Qwen/Qwen3.5-2B@15852e8c` 的权重目录；
+2. 准备 5 个输入：注册表里同一 revision 的 `multi_nli`、`boolq`、`banking77_legacy`、`ag_news`、`sst5`；分词器取自 `Qwen/Qwen3.5-2B@15852e8c` 的权重目录，照 Tev1 锁定的 transformers 5.17.0 那样以 `Qwen2Tokenizer` 加载（原因见下）；
 3. 原样运行 Tev1 的 4 个构建脚本和 3 个校验脚本。运行时关闭 Hub，由 MetisCraft 的包装层回答脚本读数据和分词器的调用，只给上面声明过的输入；
 4. 对比 Tev1 公开的哈希（结果见下）；
 5. 把记录转成 MetisCraft 的格式。选项保持 Tev1 的顺序，状态对象保持原来的键顺序，这样以后能用 MetisCraft 重新渲染出逐字节相同的提示。
 
 机制见 [`design.md`](../design.md) §4.2 的"外部构建"。
 
-核对结果在构建完成后补上。
+**核对结果**（2026-11-06）：Tev1 在该提交里公开的 21 个哈希全部一致：
+- new-v1 的 7 个最终文件（`runs/new-v1/reproduction.json`）；
+- 构建它们用到的 12 个 v1、v2.1 文件（`runs/new-v1/dataset-manifest.json`）；
+- 两个评测集，即 1,000 道 test 和 300 道 policy_transfer（`runs/new-v1/evaluation.json`）。
+
+构建环境是 Python 3.11、datasets 5.1.0、transformers 5.22.1，与 Tev1 锁定的 Python 3.12、datasets 4.8.5、transformers 5.17.0 不同。版本差别只在一处影响产物：
+
+- Qwen3.5 在 Hub 上的配置把分词器类写成 `Qwen2Tokenizer`。transformers 5.17.0 照此加载，预分词用的是 Qwen2 的正则；较新的版本把 Qwen3.5 列入"Hub 上分词器类写错的模型"，改用 `Qwen3_5Tokenizer`，与模型自带的 `tokenizer.json` 一致。
+- 两个正则只在组合附加符（Unicode 类别 M）附近切分不同。Tev1 的数据里只有 2 条 BoolQ 段落含这类字符（天城文和泰米尔文的元音符号），按新类计数分别比 Tev1 的记录少 2 个和 8 个 token。提示文本完全相同，只有三个 `records/train.jsonl` 里的 `token_count` 不同，哈希因此对不上。
+- 注册表给分词器注明 `class: Qwen2Tokenizer` 后，21 个哈希全部一致。这只影响记录里的 token 计数：MetisCraft 训练时用基座自己的分词器重新切分。
+
+另外两项核对：
+- 转换后的 43,708 条记录都能逐条还原成 Tev1 的原始消息；
+- 训练集与 calib、dev、test、eval_only 之间没有同输入或同组的行，MetisCraft 的去重一条也没删，训练集与 Tev1 相同。
 
 | MetisCraft 划分 | 来自 Tev1 | 条数 |
 |---|---|---:|
 | train | new-v1 的 train | 37,840 |
-| calib、dev | new-v1 的 dev，按组哈希对半分 | 4,568 |
+| calib、dev | new-v1 的 dev，按组哈希对半分 | 2,448 + 2,120 |
 | test | v1 的 test，即 Tev1 报 88.0% 的 1,000 道主决策题 | 1,000 |
 | eval_only | v1 的 policy_transfer，即报 100% 的 300 道政策迁移题 | 300 |
 
@@ -83,4 +96,4 @@ Tev1 自己还留了 v2 的 test 和 transfer，作者标为"未接触的最终�
 ## 状态
 
 - 2026-11-05：读完公开材料，确定方案。
-- 2026-11-06：数据部分接入 MetisCraft（外部构建），正在构建和核对。训练需要 GPU，现在四张卡都在跑 HighwayGS 的实验，等卡空出来再排。
+- 2026-11-06：数据部分接入 MetisCraft（外部构建），重建后 21 个公开哈希全部一致。训练需要 GPU，现在四张卡都在跑 HighwayGS 的实验，等卡空出来再排。

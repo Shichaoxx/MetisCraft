@@ -11,7 +11,9 @@ than the data itself. For a registry entry with ``git`` and ``params.build``:
    ``python -I -m metiscraft.data.external <inputs.json> <script> [args...]``) answers the
    builders' ``datasets.load_dataset`` calls from prepared MetisCraft versions pinned at
    the same revisions and their ``AutoTokenizer.from_pretrained`` calls from verified
-   weight directories, and refuses anything ``params.build.inputs`` does not declare;
+   weight directories, and refuses anything ``params.build.inputs`` does not declare. A
+   tokenizer input may name the ``class`` the project's own transformers loaded it as,
+   when ours resolves another one;
 3. the outputs are accepted only when every hash published in ``params.build.verify``
    matches;
 4. the built files matching the entry's ``files`` patterns are copied into ``raw/`` under
@@ -121,17 +123,20 @@ def serve_inputs(
             "version": version.version,
             "revision": dep.revision,
         }
-    for repo, rel in inputs.get("tokenizers", {}).items():
+    for repo, spec in inputs.get("tokenizers", {}).items():
         if models_root is None:
             raise BuildError(f"{entry.name}: tokenizer inputs need paths.models_root")
+        spec = {"weights": spec} if isinstance(spec, str) else spec  # or {weights, class}
+        rel = spec["weights"]
         root = Path(models_root) / rel
         source = json.loads((root / "SOURCE.json").read_text(encoding="utf-8"))
         if source.get("repo") != repo:
             raise BuildError(f"{entry.name}: {rel} holds {source.get('repo')}, not {repo}")
         dest = work / "tokenizers" / repo.replace("/", "__")
         _copy_tokenizer(root, dest)
-        config["tokenizers"][repo] = {"revision": source["revision"], "path": str(dest)}
-        record["tokenizers"][repo] = {"weights": rel, "revision": source["revision"]}
+        named = {"class": spec["class"]} if "class" in spec else {}
+        config["tokenizers"][repo] = {"revision": source["revision"], "path": str(dest), **named}
+        record["tokenizers"][repo] = {"weights": rel, "revision": source["revision"], **named}
     return config, record
 
 
@@ -295,16 +300,19 @@ def _serve(config: dict[str, Any]) -> None:
 
         datasets.load_dataset = served_load_dataset
     try:
-        from transformers import AutoTokenizer
+        import transformers
     except ImportError:
         pass
     else:
-        from_pretrained = AutoTokenizer.from_pretrained
+        from_pretrained = transformers.AutoTokenizer.from_pretrained
 
         def served_from_pretrained(name, *args, revision=None, local_files_only=None, **kwargs):
-            return from_pretrained(local("tokenizers", name, revision), *args, **kwargs)
+            path = local("tokenizers", name, revision)
+            named = config["tokenizers"][str(name)].get("class")
+            load = getattr(transformers, named).from_pretrained if named else from_pretrained
+            return load(path, *args, **kwargs)
 
-        AutoTokenizer.from_pretrained = served_from_pretrained
+        transformers.AutoTokenizer.from_pretrained = served_from_pretrained
 
 
 def _main(argv: list[str]) -> None:

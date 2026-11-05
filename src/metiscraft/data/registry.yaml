@@ -315,7 +315,11 @@ datasets:
             fancyzhx/ag_news: ag_news
             SetFit/sst5: sst5
           tokenizers:
-            Qwen/Qwen3.5-2B: qwen3.5/2b
+            # Tev1 locks transformers 5.17.0, which loads Qwen3.5's tokenizer as the
+            # Qwen2Tokenizer its Hub config names; later releases use Qwen3_5Tokenizer. The two
+            # split text differently only around combining marks, so two BoolQ rows count 2 and
+            # 8 tokens more in Tev1's records than under the newer class.
+            Qwen/Qwen3.5-2B: {weights: qwen3.5/2b, class: Qwen2Tokenizer}
         steps:
           - [build_dataset.py]
           - [validate_dataset.py, data/v1]
@@ -324,11 +328,11 @@ datasets:
           - [build_v21.py]
           - [validate_v21.py, data/v2.1]
           - [build_new_v1.py]
-        # Tev1 claims that a fresh build reproduces the final files and the two evaluation sets;
-        # the input hashes in dataset-manifest.json record its original build's intermediates.
+        # Every hash Tev1 published: the final files, the v1 and v2.1 files they are built
+        # from, and the two evaluation sets.
         verify:
           - {manifest: runs/new-v1/reproduction.json, key: files, root: data/new-v1}
-          - {manifest: runs/new-v1/dataset-manifest.json, key: input_hashes, root: data, required: false}
+          - {manifest: runs/new-v1/dataset-manifest.json, key: input_hashes, root: data}
           - manifest: runs/new-v1/evaluation.json
             key: hashes
             files: {test: data/v1/records/test.jsonl, policy_transfer: data/v1/records/policy_transfer.jsonl}

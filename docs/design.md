@@ -99,9 +99,9 @@ tests/              # pytest；微型随机初始化模型，不占 GPU
 
 **外部构建**。有的项目不发布数据本身，只发布确定性的构建脚本和产物哈希。这类条目写 `git`（`<owner>/<repo>@<完整提交号>`）和 `params.build`：
 
-- `inputs`：构建脚本要读的 Hugging Face 数据集和分词器，分别映射到已注册的数据集（同一 revision）和权重目录；
+- `inputs`：构建脚本要读的 Hugging Face 数据集和分词器，分别映射到已注册的数据集（同一 revision）和权重目录。不同版本的 transformers 可能把同一个分词器解析成不同的类，切分结果略有差别；这时分词器写成 `{weights, class}`，注明上游锁定的版本用哪个类加载；
 - `steps`：按顺序原样运行的脚本；
-- `verify`：项目在该提交里公开的哈希清单。默认必须一致；项目只当作历史记录、没有声明可复现的哈希（例如最初那次构建的中间文件）标 `required: false`，照样逐个对比并记下结果，但不作为接收条件；
+- `verify`：项目在该提交里公开的哈希清单。默认必须一致；项目记录了但没有声明可复现的哈希标 `required: false`，照样逐个对比并记下结果，但不作为接收条件；
 - `files`：要拷进 `raw/` 的产物。
 
 `data prepare` 先按提交号检出并核对，再把代码复制到暂存目录里运行，不改上游的一行代码。运行时关闭 Hub，由 MetisCraft 的包装层回答脚本的 `load_dataset` 和 `AutoTokenizer.from_pretrained`：只给声明过的输入，revision 不符或未声明的一律拒绝。必须一致的公开哈希全部一致才接收。构建记录（步骤、输入版本、包版本、核对结果）写进 `dataset.yaml` 的 `source.build`，逐文件核对表和构建日志写进 `manifests/`。第一个例子是 Tev1，见 [`reproductions/tev1.md`](reproductions/tev1.md)。
@@ -256,6 +256,7 @@ eval:      {splits: [dev], baselines: [prior]}
 | 垂直场景示例 | 银行客服分流：Banking77 经映射表改写成"转哪个队列"与"是否紧急"两个业务问题 | 11-05 | `banking77_support`（注册表） |
 | 多标签的正样本加权 | 产物记下实际用到的 `pos_weight`，推理时先减去 ln w 再校准。GoEmotions 验收发现不扣时 NLL、Brier 比先验还差，扣除后 ECE 降到约 0.002 | 11-05 | GoEmotions 验收 |
 | 复现公开项目的数据 | 上游构建脚本原样运行，输入由注册表供给，公开哈希全部一致才接收；不重写上游的生成逻辑 | 11-06 | [`reproductions/tev1.md`](reproductions/tev1.md) |
+| 上游锁定的库版本与本机不同 | 不为每个项目另建锁版本环境；产物只在输入层受版本影响时，在输入上注明上游的加载方式（如分词器类），仍按公开哈希验收。Tev1 的 21 个哈希里有 3 个只因分词器类不同而差两条计数 | 11-06 | [`reproductions/tev1.md`](reproductions/tev1.md) |
 
 ## 14. 待定
 
