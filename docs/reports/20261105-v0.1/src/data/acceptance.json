@@ -631,5 +631,119 @@
       }
     },
     "null_breakdown": null
+  },
+  "boolq/qwen3-0.6b-base_answer-token": {
+    "run": "20261105-110024-3a392e61",
+    "commit": "244ae64",
+    "dirty": false,
+    "tracked_changes": false,
+    "data_version": "rev-35b264d0",
+    "device": "RTX 3090",
+    "versions": {
+      "torch": "2.15.0+cu132",
+      "transformers": "5.22.1",
+      "peft": "0.21.2"
+    },
+    "steps": 1054,
+    "train_minutes": 38.0,
+    "loss_first": 0.7354955077171326,
+    "loss_last": 0.01514441106054518,
+    "temperatures": {
+      "*|noul": 2.04933341770433,
+      "boolq|noul": 2.04933341770433
+    },
+    "readout": {
+      "kind": "answer_token",
+      "layout": "list",
+      "head": {
+        "hidden": 256,
+        "dropout": 0.0
+      },
+      "shuffle_train": true,
+      "infer_permutations": 1
+    },
+    "finetune": {
+      "kind": "lora",
+      "r": 16,
+      "alpha": 32,
+      "dropout": 0.05,
+      "targets": "all-linear"
+    },
+    "commercial_use": true,
+    "dataset": {
+      "name": "boolq",
+      "version": "rev-35b264d0",
+      "license": "cc-by-sa-3.0",
+      "terms": [
+        "share_alike"
+      ]
+    },
+    "metrics": {
+      "dev": {
+        "model": {
+          "noul": {
+            "n": 519,
+            "accuracy": 0.861271676300578,
+            "auc": 0.9238022426095821,
+            "nll": 0.4328953765902326,
+            "brier": 0.11582158370008061,
+            "ece": 0.10012199261416066
+          }
+        },
+        "model + temperature": {
+          "noul": {
+            "n": 519,
+            "accuracy": 0.861271676300578,
+            "auc": 0.9238022426095821,
+            "nll": 0.3400205695228171,
+            "brier": 0.10458461406584353,
+            "ece": 0.04549198299978185
+          }
+        },
+        "prior": {
+          "noul": {
+            "n": 519,
+            "accuracy": 0.630057803468208,
+            "auc": 0.5,
+            "nll": 0.6591181443134058,
+            "brier": 0.23317566821565588,
+            "ece": 0.00952367883912808
+          }
+        }
+      },
+      "test": {
+        "model": {
+          "noul": {
+            "n": 3270,
+            "accuracy": 0.8507645259938837,
+            "auc": 0.9143630898580853,
+            "nll": 0.4687723197880592,
+            "brier": 0.12326557527076244,
+            "ece": 0.09405052810636122
+          }
+        },
+        "model + temperature": {
+          "noul": {
+            "n": 3270,
+            "accuracy": 0.8507645259938837,
+            "auc": 0.9143630898580853,
+            "nll": 0.360460572268228,
+            "brier": 0.11120473282541524,
+            "ece": 0.024479406402014313
+          }
+        },
+        "prior": {
+          "noul": {
+            "n": 3270,
+            "accuracy": 0.6217125382262997,
+            "auc": 0.5,
+            "nll": 0.6632224786634356,
+            "brier": 0.23518744669711766,
+            "ece": 0.0011784135972198184
+          }
+        }
+      }
+    },
+    "null_breakdown": null
   }
 }
