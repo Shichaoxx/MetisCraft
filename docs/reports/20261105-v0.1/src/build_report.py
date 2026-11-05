@@ -105,6 +105,7 @@ td.nw { white-space:nowrap; }
 td.n { text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; }
 tr.prior td { color:var(--muted); }
 .better { color:var(--green-ink); font-weight:600; }
+.worse { color:var(--coral-ink); font-weight:600; }
 .pending { color:var(--muted); font-style:italic; }
 figure { margin:14px 0 10px; }
 figure img { max-width:100%; border:1px solid var(--line); border-radius:4px; }
@@ -220,7 +221,7 @@ def headline_rows(results: dict) -> list[list[str]]:
                     num(t.get(metric, m[metric])),
                     num(p[metric]),
                     f"{num(m['nll'])} → {num(t.get('nll'))}",
-                    f"{num(m['ece'])} → <span class=better>{num(t.get('ece'))}</span>",
+                    f"{num(m['ece'])} → <span class={'better' if t.get('ece', 1) <= m['ece'] else 'worse'}>{num(t.get('ece'))}</span>",
                     num(temp, 2),
                 ]
             )
