@@ -9,7 +9,7 @@ from sklearn.metrics import accuracy_score, brier_score_loss, f1_score, log_loss
 from metiscraft.calibrate import fit_temperature, mean_nll
 from metiscraft.config import ObjectiveConfig, ReadoutConfig, TrainConfig
 from metiscraft.evaluate.metrics import ece, macro_f1, metrics_for_kind
-from metiscraft.judgments import decide, probabilities
+from metiscraft.judgments import decide, prior_shift, probabilities
 from metiscraft.train.collate import Collator
 from metiscraft.train.loop import accumulate, train_loop
 from tests.modeling.tiny import choice_row, multilabel_row, noul_row, tiny_decision_model
@@ -90,6 +90,31 @@ def test_temperature_recovers_known_scale_and_keeps_argmax():
         a = probabilities("choice", p["scores"], 1.0)
         b = probabilities("choice", p["scores"], t)
         assert int(np.argmax(a)) == int(np.argmax(b))
+
+
+def test_prior_shift_undoes_pos_weight():
+    # Fit one logit with torch's weighted BCE on labels with base rate 0.04: the optimum
+    # inflates the odds by w, and subtracting ln w brings the probability back to the rate.
+    rate, w = 0.04, 23.0
+    y = torch.zeros(1000)
+    y[: int(rate * 1000)] = 1.0
+    b = torch.zeros(1, requires_grad=True)
+    opt = torch.optim.LBFGS([b], lr=1.0, max_iter=100)
+
+    def closure():
+        opt.zero_grad()
+        loss = torch.nn.functional.binary_cross_entropy_with_logits(
+            b.expand(1000), y, pos_weight=torch.tensor(w)
+        )
+        loss.backward()
+        return loss
+
+    opt.step(closure)
+    shift = prior_shift({"pos_weight": w})
+    assert set(shift) == {"multi_label"}
+    assert torch.sigmoid(b).item() == pytest.approx(w * rate / (w * rate + 1 - rate), rel=1e-3)
+    assert torch.sigmoid(b - shift["multi_label"]).item() == pytest.approx(rate, rel=1e-3)
+    assert prior_shift({"pos_weight": None}) == {} and prior_shift(None) == {}
 
 
 def test_choice_metrics_match_sklearn():

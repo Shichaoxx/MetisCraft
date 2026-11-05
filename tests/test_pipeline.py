@@ -20,15 +20,16 @@ def roots(tmp_path):
     (base / "SOURCE.json").write_text(
         json.dumps({"channel": "test", "repo": "tiny", "revision": "0"})
     )
-    for name in ("banking77", "sst5"):
+    for name in ("banking77", "sst5", "go_emotions"):
         prepare_dataset(name, roots["data"], fetcher=fake_fetcher, staging_parent=tmp_path)
     return roots
 
 
-def recipe(roots, dataset, readout, **train):
+def recipe(roots, dataset, readout, objective=None, **train):
     return Recipe.model_validate(
         {
             "task": f"{dataset}-test",
+            "objective": objective or {},
             "data": {"dataset": dataset},
             "model": {
                 "base": "tiny-qwen3/v1",
@@ -97,6 +98,32 @@ def test_predictor_reload_matches_training_process(roots):
     for result in predictor.predict_records(rows):
         assert result["raw_scores"] == pytest.approx(saved[result["id"]]["scores"], abs=1e-5)
         assert abs(sum(result["probabilities"]) - 1) < 1e-6
+
+
+def test_pos_weight_is_undone_at_inference(roots):
+    import math
+
+    from metiscraft.data.store import read_jsonl, resolve_version
+    from metiscraft.evaluate.infer import predict
+    from metiscraft.serve.predictor import Predictor
+
+    readout = {"kind": "candidate_scalar", "shuffle_train": False}
+    run = run_recipe(recipe(roots, "go_emotions", readout, {"kind": "bce", "pos_weight": "auto"}))
+    train = resolve_version(roots["data"], "go_emotions").load("train")
+    pos = sum(len(r["supervision"]["labels"]) for r in train)
+    neg = sum(len(r["candidates"]) for r in train) - pos
+    w = read_artifact_meta(run / "artifact")["train"]["pos_weight"]
+    assert w == pytest.approx(min(max(neg / pos, 1.0), 100.0))
+    saved = {p["id"]: p for p in read_jsonl(run / "eval" / "dev.predictions.jsonl")}
+    predictor = Predictor.load(run / "artifact")
+    rows = resolve_version(roots["data"], "go_emotions").load("dev")
+    unshifted = predict(
+        predictor.model, rows, predictor.collator, batch_size=4, device=predictor.device
+    )
+    for raw, result in zip(unshifted, predictor.predict_records(rows), strict=True):
+        expected = [s - math.log(w) for s in raw["scores"]]
+        assert saved[raw["id"]]["scores"] == pytest.approx(expected, abs=1e-5)
+        assert result["raw_scores"] == pytest.approx(expected, abs=1e-5)
 
 
 def test_http_service_speaks_the_official_format(roots):

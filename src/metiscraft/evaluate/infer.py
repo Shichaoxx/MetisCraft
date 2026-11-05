@@ -1,8 +1,12 @@
-"""Run a DecisionModel over records and keep raw scores with aligned targets."""
+"""Run a DecisionModel over records and keep raw scores with aligned targets.
+
+``offsets`` (from :func:`metiscraft.judgments.prior_shift`) are subtracted per judgment type,
+so the stored scores sit on the data's own prior scale even when training reweighted classes.
+"""
 
 from __future__ import annotations
 
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 from typing import Any
 
 import torch
@@ -22,6 +26,7 @@ def predict(
     batch_size: int,
     device: torch.device,
     bf16: bool = True,
+    offsets: Mapping[str, float] | None = None,
 ) -> list[dict[str, Any]]:
     was_training = model.training
     model.eval()
@@ -34,11 +39,12 @@ def predict(
             scores = model(to_device(batch, device))
         scores = scores.float().cpu()
         for j, rec in enumerate(chunk):
+            shift = (offsets or {}).get(rec.question.type, 0.0)
             entry: dict[str, Any] = {
                 "id": rec.id,
                 "task_id": rec.task_id,
                 "kind": rec.question.type,
-                "scores": scores[j, : rec.target_size()].tolist(),
+                "scores": (scores[j, : rec.target_size()] - shift).tolist(),
                 "choice_ids": [c.id for c in choices_of(rec)],
             }
             if rec.supervision is not None:

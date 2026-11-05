@@ -166,6 +166,7 @@ tests/              # pytest；微型随机初始化模型，不占 GPU
 - 训练循环是一个约 200 行的最小实现（`train/loop.py`）：AdamW，LoRA 与头两组学习率，transformers 的线性调度，bf16 autocast，梯度裁剪。不套 HF `Trainer`：它对梯度累积与多卡的损失缩放在不同版本间改过多次，而下一条是验收硬指标。
 - 损失按全局问题数归一：一个优化步内所有微批、所有卡的问题数先 all-reduce，每个微批回传 `损失总和 × 卡数 / 全局问题数`，DDP 求平均后即为全局均值；用微型模型测试梯度累积（含大小不均的微批）下的等价性。
 - 多卡用 `torchrun` 启动 DDP。
+- 多标签可以用 `objective.pos_weight` 给正样本加权（`auto` 取训练集的负正比）。加权把每个正样本的赔率乘上 w，学到的 logit 整体高出 ln w，所以实际用到的 w 写进产物，推理时先减去 ln w，再做温度校准；否则概率会系统性偏高，温度缩放也修不回来。
 - 默认超参不写死在代码里，全部在配方中显式给出；新配方先过 sanity 阶梯：小子集过拟合 → 学习率扫描 → 学习曲线。
 - 随机种子、数据顺序、LoRA 初始化都由配方里的种子决定，并写进运行目录。
 
@@ -243,6 +244,7 @@ eval:      {splits: [dev], baselines: [prior]}
 | Unsloth | 只读不拷，不做适配（决策代码是 AGPL-3.0） | 11-04 | [`research/build-routes.md`](research/build-routes.md) |
 | 支持矩阵首版 | 收 13 个项目；首批 Tev1、jebadiah、Hmm、JevForge 与 typed-decisions（读出都在 ① / ③ 内，有公开数字可对照） | 11-05 | [`support-matrix.md`](support-matrix.md) |
 | 垂直场景示例 | 银行客服分流：Banking77 经映射表改写成"转哪个队列"与"是否紧急"两个业务问题 | 11-05 | `banking77_support`（注册表） |
+| 多标签的正样本加权 | 产物记下实际用到的 `pos_weight`，推理时先减去 ln w 再校准。GoEmotions 验收发现不扣时 NLL、Brier 比先验还差，扣除后 ECE 降到约 0.002 | 11-05 | GoEmotions 验收 |
 
 ## 14. 待定
 

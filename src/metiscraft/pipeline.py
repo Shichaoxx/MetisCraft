@@ -26,7 +26,7 @@ from metiscraft.data.store import DatasetVersion, resolve_version, sha256_file, 
 from metiscraft.evaluate.infer import predict
 from metiscraft.evaluate.metrics import evaluate, evaluate_prior, prior_probabilities
 from metiscraft.evaluate.report import render_report
-from metiscraft.judgments import target_vector
+from metiscraft.judgments import prior_shift, target_vector
 from metiscraft.modeling.backbone import load_backbone
 from metiscraft.modeling.model import DecisionModel
 from metiscraft.modeling.prompts import choices_of
@@ -35,6 +35,7 @@ from metiscraft.trace import (
     env_info,
     git_info,
     new_run_dir,
+    read_artifact_meta,
     save_artifact,
     save_calibration,
     write_json,
@@ -208,6 +209,7 @@ def evaluate_run(
 ) -> dict[str, Any]:
     collator = Collator(tokenizer, recipe.readout, recipe.model.max_length, train=False)
     batch = max(1, recipe.train.batch_size)
+    offsets = prior_shift(read_artifact_meta(artifact).get("train"))
 
     def scores_for(split: str) -> list[dict[str, Any]]:
         return predict(
@@ -217,6 +219,7 @@ def evaluate_run(
             batch_size=batch,
             device=device,
             bf16=recipe.train.bf16,
+            offsets=offsets,
         )
 
     calibration = None
@@ -285,6 +288,7 @@ def evaluate_artifact(
             predictor.collator,
             batch_size=batch_size,
             device=predictor.device,
+            offsets=predictor.offsets,
         )
         methods = {"model": evaluate(preds)}
         if predictor.calibration is not None:

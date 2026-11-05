@@ -74,6 +74,17 @@ def batch_loss(
     return total, len(kinds)
 
 
+def prior_shift(train_summary: dict[str, Any] | None) -> dict[str, float]:
+    """Per-type logit offsets that undo a positive-class weight used in training.
+
+    BCE with ``pos_weight=w`` multiplies the odds of every positive by ``w``, so the learned
+    multi_label logits sit ``ln w`` above the data's own prior scale. Subtracting it before
+    calibration puts the probabilities back on that scale (design §7).
+    """
+    w = (train_summary or {}).get("pos_weight")
+    return {"multi_label": math.log(w)} if w and w != 1.0 else {}
+
+
 def probabilities(kind: str, scores: list[float], temperature: float = 1.0) -> list[float]:
     s = torch.tensor(scores, dtype=torch.float64) / temperature
     if kind == "noul":

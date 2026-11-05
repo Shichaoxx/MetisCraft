@@ -184,4 +184,9 @@ def train_loop(
             log.flush()
     if log is not None:
         log.close()
-    return {"steps": total, "epochs_seen": epoch + 1, "last": last}
+    return {
+        "steps": total,
+        "epochs_seen": epoch + 1,
+        "last": last,
+        "pos_weight": None if pos_weight is None else float(pos_weight),
+    }

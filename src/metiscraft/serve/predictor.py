@@ -17,7 +17,7 @@ from metiscraft.config import Paths, ReadoutConfig, resolve_paths
 from metiscraft.data.contract import Record
 from metiscraft.data.jev import parse_request, request_to_records
 from metiscraft.evaluate.infer import predict
-from metiscraft.judgments import decide, probabilities
+from metiscraft.judgments import decide, prior_shift, probabilities
 from metiscraft.modeling.backbone import DTYPES, load_tokenizer, resolve_base
 from metiscraft.modeling.model import DecisionModel
 from metiscraft.trace import load_calibration, read_artifact_meta
@@ -40,6 +40,7 @@ class Predictor:
         self.meta = meta
         self.calibration = calibration
         self.device = device
+        self.offsets = prior_shift(meta.get("train"))
         self.collator = Collator(tokenizer, model.readout, meta["model"]["max_length"], train=False)
 
     @property
@@ -88,7 +89,14 @@ class Predictor:
         self, records: Sequence[Record | dict[str, Any]], batch_size: int = 8
     ) -> list[dict[str, Any]]:
         rows = [r if isinstance(r, Record) else Record.model_validate(r) for r in records]
-        raw = predict(self.model, rows, self.collator, batch_size=batch_size, device=self.device)
+        raw = predict(
+            self.model,
+            rows,
+            self.collator,
+            batch_size=batch_size,
+            device=self.device,
+            offsets=self.offsets,
+        )
         out = []
         for row, pred in zip(rows, raw, strict=True):
             kind = pred["kind"]
