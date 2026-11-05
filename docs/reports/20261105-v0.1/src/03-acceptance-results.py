@@ -85,7 +85,7 @@ def main() -> None:
         ax.set_ylim(-0.7, n - 0.3)
     fig.text(0.5, 0.005, "MetisCraft v0.1：test 划分上的验收结果@Shichao", ha="center", va="bottom",
              fontsize=8, color=MUTED)
-    fig.subplots_adjust(left=0.24, right=0.97, top=1 - 0.42 / (1.0 + 0.48 * n), bottom=0.5 / (1.0 + 0.48 * n))
+    fig.subplots_adjust(left=0.29, right=0.97, top=1 - 0.42 / (1.0 + 0.48 * n), bottom=0.5 / (1.0 + 0.48 * n))
     OUT.mkdir(exist_ok=True)
     for ext in ("png", "svg"):
         fig.savefig(OUT / f"03-acceptance-results.{ext}", dpi=200)

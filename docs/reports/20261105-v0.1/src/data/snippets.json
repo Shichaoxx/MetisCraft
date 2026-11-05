@@ -1,1 +1,196 @@
-{}
+{
+  "run_tree": [
+    "20261105-101057-30757bf7/",
+    "├── artifact/",
+    "│   ├── adapter/",
+    "│   ├── NOTICE",
+    "│   ├── SHA256SUMS",
+    "│   ├── artifact.json",
+    "│   └── head.safetensors",
+    "├── calibration/",
+    "│   ├── SHA256SUMS",
+    "│   └── calibration.json",
+    "├── eval/",
+    "│   ├── dev.predictions.jsonl",
+    "│   ├── metrics.json",
+    "│   └── test.predictions.jsonl",
+    "├── config.sha256",
+    "├── config.yaml",
+    "├── data.json",
+    "├── env.json",
+    "├── git.json",
+    "├── model.json",
+    "├── report.md",
+    "└── train_log.jsonl"
+  ],
+  "notice": "This artifact was trained with MetisCraft 0.1.0.dev0.\n\nBase model: Qwen/Qwen3-0.6B-Base (revision da87bfb608c14b7cf20ba1ce41287e8de496c0cd).\nThe base model's own licence applies to the base weights and to derived weights.\n\nTraining data: banking77_support@rev-18469841\n  licence: cc-by-4.0\n  terms: attribution\n\nThe training data terms do not restrict commercial use.\n",
+  "recipe": "# Vertical scenario example: bank support routing built from Banking77. Each customer message\n# answers two business questions in one request -- \"which support queue?\" (choice, 6 queues)\n# and \"is it urgent?\" (noul) -- and the model is served with the official request format.\ntask: banking77_support\ndata: {dataset: banking77_support}\nmodel:\n  base: qwen3/0.6b-base-da87bfb6\n  dtype: bf16\n  max_length: 384\n  finetune: {kind: lora, r: 16, alpha: 32, dropout: 0.05, targets: all-linear}\nreadout: {kind: candidate_scalar, layout: list, head: {hidden: 256}, shuffle_train: true}\nobjective: {kind: auto}\ntrain: {epochs: 2, batch_size: 16, grad_accum: 1, lr: 2.0e-4, head_lr: 1.0e-3, warmup_ratio: 0.03, seed: 42, bf16: true, logging_steps: 20}\ncalibrate: {method: temperature, split: calib}\neval: {splits: [dev, test], baselines: [prior]}\n",
+  "dataset_tree": [
+    "banking77_support/rev-18469841/",
+    "├── derived/",
+    "│   ├── eval_only/",
+    "│   ├── calib.jsonl",
+    "│   ├── dev.jsonl",
+    "│   └── train.jsonl",
+    "├── manifests/",
+    "│   ├── algorithm_input.json",
+    "│   ├── dedup_report.json",
+    "│   └── eval_only.json",
+    "├── raw/",
+    "│   ├── data/",
+    "│   └── README.md",
+    "├── SHA256SUMS",
+    "└── dataset.yaml"
+  ],
+  "records": [
+    {
+      "group": {
+        "id": "banking77_support:train:0",
+        "split_key": "banking77_support:train:0"
+      },
+      "id": "banking77_support:train:0:queue",
+      "input": {
+        "context": {
+          "state": "I am still waiting on my card?"
+        },
+        "query": "Which support queue should handle this customer message?"
+      },
+      "provenance": {
+        "converter": "label_mapping",
+        "converter_version": "1",
+        "dataset": "banking77_support",
+        "extra": {
+          "question_name": "queue",
+          "source_label": "card_arrival"
+        },
+        "index": 0,
+        "input_hash": "7d46f1aa7c0a83b4fe386b6c72b132fd3650942a23d0110451cf3c3f6b85b8aa",
+        "label_form": "hard",
+        "source": "PolyAI/banking77@1846984189f2bc0ac51c6fc3a600fa9e1714e0c6",
+        "split": "train"
+      },
+      "question": {
+        "allow_null": false,
+        "options": [
+          {
+            "id": "cards",
+            "text": "Ordering, delivering, activating, linking or replacing cards; PINs, card limits and card support."
+          },
+          {
+            "id": "payments",
+            "text": "Card payments, cash withdrawals, refunds, fees, exchange rates and currencies."
+          },
+          {
+            "id": "transfers",
+            "text": "Sending and receiving money, transfer status, cancellations and beneficiaries."
+          },
+          {
+            "id": "top_up",
+            "text": "Topping up the account and problems with top-ups or deposits."
+          },
+          {
+            "id": "account",
+            "text": "Identity verification, personal details, passcodes, age limits and closing the account."
+          },
+          {
+            "id": "security",
+            "text": "Lost, stolen or compromised cards or phones, and transactions the customer does not recognise."
+          }
+        ],
+        "type": "choice"
+      },
+      "supervision": {
+        "kind": "choice",
+        "labels": "cards"
+      },
+      "task_id": "banking77_support"
+    },
+    {
+      "group": {
+        "id": "banking77_support:train:0",
+        "split_key": "banking77_support:train:0"
+      },
+      "id": "banking77_support:train:0:urgent",
+      "input": {
+        "context": {
+          "state": "I am still waiting on my card?"
+        },
+        "query": "Could the customer lose money or access to their account if this message waits until tomorrow?"
+      },
+      "provenance": {
+        "converter": "label_mapping",
+        "converter_version": "1",
+        "dataset": "banking77_support",
+        "extra": {
+          "question_name": "urgent",
+          "source_label": "card_arrival"
+        },
+        "index": 0,
+        "input_hash": "7d46f1aa7c0a83b4fe386b6c72b132fd3650942a23d0110451cf3c3f6b85b8aa",
+        "label_form": "hard",
+        "source": "PolyAI/banking77@1846984189f2bc0ac51c6fc3a600fa9e1714e0c6",
+        "split": "train"
+      },
+      "question": {
+        "allow_null": false,
+        "type": "noul"
+      },
+      "supervision": {
+        "kind": "noul",
+        "labels": false
+      },
+      "task_id": "banking77_support"
+    }
+  ],
+  "api_example": {
+    "run": "20261105-101057-30757bf7",
+    "request": {
+      "model": "banking77_support",
+      "state": "My card was stolen this morning and there are two payments on it that I did not make.",
+      "questions": {
+        "queue": {
+          "type": "choice",
+          "instructions": "Which support queue should handle this customer message?",
+          "criteria": {
+            "cards": "Ordering, delivering, activating, linking or replacing cards; PINs, card limits and card support.",
+            "payments": "Card payments, cash withdrawals, refunds, fees, exchange rates and currencies.",
+            "transfers": "Sending and receiving money, transfer status, cancellations and beneficiaries.",
+            "top_up": "Topping up the account and problems with top-ups or deposits.",
+            "account": "Identity verification, personal details, passcodes, age limits and closing the account.",
+            "security": "Lost, stolen or compromised cards or phones, and transactions the customer does not recognise."
+          }
+        },
+        "urgent": {
+          "type": "noul",
+          "instructions": "Could the customer lose money or access to their account if this message waits until tomorrow?"
+        }
+      }
+    },
+    "response": {
+      "model": "metiscraft/banking77_support",
+      "answers": {
+        "queue": {
+          "type": "choice",
+          "choice": "security",
+          "confidence": 0.9999995054983101,
+          "probabilities": {
+            "cards": 2.0465875752668956e-07,
+            "payments": 2.8552732808090524e-07,
+            "transfers": 1.3682393373337923e-09,
+            "top_up": 1.1094860412756372e-09,
+            "account": 1.8378789176297659e-09,
+            "security": 0.9999995054983101
+          }
+        },
+        "urgent": {
+          "type": "noul",
+          "noul": 0.9999314182034214
+        }
+      },
+      "usage": {
+        "input_tokens": 199,
+        "output_tokens": 0
+      }
+    }
+  }
+}
