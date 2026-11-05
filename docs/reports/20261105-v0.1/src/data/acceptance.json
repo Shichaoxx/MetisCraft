@@ -111,7 +111,8 @@
         }
       }
     },
-    "null_breakdown": null
+    "null_breakdown": null,
+    "offline_prior_shift": null
   },
   "clinc150/qwen3-0.6b-base_candidate-scalar": {
     "run": "20261105-060357-53ec012a",
@@ -232,7 +233,8 @@
       "null_ok": 765,
       "pred_null": 788,
       "pred_null_ok": 765
-    }
+    },
+    "offline_prior_shift": null
   },
   "banking77/qwen3-0.6b-base_answer-token": {
     "run": "20261105-074726-8a84f136",
@@ -346,7 +348,8 @@
         }
       }
     },
-    "null_breakdown": null
+    "null_breakdown": null,
+    "offline_prior_shift": null
   },
   "go_emotions/qwen3-0.6b-base_candidate-scalar": {
     "run": "20261105-085531-38a1bf6f",
@@ -466,7 +469,32 @@
         }
       }
     },
-    "null_breakdown": null
+    "null_breakdown": null,
+    "offline_prior_shift": {
+      "pos_weight": 22.779767990112305,
+      "dev": {
+        "multi_label": {
+          "n": 2696,
+          "exact_match": 0.45660237388724034,
+          "micro_f1": 0.5749525616698292,
+          "nll": 0.07844029187562591,
+          "brier": 0.02226617035997463,
+          "ece": 0.002627618089397739,
+          "macro_f1": 0.437970930645125
+        }
+      },
+      "test": {
+        "multi_label": {
+          "n": 5427,
+          "exact_match": 0.4656347890178736,
+          "micro_f1": 0.5869257617205924,
+          "nll": 0.07632083105246536,
+          "brier": 0.02170679683057983,
+          "ece": 0.0016090753229520854,
+          "macro_f1": 0.4598881435392254
+        }
+      }
+    }
   },
   "banking77_support/qwen3-0.6b-base_candidate-scalar": {
     "run": "20261105-101057-30757bf7",
@@ -630,7 +658,8 @@
         }
       }
     },
-    "null_breakdown": null
+    "null_breakdown": null,
+    "offline_prior_shift": null
   },
   "boolq/qwen3-0.6b-base_answer-token": {
     "run": "20261105-110024-3a392e61",
@@ -744,6 +773,129 @@
         }
       }
     },
-    "null_breakdown": null
+    "null_breakdown": null,
+    "offline_prior_shift": null
+  },
+  "sst5/qwen3-0.6b-base_answer-token": {
+    "run": "20261105-114305-a49998c0",
+    "commit": "4299224",
+    "dirty": false,
+    "tracked_changes": false,
+    "data_version": "rev-e51bdcd8",
+    "device": "RTX 3090",
+    "versions": {
+      "torch": "2.15.0+cu132",
+      "transformers": "5.22.1",
+      "peft": "0.21.2"
+    },
+    "steps": 1602,
+    "train_minutes": 26.6,
+    "loss_first": 1.2028844356536865,
+    "loss_last": 0.1969840923945109,
+    "temperatures": {
+      "*|score": 2.4505458696455658,
+      "sst5|score": 2.4505458696455658
+    },
+    "readout": {
+      "kind": "answer_token",
+      "layout": "list",
+      "head": {
+        "hidden": 256,
+        "dropout": 0.0
+      },
+      "shuffle_train": true,
+      "infer_permutations": 1
+    },
+    "finetune": {
+      "kind": "lora",
+      "r": 16,
+      "alpha": 32,
+      "dropout": 0.05,
+      "targets": "all-linear"
+    },
+    "commercial_use": false,
+    "dataset": {
+      "name": "sst5",
+      "version": "rev-e51bdcd8",
+      "license": "unspecified",
+      "terms": [
+        "license_unspecified",
+        "research_only"
+      ]
+    },
+    "metrics": {
+      "dev": {
+        "model": {
+          "score": {
+            "n": 552,
+            "accuracy": 0.5398550724637681,
+            "nll": 1.4629312208114773,
+            "brier": 0.701357884670538,
+            "ece": 0.278874343787578,
+            "macro_f1": 0.5364164659623925,
+            "mae_expected": 0.5370775396132166
+          }
+        },
+        "model + temperature": {
+          "score": {
+            "n": 552,
+            "accuracy": 0.5398550724637681,
+            "nll": 1.0528889284916834,
+            "brier": 0.5842931477473788,
+            "ece": 0.06324507644899784,
+            "macro_f1": 0.5364164659623925,
+            "mae_expected": 0.5743500347691144
+          }
+        },
+        "prior": {
+          "score": {
+            "n": 552,
+            "accuracy": 0.2572463768115942,
+            "nll": 1.5762742593266335,
+            "brier": 0.7873730374801848,
+            "ece": 0.014416386654447999,
+            "macro_f1": 0.08184438040345822,
+            "mae_expected": 1.0821241896616094
+          }
+        }
+      },
+      "test": {
+        "model": {
+          "score": {
+            "n": 2210,
+            "accuracy": 0.5547511312217195,
+            "nll": 1.379973098091106,
+            "brier": 0.6815338579623405,
+            "ece": 0.27010048112534313,
+            "macro_f1": 0.5458333828488313,
+            "mae_expected": 0.5060530583162769
+          }
+        },
+        "model + temperature": {
+          "score": {
+            "n": 2210,
+            "accuracy": 0.5547511312217195,
+            "nll": 1.0142433691612573,
+            "brier": 0.5689268894719952,
+            "ece": 0.03993176713966335,
+            "macro_f1": 0.5458333828488313,
+            "mae_expected": 0.5588312125856245
+          }
+        },
+        "prior": {
+          "score": {
+            "n": 2210,
+            "accuracy": 0.23076923076923078,
+            "nll": 1.5804682443413525,
+            "brier": 0.7886650107089742,
+            "ece": 0.0408935326968114,
+            "macro_f1": 0.075,
+            "mae_expected": 1.1410503671834433
+          }
+        }
+      }
+    },
+    "null_breakdown": null,
+    "offline_prior_shift": null
   }
 }

@@ -1,6 +1,6 @@
 {
-  "passed": 83,
-  "seconds": 81.44,
-  "commit": "85fd8ac",
+  "passed": 85,
+  "seconds": 183.27,
+  "commit": "4ef5a4a",
   "command": "pytest（CPU，微型随机初始化模型，不下载权重）"
 }
