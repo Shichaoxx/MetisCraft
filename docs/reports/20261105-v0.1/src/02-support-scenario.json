@@ -1,0 +1,158 @@
+{
+  "id": "MetisCraft v0.1：把客服业务做成 Jev",
+  "top": [
+    "问题：业务要的不是 77 个意图标签，而是“转给哪个组”和“能不能等到明天”",
+    "方案：一张映射表把原始标签改写成业务题的标准答案；同一条消息的两道题一起训练、一起回答"
+  ],
+  "cols": 2,
+  "lanes": [
+    {
+      "label": "原始数据",
+      "nodes": [
+        {
+          "id": "msg",
+          "role": "io",
+          "col": 0,
+          "title": "客户消息",
+          "lines": [
+            "Banking77 网银客服",
+            {
+              "text": "CC-BY-4.0",
+              "muted": true
+            }
+          ]
+        },
+        {
+          "id": "intent",
+          "role": "io",
+          "col": 1,
+          "title": "原始意图",
+          "lines": [
+            "77 个标签"
+          ]
+        }
+      ]
+    },
+    {
+      "label": "映射表",
+      "nodes": [
+        {
+          "id": "map",
+          "role": "own",
+          "col": 0,
+          "span": 2,
+          "title": "label_mapping 转换器",
+          "lines": [
+            "每个意图恰好落到一个答案",
+            {
+              "text": "漏写或重复在 data prepare 时直接报错",
+              "muted": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "label": "业务题",
+      "nodes": [
+        {
+          "id": "q1",
+          "role": "result",
+          "col": 0,
+          "title": "queue（choice）",
+          "lines": [
+            "cards · payments · transfers",
+            "top_up · account · security"
+          ]
+        },
+        {
+          "id": "q2",
+          "role": "result",
+          "col": 1,
+          "title": "urgent（noul）",
+          "lines": [
+            "拖到明天会不会丢钱或丢账户",
+            {
+              "text": "10 个意图答“是”",
+              "muted": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "label": "训练",
+      "nodes": [
+        {
+          "id": "train",
+          "role": "own",
+          "col": 0,
+          "span": 2,
+          "title": "一份配方训练",
+          "lines": [
+            "③ 逐候选标量头 · LoRA · 两道题共用一个模型"
+          ]
+        }
+      ]
+    },
+    {
+      "label": "部署",
+      "nodes": [
+        {
+          "id": "api",
+          "role": "own",
+          "col": 0,
+          "span": 2,
+          "title": "POST /v1/systemone",
+          "lines": [
+            "一次请求回答两道题，各带校准后的概率"
+          ]
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "from": "msg",
+      "to": "intent"
+    },
+    {
+      "from": "intent",
+      "to": "map"
+    },
+    {
+      "from": "map",
+      "to": "q1"
+    },
+    {
+      "from": "map",
+      "to": "q2"
+    },
+    {
+      "from": "q1",
+      "to": "train"
+    },
+    {
+      "from": "q2",
+      "to": "train"
+    },
+    {
+      "from": "train",
+      "to": "api"
+    }
+  ],
+  "notes": [
+    [
+      "换成自己的业务",
+      "改映射表和题目说明，其余流程不变"
+    ],
+    [
+      "数据",
+      "按题计：每条消息两道题，同一条消息的题落在同一划分"
+    ],
+    [
+      "边界",
+      "这是用公开数据构造的示例场景，不是真实业务数据"
+    ]
+  ]
+}

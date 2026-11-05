@@ -1,0 +1,471 @@
+{
+  "banking77/qwen3-0.6b-base_candidate-scalar": {
+    "run": "20261105-043310-e809a40e",
+    "commit": "42b013c",
+    "dirty": false,
+    "tracked_changes": false,
+    "data_version": "rev-18469841",
+    "device": "RTX 3090",
+    "versions": {
+      "torch": "2.15.0+cu132",
+      "transformers": "5.22.1",
+      "peft": "0.21.2"
+    },
+    "steps": 1124,
+    "train_minutes": 37.5,
+    "loss_first": 1.3669533729553223,
+    "loss_last": 0.15577480701419213,
+    "temperatures": {
+      "*|choice": 1.3284992716539668,
+      "banking77|choice": 1.3284992716539668
+    },
+    "readout": {
+      "kind": "candidate_scalar",
+      "layout": "list",
+      "head": {
+        "hidden": 256,
+        "dropout": 0.0
+      },
+      "shuffle_train": true,
+      "infer_permutations": 1
+    },
+    "finetune": {
+      "kind": "lora",
+      "r": 16,
+      "alpha": 32,
+      "dropout": 0.05,
+      "targets": "all-linear"
+    },
+    "commercial_use": true,
+    "dataset": {
+      "name": "banking77",
+      "version": "rev-18469841",
+      "license": "cc-by-4.0",
+      "terms": [
+        "attribution"
+      ]
+    },
+    "metrics": {
+      "dev": {
+        "model": {
+          "choice": {
+            "n": 537,
+            "accuracy": 0.8994413407821229,
+            "nll": 0.39096687040883676,
+            "brier": 0.15451084153896164,
+            "ece": 0.046768524644620384,
+            "macro_f1": 0.89178323851021
+          }
+        },
+        "model + temperature": {
+          "choice": {
+            "n": 537,
+            "accuracy": 0.8994413407821229,
+            "nll": 0.3542880927513191,
+            "brier": 0.15077610394779342,
+            "ece": 0.03376970707670992,
+            "macro_f1": 0.89178323851021
+          }
+        },
+        "prior": {
+          "choice": {
+            "n": 537,
+            "accuracy": 0.0186219739292365,
+            "nll": 4.303410710562407,
+            "brier": 0.9860098319022853,
+            "ece": 0.0006259121410794773,
+            "macro_f1": 0.00047484508179206536
+          }
+        }
+      },
+      "test": {
+        "model": {
+          "choice": {
+            "n": 3080,
+            "accuracy": 0.9272727272727272,
+            "nll": 0.3018498344048746,
+            "brier": 0.11471529336976553,
+            "ece": 0.02533534572664152,
+            "macro_f1": 0.9271300406146049
+          }
+        },
+        "model + temperature": {
+          "choice": {
+            "n": 3080,
+            "accuracy": 0.9272727272727272,
+            "nll": 0.28008485960731444,
+            "brier": 0.11356002978828479,
+            "ece": 0.010809119205634002,
+            "macro_f1": 0.9271300406146049
+          }
+        },
+        "prior": {
+          "choice": {
+            "n": 3080,
+            "accuracy": 0.012987012987012988,
+            "nll": 4.3843057518113895,
+            "brier": 0.9878382389674698,
+            "ece": 0.00626087308330299,
+            "macro_f1": 0.000333000333000333
+          }
+        }
+      }
+    },
+    "null_breakdown": null
+  },
+  "clinc150/qwen3-0.6b-base_candidate-scalar": {
+    "run": "20261105-060357-53ec012a",
+    "commit": "85fd8ac",
+    "dirty": false,
+    "tracked_changes": false,
+    "data_version": "rev-155b9c71",
+    "device": "RTX 3090",
+    "versions": {
+      "torch": "2.15.0+cu132",
+      "transformers": "5.22.1",
+      "peft": "0.21.2"
+    },
+    "steps": 953,
+    "train_minutes": 77.0,
+    "loss_first": 2.2283422648906708,
+    "loss_last": 0.0012837339132742132,
+    "temperatures": {
+      "*|choice": 1.3619663162754105,
+      "clinc150|choice": 1.3619663162754105
+    },
+    "readout": {
+      "kind": "candidate_scalar",
+      "layout": "list",
+      "head": {
+        "hidden": 256,
+        "dropout": 0.0
+      },
+      "shuffle_train": true,
+      "infer_permutations": 1
+    },
+    "finetune": {
+      "kind": "lora",
+      "r": 16,
+      "alpha": 32,
+      "dropout": 0.05,
+      "targets": "all-linear"
+    },
+    "commercial_use": true,
+    "dataset": {
+      "name": "clinc150",
+      "version": "rev-155b9c71",
+      "license": "cc-by-3.0",
+      "terms": [
+        "attribution"
+      ]
+    },
+    "metrics": {
+      "dev": {
+        "model": {
+          "choice": {
+            "n": 1508,
+            "accuracy": 0.9608753315649867,
+            "nll": 0.16976109132674053,
+            "brier": 0.05889571599071035,
+            "ece": 0.01993347853546489,
+            "macro_f1": 0.9612472201144732
+          }
+        },
+        "model + temperature": {
+          "choice": {
+            "n": 1508,
+            "accuracy": 0.9608753315649867,
+            "nll": 0.14725384685283982,
+            "brier": 0.0560697322095614,
+            "ece": 0.009177795708496079,
+            "macro_f1": 0.9612472201144732
+          }
+        },
+        "prior": {
+          "choice": {
+            "n": 1508,
+            "accuracy": 0.03116710875331565,
+            "nll": 4.9986317685285275,
+            "brier": 0.992990981461577,
+            "ece": 0.01476828946830417,
+            "macro_f1": 0.0004003321905410873
+          }
+        }
+      },
+      "test": {
+        "model": {
+          "choice": {
+            "n": 5500,
+            "accuracy": 0.9234545454545454,
+            "nll": 0.3412884209812645,
+            "brier": 0.12507550238304102,
+            "ece": 0.044661966679477,
+            "macro_f1": 0.9381853817217328
+          }
+        },
+        "model + temperature": {
+          "choice": {
+            "n": 5500,
+            "accuracy": 0.9234545454545454,
+            "nll": 0.29376686468791213,
+            "brier": 0.12103411413950796,
+            "ece": 0.019271813805128095,
+            "macro_f1": 0.9381853817217328
+          }
+        },
+        "prior": {
+          "choice": {
+            "n": 5500,
+            "accuracy": 0.18181818181818182,
+            "nll": 4.860512458616785,
+            "brier": 0.9900253489104391,
+            "ece": 0.16541936253317036,
+            "macro_f1": 0.0020376974019358125
+          }
+        }
+      }
+    },
+    "null_breakdown": {
+      "ins": 4500,
+      "ins_ok": 4314,
+      "null": 1000,
+      "null_ok": 765,
+      "pred_null": 788,
+      "pred_null_ok": 765
+    }
+  },
+  "banking77/qwen3-0.6b-base_answer-token": {
+    "run": "20261105-074726-8a84f136",
+    "commit": "85fd8ac",
+    "dirty": true,
+    "tracked_changes": false,
+    "data_version": "rev-18469841",
+    "device": "RTX 3090",
+    "versions": {
+      "torch": "2.15.0+cu132",
+      "transformers": "5.22.1",
+      "peft": "0.21.2"
+    },
+    "steps": 1124,
+    "train_minutes": 59.1,
+    "loss_first": 2.165686249732971,
+    "loss_last": 0.04716577660292387,
+    "temperatures": {
+      "*|choice": 1.1670522798420147,
+      "banking77|choice": 1.1670522798420147
+    },
+    "readout": {
+      "kind": "answer_token",
+      "layout": "list",
+      "head": {
+        "hidden": 256,
+        "dropout": 0.0
+      },
+      "shuffle_train": true,
+      "infer_permutations": 1
+    },
+    "finetune": {
+      "kind": "lora",
+      "r": 16,
+      "alpha": 32,
+      "dropout": 0.05,
+      "targets": "all-linear"
+    },
+    "commercial_use": true,
+    "dataset": {
+      "name": "banking77",
+      "version": "rev-18469841",
+      "license": "cc-by-4.0",
+      "terms": [
+        "attribution"
+      ]
+    },
+    "metrics": {
+      "dev": {
+        "model": {
+          "choice": {
+            "n": 537,
+            "accuracy": 0.8957169459962756,
+            "nll": 0.45269098617482745,
+            "brier": 0.16286612067383177,
+            "ece": 0.0444016965302241,
+            "macro_f1": 0.8790144049808607
+          }
+        },
+        "model + temperature": {
+          "choice": {
+            "n": 537,
+            "accuracy": 0.8957169459962756,
+            "nll": 0.4265308699914248,
+            "brier": 0.1595224915202363,
+            "ece": 0.03318199416132105,
+            "macro_f1": 0.8790144049808607
+          }
+        },
+        "prior": {
+          "choice": {
+            "n": 537,
+            "accuracy": 0.0186219739292365,
+            "nll": 4.303410710562407,
+            "brier": 0.9860098319022853,
+            "ece": 0.0006259121410794773,
+            "macro_f1": 0.00047484508179206536
+          }
+        }
+      },
+      "test": {
+        "model": {
+          "choice": {
+            "n": 3080,
+            "accuracy": 0.9275974025974026,
+            "nll": 0.30742217397964416,
+            "brier": 0.11412737831877545,
+            "ece": 0.02425144424492705,
+            "macro_f1": 0.9277511192996766
+          }
+        },
+        "model + temperature": {
+          "choice": {
+            "n": 3080,
+            "accuracy": 0.9275974025974026,
+            "nll": 0.2978110531280658,
+            "brier": 0.11275212982882012,
+            "ece": 0.008956137241481204,
+            "macro_f1": 0.9277511192996766
+          }
+        },
+        "prior": {
+          "choice": {
+            "n": 3080,
+            "accuracy": 0.012987012987012988,
+            "nll": 4.3843057518113895,
+            "brier": 0.9878382389674698,
+            "ece": 0.00626087308330299,
+            "macro_f1": 0.000333000333000333
+          }
+        }
+      }
+    },
+    "null_breakdown": null
+  },
+  "go_emotions/qwen3-0.6b-base_candidate-scalar": {
+    "run": "20261105-085531-38a1bf6f",
+    "commit": "85fd8ac",
+    "dirty": true,
+    "tracked_changes": false,
+    "data_version": "rev-add49224",
+    "device": "RTX 3090",
+    "versions": {
+      "torch": "2.15.0+cu132",
+      "transformers": "5.22.1",
+      "peft": "0.21.2"
+    },
+    "steps": 2704,
+    "train_minutes": 65.5,
+    "loss_first": 1.2059954404830933,
+    "loss_last": 0.5826239585876465,
+    "temperatures": {
+      "*|multi_label": 1.247956326173242,
+      "go_emotions|multi_label": 1.247956326173242
+    },
+    "readout": {
+      "kind": "candidate_scalar",
+      "layout": "list",
+      "head": {
+        "hidden": 256,
+        "dropout": 0.0
+      },
+      "shuffle_train": true,
+      "infer_permutations": 1
+    },
+    "finetune": {
+      "kind": "lora",
+      "r": 16,
+      "alpha": 32,
+      "dropout": 0.05,
+      "targets": "all-linear"
+    },
+    "commercial_use": true,
+    "dataset": {
+      "name": "go_emotions",
+      "version": "rev-add49224",
+      "license": "apache-2.0",
+      "terms": [
+        "pii_possible"
+      ]
+    },
+    "metrics": {
+      "dev": {
+        "model": {
+          "multi_label": {
+            "n": 2696,
+            "exact_match": 0.055637982195845696,
+            "micro_f1": 0.42782171631310517,
+            "nll": 0.2216041178867497,
+            "brier": 0.07005505144076814,
+            "ece": 0.10891132731064636,
+            "macro_f1": 0.41693874988104046
+          }
+        },
+        "model + temperature": {
+          "multi_label": {
+            "n": 2696,
+            "exact_match": 0.055637982195845696,
+            "micro_f1": 0.42782171631310517,
+            "nll": 0.21556969260115477,
+            "brier": 0.06832574023857925,
+            "ece": 0.11844349899400664,
+            "macro_f1": 0.41693874988104046
+          }
+        },
+        "prior": {
+          "multi_label": {
+            "n": 2696,
+            "exact_match": 0.0,
+            "micro_f1": 0.0,
+            "nll": 0.14932989737515787,
+            "brier": 0.036666550760492515,
+            "ece": 0.0002903074961148281,
+            "macro_f1": 0.0
+          }
+        }
+      },
+      "test": {
+        "model": {
+          "multi_label": {
+            "n": 5427,
+            "exact_match": 0.0654136723788465,
+            "micro_f1": 0.4289302600472813,
+            "nll": 0.2207979503315916,
+            "brier": 0.07003259301827038,
+            "ece": 0.10907750459228953,
+            "macro_f1": 0.4086358723817384
+          }
+        },
+        "model + temperature": {
+          "multi_label": {
+            "n": 5427,
+            "exact_match": 0.0654136723788465,
+            "micro_f1": 0.4289302600472813,
+            "nll": 0.21463301082081676,
+            "brier": 0.06824056607231278,
+            "ece": 0.11842906292583345,
+            "macro_f1": 0.4086358723817384
+          }
+        },
+        "prior": {
+          "multi_label": {
+            "n": 5427,
+            "exact_match": 0.0,
+            "micro_f1": 0.0,
+            "nll": 0.14773317389814966,
+            "brier": 0.03638252914595751,
+            "ece": 0.00048821367457080035,
+            "macro_f1": 0.0
+          }
+        }
+      }
+    },
+    "null_breakdown": null
+  }
+}
