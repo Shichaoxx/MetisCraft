@@ -17,6 +17,12 @@ Answer-token readout (①)::
     Answer:
     <code>          <- logits of the code tokens are read at the last position
 
+With ``prompt.style: chat_json`` the same readout takes the question as one JSON payload,
+``{"state": ..., "question": ..., "options": [{"label": "A", "key": ..., "description":
+...}, ...]}``, in a user turn (after an optional system turn) of the tokenizer's chat
+template with thinking off; levels are lettered like options, and the answer is the
+letter at the start of the assistant turn. This is the format Tev1 trains on.
+
 Candidate-scalar readout (③), list layout: the shared prefix is followed by one
 segment per candidate; each candidate is scored from the hidden state of its last
 token. The pairs layout builds one sequence per candidate instead.
@@ -30,6 +36,7 @@ from dataclasses import dataclass, field
 from itertools import product
 from typing import Any
 
+from metiscraft.config import PromptConfig
 from metiscraft.data.contract import Option, Record
 
 NULL_OPTION = Option(id="__null__", text="None of the above")
@@ -127,9 +134,10 @@ class Encoded:
 
 
 class PromptBuilder:
-    def __init__(self, tokenizer, max_length: int) -> None:
+    def __init__(self, tokenizer, max_length: int, prompt: PromptConfig | None = None) -> None:
         self.tok = tokenizer
         self.max_length = max_length
+        self.prompt = prompt or PromptConfig()
 
     def _ids(self, text: str) -> list[int]:
         return self.tok.encode(text, add_special_tokens=False)
@@ -157,6 +165,8 @@ class PromptBuilder:
         q = record.question
         if q.type == "multi_label":
             raise ValueError("the answer-token readout does not support multi_label")
+        if self.prompt.style == "chat_json":
+            return self.chat_json(record)
         if q.type == "noul":
             codes = yes_no_codes(self.tok)
             tail = [self._ids("\n\nAnswer yes or no.\nAnswer:\n")]
@@ -175,6 +185,30 @@ class PromptBuilder:
         )
         tail = [self._ids(header + lines), self._ids(instruction)]
         return Encoded(self._assemble(record, tail), q.type, codes=[t for _, t in codes])
+
+    def chat_json(self, record: Record) -> Encoded:
+        """The chat_json layout; the whole prompt is rendered once, so it is never truncated."""
+        q = record.question
+        if q.type not in ("choice", "score"):
+            raise ValueError(f"{record.id}: the chat_json prompt takes choice and score questions")
+        choices = choices_of(record)
+        codes = build_codebook(self.tok, len(choices))
+        context = record.input.context or {}
+        payload: dict[str, Any] = {"state": context["state"]} if "state" in context else {}
+        payload["question"] = record.input.query
+        payload["options"] = [
+            {"label": code, "key": o.id, "description": o.text}
+            for (code, _), o in zip(codes, choices, strict=True)
+        ]
+        messages = [{"role": "system", "content": self.prompt.system}] if self.prompt.system else []
+        messages.append({"role": "user", "content": json.dumps(payload, ensure_ascii=False)})
+        text = self.tok.apply_chat_template(
+            messages, tokenize=False, add_generation_prompt=True, enable_thinking=False
+        )
+        ids = self._ids(text)
+        if len(ids) > self.max_length:
+            raise ValueError(f"{record.id}: the prompt needs {len(ids)} tokens > max_length")
+        return Encoded(ids, q.type, codes=[t for _, t in codes])
 
     def candidate_list(self, record: Record, order: list[int] | None = None) -> Encoded:
         """List layout; ``order`` permutes candidates in the prompt, positions stay aligned

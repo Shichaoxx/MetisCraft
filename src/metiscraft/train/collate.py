@@ -14,7 +14,7 @@ import torch
 
 from metiscraft.config import ReadoutConfig
 from metiscraft.data.contract import Record
-from metiscraft.judgments import target_vector
+from metiscraft.judgments import answer_index, target_vector
 from metiscraft.modeling.prompts import Encoded, PromptBuilder, choices_of
 
 
@@ -46,12 +46,16 @@ class Collator:
         train: bool = False,
         seed: int = 0,
         ordinal_sigma: float | None = None,
+        completion: bool = False,
     ) -> None:
-        self.builder = PromptBuilder(tokenizer, max_length)
+        self.builder = PromptBuilder(tokenizer, max_length, readout.prompt)
         self.readout = readout
         self.train = train
         self.rng = random.Random(seed)
         self.ordinal_sigma = ordinal_sigma
+        # completion training appends the answer code; the model then predicts [code, EOS]
+        self.completion = completion
+        self.eos_id = tokenizer.eos_token_id
         pad = tokenizer.pad_token_id
         self.pad_id = pad if pad is not None else tokenizer.eos_token_id
 
@@ -97,7 +101,12 @@ class Collator:
                 pair_col=torch.tensor(cols, dtype=torch.long),
             )
         else:
-            ids, am, pos, offsets = left_pad([e.input_ids for e in encoded], self.pad_id)
+            seqs = [e.input_ids for e in encoded]
+            if self.completion:
+                answers = [e.codes[answer_index(r)] for r, e in zip(records, encoded, strict=True)]
+                seqs = [s + [a] for s, a in zip(seqs, answers, strict=True)]
+                batch["answer_ids"] = torch.tensor([[a, self.eos_id] for a in answers])
+            ids, am, pos, offsets = left_pad(seqs, self.pad_id)
             batch.update(input_ids=ids, attention_mask=am, position_ids=pos)
             if self.readout.kind == "answer_token":
                 width = max(len(e.codes) for e in encoded)

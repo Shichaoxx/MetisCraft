@@ -29,7 +29,7 @@
 |---|---|---|---|
 | `model.base` | str | 必填 | 基座在 `models_root` 下的相对路径；目录里要有 `SOURCE.json` 和 `SHA256SUMS`。 |
 | `model.dtype` | `bf16` \| `fp16` \| `fp32` | `bf16` | 加载权重的精度。 |
-| `model.max_length` | int | `1024` | 提示的最大 token 数；超出时截短材料，问题和选项保留。 |
+| `model.max_length` | int | `1024` | 提示的最大 token 数；超出时截短材料，问题和选项保留（`chat_json` 不截短，超出就报错）。 |
 | `model.finetune.kind` | `lora` \| `full` \| `frozen` | `lora` | `lora` 只训 LoRA；`full` 全参；`frozen` 冻结主干，只训读出头。 |
 | `model.finetune.r` | int | `16` | LoRA 秩。 |
 | `model.finetune.alpha` | int | `32` | LoRA 缩放系数。 |
@@ -45,6 +45,8 @@
 | `readout.layout` | `list` \| `pairs` | `list` | ③ 的布局：`list` 把候选写在同一条序列；`pairs` 每个候选单独一条，用作对照。 |
 | `readout.head.hidden` | int | `256` | ③ 的 MLP 头隐藏层宽度。 |
 | `readout.head.dropout` | float | `0.0` | ③ 的 MLP 头 dropout。 |
+| `readout.prompt.style` | `plain` \| `chat_json` | `plain` | ① 的提示写法：`plain` 是 MetisCraft 的文本布局；`chat_json` 把题目写成 JSON 载荷放进分词器的对话模板（关闭思考），选项和等级都用字母，即 Tev1 的格式，只接受选择和等级题。 |
+| `readout.prompt.system` | str \| `null` | `null` | `chat_json` 的系统提示；不写就没有系统回合。 |
 | `readout.shuffle_train` | bool | `True` | 训练时打乱候选顺序（③），避免记住位置。 |
 | `readout.infer_permutations` | int | `1` | 预留字段，v0.1 未实现，设了也不生效。 |
 
@@ -52,7 +54,7 @@
 
 | 字段 | 类型 | 默认 | 说明 |
 |---|---|---|---|
-| `objective.kind` | `auto` \| `bce` \| `cross_entropy` \| `ordinal_soft` | `auto` | 损失由判断类型决定，`auto`、`bce`、`cross_entropy` 在 v0.1 效果相同，只作标注；`ordinal_soft` 让等级题改用以金标为中心的高斯软目标。 |
+| `objective.kind` | `auto` \| `bce` \| `cross_entropy` \| `ordinal_soft` \| `completion` | `auto` | 损失由判断类型决定，`auto`、`bce`、`cross_entropy` 在 v0.1 效果相同，只作标注；`ordinal_soft` 让等级题改用以金标为中心的高斯软目标；`completion` 只用于 ①，像监督微调那样在整个词表上训练答案码和 EOS 两个 token。 |
 | `objective.brier_weight` | float | `0.0` | 在交叉熵之外再加 Brier 项的权重（选择、等级）。 |
 | `objective.pos_weight` | `none` \| `auto` \| float | `none` | 多标签正样本权重：`none`、`auto`（训练集负正比，限制在 1 到 100）或一个数；推理时自动扣回 ln w。 |
 | `objective.ordinal_sigma` | float | `1.0` | 序数软目标的高斯宽度，单位是等级。 |
@@ -68,7 +70,8 @@
 | `train.lr` | float | `0.0002` | LoRA（或全参）的学习率。 |
 | `train.head_lr` | float | `0.001` | 读出头的学习率。 |
 | `train.weight_decay` | float | `0.0` | AdamW 的权重衰减。 |
-| `train.warmup_ratio` | float | `0.0` | 预热步数占总步数的比例；之后线性衰减到 0。 |
+| `train.scheduler` | `linear` \| `cosine` | `linear` | 学习率调度：`linear` 线性衰减到 0；`cosine` 按余弦衰减到 0。 |
+| `train.warmup_ratio` | float | `0.0` | 预热步数占总步数的比例；之后按 `train.scheduler` 衰减。 |
 | `train.max_grad_norm` | float | `1.0` | 梯度裁剪阈值。 |
 | `train.seed` | int | `42` | 随机种子，决定数据顺序和初始化。 |
 | `train.bf16` | bool | `True` | 在 CUDA 上用 bf16 autocast。 |

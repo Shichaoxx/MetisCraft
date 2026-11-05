@@ -161,6 +161,7 @@ tests/              # pytest；微型随机初始化模型，不占 GPU
 **① 答案 token**：在答案位置取 `lm_head` 的 logits `z: [B, V]`，只保留各选项码的 token：`z[:, ell] -> [B, K]`。
 - noul 的选项码是 ` yes` / ` no` 两个 token，`p_true = sigmoid(z_yes - z_no)`；这等价于一个线性头（两行 `lm_head` 之差），测试要验证逐位一致。
 - choice 与 score 的选项码由码本给出：按固定顺序（`A`–`Z`、`a`–`z`、两位大写字母……）挑出在当前分词器里恰好编码为单个 token 的字符串，前 K 个分给选项。提示里写"码: 选项描述"，所以 Banking77 的 77 个选项也能用 ①。score 默认用从 0 起的数字等级。
+- 提示有两种写法（`readout.prompt.style`）。默认 `plain` 是"码: 选项描述"的文本布局，题面过长时只截断状态。`chat_json` 把状态、问题和带字母的选项写成一个 JSON 载荷，放进分词器自带的对话模板（关闭思考，可加系统提示）；等级也用字母，答案是助手回合开头的那个字母。这是 Tev1 训练用的格式，整段一次渲染、不截断，只接受 choice 与 score。
 - 参数只有 LoRA（或全参），不加新层，保留零样本能力；零样本的 ① 本身就是基线。
 
 **③ 逐候选标量头**：每个候选取一个表示向量 `h_k: [B, K, d]`，经头 `s_k = w^T MLP(h_k) + b` 得到原始分数 `s: [B, K]`。
@@ -173,8 +174,9 @@ tests/              # pytest；微型随机初始化模型，不占 GPU
 
 ## 7. 训练
 
-- 训练循环是一个约 200 行的最小实现（`train/loop.py`）：AdamW，LoRA 与头两组学习率，transformers 的线性调度，bf16 autocast，梯度裁剪。不套 HF `Trainer`：它对梯度累积与多卡的损失缩放在不同版本间改过多次，而下一条是验收硬指标。
+- 训练循环是一个约 200 行的最小实现（`train/loop.py`）：AdamW，LoRA 与头两组学习率，transformers 的线性或 cosine 调度（`train.scheduler`），bf16 autocast，梯度裁剪。不套 HF `Trainer`：它对梯度累积与多卡的损失缩放在不同版本间改过多次，而下一条是验收硬指标。
 - 损失按全局问题数归一：一个优化步内所有微批、所有卡的问题数先 all-reduce，每个微批回传 `损失总和 × 卡数 / 全局问题数`，DDP 求平均后即为全局均值；用微型模型测试梯度累积（含大小不均的微批）下的等价性。
+- 答案 token 读出默认在选项码之间做 softmax。`objective.kind: completion` 改按监督微调的方式训练：把正确选项的码接在提示后面，在最后两个位置分别对整个词表算码和 EOS 的交叉熵，两项取平均作为这道题的损失，再按上一条归一。每题恰好两个答案 token，所以它等于 SFT 报告的逐 token 均值。校准、评测和部署照旧在提示末尾只读选项码的 logits；接在后面的码只影响训练，读出位置看不到它。
 - 多卡用 `torchrun` 启动 DDP。
 - 多标签可以用 `objective.pos_weight` 给正样本加权（`auto` 取训练集的负正比）。加权把每个正样本的赔率乘上 w，学到的 logit 整体高出 ln w，所以实际用到的 w 写进产物，推理时先减去 ln w，再做温度校准；否则概率会系统性偏高，温度缩放也修不回来。
 - 默认超参不写死在代码里，全部在配方中显式给出；新配方先过 sanity 阶梯：小子集过拟合 → 学习率扫描 → 学习曲线。
@@ -210,8 +212,8 @@ task: banking77
 data:      {dataset: banking77, version: rev-18469841}
 model:     {base: qwen3/0.6b, finetune: {kind: lora, r: 16, alpha: 32, targets: all-linear}}
 readout:   {kind: candidate_scalar, layout: list, head: {hidden: 256}}
-objective: {kind: cross_entropy}
-train:     {epochs: 3, batch_size: 8, grad_accum: 2, lr: 2.0e-4, head_lr: 1.0e-3, seed: 42, bf16: true}
+objective: {kind: cross_entropy}    # 答案 token 读出还可用 completion
+train:     {epochs: 3, batch_size: 8, grad_accum: 2, lr: 2.0e-4, head_lr: 1.0e-3, scheduler: linear, seed: 42, bf16: true}
 calibrate: {method: temperature, split: calib}
 eval:      {splits: [dev], baselines: [prior]}
 ```

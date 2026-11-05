@@ -21,7 +21,7 @@ import torch.distributed as dist
 from torch.utils.data import DataLoader, DistributedSampler, RandomSampler
 
 from metiscraft.config import ObjectiveConfig, TrainConfig
-from metiscraft.judgments import batch_loss
+from metiscraft.judgments import batch_loss, completion_loss
 from metiscraft.train.collate import Collator, to_device
 
 
@@ -89,14 +89,17 @@ def accumulate(
         with sync:
             with torch.autocast("cuda", dtype=torch.bfloat16, enabled=use_bf16):
                 scores = net(batch)
-            loss_sum, _ = batch_loss(
-                scores.float(),
-                batch["mask"],
-                batch["targets"],
-                batch["kinds"],
-                brier_weight=objective.brier_weight,
-                pos_weight=pos_weight,
-            )
+            if objective.kind == "completion":
+                loss_sum, _ = completion_loss(scores.float(), batch["answer_ids"])
+            else:
+                loss_sum, _ = batch_loss(
+                    scores.float(),
+                    batch["mask"],
+                    batch["targets"],
+                    batch["kinds"],
+                    brier_weight=objective.brier_weight,
+                    pos_weight=pos_weight,
+                )
             (loss_sum * world / n_global).backward()
         loss_sum_total += float(loss_sum.detach())
     return loss_sum_total, n_local
@@ -131,7 +134,7 @@ def train_loop(
     params = [p for g in param_groups(model, cfg) for p in g["params"]]
     optimizer = torch.optim.AdamW(param_groups(model, cfg), weight_decay=cfg.weight_decay)
     scheduler = get_scheduler(
-        "linear",
+        cfg.scheduler,
         optimizer,
         num_warmup_steps=int(cfg.warmup_ratio * total),
         num_training_steps=total,

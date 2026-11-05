@@ -25,6 +25,15 @@ very negative neutral positive review comment admiration anger state fresh Next 
 urgent Needs a human reply escalate if true false number utterance weather timer intent""".split()
 
 
+# Qwen's layout, including the empty thinking block that `enable_thinking=False` adds.
+CHAT_TEMPLATE = (
+    "{% for m in messages %}<|im_start|>{{ m.role }}\n{{ m.content }}<|im_end|>\n{% endfor %}"
+    "{% if add_generation_prompt %}<|im_start|>assistant\n"
+    "{% if enable_thinking is defined and not enable_thinking %}<think>\n\n</think>\n\n{% endif %}"
+    "{% endif %}"
+)
+
+
 def tiny_tokenizer() -> PreTrainedTokenizerFast:
     upper = list(string.ascii_uppercase)
     vocab_words = (
@@ -46,6 +55,7 @@ def tiny_tokenizer() -> PreTrainedTokenizerFast:
         tokenizer_object=tok, unk_token="[UNK]", pad_token="[PAD]", eos_token="[EOS]"
     )
     fast.padding_side = "left"
+    fast.chat_template = CHAT_TEMPLATE
     return fast
 
 

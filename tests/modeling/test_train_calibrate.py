@@ -1,20 +1,37 @@
 import copy
 import json
+import math
 
 import numpy as np
 import pytest
 import torch
+import torch.nn.functional as F
 from sklearn.metrics import accuracy_score, brier_score_loss, f1_score, log_loss
 
 from metiscraft.calibrate import fit_temperature, mean_nll
 from metiscraft.config import ObjectiveConfig, ReadoutConfig, TrainConfig
+from metiscraft.data.contract import Record
 from metiscraft.evaluate.metrics import ece, macro_f1, metrics_for_kind
-from metiscraft.judgments import decide, prior_shift, probabilities
+from metiscraft.judgments import (
+    answer_index,
+    completion_loss,
+    decide,
+    prior_shift,
+    probabilities,
+)
 from metiscraft.train.collate import Collator
 from metiscraft.train.loop import accumulate, train_loop
-from tests.modeling.tiny import choice_row, multilabel_row, noul_row, tiny_decision_model
+from tests.modeling.tiny import (
+    choice_row,
+    multilabel_row,
+    noul_row,
+    score_row,
+    tiny_decision_model,
+)
 
 LIST = {"kind": "candidate_scalar", "layout": "list", "shuffle_train": False}
+ANSWER = {"kind": "answer_token"}
+CHAT = {**ANSWER, "prompt": {"style": "chat_json", "system": "Pick one."}}
 
 
 def _rows(n):
@@ -65,6 +82,74 @@ def test_train_loop_runs_and_logs(tmp_path):
     assert summary["steps"] == 3
     lines = [json.loads(x) for x in log.read_text().splitlines()]
     assert len(lines) == 3 and all(np.isfinite(x["loss"]) for x in lines)
+
+
+@pytest.mark.parametrize("readout", [ANSWER, CHAT])
+def test_completion_predicts_the_answer_code_then_eos(readout):
+    model, tok = tiny_decision_model("qwen3", readout)
+    model.eval()
+    rows = [choice_row(0, "tech"), score_row(1)]
+    if readout is ANSWER:
+        rows.append(noul_row(2, False))  # chat_json takes no noul
+    cfg = ReadoutConfig(**readout)
+    plain = Collator(tok, cfg, 256)(rows)
+    batch = Collator(tok, cfg, 256, train=True, completion=True)(rows)
+    gold = [int(plain["codes"][i, answer_index(Record(**r))]) for i, r in enumerate(rows)]
+    assert batch["input_ids"][:, -1].tolist() == gold  # the prompt, then its answer code
+    assert torch.equal(batch["input_ids"][:, :-1], plain["input_ids"])
+    assert batch["answer_ids"].tolist() == [[g, tok.eos_token_id] for g in gold]
+    with torch.no_grad():
+        logits = model(batch)
+        loss, n = completion_loss(logits, batch["answer_ids"])
+        full = model.backbone(
+            input_ids=batch["input_ids"],
+            attention_mask=batch["attention_mask"],
+            position_ids=batch["position_ids"],
+        ).logits
+        h = model.hidden(plain["input_ids"], plain["attention_mask"], plain["position_ids"])
+        read = model.backbone.get_output_embeddings()(h[:, -1])
+    target = batch["answer_ids"]
+    per_token = F.cross_entropy(full[:, -2], target[:, 0], reduction="none") + F.cross_entropy(
+        full[:, -1], target[:, 1], reduction="none"
+    )
+    assert n == len(rows)
+    torch.testing.assert_close(loss, (per_token / 2).sum())
+    # the readout position sees only the prompt, so the appended code changes nothing there
+    torch.testing.assert_close(logits[:, 0], read, rtol=1e-4, atol=1e-5)
+
+
+def test_completion_gradient_accumulation_matches_one_big_batch():
+    model, tok = tiny_decision_model("qwen3", ANSWER)
+    other = copy.deepcopy(model)
+    collator = Collator(tok, ReadoutConfig(**ANSWER), 256, train=True, completion=True)
+    rows = [choice_row(i, ["billing", "tech", "refund"][i % 3]) for i in range(4)]
+    rows += [score_row(4), noul_row(5)]
+    objective = ObjectiveConfig(kind="completion")
+    cpu = torch.device("cpu")
+    accumulate(model, [collator(rows[:1]), collator(rows[1:])], objective, device=cpu)
+    accumulate(other, [collator(rows)], objective, device=cpu)
+    ga, gb = _grads(model), _grads(other)
+    assert ga.keys() == gb.keys() and ga
+    for name in ga:
+        torch.testing.assert_close(ga[name], gb[name], rtol=1e-5, atol=1e-6, msg=name)
+
+
+@pytest.mark.parametrize("scheduler", ["linear", "cosine"])
+def test_learning_rate_follows_the_schedule(tmp_path, scheduler):
+    model, tok = tiny_decision_model("qwen3", ANSWER)
+    collator = Collator(tok, ReadoutConfig(**ANSWER), 256, train=True, completion=True)
+    cfg = TrainConfig(
+        batch_size=2, max_steps=4, lr=1e-3, scheduler=scheduler, bf16=False, logging_steps=1
+    )
+    log = tmp_path / "log.jsonl"
+    rows = [choice_row(i) for i in range(8)]
+    objective = ObjectiveConfig(kind="completion")
+    train_loop(model, rows, collator, cfg, objective, device=torch.device("cpu"), log_path=log)
+    lines = [json.loads(x) for x in log.read_text().splitlines()]
+    shape = {"linear": lambda p: 1 - p, "cosine": lambda p: 0.5 * (1 + math.cos(math.pi * p))}
+    expected = [1e-3 * shape[scheduler](step / 4) for step in range(1, 5)]
+    assert [x["lr"] for x in lines] == pytest.approx(expected)
+    assert all(np.isfinite(x["loss"]) for x in lines)
 
 
 def _choice_preds(n=4000, true_t=2.0, k=4, seed=0):

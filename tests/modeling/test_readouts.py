@@ -122,3 +122,56 @@ def test_answer_token_rejects_multi_label():
     tok = tiny_tokenizer()
     with pytest.raises(ValueError, match="multi_label"):
         Collator(tok, ReadoutConfig(**ANSWER), 256)([multilabel_row(0)])
+
+
+CHAT = {**ANSWER, "prompt": {"style": "chat_json", "system": "Pick one."}}
+
+
+class Spy:
+    """The tiny tokenizer, recording what reaches its chat template."""
+
+    def __init__(self):
+        self.tok, self.calls = tiny_tokenizer(), []
+
+    def __getattr__(self, name):
+        return getattr(self.tok, name)
+
+    def apply_chat_template(self, messages, **kwargs):
+        self.calls.append((messages, kwargs))
+        return self.tok.apply_chat_template(messages, **kwargs)
+
+
+def test_chat_json_prompt_is_the_payload_in_the_chat_template():
+    spy = Spy()
+    row = choice_row(0)
+    row["input"]["context"]["state"] = {"amount": 3, "note": "late"}  # key order is kept
+    row["question"]["options"][0]["text"] = "Billing team"
+    enc = PromptBuilder(spy, 256, ReadoutConfig(**CHAT).prompt).answer_token(Record(**row))
+    ((messages, kwargs),) = spy.calls
+    user = (
+        '{"state": {"amount": 3, "note": "late"}, "question": "Which team should handle this ?", '
+        '"options": [{"label": "A", "key": "billing", "description": "Billing team"}, '
+        '{"label": "B", "key": "tech", "description": null}, '
+        '{"label": "C", "key": "refund", "description": null}]}'
+    )
+    assert messages == [
+        {"role": "system", "content": "Pick one."},
+        {"role": "user", "content": user},
+    ]
+    assert kwargs == {"tokenize": False, "add_generation_prompt": True, "enable_thinking": False}
+    text = spy.tok.apply_chat_template(messages, **kwargs)
+    assert text.endswith("<|im_start|>assistant\n<think>\n\n</think>\n\n")
+    assert enc.input_ids == spy.tok.encode(text, add_special_tokens=False)
+    assert enc.codes == [t for _, t in build_codebook(spy.tok, 3)]
+
+
+def test_chat_json_letters_levels_and_takes_no_noul():
+    tok = tiny_tokenizer()
+    builder = PromptBuilder(tok, 256, ReadoutConfig(**CHAT).prompt)
+    assert builder.answer_token(Record(**score_row(0))).codes == tok.convert_tokens_to_ids(
+        ["A", "B", "C"]
+    )
+    with pytest.raises(ValueError, match="choice and score"):
+        builder.answer_token(Record(**noul_row(0)))
+    with pytest.raises(ValueError, match="needs kind=answer_token"):
+        ReadoutConfig(**{**LIST, "prompt": {"style": "chat_json"}})

@@ -15,7 +15,7 @@ from pathlib import Path
 from typing import Any, Literal
 
 import yaml
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 
 class _Strict(BaseModel):
@@ -60,16 +60,32 @@ class HeadConfig(_Strict):
     dropout: float = 0.0
 
 
+class PromptConfig(_Strict):
+    # plain: MetisCraft's own text layout; chat_json: a JSON payload in the tokenizer's chat
+    # template with thinking off and lettered options (answer-token readout only)
+    style: Literal["plain", "chat_json"] = "plain"
+    system: str | None = None  # chat_json: the system message, if any
+
+
 class ReadoutConfig(_Strict):
     kind: Literal["answer_token", "candidate_scalar"]
     layout: Literal["list", "pairs"] = "list"
     head: HeadConfig = Field(default_factory=HeadConfig)
+    prompt: PromptConfig = Field(default_factory=PromptConfig)
     shuffle_train: bool = True
     infer_permutations: int = 1
 
+    @model_validator(mode="after")
+    def _prompt_fits(self) -> ReadoutConfig:
+        if self.prompt.style != "plain" and self.kind != "answer_token":
+            raise ValueError(f"prompt.style={self.prompt.style} needs kind=answer_token")
+        return self
+
 
 class ObjectiveConfig(_Strict):
-    kind: Literal["auto", "bce", "cross_entropy", "ordinal_soft"] = "auto"
+    # completion: next-token cross-entropy over the whole vocabulary on the answer code and
+    # the end-of-sequence token, as supervised fine-tuning does (answer-token readout only)
+    kind: Literal["auto", "bce", "cross_entropy", "ordinal_soft", "completion"] = "auto"
     brier_weight: float = 0.0
     pos_weight: Literal["none", "auto"] | float = "none"
     ordinal_sigma: float = 1.0
@@ -83,6 +99,7 @@ class TrainConfig(_Strict):
     lr: float = 2e-4
     head_lr: float = 1e-3
     weight_decay: float = 0.0
+    scheduler: Literal["linear", "cosine"] = "linear"
     warmup_ratio: float = 0.0
     max_grad_norm: float = 1.0
     seed: int = 42
@@ -110,6 +127,12 @@ class Recipe(_Strict):
     calibrate: CalibrateConfig = Field(default_factory=CalibrateConfig)
     eval: EvalConfig = Field(default_factory=EvalConfig)
     paths: Paths = Field(default_factory=Paths)
+
+    @model_validator(mode="after")
+    def _objective_fits(self) -> Recipe:
+        if self.objective.kind == "completion" and self.readout.kind != "answer_token":
+            raise ValueError("objective.kind=completion needs readout.kind=answer_token")
+        return self
 
     def to_dict(self) -> dict[str, Any]:
         return self.model_dump(mode="json")

@@ -47,6 +47,28 @@ def target_vector(record: Record, ordinal_sigma: float | None = None) -> list[fl
     return vec
 
 
+def answer_index(record: Record) -> int:
+    """The target an answer-token prompt should be completed with: yes/no for noul (codes
+    are [yes, no]), otherwise the labelled option or level."""
+    sup = record.supervision
+    if sup is None or sup.soft is not None:
+        raise ValueError(f"{record.id}: completion training needs one hard label")
+    if record.question.type == "noul":
+        return 0 if sup.labels else 1
+    return target_vector(record).index(1.0)
+
+
+def completion_loss(logits: torch.Tensor, answer_ids: torch.Tensor) -> tuple[torch.Tensor, int]:
+    """Next-token cross-entropy over the whole vocabulary on [answer code, EOS].
+
+    ``logits`` [B, 2, V] predict ``answer_ids`` [B, 2]. Every question has two answer tokens,
+    so the mean of its two losses summed over questions, divided by the question count,
+    equals the per-token mean that supervised fine-tuning reports.
+    """
+    ce = F.cross_entropy(logits.flatten(0, 1), answer_ids.flatten(), reduction="none")
+    return ce.view(-1, 2).mean(-1).sum(), logits.size(0)
+
+
 def batch_loss(
     scores: torch.Tensor,
     mask: torch.Tensor,

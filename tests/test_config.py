@@ -75,3 +75,21 @@ def test_resolve_paths_priority(tmp_path, monkeypatch):
 def test_require_path_explains_missing(tmp_path):
     with pytest.raises(ValueError, match="METISCRAFT_DATA_ROOT"):
         require_path(Paths(), "data_root")
+
+
+def test_completion_and_chat_prompts_need_the_answer_token_readout(tmp_path):
+    path = write(tmp_path, RECIPE)
+    recipe = load_recipe(
+        path,
+        [
+            "readout.kind=answer_token",
+            "readout.prompt.style=chat_json",
+            "objective.kind=completion",
+            "train.scheduler=cosine",
+        ],
+    )
+    assert recipe.readout.prompt.style == "chat_json" and recipe.train.scheduler == "cosine"
+    with pytest.raises(ValidationError, match="needs readout.kind=answer_token"):
+        load_recipe(path, ["readout.kind=candidate_scalar", "objective.kind=completion"])
+    with pytest.raises(ValidationError, match="needs kind=answer_token"):
+        load_recipe(path, ["readout.kind=candidate_scalar", "readout.prompt.style=chat_json"])

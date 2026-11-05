@@ -179,3 +179,21 @@ def test_evaluate_artifact_matches_the_run(roots, monkeypatch):
             assert again["dev"][method]["choice"][key] == pytest.approx(
                 saved["dev"][method]["choice"][key], abs=1e-6
             )
+
+
+def test_chat_json_completion_run_reloads_with_its_prompt(roots):
+    from metiscraft.data.store import read_jsonl, resolve_version
+    from metiscraft.serve.predictor import Predictor
+
+    readout = {"kind": "answer_token", "prompt": {"style": "chat_json", "system": "Pick one."}}
+    objective = {"kind": "completion"}
+    run = run_recipe(recipe(roots, "banking77", readout, objective, scheduler="cosine"))
+    meta = read_artifact_meta(run / "artifact")
+    assert meta["readout"]["prompt"] == {"style": "chat_json", "system": "Pick one."}
+    log = [json.loads(x) for x in (run / "train_log.jsonl").read_text().splitlines()]
+    assert log[-1]["lr"] == pytest.approx(0.0)  # cosine reaches zero on the last step
+    saved = {p["id"]: p for p in read_jsonl(run / "eval" / "dev.predictions.jsonl")}
+    predictor = Predictor.load(run / "artifact")
+    rows = resolve_version(roots["data"], "banking77").load("dev")
+    for result in predictor.predict_records(rows):
+        assert result["raw_scores"] == pytest.approx(saved[result["id"]]["scores"], abs=1e-5)

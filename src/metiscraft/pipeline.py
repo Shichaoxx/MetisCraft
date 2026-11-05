@@ -149,6 +149,7 @@ def run_recipe(recipe: Recipe, *, model_factory=build_model) -> Path:
             train=True,
             seed=recipe.train.seed,
             ordinal_sigma=ordinal,
+            completion=recipe.objective.kind == "completion",
         )
         net = None
         if world > 1:

@@ -46,12 +46,17 @@ class DecisionModel(nn.Module):
         return out.last_hidden_state  # [B, T, d], after the final norm
 
     def forward(self, batch: dict) -> torch.Tensor:
-        """Raw scores [B, K]; padded columns are meaningless and masked by the caller."""
+        """Raw scores [B, K]; padded columns are meaningless and masked by the caller.
+
+        For completion training (``answer_ids`` in the batch, answer code appended to the
+        input) it returns instead the full-vocabulary logits [B, 2, V] at the last prompt
+        position and at the code, which predict the code and the end-of-sequence token.
+        """
         if self.readout.kind == "answer_token":
-            h_last = self.hidden(
-                batch["input_ids"], batch["attention_mask"], batch["position_ids"]
-            )[:, -1]
-            logits = self.backbone.get_output_embeddings()(h_last).float()  # [B, V]
+            h = self.hidden(batch["input_ids"], batch["attention_mask"], batch["position_ids"])
+            if "answer_ids" in batch:
+                return self.backbone.get_output_embeddings()(h[:, -2:]).float()  # [B, 2, V]
+            logits = self.backbone.get_output_embeddings()(h[:, -1]).float()  # [B, V]
             z = logits.gather(1, batch["codes"])  # [B, K]
             noul = batch["noul_rows"]
             if noul.any():
