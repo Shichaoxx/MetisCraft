@@ -23,6 +23,7 @@ from metiscraft.calibrate import fit_calibration
 from metiscraft.config import Recipe, require_path, resolve_paths
 from metiscraft.data.contract import Record
 from metiscraft.data.store import DatasetVersion, resolve_version, sha256_file, write_jsonl
+from metiscraft.data.usage import validate_usage
 from metiscraft.evaluate.infer import predict
 from metiscraft.evaluate.metrics import evaluate, evaluate_prior, prior_probabilities
 from metiscraft.evaluate.report import render_report
@@ -99,10 +100,10 @@ def run_recipe(recipe: Recipe, *, model_factory=build_model) -> Path:
     paths = resolve_paths(recipe.paths)
     data_root = require_path(paths, "data_root")
     runs_root = require_path(paths, "runs_root")
-    rank, world, device = init_distributed()
-
     dv = resolve_version(data_root, recipe.data.dataset, recipe.data.version)
     dv.verify()
+    validate_usage(recipe, dv)
+    rank, world, device = init_distributed()
     data_meta = dv.meta()
     run = _shared_run_dir(rank, world, lambda: new_run_dir(runs_root, recipe.task, recipe.sha256()))
     if rank == 0:
@@ -172,6 +173,8 @@ def run_recipe(recipe: Recipe, *, model_factory=build_model) -> Path:
         meta = {
             "metiscraft_version": __version__,
             "task": recipe.task,
+            "task_ids": sorted({r["task_id"] for r in train_rows}) or [recipe.task],
+            "serve": recipe.serve.model_dump(mode="json"),
             "readout": recipe.readout.model_dump(mode="json"),
             "finetune": recipe.model.finetune.model_dump(mode="json"),
             "model": {
@@ -274,11 +277,18 @@ def evaluate_artifact(
     calibration_dir: Path | None = None,
     max_eval: int | None = None,
     batch_size: int = 8,
+    allow_legacy_artifact: bool = False,
+    base_path: str | Path | None = None,
 ) -> dict[str, Any]:
     """Evaluate a sealed artifact on any prepared dataset; temperatures come from its run."""
     from metiscraft.serve.predictor import Predictor
 
-    predictor = Predictor.load(artifact, calibration_dir=calibration_dir)
+    predictor = Predictor.load(
+        artifact,
+        calibration_dir=calibration_dir,
+        allow_legacy_artifact=allow_legacy_artifact,
+        base_path=base_path,
+    )
     dv = resolve_version(require_path(resolve_paths(), "data_root"), dataset, version)
     dv.verify()
     results: dict[str, Any] = {}

@@ -73,7 +73,7 @@ class ReadoutConfig(_Strict):
     head: HeadConfig = Field(default_factory=HeadConfig)
     prompt: PromptConfig = Field(default_factory=PromptConfig)
     shuffle_train: bool = True
-    infer_permutations: int = 1
+    infer_permutations: Literal[1] = 1
 
     @model_validator(mode="after")
     def _prompt_fits(self) -> ReadoutConfig:
@@ -117,6 +117,11 @@ class EvalConfig(_Strict):
     baselines: list[str] = Field(default_factory=lambda: ["prior"])
 
 
+class ServeConfig(_Strict):
+    # Request question names map to the same task IDs used during calibration.
+    task_map: dict[str, str] = Field(default_factory=dict)
+
+
 class Recipe(_Strict):
     task: str
     data: DataConfig
@@ -126,6 +131,7 @@ class Recipe(_Strict):
     train: TrainConfig = Field(default_factory=TrainConfig)
     calibrate: CalibrateConfig = Field(default_factory=CalibrateConfig)
     eval: EvalConfig = Field(default_factory=EvalConfig)
+    serve: ServeConfig = Field(default_factory=ServeConfig)
     paths: Paths = Field(default_factory=Paths)
 
     @model_validator(mode="after")

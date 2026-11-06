@@ -44,3 +44,22 @@ jobs:
         run: python -c "import metiscraft, sys; print(metiscraft.__file__); sys.exit('site-packages' not in metiscraft.__file__)"
       - name: Test
         run: pytest
+      - name: Follow the installed-package quickstart outside the checkout
+        run: |
+          cd "$RUNNER_TEMP"
+          python "$GITHUB_WORKSPACE/scripts/verify_installed.py" --work-dir "$RUNNER_TEMP/metiscraft-flow"
+
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.11"
+      - run: pip install -r docs/requirements.txt
+      - run: python scripts/build_docs.py
+      - run: python scripts/check_docs.py
+      - uses: actions/upload-artifact@v7
+        with:
+          name: documentation-preview
+          path: build/documentation/site

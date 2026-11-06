@@ -71,7 +71,22 @@ def fit_calibration(preds: Sequence[dict[str, Any]], min_rows: int = 20) -> dict
 
 
 def temperature_for(calibration: dict[str, Any] | None, task_id: str, kind: str) -> float:
+    return calibration_for(calibration, task_id, kind)["temperature"]
+
+
+def calibration_for(calibration: dict[str, Any] | None, task_id: str, kind: str) -> dict[str, Any]:
+    """Resolve a temperature once, including the reason for any fallback."""
     if not calibration:
-        return 1.0
+        return {"temperature": 1.0, "group": None, "fallback_reason": "uncalibrated"}
     temps = calibration["temperatures"]
-    return temps.get(f"{task_id}|{kind}", temps.get(f"*|{kind}", 1.0))
+    key = f"{task_id}|{kind}"
+    if key in temps:
+        return {"temperature": temps[key], "group": key, "fallback_reason": None}
+    fallback = f"*|{kind}"
+    if fallback in temps:
+        return {
+            "temperature": temps[fallback],
+            "group": fallback,
+            "fallback_reason": "task_temperature_unavailable",
+        }
+    return {"temperature": 1.0, "group": None, "fallback_reason": "kind_temperature_unavailable"}

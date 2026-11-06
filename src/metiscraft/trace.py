@@ -16,7 +16,7 @@ import torch
 from metiscraft import __version__
 from metiscraft.data.store import IntegrityError, sha256_file, verify_sha256sums, write_sha256sums
 
-ARTIFACT_FORMAT = "metiscraft-artifact/1"
+ARTIFACT_FORMAT = "metiscraft-artifact/2"
 NON_COMMERCIAL_TERMS = {
     "non_commercial",
     "research_only",
@@ -148,7 +148,7 @@ def artifact_sha(artifact_dir: Path) -> str:
 def read_artifact_meta(artifact_dir: Path) -> dict[str, Any]:
     verify_sha256sums(artifact_dir)
     meta = json.loads((artifact_dir / "artifact.json").read_text(encoding="utf-8"))
-    if meta.get("format") != ARTIFACT_FORMAT:
+    if meta.get("format") not in {"metiscraft-artifact/1", ARTIFACT_FORMAT}:
         raise IntegrityError(f"{artifact_dir}: unknown artifact format {meta.get('format')!r}")
     return meta
 

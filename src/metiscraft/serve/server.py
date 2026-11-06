@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import logging
 from typing import Annotated, Any
 
 from fastapi import Body, FastAPI, HTTPException
@@ -20,6 +21,7 @@ def create_app(predictor: Predictor):
             "status": "ok",
             "model": predictor.name,
             "calibrated": predictor.calibration is not None,
+            "base_verification": predictor.meta.get("base_verification", "in_memory"),
         }
 
     @app.get("/v1/models")
@@ -39,4 +41,11 @@ def create_app(predictor: Predictor):
 def serve(predictor: Predictor, host: str = "127.0.0.1", port: int = 8000) -> None:
     import uvicorn
 
+    logger = logging.getLogger("metiscraft.serve.predictor")
+    if not logger.handlers:
+        handler = logging.StreamHandler()
+        handler.setFormatter(logging.Formatter("%(levelname)s %(name)s: %(message)s"))
+        logger.addHandler(handler)
+    logger.setLevel(logging.INFO)
+    logger.propagate = False
     uvicorn.run(create_app(predictor), host=host, port=port)

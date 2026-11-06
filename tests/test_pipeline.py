@@ -4,6 +4,7 @@ import pytest
 
 from metiscraft.config import Recipe
 from metiscraft.data.prepare import prepare_dataset
+from metiscraft.data.store import write_sha256sums
 from metiscraft.pipeline import run_recipe
 from metiscraft.trace import load_calibration, read_artifact_meta
 from tests.data.fixtures import fake_fetcher
@@ -20,6 +21,7 @@ def roots(tmp_path):
     (base / "SOURCE.json").write_text(
         json.dumps({"channel": "test", "repo": "tiny", "revision": "0"})
     )
+    write_sha256sums(base)
     for name in ("banking77", "sst5", "go_emotions"):
         prepare_dataset(name, roots["data"], fetcher=fake_fetcher, staging_parent=tmp_path)
     return roots

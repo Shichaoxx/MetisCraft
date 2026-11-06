@@ -1,0 +1,10 @@
+name: quickstart
+version: synthetic-v1
+source: metiscraft-quickstart-synthetic
+license: CC0-1.0
+terms: []
+splits:
+  train: input/train.jsonl
+  calib: input/calib.jsonl
+  dev: input/dev.jsonl
+  test: input/test.jsonl

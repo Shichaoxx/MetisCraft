@@ -107,6 +107,18 @@ jobs:
           metiscraft --help
       - name: Test the installed wheel
         run: python -m pytest
+      - name: Follow the installed-package quickstart outside the checkout
+        run: |
+          cd "$RUNNER_TEMP"
+          python "$GITHUB_WORKSPACE/scripts/verify_installed.py" --work-dir "$RUNNER_TEMP/metiscraft-flow"
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: installed-flow-${{ matrix.python-version }}
+          path: |
+            ${{ runner.temp }}/metiscraft-flow/validation.json
+            ${{ runner.temp }}/metiscraft-flow/commands.log
+            ${{ runner.temp }}/metiscraft-flow/server.log
 
   publish:
     needs: [build, test-wheel]

@@ -1,26 +1,57 @@
-# 参与开发
+# Contributing
 
-MetisCraft 还在 v0.1 开发中，接口随时会变。当前设计见 [`docs/design.md`](docs/design.md)，进度见 [`docs/status.md`](docs/status.md)。
+MetisCraft is preparing 0.1.0rc1. Start with the [core documentation](docs/en/index.md)
+and [current status](docs/status.md). Discuss substantial changes to public APIs,
+judgment semantics or artifact formats before implementing them.
 
-## 开发环境
+## Development setup
+
+Work on a feature branch from `toolkit-rewrite`. In an isolated Python environment:
 
 ```bash
-pip install -e ".[dev,serve]"
-pytest
+python -m pip install -e '.[dev,serve,reproduce]'
 ruff check .
+CUDA_VISIBLE_DEVICES='' OMP_NUM_THREADS=1 python -m pytest
 ```
 
-只跑测试时 CPU 版 PyTorch 就够了：测试用微型随机初始化模型，不下载任何权重或数据。
+Tests use tiny random models and constructed data on CPU. They do not require
+downloaded weights or datasets. The `reproduce` extra is needed by tests for
+external dataset builders. Run the [quickstart](docs/en/quickstart.md) when changing
+the installed-package workflow, and verify packaged resources when changing templates
+or the registry.
 
-## 约定
+## Implementation conventions
 
-- **一事一处**：判断类型的语义只在 `judgments/` 定义，指标只在 `evaluate/` 定义，配方只引用注册名。
-- **默认值有出处**：影响结果的默认值只写在 `config.py`；配方里显式给出训练超参。
-- **测试**：新读出或新判断类型要带形状测试；与已有实现等价的部分（比如答案 token 读出与线性头）要带逐位一致的测试。
-- **数据**：新数据集先进 `src/metiscraft/data/registry.yaml`，写明固定 revision、许可证与条款；不接受用 Jev / TypeSafe API 输出作标签的数据。
-- **提交说明**：英文，祈使句开头，说明为什么改。
-- **文档**：中文；项目状态只写在 `docs/status.md`；公开文件里不写本机路径。
+- Keep judgment semantics in `judgments/`, metrics in `evaluate/`, and defaults
+  that affect results in `config.py`. Recipes should state experimental settings.
+- Keep training, calibration and evaluation roles separate. Never use
+  `eval_only` labels to fit a model or calibrator.
+- Bind artifacts to their verified base content. Historical artifacts must
+  remain explicitly unverified when their original identity is unavailable.
+- Preserve consistent task routing between Record and HTTP prediction, including
+  observable calibration fallback behavior.
+- Add focused regression tests for changed behavior. New readouts and judgment
+  types need shape tests; equivalent implementations need numerical comparisons.
 
-## 许可证
+Users can import their own data without changing the registry. Adding a reusable
+built-in dataset requires a pinned source revision, converter, license and terms
+in `src/metiscraft/data/registry.yaml`. Do not submit labels derived from Jev or
+TypeSafe API outputs.
 
-代码以 Apache-2.0 发布。提交贡献即表示同意以 Apache-2.0 授权你的贡献。
+## Documentation and review
+
+Maintain paired core pages in `docs/en/` and `docs/zh/`; English is the default.
+Use `src/metiscraft/templates/quickstart/README.md` as the command source for the
+exported quickstart. Keep documented commands aligned with the actual CLI, and
+distinguish software checks from evidence about model quality. Keep project
+progress in `docs/status.md` and machine-specific information out of public files.
+
+Write commit messages in English, starting with an imperative verb. A pull
+request should explain the behavior change, relevant checks and material
+limitations. Keep experimental claims tied to recorded runs. Release preparation
+is described in [publishing](docs/publishing.md).
+
+## License
+
+The code is licensed under [Apache-2.0](LICENSE). By submitting a contribution,
+you agree to license it under Apache-2.0. Dataset and model licenses remain separate.

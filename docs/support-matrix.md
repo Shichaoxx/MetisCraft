@@ -1,6 +1,8 @@
 # 支持矩阵（首版）
 
-本矩阵收录 13 个当前较好的 Jev 类项目（8 个开放权重或训练代码、2 个框架内的决策训练功能、3 个与训练直接相关的数据集或基准），逐项标出能否用 MetisCraft v0.1 训练、复现、部署。核对日期 2026-11-05。
+本矩阵收录 14 个 Jev 类项目（8 个开放权重或训练代码项目、3 个工具包或框架功能、3 个相关数据集或基准），逐项记录 MetisCraft 的适配与复现状态。原始核对日期为 2026-11-05；2026-11-07 补入 JevAny 并更新框架定位。未运行第三方工具包，不把阅读文档等同于复现。
+
+**生态定位**：统一的决策模型工具包已经存在。JevAny 提供数据、训练、评测与服务入口；ms-swift 已有 decision 训练、推理和温度校准。MetisCraft 的工作重点是业务配方、可核查运行记录与同协议比较，这些是需要持续验证的目标，不是已证明的独有能力。
 
 **结论**：v0.1 的读出只有 ① 答案 token 与 ③ 逐候选标量头（见 [`readouts/README.md`](readouts/README.md)）。入选项目中，Tev1、jebadiah、Hmm（①）和 JevForge（③）可以按配方直接训练；mammoth-1、ms-swift 部分覆盖；Kev（④）、Clef（⑤）、d3（②）、Unsloth（⑤）的读出不在 v0.1，只作参照。三个数据集都已在注册表中。状态依据 v0.1 设计范围（[`design.md`](design.md) §2）判断，不代表这些项目的配方已在 MetisCraft 内跑通。
 
@@ -33,8 +35,15 @@
 | 11 | [tasksource-jev-typed-decisions][ds-tasksource] | 数据集<br>♥30 · 10-24 | — | — | noul / choice / score；default 配置 999,832 / 15,000 / 15,000 行 | other；逐行 license_use，754 源中 440 个可商用 | source-verified | **能**：已注册 `tasksource_jev`，训练只取 license_use=commercial | — | — |
 | 12 | [Open-Jev][ds-openjev] | 数据集<br>♥115 · 09-20 | — | — | noul / choice / score；release-v2-redistributable 共 113,568 行 | CC0-1.0，仅覆盖作者生成内容 | source-verified | **能**：已注册 `open_jev`；test、ood 标签公开，入模前剔除 metadata_json | — | — |
 | 13 | [typed-decisions][ds-typed] | 基准<br>♥270 · 11-03 | — | — | noul / choice / score；1,200 / 400 case，test 共 2,000 个决策 | Apache-2.0 | source-verified | **仅评测**：已注册 `typed_decisions`，标签是未公开教师的采样均值 | **能**（作评测集）：可与 Hmm、Clef、d3 等榜单数字对拍 | — |
+| 14 | [JevAny][gh-jevany] | 独立工具包 | direct-token / pointer；另有免训练 choice-token | 多基座，具体兼容范围以其文档为准 | 类型化决策 | Apache-2.0（代码） | source-verified：README、pyproject 与 train.py | **未适配**：已有数据准备、自有数据、训练 CLI/API | **未验证**：未运行其配方 | **未适配**：其检查点尚不能由 MetisCraft 直接加载 |
 
-## 训练过程公开程度（2026-11-05 核对）
+## 工具包补充核对（2026-11-07）
+
+- **JevAny**：已查看固定提交的 README、包配置和训练代码，包含独立 Python 包、CLI/API、数据准备、训练、评测与服务，以及 manifest/数据用途验证相关实现。不能根据旧矩阵漏收它而断言市场没有统一包，也没有审计其全部训练结果。
+- **ms-swift**：[官方 Decision 文档](https://swift.readthedocs.io/en/latest/BestPractices/Decision.html)已有训练、推理与温度校准；其已实现能力与 MetisCraft 适配状态分别记录。
+- **标准化进展**：[TRL #8040](https://github.com/huggingface/trl/pull/8040)仍为未合并草稿；[Transformers #50054](https://github.com/huggingface/transformers/pull/50054)与 [#50203](https://github.com/huggingface/transformers/pull/50203)仍未合并。提案不代表已发布 API。
+
+## 训练过程公开程度（2026-11-05 样本，11-07 修正口径）
 
 类 Jev 模型很少把训练过程完整开源。下表只记已核实的内容，"—"表示未核实或未披露。
 
@@ -51,7 +60,7 @@
 | KnowLine、GLiDE、Sieve（榜单前列） | 未披露；GLiDE 仓库只有推理代码 | 未披露 | 未披露 | 榜单分数 | 不能 |
 | 官方 Jev | 闭源，只有 API | — | — | — | 不能；TypeSafe 条款禁止用其输出训练 |
 
-规律：榜单越靠前越不透明，27B 级只放权重，训练数据来源一律未披露，无法核对是否用了 Jev 输出；公开训练代码的都是 4B 级项目，且多缺数据或超参；没有一个提供完整可追溯的训练记录（配置、数据版本、提交、环境、逐题评测）。MetisCraft 要补的就是这一块，见 [`status.md`](status.md)。
+在已核对样本中，部分项目缺少可取得的数据、实际超参或逐题评测，限制了独立复现；本表的未核实项不能推广为整个生态都不存在。单机算力不足也不等于项目不可追溯。MetisCraft 将通过完整记录配置、数据版本、提交、环境和逐题评测，以及实际复现工作来积累证据，见 [`status.md`](status.md)。
 
 ## 各列口径
 
@@ -96,3 +105,4 @@
 [ds-tasksource]: https://huggingface.co/datasets/tasksource/tasksource-jev-typed-decisions/tree/8df2e5c9a33f19a2c2b8febf291c3acb0a91a8a8
 [ds-openjev]: https://huggingface.co/datasets/ZefanCai/Open-Jev/tree/c67699e13d0ae25e35b77165a4b6b079bedc8aba
 [ds-typed]: https://huggingface.co/datasets/LocalLLaMA/typed-decisions/tree/c9e8c4167bf9b47edfcba3b9580e69bddd8d9e5a
+[gh-jevany]: https://github.com/SimpleJev/JevAny/tree/7832fd7ba3b0ba4205bf9f6d3457a7256e11e24e

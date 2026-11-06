@@ -1,0 +1,30 @@
+task: quickstart
+data:
+  dataset: quickstart
+  version: synthetic-v1
+model:
+  base: tiny-qwen3/v1
+  dtype: fp32
+  max_length: 128
+  finetune:
+    kind: lora
+    r: 4
+    alpha: 8
+readout:
+  kind: candidate_scalar
+  head:
+    hidden: 32
+train:
+  max_steps: 2
+  batch_size: 4
+  bf16: false
+  seed: 42
+calibrate:
+  method: temperature
+  split: calib
+eval:
+  splits: [dev, test]
+paths:
+  data_root: data
+  models_root: models
+  runs_root: runs

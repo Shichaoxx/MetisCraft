@@ -28,8 +28,10 @@ def resolve_base(base: str, paths: Paths) -> str:
 
 
 def base_identity(path: str) -> dict[str, Any]:
-    info: dict[str, Any] = {"path": path}
-    root = Path(path)
+    from metiscraft.modeling.identity import capture_identity
+
+    root = Path(path).expanduser().absolute()
+    info: dict[str, Any] = {"path": str(root), "identity": capture_identity(root)}
     source = root / "SOURCE.json"
     if source.is_file():
         info["source"] = json.loads(source.read_text(encoding="utf-8"))
@@ -74,6 +76,7 @@ def load_backbone(cfg: ModelConfig, paths: Paths) -> tuple[nn.Module, Any, dict[
     from transformers import AutoModelForCausalLM
 
     path = resolve_base(cfg.base, paths)
+    identity = base_identity(path)
     tokenizer = load_tokenizer(path)
     model = AutoModelForCausalLM.from_pretrained(path, dtype=DTYPES[cfg.dtype])
     if cfg.gradient_checkpointing:
@@ -81,4 +84,4 @@ def load_backbone(cfg: ModelConfig, paths: Paths) -> tuple[nn.Module, Any, dict[
         if cfg.finetune.kind == "lora":
             model.enable_input_require_grads()
     model = apply_finetune(model, cfg.finetune)
-    return model, tokenizer, base_identity(path)
+    return model, tokenizer, identity

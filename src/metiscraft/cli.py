@@ -15,6 +15,34 @@ def _cmd_version(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_init(args: argparse.Namespace) -> int:
+    from pathlib import Path
+
+    from metiscraft.scaffold import init_project
+
+    print(init_project(Path(args.directory), template=args.template))
+    return 0
+
+
+def _cmd_data_import(args: argparse.Namespace) -> int:
+    from pathlib import Path
+
+    from metiscraft.data.local import import_dataset
+
+    dv = import_dataset(Path(args.manifest), _data_root(args))
+    print(f"{dv.name}@{dv.version} ready at {dv.root}")
+    return 0
+
+
+def _predictor_options(args: argparse.Namespace) -> dict:
+    from metiscraft.config import load_yaml
+
+    options = {"allow_legacy_artifact": args.allow_legacy_artifact, "base_path": args.base_path}
+    if getattr(args, "task_map", None):
+        options["task_map"] = load_yaml(args.task_map)
+    return options
+
+
 def _cmd_config_show(args: argparse.Namespace) -> int:
     from metiscraft.config import load_recipe, resolve_paths
 
@@ -106,6 +134,8 @@ def _cmd_eval(args: argparse.Namespace) -> int:
         splits=args.split,
         calibration_dir=Path(args.calibration) if args.calibration else None,
         max_eval=args.max_eval,
+        allow_legacy_artifact=args.allow_legacy_artifact,
+        base_path=args.base_path,
     )
     header = {"task": f"{args.dataset} evaluated with {args.artifact}"}
     print(render_report(header, results))
@@ -120,7 +150,9 @@ def _cmd_predict(args: argparse.Namespace) -> int:
     from metiscraft.data.store import read_jsonl
     from metiscraft.serve.predictor import Predictor
 
-    predictor = Predictor.load(args.artifact, calibration_dir=args.calibration)
+    predictor = Predictor.load(
+        args.artifact, calibration_dir=args.calibration, **_predictor_options(args)
+    )
     rows = list(read_jsonl(Path(args.input)))
     out = open(args.output, "w", encoding="utf-8") if args.output else sys.stdout
     try:
@@ -141,7 +173,7 @@ def _cmd_serve(args: argparse.Namespace) -> int:
     from metiscraft.serve.server import serve
 
     serve(
-        Predictor.load(args.artifact, calibration_dir=args.calibration),
+        Predictor.load(args.artifact, calibration_dir=args.calibration, **_predictor_options(args)),
         host=args.host,
         port=args.port,
     )
@@ -158,6 +190,11 @@ def build_parser() -> argparse.ArgumentParser:
 
     p = sub.add_parser("version", help="print the package version")
     p.set_defaults(func=_cmd_version)
+
+    p = sub.add_parser("init", help="export a self-contained quickstart from the installed package")
+    p.add_argument("directory", help="new project directory (must not exist)")
+    p.add_argument("--template", choices=["quickstart"], default="quickstart")
+    p.set_defaults(func=_cmd_init)
 
     p = sub.add_parser("config", help="inspect recipes")
     config_sub = p.add_subparsers(dest="config_command", required=True)
@@ -179,6 +216,10 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--max-eval", type=int, help="cap rows per split")
     p.add_argument("--calibration", help="calibration directory (default: the run's)")
     p.add_argument("--output", help="also write the metrics as JSON here")
+    p.add_argument("--base-path", help="verified base directory after a path migration")
+    p.add_argument(
+        "--allow-legacy-artifact", action="store_true", help="load an unverified /1 base"
+    )
     p.set_defaults(func=_cmd_eval)
 
     p = sub.add_parser("predict", help="answer records or official requests from a JSONL file")
@@ -186,6 +227,11 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("input", help="JSONL of records or /v1/systemone requests")
     p.add_argument("--output", help="write results here instead of stdout")
     p.add_argument("--calibration", help="calibration directory (default: the run's)")
+    p.add_argument("--task-map", help="YAML mapping request question names to artifact task IDs")
+    p.add_argument("--base-path", help="verified base directory after a path migration")
+    p.add_argument(
+        "--allow-legacy-artifact", action="store_true", help="load an unverified /1 base"
+    )
     p.set_defaults(func=_cmd_predict)
 
     p = sub.add_parser("serve", help="serve an artifact over HTTP (POST /v1/systemone)")
@@ -193,10 +239,19 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--calibration", help="calibration directory (default: the run's)")
     p.add_argument("--host", default="127.0.0.1")
     p.add_argument("--port", type=int, default=8000)
+    p.add_argument("--task-map", help="YAML mapping request question names to artifact task IDs")
+    p.add_argument("--base-path", help="verified base directory after a path migration")
+    p.add_argument(
+        "--allow-legacy-artifact", action="store_true", help="load an unverified /1 base"
+    )
     p.set_defaults(func=_cmd_serve)
 
     p = sub.add_parser("data", help="registered datasets")
     data_sub = p.add_subparsers(dest="data_command", required=True)
+    local = data_sub.add_parser("import", help="validate and seal local Record JSONL splits")
+    local.add_argument("manifest", help="local dataset manifest YAML")
+    local.add_argument("--data-root", help="data root (default: paths.data_root)")
+    local.set_defaults(func=_cmd_data_import)
     for cmd, func, help_text in (
         ("list", _cmd_data_list, "list registered datasets and prepared versions"),
         ("prepare", _cmd_data_prepare, "download, convert and write a dataset version"),

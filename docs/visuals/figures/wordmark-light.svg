@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="620" height="116" viewBox="0 0 620 116" role="img" aria-labelledby="title"><title id="title">MetisCraft</title><style>text {font-family: "Inter", "DejaVu Sans", Arial, sans-serif}</style><rect width="620" height="116" rx="18" fill="none"/><g transform="translate(4 6) scale(1)" fill="none"
+        stroke="#087f78" stroke-width="5" stroke-linejoin="round" stroke-linecap="round">
+      <path d="M18 25 L18 8 L38 19 Q50 14 62 19 L82 8 L82 53
+               Q80 78 50 91 Q20 78 18 53 Z"/>
+      <path d="M20 31 Q33 18 50 37 Q67 18 80 31"/>
+      <circle cx="35" cy="44" r="13"/><circle cx="65" cy="44" r="13"/>
+      <circle cx="35" cy="44" r="4" fill="#087f78" stroke="none"/>
+      <circle cx="65" cy="44" r="4" fill="#087f78" stroke="none"/>
+      <path d="M45 61 L50 68 L55 61" stroke="#bd8c36"/>
+    </g><text x="124" y="78" font-size="62" fill="#243438" font-weight="650" >MetisCraft</text></svg>
