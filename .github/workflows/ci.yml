@@ -21,3 +21,26 @@ jobs:
         run: ruff check .
       - name: Test
         run: pytest
+
+  wheel:
+    # What `pip install metiscraft` would get: the built wheel in a clean environment, tested
+    # against the installed package rather than the source tree.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Build the wheel and the sdist
+        run: |
+          pip install build
+          python -m build
+      - name: Install CPU PyTorch
+        run: pip install torch --index-url https://download.pytorch.org/whl/cpu
+      - name: Install the wheel
+        run: pip install "$(ls dist/*.whl)[dev,serve,reproduce]"
+      - name: Check that the installed package is the one imported
+        run: python -c "import metiscraft, sys; print(metiscraft.__file__); sys.exit('site-packages' not in metiscraft.__file__)"
+      - name: Test
+        run: pytest

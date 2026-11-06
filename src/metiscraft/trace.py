@@ -24,7 +24,6 @@ NON_COMMERCIAL_TERMS = {
     "teacher_unknown",
     "eval_only_no_train",
 }
-REPO_ROOT = Path(__file__).resolve().parents[2]
 
 
 def write_json(path: Path, obj: Any) -> None:
@@ -34,21 +33,38 @@ def write_json(path: Path, obj: Any) -> None:
     )
 
 
-def _git(*args: str) -> str | None:
+def _git(root: Path, *args: str) -> str | None:
     try:
         return subprocess.run(
-            ["git", *args], cwd=REPO_ROOT, capture_output=True, text=True, check=True
+            ["git", *args], cwd=root, capture_output=True, text=True, check=True
         ).stdout
     except (OSError, subprocess.CalledProcessError):
         return None
 
 
+def checkout_of(module: Path) -> Path | None:
+    """The MetisCraft source checkout ``module`` (``src/metiscraft/<file>``) runs from.
+
+    None for an installed package: its parent directories may belong to the user's own
+    repository (a virtual environment inside a project), whose commit is not ours.
+    """
+    package = Path(module).resolve().parent
+    root = package.parents[1]
+    if package.parent.name != "src" or not (root / "pyproject.toml").is_file():
+        return None
+    if 'name = "metiscraft"' not in (root / "pyproject.toml").read_text(encoding="utf-8"):
+        return None
+    top = _git(root, "rev-parse", "--show-toplevel")
+    return root if top is not None and Path(top.strip()).resolve() == root else None
+
+
 def git_info() -> tuple[dict[str, Any], str]:
-    commit = _git("rev-parse", "HEAD")
+    root = checkout_of(Path(__file__))
+    commit = _git(root, "rev-parse", "HEAD") if root is not None else None
     if commit is None:
-        return {"commit": None}, ""
-    status = _git("status", "--porcelain") or ""
-    diff = _git("diff", "HEAD") or ""
+        return {"commit": None, "source": "installed package", "version": __version__}, ""
+    status = _git(root, "status", "--porcelain") or ""
+    diff = _git(root, "diff", "HEAD") or ""
     return {"commit": commit.strip(), "dirty": bool(status.strip())}, diff
 
 
