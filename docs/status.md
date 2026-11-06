@@ -1,10 +1,15 @@
 # MetisCraft 状态
 
-更新：2026-11-06
+更新：2026-11-07
 
 ## 当前阶段
 
 v0.1 已完成（2026-11-05）。数据层、两种读出、训练、校准、评测、可追溯产物、Predictor 与 HTTP 服务都已实现，CPU 上 102 个测试通过；Qwen3-0.6B 上 7 份验收配方全部跑通：BoolQ、Banking77（① 与 ③ 各一份）、CLINC150、SST-5、GoEmotions 和银行客服分流场景。每份配方目录的 README 写有成绩。
+
+开发验证（2026-11-07）：当前源码在 Python 3.11 上的 107 项 CPU 测试全部通过，
+Ruff、工作流语法检查、版本检查，以及 wheel/sdist 构建与元数据检查通过。
+新增发布流程会在 Python 3.10/3.11 上安装并测试同一份 wheel；这套发布流程尚未在线运行，
+本轮本地 wheel 安装测试也尚未完成。发布配置与步骤见 [`publishing.md`](publishing.md)。
 
 **Cookbook**：[`cookbook/`](cookbook/README.md)，讲原理、把业务做成 Jev 的完整流程和最佳实践。
 
@@ -77,10 +82,10 @@ v0.1 的里程碑 M0–M5 已于 2026-11-05 全部完成：设计规格、骨架
 
 接下来：
 
-1. 补开源训练过程，第一站是用 MetisCraft 复现 Tev1：数据已按公开哈希重建，训练要用的提示格式、全词表答案损失和 cosine 调度已补上，配方写好；Qwen3.5-2B 已训完，test 达标、policy_transfer 未达标，下一步是 4B、Tev1 读法与逐题对照。方案与进度见 [`reproductions/tev1.md`](reproductions/tev1.md)。之后再考虑 Hmm、jebadiah，以及一个数据条款干净、过程全公开的通用小 Jev。
+1. 补开源训练过程，第一站是用 MetisCraft 复现 Tev1：数据已按公开哈希重建，训练要用的提示格式、全词表答案损失和 cosine 调度已补上，配方写好；Qwen3.5-2B 已训完，test 达标、policy_transfer 未达标。验收标准保持不变，4B、Tev1 读法与逐题对照暂缓；目前不作复现成功的结论。方案与进度见 [`reproductions/tev1.md`](reproductions/tev1.md)。之后再考虑 Hmm、jebadiah，以及一个数据条款干净、过程全公开的通用小 Jev。
 2. GoEmotions 用修复后的代码重跑一次（单卡约 80 分钟），等有空闲的 GPU 再跑。
 3. encoder 同协议对照：句向量 + 逻辑回归，划分、指标、校准方式都与模型相同，用来回答"比 encoder 好还是差"。
-4. 发布到 PyPI，做到 `pip install metiscraft`。已能从源码安装；CI 每次都构建 wheel，装进干净环境跑全套测试（注册表随包）；复现用的依赖是可选组 `reproduce`；运行记录只在 MetisCraft 自己的源码仓库里取 git 提交号，装成包时记版本号。还差打 tag 自动构建并发布（PyPI 的 Trusted Publishing）。
+4. 发布到 PyPI，做到 `pip install metiscraft`。已有源码安装、CI 的 wheel 安装测试、`reproduce` 可选依赖和提交号追溯；新增 [`release.yml`](../.github/workflows/release.yml) 支持版本一致性检查、构建与 wheel 测试，以及 tag 触发的 Trusted Publishing。手动触发只验证、不发布。尚需配置 GitHub `pypi` environment、PyPI publisher，并实际运行发布工作流。操作见 [`publishing.md`](publishing.md)。原定完成一次开源复现后发布；目前 Tev1 仅部分达标，发布时机待定。
 5. v0.2 候选（待定）：
    - 排序判断类型；
    - ms-swift / HF 适配层；

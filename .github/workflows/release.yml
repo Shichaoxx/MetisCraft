@@ -1,0 +1,127 @@
+name: release
+
+on:
+  push:
+    tags: ["v*"]
+  # A manual run validates the selected ref and leaves artifacts; it never publishes.
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.11"
+      - name: Check the version and release tag
+        run: |
+          python - <<'PY'
+          import ast
+          import os
+          import tomllib
+          from pathlib import Path
+
+          project = tomllib.loads(Path("pyproject.toml").read_text())["project"]
+          tree = ast.parse(Path("src/metiscraft/__init__.py").read_text())
+          versions = [
+              ast.literal_eval(node.value)
+              for node in tree.body
+              if isinstance(node, ast.Assign)
+              and any(isinstance(t, ast.Name) and t.id == "__version__" for t in node.targets)
+          ]
+          version = project["version"]
+          if versions != [version]:
+              raise SystemExit("pyproject.toml and metiscraft.__version__ must match")
+          if os.environ["GITHUB_REF_TYPE"] == "tag":
+              if os.environ["GITHUB_REF_NAME"] != f"v{version}":
+                  raise SystemExit(f"The release tag must be v{version}")
+          print(f"Building {project['name']} {version}")
+          PY
+      - name: Build and check distributions
+        run: |
+          python -m pip install build twine ruff
+          ruff check .
+          python -m build
+          python -m twine check --strict dist/*
+      - uses: actions/upload-artifact@v7
+        with:
+          name: distributions
+          path: dist/*
+          if-no-files-found: error
+
+  test-wheel:
+    needs: build
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.11"]
+    env:
+      CUDA_VISIBLE_DEVICES: ""
+      OMP_NUM_THREADS: "2"
+      MKL_NUM_THREADS: "2"
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v7
+        with:
+          python-version: ${{ matrix.python-version }}
+      - uses: actions/download-artifact@v8
+        with:
+          name: distributions
+          path: dist
+      - name: Install CPU PyTorch and the built wheel
+        run: |
+          python -m pip install torch --index-url https://download.pytorch.org/whl/cpu
+          wheels=(dist/*.whl)
+          test "${#wheels[@]}" -eq 1
+          python -m pip install "${wheels[0]}[dev,serve,reproduce]"
+          python -m pip check
+      - name: Check the installed package
+        run: |
+          python - <<'PY'
+          import sysconfig
+          from importlib.metadata import version
+          from pathlib import Path
+
+          import metiscraft
+
+          location = Path(metiscraft.__file__).resolve()
+          if not location.is_relative_to(Path(sysconfig.get_path("purelib")).resolve()):
+              raise SystemExit(f"Expected the installed wheel, imported {location}")
+          if metiscraft.__version__ != version("metiscraft"):
+              raise SystemExit("Installed metadata and package versions differ")
+          print(location)
+          PY
+          metiscraft --help
+      - name: Test the installed wheel
+        run: python -m pytest
+
+  publish:
+    needs: [build, test-wheel]
+    if: github.event_name == 'push' && github.ref_type == 'tag'
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/project/metiscraft/
+    permissions:
+      id-token: write
+    steps:
+      # Publish the same distributions that passed the wheel tests; do not rebuild.
+      - uses: actions/download-artifact@v8
+        with:
+          name: distributions
+          path: dist
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
