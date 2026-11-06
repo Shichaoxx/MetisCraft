@@ -157,11 +157,11 @@
 | JevBench（Benchmark Heaven） | 231 公开 + 封存题；capability = (Intelligence + Calibration)/2 | 高：v1.8.6 约 337 个系统，EvalScope 内置 | 公开题已饱和（冻结 4B 达 80.5%）；各行版本不同 |
 | S1MB | 137 个 typed-task benchmark，要求申报训练暴露 | 中高：212 个完整提交 | 暴露为自报；我方复算未与页面核对 |
 | S1-Arena（arXiv 2610.21244） | 43,226 请求 + 138 个闭环环境 | 低（3 stars） | 未做污染审计，只给汇总 |
-| EvalScope 内置 systemone_api | open_decisions、jevbench 适配 | 唯一内置决策基准的主流评测框架 | lm-eval-harness、lighteval、opencompass 未查到 |
+| EvalScope 内置 systemone_api | open_decisions、jevbench 适配 | 本次调研已确认的内置决策基准适配 | lm-eval-harness、lighteval、opencompass 尚未核实 |
 | TypeSafe WorkflowEvals / EvalSafe O*NET | 附 Jev 1.13 逐题概率与 consensus 目标 | 仅 TypeSafe 自用 | 参照由 LLM 生成；**可不调 API 直接与 Jev 已记录输出对比** |
 | 其余 | AA Decision Index、Bespoke Nimble、OpenDecisions、XDecideBench、TypedBench | 低到中 | 多为私有或新发布 |
 
-**判断**：社区有事实标准榜，但没有一个同时满足"公开题、人工真值、统一读出、报校准、可复现"。更重要的是：**这些榜测的都是成品模型，没有一个把"配方/读出/目标"当变量做同骨干同数据的受控对照**。因此 MetisCraft 做"同协议对照基准"有空位，建议做成薄的一层，不新造数据集：
+**判断**：本次调研尚未确认一套同时满足"公开题、人工真值、统一读出、报校准、可复现"，并将"配方/读出/目标"作为变量做同骨干同数据受控对照的基准。这是待验证的工作方向，不能据有限样本断言其他项目均未覆盖。MetisCraft 可先做薄的一层同协议对照，不新造数据集：
 - 题集：采用 Banking77 全量 test、BoolQ val、MNLI-m val、AG News test、SST-5 test（2.1–2.5 的强基线直接对齐）+ typed-decisions test（采用度最高）；
 - 报告：accuracy/macro-F1 与 NLL、Brier、ECE 同表；固定 bin 定义；同时放 encoder 微调基线与多数类/先验行；
 - 对 Decision Index、S1MB 只做"跑公开部分 + 提交"，不自建私有题；

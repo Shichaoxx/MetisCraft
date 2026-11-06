@@ -24,6 +24,7 @@ NON_COMMERCIAL_TERMS = {
     "teacher_unknown",
     "eval_only_no_train",
 }
+COMMERCIAL_NEUTRAL_TERMS = {"attribution", "share_alike", "pii_possible", "soft_attributes"}
 
 
 def write_json(path: Path, obj: Any) -> None:
@@ -95,8 +96,17 @@ def new_run_dir(runs_root: Path, task: str, recipe_sha: str) -> Path:
     return run
 
 
-def commercial_use(terms: list[str]) -> bool:
-    return not (set(terms) & NON_COMMERCIAL_TERMS)
+def commercial_use(terms: list[str]) -> bool | None:
+    """Summarize recognized restriction flags; unknown terms remain unverified.
+
+    True means no recognized restriction flag, not a licence or permission grant.
+    """
+    flags = set(terms)
+    if flags & NON_COMMERCIAL_TERMS:
+        return False
+    if flags - COMMERCIAL_NEUTRAL_TERMS:
+        return None
+    return True
 
 
 def notice_text(meta: dict[str, Any]) -> str:
@@ -115,10 +125,14 @@ def notice_text(meta: dict[str, Any]) -> str:
         f"  terms: {', '.join(data.get('terms') or []) or 'none'}",
         "",
     ]
-    if meta.get("commercial_use"):
-        lines.append("The training data terms do not restrict commercial use.")
+    eligibility = commercial_use(data.get("terms") or [])
+    if meta.get("commercial_use") is False or eligibility is False:
+        lines.append("Commercial use is NOT permitted by the recorded restriction flags.")
+    elif meta.get("commercial_use") is True and eligibility is True:
+        lines.append("No recognized non-commercial restriction flags were recorded.")
     else:
-        lines.append("Commercial use is NOT permitted: the training data terms restrict it.")
+        lines.append("Commercial-use eligibility is unverified; review all declared terms.")
+    lines.append("These flags do not grant permission; review the data and base model licences.")
     return "\n".join(lines) + "\n"
 
 

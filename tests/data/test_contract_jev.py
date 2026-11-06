@@ -30,6 +30,33 @@ def test_valid_records():
     rec({"type": "multi_label"}, {"kind": "multi_label", "labels": ["b"]}, candidates=OPTS)
 
 
+@pytest.mark.parametrize("kind", ["choice", "score"])
+@pytest.mark.parametrize("soft", [[0.0, 0.0], [1.0, 1.0], [0.3, 0.6]])
+def test_categorical_soft_targets_must_be_normalized(kind, soft):
+    question = {"type": kind, "options" if kind == "choice" else "levels": OPTS}
+    with pytest.raises(ValidationError, match="must sum to 1"):
+        rec(question, {"kind": kind, "soft": soft})
+
+
+@pytest.mark.parametrize("kind", ["choice", "score"])
+def test_categorical_soft_targets_tolerate_floating_point_rounding(kind):
+    question = {"type": kind, "options" if kind == "choice" else "levels": OPTS}
+    rec(question, {"kind": kind, "soft": [0.3, 0.7000002]})
+
+
+@pytest.mark.parametrize("soft", [[0.0, 0.0], [1.0, 1.0]])
+def test_multilabel_probabilities_are_independent(soft):
+    rec({"type": "multi_label"}, {"kind": "multi_label", "soft": soft}, candidates=OPTS)
+    rec({"type": "noul"}, {"kind": "noul", "soft": [soft[0]]})
+
+
+@pytest.mark.parametrize("allow_null", [False, True])
+def test_user_options_cannot_use_the_reserved_null_id(allow_null):
+    with pytest.raises(ValidationError, match="reserved for the null answer"):
+        rec({"type": "choice", "options": [{"id": "__null__"}, {"id": "b"}],
+             "allow_null": allow_null})
+
+
 @pytest.mark.parametrize(
     "question,supervision,candidates",
     [

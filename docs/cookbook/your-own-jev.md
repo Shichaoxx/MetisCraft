@@ -19,6 +19,11 @@
 
 ## 2. 准备数据：两条路
 
+自有数据先整理为标准 Record JSONL，用清单声明来源、条款与各划分，再运行
+`metiscraft data import dataset.yaml --data-root ./data`。完整格式与步骤见
+[自有数据指南](../zh/data.md)。这条路径可直接使用安装后的 wheel，无需编辑注册表。
+下面的注册表片段用于解释已内置的 Banking77 场景；运行本篇示例时使用该内置条目。
+
 **已有带标签的数据**：用映射表把原始标签改写成业务题的标准答案。客服分流就是这样从 Banking77 的 77 个意图得到的。下面是注册表条目（`src/metiscraft/data/registry.yaml`，节选）：
 
 ```yaml
@@ -52,7 +57,9 @@ banking77_support:
 
 **直接写 Jev 格式的数据**：每行一条官方请求格式的记录（`state` + `questions`），加上每道题的标准答案。注册表里的 Jev 类数据集（如 `open_jev`、`typed_decisions`）就是这样读入的，转换器是 `jev_requests` 一族。
 
-无论哪条路，都要在注册表里固定上游 revision，并写明许可证和条款；用条款受限的数据训练的产物，`NOTICE` 会标成不可商用。
+内置数据条目在注册表里固定上游 revision；自有数据在导入清单里固定版本与来源。
+两种路径均保留许可证和条款。产物 `NOTICE` 记录可识别的限制；自定义或未解释条款
+标为未验证，不能据此推断使用许可。
 
 ## 3. 准备并检查数据
 

@@ -37,9 +37,9 @@ from itertools import product
 from typing import Any
 
 from metiscraft.config import PromptConfig
-from metiscraft.data.contract import Option, Record
+from metiscraft.data.contract import NULL_OPTION_ID, Option, Record
 
-NULL_OPTION = Option(id="__null__", text="None of the above")
+NULL_OPTION = Option(id=NULL_OPTION_ID, text="None of the above")
 YES, NO = "yes", "no"
 
 

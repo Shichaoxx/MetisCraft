@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import math
 import re
 import unicodedata
 from typing import Any, Literal
@@ -22,6 +23,7 @@ JudgmentType = Literal["noul", "choice", "score", "multi_label"]
 JUDGMENT_TYPES: tuple[str, ...] = ("noul", "choice", "score", "multi_label")
 MAX_CHOICE_OPTIONS = 255
 MAX_SCORE_LEVELS = 10
+NULL_OPTION_ID = "__null__"
 HASH_VERSION = "nfkc-lower-ws-sha256-v1"
 
 
@@ -55,6 +57,8 @@ class Question(_Strict):
             if len(self.options) > MAX_CHOICE_OPTIONS:
                 raise ValueError(f"a choice question takes at most {MAX_CHOICE_OPTIONS} options")
             _check_unique(self.options, "option")
+            if any(option.id == NULL_OPTION_ID for option in self.options):
+                raise ValueError(f"option id {NULL_OPTION_ID!r} is reserved for the null answer")
         elif self.options is not None:
             raise ValueError(f"a {self.type} question takes no options")
         if self.type == "score":
@@ -139,6 +143,10 @@ class Record(_Strict):
                 raise ValueError(f"soft has {len(sup.soft)} entries, expected {self.target_size()}")
             if any(not 0.0 <= p <= 1.0 for p in sup.soft):
                 raise ValueError("soft probabilities must lie in [0, 1]")
+            if q.type in {"choice", "score"} and not math.isclose(
+                math.fsum(sup.soft), 1.0, rel_tol=0.0, abs_tol=1e-6
+            ):
+                raise ValueError("choice/score soft probabilities must sum to 1 (tolerance 1e-6)")
         _check_labels(self, sup.labels)
         return self
 

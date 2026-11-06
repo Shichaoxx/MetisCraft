@@ -3,6 +3,8 @@
 import subprocess
 from pathlib import Path
 
+import pytest
+
 import metiscraft.trace as trace
 from metiscraft.trace import checkout_of
 
@@ -47,3 +49,28 @@ def test_an_installed_package_records_its_version(monkeypatch):
     info, diff = trace.git_info()
     assert info == {"commit": None, "source": "installed package", "version": trace.__version__}
     assert diff == ""
+
+
+@pytest.mark.parametrize("terms", [["internal_only"], ["mixed_per_row"], ["custom_contract"]])
+def test_custom_terms_are_unverified_in_metadata_and_notice(terms):
+    assert trace.commercial_use(terms) is None
+    # Re-rendering a historical positive flag must not approve unfamiliar terms.
+    notice = trace.notice_text({"dataset": {"terms": terms}, "commercial_use": True})
+    assert "eligibility is unverified" in notice
+    assert "terms do not restrict" not in notice
+    assert "do not grant permission" in notice
+
+
+def test_restrictions_take_precedence_over_unknown_terms():
+    terms = ["research_only", "custom_contract"]
+    assert trace.commercial_use(terms) is False
+    notice = trace.notice_text({"dataset": {"terms": terms}, "commercial_use": False})
+    assert "NOT permitted by the recorded restriction flags" in notice
+
+
+def test_no_restriction_flags_do_not_claim_licence_permission():
+    assert trace.commercial_use([]) is True
+    notice = trace.notice_text({"dataset": {"terms": []}, "commercial_use": True})
+    assert "No recognized non-commercial restriction flags" in notice
+    assert "terms do not restrict" not in notice
+    assert "do not grant permission" in notice

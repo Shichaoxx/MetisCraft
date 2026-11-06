@@ -14,7 +14,7 @@
 3. **HF 的决策接口还没合并，并且自己声明是实验性的**：#50054 有 Lysandre 的 Approve（11-02），但 mergeable_state 为 dirty，head 上 3 项 CI 失败（质量检查），Lysandre 的评审要求文档里注明"此 API 属实验性，随时可能变"。后续 Jeva #50203、CLM #50246、TRL #8040 都是 draft，依赖链是 #50054 → #50203 → #50246，TRL #8040 依赖 #50203。**最早也要等 #50054 合并后才能谈贡献**。
 4. **损失在 HF 里是模型 forward 的一部分**（传 `labels` 返回 `loss`），不是可注册的钩子；TRL `DecisionTrainer` 复用 `Trainer.compute_loss`，所以第三方想换损失要写自己的 `XxxForDecision` 类。读出头可以通过 `AutoModelForDecision.register(...)`（transformers 的标准 Auto 注册）或 `trust_remote_code` 的 `auto_map` 接入，但 `DecisionConfig` 是 `@strict` 数据类，加字段要走自己的 config 类。
 5. **Unsloth 的决策代码是 AGPL-3.0-only**（逐文件 SPDX 头），虽然 README 说"核心 Apache、Studio AGPL"。MetisCraft 是 Apache-2.0，不能拷贝或链接它的决策代码；`DECISION_HEADS = ("clef",)` 也没有注册机制。**排除 Unsloth 插件路线**，只当对照。
-6. **竞品其实在帮我们**：三家（ms-swift、HF、Unsloth）都在抢"训练"，没有人做"Awesome 调研清单 + 业务场景（Schema Linking）配置 + 跨读出对比评测 + 统一导出"。自建核心的价值应放在这里，不在再造一个训练器。
+6. **定位随证据修正**：JevAny 等项目已提供统一工具包，当前核对见[支持矩阵](../support-matrix.md)。MetisCraft 继续验证业务配方、跨读出受控对照与可追溯部署的价值；这些组合尚未证实为独有空白，业务示例也不限定于 Schema Linking。
 
 待定事项见 §5。
 

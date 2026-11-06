@@ -101,6 +101,26 @@ def test_invalid_label_reports_file_and_line(local_source):
     assert not (root / "own-data" / "v1").exists()
 
 
+@pytest.mark.parametrize("invalid", ["choice_soft", "score_soft", "reserved_null_id"])
+def test_invalid_probability_contract_is_rejected_before_sealing(local_source, invalid):
+    manifest, root = local_source
+    bad = row("train")
+    if invalid == "reserved_null_id":
+        bad["question"]["options"][0]["id"] = "__null__"
+        bad["question"]["allow_null"] = True
+        message = "reserved for the null answer"
+    else:
+        kind = "score" if invalid == "score_soft" else "choice"
+        if kind == "score":
+            bad["question"] = {"type": "score", "levels": [{"id": "low"}, {"id": "high"}]}
+        bad["supervision"] = {"kind": kind, "soft": [0.0, 0.0]}
+        message = "must sum to 1"
+    write_jsonl(manifest.parent / "train.jsonl", [bad])
+    with pytest.raises(ValueError, match=rf"(?s)train\.jsonl:1:.*{message}"):
+        import_dataset(manifest, root)
+    assert not (root / "own-data" / "v1").exists()
+
+
 @pytest.mark.parametrize("kind", ["input", "group", "split_key"])
 def test_import_rejects_cross_purpose_overlap(local_source, kind):
     manifest, root = local_source

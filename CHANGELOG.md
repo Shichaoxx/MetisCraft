@@ -26,6 +26,11 @@ training evidence, calibration and deployment.
   question-to-task mapping for multi-task artifacts. Missing mappings fail.
 - Record predictions expose calibration group and fallback information, plus
   base-verification status. The health endpoint also reports base-verification status.
+- Choice and score soft targets must sum to one, and choice options cannot use
+  the reserved `__null__` ID. Local import rejects these errors before sealing.
+- Custom data terms remain uninterpreted (`commercial_use: null`) instead of
+  being declared commercially unrestricted. Notices report flags and retain
+  the requirement to review the actual licences.
 
 ### Migration and evidence
 

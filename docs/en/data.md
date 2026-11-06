@@ -25,6 +25,11 @@ your data. `name` and `version` are single path components starting with an
 alphanumeric character. Split paths are relative to the manifest and must stay
 inside its directory. A source file cannot supply more than one split.
 
+Custom terms are preserved. The artifact's `commercial_use` field summarizes
+recognized restriction flags: `false` for a recorded restriction, `null` for
+uninterpreted terms, and `true` when no recognized restriction is recorded.
+This field does not grant permission; review the actual data and base licences.
+
 ## Write Record JSONL
 
 Each line is one supervised question. For example:
@@ -47,6 +52,9 @@ provenance and an input hash, retaining any supplied provenance as nested metada
 Set `supervision.kind` to the question type. Soft probabilities can be supplied
 in `supervision.soft`, aligned with the question's targets. Import requires
 supervision; Record prediction inputs can omit it.
+For `choice` and `score`, soft probabilities must sum to 1 within `1e-6`;
+`noul` and `multi_label` carry independent probabilities. The choice option ID
+`__null__` is reserved: enable `allow_null` to add the null answer instead.
 
 ## Keep fitting and evaluation separate
 
