@@ -35,4 +35,4 @@ Qwen3.5 的线性注意力层要装 `flash-linear-attention`，否则走 transfo
 
 ## 验收结果
 
-还没有完整运行。2026-11-06 在 GPU 上跑了 10 步冒烟（含校准和 dev 抽样评测），全流程跑通，速度与显存见上。
+2026-11-06 用 `qwen3.5-2b_chat-completion.yaml` 完整跑了一遍：test 1,000 题 86.4%（Tev1 的 4B 为 88.0%），policy_transfer 300 题 92.0%（Tev1 为 100%）。test 达标，policy_transfer 未达标，待 4B。详情与判断标准见[复现记录](../../docs/reproductions/tev1.md)。

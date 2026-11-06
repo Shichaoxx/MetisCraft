@@ -77,7 +77,7 @@ v0.1 的里程碑 M0–M5 已于 2026-11-05 全部完成：设计规格、骨架
 
 接下来：
 
-1. 补开源训练过程，第一站是用 MetisCraft 复现 Tev1：数据已按公开哈希重建，训练要用的提示格式、全词表答案损失和 cosine 调度已补上，配方写好，等 GPU 训练。方案与进度见 [`reproductions/tev1.md`](reproductions/tev1.md)。之后再考虑 Hmm、jebadiah，以及一个数据条款干净、过程全公开的通用小 Jev。
+1. 补开源训练过程，第一站是用 MetisCraft 复现 Tev1：数据已按公开哈希重建，训练要用的提示格式、全词表答案损失和 cosine 调度已补上，配方写好；Qwen3.5-2B 已训完，test 达标、policy_transfer 未达标，下一步是 4B、Tev1 读法与逐题对照。方案与进度见 [`reproductions/tev1.md`](reproductions/tev1.md)。之后再考虑 Hmm、jebadiah，以及一个数据条款干净、过程全公开的通用小 Jev。
 2. GoEmotions 用修复后的代码重跑一次（单卡约 80 分钟），等有空闲的 GPU 再跑。
 3. encoder 同协议对照：句向量 + 逻辑回归，划分、指标、校准方式都与模型相同，用来回答"比 encoder 好还是差"。
 4. 发布到 PyPI，做到 `pip install metiscraft`。已能从源码安装；CI 每次都构建 wheel，装进干净环境跑全套测试（注册表随包）；复现用的依赖是可选组 `reproduce`；运行记录只在 MetisCraft 自己的源码仓库里取 git 提交号，装成包时记版本号。还差打 tag 自动构建并发布（PyPI 的 Trusted Publishing）。
