@@ -26,10 +26,13 @@ Tev1 的决策数据：5 个公开数据集改写成的选择题和等级题，�
 ## 运行
 
 ```bash
+pip install -e ".[reproduce]" flash-linear-attention
 metiscraft data prepare tev1
 metiscraft train recipes/tev1/qwen3.5-2b_chat-completion.yaml
 ```
 
+Qwen3.5 的线性注意力层要装 `flash-linear-attention`，否则走 transformers 的 PyTorch 参考实现：批量 4 不开梯度检查点时显存涨到 23.5 GB，第一步 1.5 分钟还没走完。装上它并开梯度检查点后，单张 RTX 3090 上显存峰值约 6 GB，每步（36 题）约 26 秒；第一次运行还要额外花约 10 分钟编译内核，之后有缓存。照此估算，一个 epoch（1,052 步）单卡约 7.5 小时。
+
 ## 验收结果
 
-还没有运行，需要 GPU。
+还没有完整运行。2026-11-06 在 GPU 上跑了 10 步冒烟（含校准和 dev 抽样评测），全流程跑通，速度与显存见上。
