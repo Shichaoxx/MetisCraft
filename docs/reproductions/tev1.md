@@ -58,10 +58,11 @@
 ## 数据
 
 ```bash
+pip install -e ".[reproduce]"   # Tev1 的构建脚本要用 datasets 和 jinja2
 metiscraft data prepare tev1
 ```
 
-这一条命令依次：
+`data prepare` 依次：
 
 1. 按提交号检出 Tev1 并核对代码树；
 2. 准备 5 个输入：注册表里同一 revision 的 `multi_nli`、`boolq`、`banking77_legacy`、`ag_news`、`sst5`；分词器取自 `Qwen/Qwen3.5-2B@15852e8c` 的权重目录，照 Tev1 锁定的 transformers 5.17.0 那样以 `Qwen2Tokenizer` 加载（原因见下）；

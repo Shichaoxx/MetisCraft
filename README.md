@@ -16,7 +16,7 @@ A toolkit for training Jev-style System One decision models: typed judgments wit
 ## 安装
 
 ```bash
-pip install -e ".[serve]"        # 开发时用 ".[dev,serve]"
+pip install -e ".[serve]"        # 开发时用 ".[dev,serve,reproduce]"
 ```
 
 ## 快速上手

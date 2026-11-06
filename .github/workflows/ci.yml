@@ -16,7 +16,7 @@ jobs:
       - name: Install CPU PyTorch
         run: pip install torch --index-url https://download.pytorch.org/whl/cpu
       - name: Install MetisCraft
-        run: pip install -e ".[dev,serve]"
+        run: pip install -e ".[dev,serve,reproduce]"
       - name: Lint
         run: ruff check .
       - name: Test
