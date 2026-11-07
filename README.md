@@ -3,7 +3,7 @@
     <source media="(prefers-color-scheme: dark)" srcset="docs/visuals/figures/wordmark-dark.svg">
     <img src="docs/visuals/figures/wordmark-light.svg" alt="MetisCraft" width="320">
   </picture>
-  <br><b>Train. Calibrate. Decide.</b>
+  <br><b>A toolkit for JevLike decision models.</b>
 </p>
 
 <p align="center">
@@ -21,7 +21,16 @@
   <a href="CONTRIBUTING.md">Contribute</a>
 </p>
 
-**Decision models, built for your tasks.** Turn your task into a decision model. Bring labeled data and a local base model; one recipe takes you from training and calibration to evaluation and serving.
+**Train, reproduce and deploy JevLike models.** One toolkit connects training, calibration, evaluation and serving. Reproduce an open recipe or build a decision model for your own labeled task.
+
+## Tev1 4B, reproduced with MetisCraft
+
+| Evaluation set | MetisCraft 4B | Original Tev1 4B | Difference |
+|---|---:|---:|---:|
+| Main decisions · 1,000 questions | **87.3% · 873/1,000** | 88.0% | −0.70 pp |
+| Policy transfer · 300 questions | **99.33% · 298/300** | 100% | −0.67 pp |
+
+**Both predeclared accuracy checks passed.** Single seed, the same public development questions; the original training history was not recovered, and calibration can worsen NLL. [Reproduction record and limits](docs/reproductions/tev1.md) · [Training recipe](recipes/tev1/README.md).
 
 ## One message. Two decisions.
 

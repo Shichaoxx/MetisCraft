@@ -176,7 +176,7 @@ def main():
         project = {
             "site_name": "MetisCraft",
             "site_url": f"https://shichaoxx.github.io/MetisCraft/{lang}/",
-            "site_description": "Train. Calibrate. Decide. A toolkit for typed decision models.",
+            "site_description": "A JevLike model toolkit. Train, reproduce, calibrate and serve.",
             "docs_dir": f"sources/{lang}",
             "site_dir": f"site/{lang}",
             "repo_url": "https://github.com/Shichaoxx/MetisCraft",

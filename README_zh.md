@@ -3,7 +3,7 @@
     <source media="(prefers-color-scheme: dark)" srcset="docs/visuals/figures/wordmark-dark.svg">
     <img src="docs/visuals/figures/wordmark-light.svg" alt="MetisCraft" width="320">
   </picture>
-  <br><b>Train. Calibrate. Decide.</b>
+  <br><b>JevLike 判断模型工具包</b>
 </p>
 
 <p align="center">
@@ -21,7 +21,16 @@
   <a href="CONTRIBUTING.md">参与贡献</a>
 </p>
 
-**为自己的任务训练判断模型。** 把业务问题训练成一次前向就能回答的判断。带上有标签的数据和本地基座，用同一份配方完成训练、校准、评测与部署。
+**训练、复现与部署 JevLike 模型。** 同一工具包连接训练、校准、评测和服务；既能复现公开配方，也能接入自己的标注任务。
+
+## 用 MetisCraft 复现 Tev1 4B
+
+| 评测集 | MetisCraft 4B | 原版 Tev1 4B | 差距 |
+|---|---:|---:|---:|
+| 主决策集 · 1,000 题 | **87.3% · 873/1,000** | 88.0% | −0.70 个百分点 |
+| 政策迁移 · 300 题 | **99.33% · 298/300** | 100% | −0.67 个百分点 |
+
+**两项预定准确率验收均达标。** 单种子、同一批公开开发题；原始训练历史未恢复，校准可能恶化 NLL。[复现记录与限制](docs/reproductions/tev1.md) · [训练配方](recipes/tev1/README.md)。
 
 ## 一条消息，两个判断
 

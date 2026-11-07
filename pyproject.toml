@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "metiscraft"
 version = "0.1.0rc1"
-description = "Train Jev-style System One decision models: typed judgments with calibrated probabilities in one forward pass."
+description = "A toolkit for training, reproducing, calibrating and serving JevLike decision models."
 dynamic = ["readme"]
 license = "Apache-2.0"
 license-files = ["LICENSE"]

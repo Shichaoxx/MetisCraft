@@ -1,13 +1,41 @@
-# 把业务问题，变成模型的判断。
+# JevLike 模型工具包
 
 <div class="home-lead" markdown="1">
 
-用自己的数据训练类型化判断模型。一份配方，连接训练、校准、评测和部署。
+训练、复现与部署 JevLike 判断模型。一份配方，连接训练、校准、评测和服务。
 
 [开始使用](cookbook/first-model.md){ .md-button .md-button--primary }
 [浏览 Cookbook](cookbook/index.md){ .md-button }
 
 </div>
+
+## Tev1 4B 复现结果
+
+<div class="reproduction-results" markdown="1">
+
+<div markdown="1">
+
+<span class="result-label">主决策集 · 1,000 题</span>
+
+**87.3%**
+
+873/1,000 答对 · 原版 Tev1 **88.0%**
+
+</div>
+<div markdown="1">
+
+<span class="result-label">政策迁移 · 300 题</span>
+
+**99.33%**
+
+298/300 答对 · 原版 Tev1 **100%**
+
+</div>
+</div>
+
+两项预定准确率验收均达标。单种子、同一批公开开发题；原始训练历史未恢复，校准可能恶化 NLL。
+
+[复现记录与限制](../reproductions/tev1.md) · [训练配方](../../recipes/tev1/README.md)
 
 ## 从一条真实响应开始
 

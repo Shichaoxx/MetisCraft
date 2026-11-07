@@ -48,15 +48,15 @@ def main():
             "MetisCraft",
             text(12, 82, "MetisCraft", 80, ink, 700, letter_spacing="-2"),
         )
-        body = text(64, 68, "A TOOLKIT FOR TYPED DECISIONS", 16, accent, 650, letter_spacing="2")
+        body = text(64, 68, "A TOOLKIT FOR JEVLIKE MODELS", 16, accent, 650, letter_spacing="2")
         body += text(58, 186, "MetisCraft", 104, ink, 700, letter_spacing="-4")
         body += text(64, 252, "Train. Calibrate. Decide.", 30, ink, 500)
         body += f'<path d="M64 294 H1136" stroke="{accent}" stroke-opacity=".2"/>'
-        body += text(64, 348, "Your data. Your model. Typed decisions.", 23, muted)
+        body += text(64, 348, "Reproduce open recipes. Build your own models.", 23, muted)
         save(f"hero-{mode}", 1200, 400, "MetisCraft — Train. Calibrate. Decide.", body, bg)
     body = text(88, 158, "MetisCraft", 96, INK, 700, letter_spacing="-3")
     body += text(92, 240, "Train. Calibrate. Decide.", 42, INK, 600)
-    body += text(94, 310, "Train decision models for your own tasks", 28, "#546b6d")
+    body += text(94, 310, "A toolkit for JevLike decision models", 28, "#546b6d")
     body += '<path d="M94 378 H1106" stroke="#c5dbd6"/>'
     body += text(94, 447, "Typed outputs  /  Composable readouts  /  Traceable runs", 25, TEAL)
     body += text(94, 553, "github.com/Shichaoxx/MetisCraft", 21, "#546b6d")

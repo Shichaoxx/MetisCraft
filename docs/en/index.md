@@ -1,13 +1,41 @@
-# Your task. A model that decides.
+# A toolkit for JevLike models.
 
 <div class="home-lead" markdown="1">
 
-Train typed decision models on your own data. One recipe connects training, calibration, evaluation and serving.
+Train, reproduce and deploy JevLike decision models. One recipe connects training, calibration, evaluation and serving.
 
 [Get started](cookbook/first-model.md){ .md-button .md-button--primary }
 [Explore the Cookbook](cookbook/index.md){ .md-button }
 
 </div>
+
+## Tev1 4B reproduction
+
+<div class="reproduction-results" markdown="1">
+
+<div markdown="1">
+
+<span class="result-label">Main decisions · 1,000 questions</span>
+
+**87.3%**
+
+873/1,000 correct · original Tev1 **88.0%**
+
+</div>
+<div markdown="1">
+
+<span class="result-label">Policy transfer · 300 questions</span>
+
+**99.33%**
+
+298/300 correct · original Tev1 **100%**
+
+</div>
+</div>
+
+Both predeclared accuracy checks passed. Single seed, the same public development questions; original training history is unavailable and calibration can worsen NLL.
+
+[Reproduction record and limits](../reproductions/tev1.md) · [Training recipe](../../recipes/tev1/README.md)
 
 ## Start with a recorded decision
 
