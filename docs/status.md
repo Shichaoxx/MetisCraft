@@ -4,7 +4,7 @@
 
 ## 公开预览版准备
 
-目标版本为 `0.1.0rc1`。本轮同时完善外部用户闭环与社区展示，首发审核已通过，正在执行仓库切换、文档部署与发布验证；PyPI 尚未上传。
+目标版本为 `0.1.0rc1`。本轮同时完善外部用户闭环与社区展示，新版已合并主分支，文档站已上线，双版本发布验证通过；PyPI 尚未上传。
 
 - [x] 数据用途保护、基座内容身份校验、离线与 HTTP 校准一致性。
 - [x] 本地 Record JSONL 导入、wheel 内的起步模板与独立安装验收。
@@ -26,10 +26,13 @@ Python 3.10、3.11 各 236 项完整回归通过，测试与闭环均正常退�
 语言切换与代码复制。README 使用 GitHub Markdown API 渲染结果进行本地视觉检查。
 审计后更新的数据页面另有 8 组桌面／手机、明暗主题渲染检查通过。
 wheel/sdist 构建、元数据与依赖检查、Ruff、工作流语法及差异空白检查通过。
-候选版已通过本地验收。提交 `002ec81` 的远端
-[push CI](https://github.com/Shichaoxx/MetisCraft/actions/runs/42320700941) 与
-[PR CI](https://github.com/Shichaoxx/MetisCraft/actions/runs/42320706685) 均通过：
-源码测试、wheel 测试及文档构建全绿，安装包在源码目录外的完整闭环也通过。
+候选版已通过本地验收。新版通过 PR #1 合入 `main`；主分支
+[CI](https://github.com/Shichaoxx/MetisCraft/actions/runs/42338388965) 的源码测试、wheel 测试
+与文档检查均通过，安装包在源码目录外的完整闭环也通过。
+[手动发布验证](https://github.com/Shichaoxx/MetisCraft/actions/runs/42338421565) 在
+Python 3.10、3.11 上分别通过 236 项测试及独立闭环；该运行不上传 PyPI。
+[文档部署](https://github.com/Shichaoxx/MetisCraft/actions/runs/42338418256) 已成功，
+中英站点可从 https://shichaoxx.github.io/MetisCraft/ 访问。
 公开安装与发布后链接检查仍需在实际发布阶段执行。
 PyPI README 图片使用版本 tag 的绝对链接，须随同该 tag 发布后才能公开解析。
 
@@ -39,7 +42,7 @@ Tev1 的 4B 运行已达到原定准确率标准：主集 873／1,000（87.3%，
 校准仍可能恶化 NLL，历史实际超参也没有恢复；具体证据与边界见
 [复现记录](reproductions/tev1.md)。CPU 工程测试本身不代表真实模型质量。
 encoder 对照、断点续训与补充读出诊断仍在后续路线图。当前沿用 `0.1.0rc1` 准备
-首个公开版本；仓库合并与公开发布进入执行阶段。
+首个公开版本；新版已合入主分支，包发布继续按下述流程收口。
 2026-11-07 首发配置：仓库简介与 topics 已更新；Pages 已配置为 GitHub Actions 构建，
 `pypi` environment 已添加审核人并限制为 `v*` tag。中英 README 首屏已加入猫头鹰角色、
 明暗主题字标及快速入口，站点手机首页的上手链接已移到流程图之前。
@@ -59,7 +62,7 @@ Python 3.11 环境的依赖。当前 rc1 的干净环境与扩展回归结果见
 
 验收中发现并修复了一个缺陷：多标签用正样本加权（`pos_weight`）训练后，推理时没有扣回 ln w，概率系统性偏高。GoEmotions 的正式数字来自修复前的运行，离线修正结果和重跑计划见报告。
 
-设计规格见 [`design.md`](design.md)。MetisCraft 是新名字、新包，版本号从 `0.1.0.dev0` 重新开始。开发在 `toolkit-rewrite` 分支，升级完成后再接替 `main`。这是开发版，文档里标"待定"的地方都是开发进行中的状态。
+设计规格见 [`design.md`](design.md)。MetisCraft 是新名字、新包，版本号从 `0.1.0.dev0` 重新开始。`toolkit-rewrite` 的重写已合入 `main`；当前公开预览版为 `0.1.0rc1`，文档中标“待定”的内容仍属于后续设计。
 
 ## 定位
 
@@ -127,7 +130,7 @@ v0.1 的里程碑 M0–M5 已于 2026-11-05 全部完成：设计规格、骨架
 1. Tev1 首站已达到预定的 4B 准确率标准，并完成 1,300 道公开题的逐题对照。保留校准、历史超参和单种子限制，补充读出诊断不冒充已完成的原版协议。证据见 [`reproductions/tev1.md`](reproductions/tev1.md)。后续再考虑 Hmm、jebadiah，以及一个数据条款干净、过程全公开的通用小 Jev。
 2. GoEmotions 用修复后的代码重跑一次（单卡约 80 分钟），等有空闲的 GPU 再跑。
 3. encoder 同协议对照：句向量 + 逻辑回归，划分、指标、校准方式都与模型相同，用来回答"比 encoder 好还是差"。
-4. 发布到 PyPI，做到 `pip install metiscraft`。已有源码安装、CI 的 wheel 安装测试、`reproduce` 可选依赖和提交号追溯；[`release.yml`](../.github/workflows/release.yml) 支持版本一致性检查、构建与 wheel 测试，以及 tag 触发的 Trusted Publishing。手动触发只验证、不发布。Tev1 的准确率门槛已通过；剩余为 GitHub `pypi` environment、PyPI publisher、实际发布工作流及公开安装核验。操作见 [`publishing.md`](publishing.md)，实际发布仍需最终确认。
+4. 发布到 PyPI，做到 `pip install metiscraft`。已有源码安装、CI 的 wheel 安装测试、`reproduce` 可选依赖和提交号追溯；[`release.yml`](../.github/workflows/release.yml) 支持版本一致性检查、构建与 wheel 测试，以及 tag 触发的 Trusted Publishing。手动触发只验证、不发布。Tev1 的准确率门槛已通过；GitHub `pypi` environment 已配置，双版本发布验证已通过；剩余为 PyPI publisher、tag 发布工作流及公开安装核验。操作见 [`publishing.md`](publishing.md)。
 5. v0.2 候选（待定）：
    - 排序判断类型；
    - ms-swift / HF 适配层；
@@ -139,6 +142,5 @@ v0.1 的里程碑 M0–M5 已于 2026-11-05 全部完成：设计规格、骨架
 
 ## 未决
 
-- 口号与吉祥物。候选：口号点出 System One 与 unthink（不经长推理直接判断），吉祥物用雅典娜的猫头鹰。
 - 从 0.1.0 带回哪些部分。
 - 读出张量图的风格问题，见 [`readouts/README.md`](readouts/README.md) 末尾。
