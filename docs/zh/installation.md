@@ -30,7 +30,7 @@ metiscraft --version
 ```
 
 这是本地 wheel 安装，不代表已经可以从 PyPI 执行 `pip install metiscraft`。
-发布流程见[发布说明](../publishing.md)。
+可用版本见[发行记录](https://github.com/Shichaoxx/MetisCraft/releases)。
 
 ## 可选依赖
 

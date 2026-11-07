@@ -1,5 +1,5 @@
 [build-system]
-requires = ["hatchling>=1.24"]
+requires = ["hatchling>=1.27"]
 build-backend = "hatchling.build"
 
 [project]
@@ -35,7 +35,7 @@ dependencies = [
 serve = ["fastapi>=0.110", "uvicorn>=0.29"]
 # rebuilding data with a project's own builders (metiscraft data prepare tev1)
 reproduce = ["datasets>=4.0", "jinja2>=3.1"]
-dev = ["pytest>=8.0", "ruff>=0.6", "scikit-learn>=1.4", "httpx>=0.27"]
+dev = ["pytest>=8.0", "ruff==0.17.4", "pyright==1.1.414", "pre-commit==4.7.0; python_version >= '3.11'", "scikit-learn>=1.4", "httpx>=0.27"]
 
 [project.scripts]
 metiscraft = "metiscraft.cli:main"
@@ -69,3 +69,15 @@ select = ["E", "F", "I", "B", "UP"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-q"
+
+[tool.hatch.build.targets.sdist]
+exclude = [
+  "/docs/status.md", "/docs/design.md", "/docs/publishing.md", "/docs/research",
+  "**/checks/**",
+]
+
+[tool.pyright]
+pythonVersion = "3.10"
+typeCheckingMode = "basic"
+include = ["src/metiscraft/config.py", "src/metiscraft/data/contract.py"]
+reportMissingTypeStubs = false

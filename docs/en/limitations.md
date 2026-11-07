@@ -59,7 +59,6 @@ the fitted policy temperature; the cause remains unresolved. Accuracy was unchan
 Compare calibrated and raw
 metrics on representative held-out data, and keep their split roles separate.
 
-The broader [support matrix](../support-matrix.md) and [project status](../status.md)
-track experiments and future work separately from this installation guide.
+The [support matrix](../support-matrix.md) records ecosystem coverage and the evidence available for each project.
 
 [中文](../zh/limitations.md)

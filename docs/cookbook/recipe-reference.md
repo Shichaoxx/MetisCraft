@@ -2,7 +2,7 @@
 
 配方是 YAML，结构与 `metiscraft.config.Recipe` 一致；未知字段会直接报错。命令行可以用 `a.b=c` 覆盖任意字段，例如 `metiscraft train <配方> readout.kind=answer_token train.lr=1e-4`。路径的优先级是：配方里的 `paths` > 环境变量 `METISCRAFT_DATA_ROOT` 等 > `~/.config/metiscraft/paths.yaml`。
 
-本页由 [`src/recipe_reference.py`](src/recipe_reference.py) 从代码生成，类型和默认值以代码为准。完整示例见[把业务做成 Jev](your-own-jev.md#4-写配方)。
+本页由 [`src/recipe_reference.py`](src/recipe_reference.py) 从代码生成，类型和默认值以代码为准。完整示例见[接入自己的任务](../zh/cookbook/own-task.md)。
 
 ## 任务
 
@@ -20,8 +20,8 @@
 | `data.calib_split` | str | `calib` | 拟合温度用的划分。 |
 | `data.dev_split` | str | `dev` | 选择用的评测划分。 |
 | `data.test_split` | str | `test` | 封存后才评的测试划分。 |
-| `data.max_train` | int \| `null` | `null` | 训练集最多取多少条，调试用；不写就是全部。 |
-| `data.max_eval` | int \| `null` | `null` | 每个评测划分最多取多少条。 |
+| `data.max_train` | Annotated \| `null` | `null` | 训练集最多取多少条，调试用；不写就是全部。 |
+| `data.max_eval` | Annotated \| `null` | `null` | 每个评测划分最多取多少条。 |
 
 ## 基座与微调
 
@@ -48,7 +48,7 @@
 | `readout.prompt.style` | `plain` \| `chat_json` | `plain` | ① 的提示写法：`plain` 是 MetisCraft 的文本布局；`chat_json` 把题目写成 JSON 载荷放进分词器的对话模板（关闭思考），选项和等级都用字母，即 Tev1 的格式，只接受选择和等级题。 |
 | `readout.prompt.system` | str \| `null` | `null` | `chat_json` 的系统提示；不写就没有系统回合。 |
 | `readout.shuffle_train` | bool | `True` | 训练时打乱候选顺序（③），避免记住位置。 |
-| `readout.infer_permutations` | int | `1` | 预留字段，v0.1 未实现，设了也不生效。 |
+| `readout.infer_permutations` | `1` | `1` | 当前只接受 1；多次排列推理尚未实现，其他值会被拒绝。 |
 
 ## 目标
 
@@ -56,7 +56,7 @@
 |---|---|---|---|
 | `objective.kind` | `auto` \| `bce` \| `cross_entropy` \| `ordinal_soft` \| `completion` | `auto` | 损失由判断类型决定，`auto`、`bce`、`cross_entropy` 在 v0.1 效果相同，只作标注；`ordinal_soft` 让等级题改用以金标为中心的高斯软目标；`completion` 只用于 ①，像监督微调那样在整个词表上训练答案码和 EOS 两个 token。 |
 | `objective.brier_weight` | float | `0.0` | 在交叉熵之外再加 Brier 项的权重（选择、等级）。 |
-| `objective.pos_weight` | `none` \| `auto` \| float | `none` | 多标签正样本权重：`none`、`auto`（训练集负正比，限制在 1 到 100）或一个数；推理时自动扣回 ln w。 |
+| `objective.pos_weight` | `none` \| `auto` \| Annotated | `none` | 多标签正样本权重：`none`、`auto`（训练集负正比，限制在 1 到 100）或一个数；推理时自动扣回 ln w。 |
 | `objective.ordinal_sigma` | float | `1.0` | 序数软目标的高斯宽度，单位是等级。 |
 
 ## 训练
@@ -64,7 +64,7 @@
 | 字段 | 类型 | 默认 | 说明 |
 |---|---|---|---|
 | `train.epochs` | float | `1.0` | 训练轮数，可以是小数。 |
-| `train.max_steps` | int \| `null` | `null` | 最多优化步数；写了就覆盖 `epochs`。 |
+| `train.max_steps` | Annotated \| `null` | `null` | 最多优化步数；写了就覆盖 `epochs`。 |
 | `train.batch_size` | int | `8` | 每个微批的题数（每张卡）。 |
 | `train.grad_accum` | int | `1` | 梯度累积步数；有效批量是 `batch_size × grad_accum × 卡数`，损失按全局题数归一。 |
 | `train.lr` | float | `0.0002` | LoRA（或全参）的学习率。 |
@@ -90,6 +90,12 @@
 |---|---|---|---|
 | `eval.splits` | list[str] | `['dev']` | 要评测的划分。 |
 | `eval.baselines` | list[str] | `['prior']` | 和模型同表报告的基线；v0.1 支持 `prior`。 |
+
+## 服务
+
+| 字段 | 类型 | 默认 | 说明 |
+|---|---|---|---|
+| `serve.task_map` | dict | `{}` | HTTP 题名到产物 task_id 的映射；多任务请求需要明确映射，单任务可自动选择。 |
 
 ## 路径
 

@@ -1,6 +1,6 @@
-# 判断怎么读出来：七类读出的张量说明（草稿，2026-11-04）
+# 判断读出与张量图
 
-这份说明配合同目录下的张量图。分类和代表项目取自设计前调研报告（维护者本机 `research/metiscraft-research.md`）的专题 1，有两处改动：d3 按核查结果归入②，不在③；④和⑤分别按 Kev 源码和 Clef 源码（[`Cloudflare/clef`](https://huggingface.co/Cloudflare/clef) 中 `joint_schema_model.py` 的本机副本）画。
+本页以张量图比较七类读出。MetisCraft 当前实现答案 token 和逐候选标量头；其他机制用于理解生态项目，不能据此认定可在本包直接训练。项目和来源见[支持矩阵](../support-matrix.md)。
 
 | 图 | 文件 |
 |---|---|

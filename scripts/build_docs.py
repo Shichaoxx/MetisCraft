@@ -36,19 +36,27 @@ def main():
     if BUILD.exists():
         shutil.rmtree(BUILD)  # Only this script's ignored, reproducible build output.
     SITE.mkdir(parents=True)
+    policy = json.loads((ROOT / "docs/public-pages.json").read_text())
     mapping = {}
-    for source in sorted((ROOT / "docs").rglob("*.md")):
-        if any(part in {"checks", "src"} for part in source.relative_to(ROOT / "docs").parts):
-            continue
-        relative = source.relative_to(ROOT / "docs")
-        dest = relative if relative.parts[0] in {"en", "zh"} else Path("zh") / relative
+    sources = [ROOT / name for name in policy["pages"]]
+    for source in sources:
+        if not source.is_file():
+            raise ValueError(f"Missing public page: {source.relative_to(ROOT)}")
+        relative = source.relative_to(ROOT)
+        if relative.parts[0] == "docs":
+            relative = source.relative_to(ROOT / "docs")
+            dest = relative if relative.parts[0] in {"en", "zh"} else Path("zh") / relative
+        elif relative.parts[0] == "recipes":
+            dest = Path("zh") / relative
+        else:
+            dest = Path("en") / (
+                "contributing.md" if source.name == "CONTRIBUTING.md" else "changelog.md"
+            )
         if dest.name == "README.md":
             dest = dest.with_name("index.md")
         mapping[source.resolve()] = dest
-    for source in (ROOT / "recipes").rglob("README.md"):
-        mapping[source.resolve()] = Path("zh") / source.relative_to(ROOT).with_name("index.md")
-    mapping[(ROOT / "CONTRIBUTING.md").resolve()] = Path("en/contributing.md")
-    mapping[(ROOT / "CHANGELOG.md").resolve()] = Path("en/changelog.md")
+    for alias, target in policy["aliases"].items():
+        mapping[(ROOT / alias).resolve()] = mapping[(ROOT / target).resolve()]
 
     def rewrite(value, source):
         url = urlsplit(value)
@@ -68,7 +76,19 @@ def main():
         if not target.is_relative_to(ROOT) or not target.exists():
             raise ValueError(f"Broken local link in {source.relative_to(ROOT)}: {value}")
         relative = target.relative_to(ROOT)
-        if target.suffix in {".svg", ".png", ".jpg", ".jpeg", ".webp", ".pdf", ".html"}:
+        if target.suffix == ".md" and relative.parts[0] == "docs":
+            raise ValueError(f"Non-public page linked from {source.relative_to(ROOT)}: {value}")
+        if target.suffix in {
+            ".svg",
+            ".png",
+            ".jpg",
+            ".jpeg",
+            ".webp",
+            ".pdf",
+            ".html",
+            ".json",
+            ".yaml",
+        }:
             output = SITE / "assets" / relative
             output.parent.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(target, output)
@@ -88,7 +108,8 @@ def main():
             return PREFIX + "assets/" + quote(relative.as_posix()) + suffix
         return REPO + quote(relative.as_posix()) + suffix
 
-    for source, dest in mapping.items():
+    for source in sources:
+        dest = mapping[source.resolve()]
         content = source.read_text(encoding="utf-8")
         content = re.sub(
             r"(!?\[[^\]\n]*\]\()([^\s)]+)(\))",
@@ -119,6 +140,14 @@ def main():
                     {"快速上手" if zh else "Quickstart": "quickstart.md"},
                 ]
             },
+            {
+                "Cookbook": [
+                    {"阅读路线" if zh else "Choose a path": "cookbook/index.md"},
+                    {"认识一次判断" if zh else "Understand a decision": "cookbook/decision.md"},
+                    {"跑通第一个模型" if zh else "Your first model": "cookbook/first-model.md"},
+                    {"接入自己的任务" if zh else "Your own task": "cookbook/own-task.md"},
+                ]
+            },
             {"数据与配方" if zh else "Data & recipes": "data.md"},
             {"训练与校准" if zh else "Train & calibrate": "training.md"},
             {"预测与服务" if zh else "Predict & serve": "serving.md"},
@@ -131,7 +160,8 @@ def main():
             },
             {
                 "参考" if zh else "Reference": [
-                    {"Cookbook（中文）": PREFIX + "zh/cookbook/"},
+                    {"原理与最佳实践（中文）": PREFIX + "zh/cookbook/principles/"},
+                    {"接口约定（中文）": PREFIX + "zh/reference/"},
                     {"配方字段（中文）": PREFIX + "zh/cookbook/recipe-reference/"},
                     {"读出与张量图（中文）": PREFIX + "zh/readouts/"},
                 ]
@@ -198,6 +228,25 @@ pymdownx.tasklist.custom_checkbox = true
             [sys.executable, "-m", "zensical", "build", "-f", str(path), "--strict"],
             cwd=ROOT,
             check=True,
+        )
+    # Old tutorial URLs are redirects, not a second maintained tutorial or search page.
+    for alias, target in policy["aliases"].items():
+        old = Path(alias).relative_to("docs")
+        if old.parts[0] not in {"en", "zh"}:
+            old = Path("zh") / old
+        if old.name == "README.md":
+            old = old.with_name("index.md")
+        destination = page_url(mapping[(ROOT / target).resolve()])
+        if page_url(old) == destination:
+            continue
+        output = SITE / old.with_suffix("") / "index.html"
+        output.parent.mkdir(parents=True, exist_ok=True)
+        output.write_text(
+            f'<!doctype html><html lang="zh"><meta charset="utf-8">'
+            f'<meta http-equiv="refresh" content="0;url={destination}">'
+            f'<link rel="canonical" href="{destination}"><title>Cookbook</title>'
+            f'<a href="{destination}">Continue to the Cookbook</a></html>',
+            encoding="utf-8",
         )
     assets = SITE / "assets" / "docs" / "visuals" / "figures"
     shutil.copytree(ROOT / "docs/visuals/figures", assets, dirs_exist_ok=True)

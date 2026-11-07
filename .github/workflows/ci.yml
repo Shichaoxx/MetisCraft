@@ -18,7 +18,7 @@ jobs:
       - name: Install MetisCraft
         run: pip install -e ".[dev,serve,reproduce]"
       - name: Lint
-        run: ruff check .
+        run: python scripts/check_quality.py
       - name: Test
         run: pytest
 
@@ -59,6 +59,9 @@ jobs:
       - run: pip install -r docs/requirements.txt
       - run: python scripts/build_docs.py
       - run: python scripts/check_docs.py
+      - run: python scripts/check_examples.py
+      - run: python scripts/check_public_surface.py --site build/documentation/site
+      - run: PYTHONPATH=src python docs/cookbook/src/recipe_reference.py --check
       - uses: actions/upload-artifact@v7
         with:
           name: documentation-preview

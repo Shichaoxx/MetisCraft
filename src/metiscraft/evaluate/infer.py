@@ -28,6 +28,8 @@ def predict(
     bf16: bool = True,
     offsets: Mapping[str, float] | None = None,
 ) -> list[dict[str, Any]]:
+    if isinstance(batch_size, bool) or not isinstance(batch_size, int) or batch_size <= 0:
+        raise ValueError("batch_size must be a positive integer")
     was_training = model.training
     model.eval()
     use_bf16 = bf16 and device.type == "cuda"
@@ -50,6 +52,7 @@ def predict(
             if rec.supervision is not None:
                 entry["target"] = target_vector(rec)
                 entry["labels"] = rec.supervision.labels
+                entry["has_hard_label"] = rec.hard_label_status()
                 if rec.supervision.soft is not None:
                     entry["soft"] = list(rec.supervision.soft)
             out.append(entry)

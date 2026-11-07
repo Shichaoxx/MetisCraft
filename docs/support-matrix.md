@@ -4,7 +4,7 @@
 
 **生态定位**：统一的决策模型工具包已经存在。JevAny 提供数据、训练、评测与服务入口；ms-swift 已有 decision 训练、推理和温度校准。MetisCraft 的工作重点是业务配方、可核查运行记录与同协议比较，这些是需要持续验证的目标，不是已证明的独有能力。
 
-**结论**：v0.1 的读出只有 ① 答案 token 与 ③ 逐候选标量头（见 [`readouts/README.md`](readouts/README.md)）。入选项目中，Tev1、jebadiah、Hmm（①）和 JevForge（③）可以按配方直接训练；mammoth-1、ms-swift 部分覆盖；Kev（④）、Clef（⑤）、d3（②）、Unsloth（⑤）的读出不在 v0.1，只作参照。三个数据集都已在注册表中。状态依据 v0.1 设计范围（[`design.md`](design.md) §2）判断，不代表这些项目的配方已在 MetisCraft 内跑通。
+**结论**：v0.1 的读出只有 ① 答案 token 与 ③ 逐候选标量头（见 [`readouts/README.md`](readouts/README.md)）。入选项目中，Tev1、jebadiah、Hmm（①）和 JevForge（③）可以按配方直接训练；mammoth-1、ms-swift 部分覆盖；Kev（④）、Clef（⑤）、d3（②）、Unsloth（⑤）的读出不在 v0.1，只作参照。三个数据集都已在注册表中。状态依据 v0.1 设计范围（[接口约定](reference.md)）判断，不代表这些项目的配方已在 MetisCraft 内跑通。
 
 ## 首批（2026-11-05 定）
 
@@ -60,7 +60,7 @@
 | KnowLine、GLiDE、Sieve（榜单前列） | 未披露；GLiDE 仓库只有推理代码 | 未披露 | 未披露 | 榜单分数 | 不能 |
 | 官方 Jev | 闭源，只有 API | — | — | — | 不能；TypeSafe 条款禁止用其输出训练 |
 
-在已核对样本中，部分项目缺少可取得的数据、实际超参或逐题评测，限制了独立复现；本表的未核实项不能推广为整个生态都不存在。单机算力不足也不等于项目不可追溯。MetisCraft 将通过完整记录配置、数据版本、提交、环境和逐题评测，以及实际复现工作来积累证据，见 [`status.md`](status.md)。
+在已核对样本中，部分项目缺少可取得的数据、实际超参或逐题评测，限制了独立复现；本表的未核实项不能推广为整个生态都不存在。单机算力不足也不等于项目不可追溯。MetisCraft 将通过完整记录配置、数据版本、提交、环境和逐题评测，以及实际复现工作来积累证据，见[复现记录](reproductions/tev1.md)。
 
 ## 各列口径
 

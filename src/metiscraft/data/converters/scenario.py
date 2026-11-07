@@ -48,6 +48,7 @@ def _table(
 @register
 class LabelMapping(Converter):
     name = "label_mapping"
+    version = "2"
 
     def _plan(self, ctx: ConverterContext):
         p = ctx.entry.params

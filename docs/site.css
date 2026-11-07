@@ -10,14 +10,41 @@
 .md-typeset h2 { font-weight: 650; letter-spacing: -.02em; }
 .md-typeset { line-height: 1.75; }
 .md-typeset img { border-radius: .6rem; }
-.md-typeset img[alt="MetisCraft owl avatar"] { width: 8rem; float: right; margin: 0 0 1rem 1rem; }
+.md-typeset .cookbook-guide {
+  display: grid;
+  grid-template-columns: 96px minmax(0, 1fr);
+  gap: 1.25rem;
+  align-items: start;
+  margin: 1.5rem 0;
+  padding: 1.25rem;
+  border: 1px solid var(--md-default-fg-color--lightest);
+  border-radius: .65rem;
+  background: var(--md-code-bg-color);
+}
+.md-typeset .cookbook-guide > p { margin: 0; }
+.md-typeset .cookbook-guide > p img { display: block; width: 96px; }
+.md-typeset .cookbook-guide h2 { margin: 0 0 .35rem; font-size: 1.05rem; }
+.md-typeset .cookbook-guide ul { margin-bottom: 0; }
 .md-typeset table:not([class]) { font-size: .72rem; }
-.md-header__button.md-logo img { background: #f6faf9; border-radius: 5px; padding: 2px; }
+.md-header__button.md-logo img { border-radius: .25rem; }
 @media (max-width: 600px) {
-  .md-typeset img[alt="MetisCraft owl avatar"] { width: 5.5rem; }
+  .md-typeset .cookbook-guide { grid-template-columns: minmax(0, 1fr); gap: .75rem; padding: 1rem; }
+  .md-typeset .cookbook-guide > p img { width: 64px; }
   .md-typeset h1 { font-size: 1.8rem; }
 }
 @media (max-width: 600px) {
   .md-typeset table:not([class]) { min-width: 32rem; }
   .md-typeset table:not([class]) td:first-child code { white-space: nowrap; }
 }
+
+/* Product pages use the same neutral, teal and warm-gold hierarchy as the README. */
+.home-lead { max-width: 48rem; font-size: 1.1rem; margin-bottom: 2rem; }
+.md-typeset .md-button { border-radius: .35rem; font-size: .85rem; margin: .25rem .5rem .25rem 0; }
+.decision-result { border-left: 4px solid var(--md-primary-fg-color); padding: 1rem 1.25rem; background: var(--md-code-bg-color); border-radius: 0 .5rem .5rem 0; }
+.decision-result > :first-child { font-size: 1.25rem; margin-top: 0; }
+.decision-result > :last-child { margin-bottom: 0; }
+.start-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 1rem; margin: 1.5rem 0; }
+.start-grid > div { padding: 1.1rem; border: 1px solid var(--md-default-fg-color--lightest); border-radius: .5rem; }
+.start-grid h3 { margin-top: 0; font-size: 1rem; }
+.start-grid > div > :last-child { margin-bottom: 0; }
+@media (max-width: 760px) { .start-grid { grid-template-columns: minmax(0,1fr); } }

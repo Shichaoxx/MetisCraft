@@ -126,3 +126,5 @@ metiscraft train recipe.yaml
 训练结果可通过 [Predictor 或 HTTP 服务](serving.md)重新加载。
 
 [English](../en/training.md)
+
+轮数按微批预算计算，小数轮向上取整；尾部梯度累积使用实际剩余微批，不从下一轮补齐。`max_steps` 覆盖轮数并按优化器更新次数计数。产物记录微批与样本呈现次数，包括分布式采样的填充。输入配方与解析后的配置分别保存；`recipe_sha256` 保留输入身份含义。

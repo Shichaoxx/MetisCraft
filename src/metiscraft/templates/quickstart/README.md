@@ -4,6 +4,8 @@ This example runs from the installed package, with no source checkout, model dow
 or GPU required. The randomly initialized tiny Qwen3 and synthetic data validate the
 software workflow; their accuracy and calibration scores are not useful model results.
 
+<!-- workflow:start -->
+
 Export a fresh workspace, enter it, and create the example inputs:
 
 ```bash
@@ -43,6 +45,8 @@ Stop the server with Ctrl-C. Serving requires the `serve` extra. The official
 endpoint accepts `noul`, `choice` and `score`; `multi_label` is available through
 the Record prediction API. This example has one task ID, `quickstart`, so HTTP
 and Record requests select the same calibration group.
+
+<!-- workflow:end -->
 
 ## Use your own data
 

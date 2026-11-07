@@ -4,7 +4,7 @@ from html import escape
 from pathlib import Path
 
 OUT = Path(__file__).resolve().parents[1] / "figures"
-INK, TEAL, GOLD = "#243438", "#087f78", "#bd8c36"
+INK, TEAL = "#243438", "#087f78"
 
 
 def text(x, y, value, size=20, color=INK, weight=400, **attrs):
@@ -15,17 +15,12 @@ def text(x, y, value, size=20, color=INK, weight=400, **attrs):
     )
 
 
-def owl(x=0, y=0, scale=1, color=TEAL):
-    return f'''<g transform="translate({x} {y}) scale({scale})" fill="none"
-        stroke="{color}" stroke-width="5" stroke-linejoin="round" stroke-linecap="round">
-      <path d="M18 25 L18 8 L38 19 Q50 14 62 19 L82 8 L82 53
-               Q80 78 50 91 Q20 78 18 53 Z"/>
-      <path d="M20 31 Q33 18 50 37 Q67 18 80 31"/>
-      <circle cx="35" cy="44" r="13"/><circle cx="65" cy="44" r="13"/>
-      <circle cx="35" cy="44" r="4" fill="{color}" stroke="none"/>
-      <circle cx="65" cy="44" r="4" fill="{color}" stroke="none"/>
-      <path d="M45 61 L50 68 L55 61" stroke="{GOLD}"/>
-    </g>'''
+def monogram():
+    return (
+        f'<rect x="4" y="4" width="92" height="92" rx="22" fill="{TEAL}"/>'
+        '<path d="M27 72 V28 L50 51 L73 28 V72" fill="none" '
+        'stroke="#ffffff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>'
+    )
 
 
 def save(name, width, height, title, body, bg="none"):
@@ -41,42 +36,38 @@ def save(name, width, height, title, body, bg="none"):
 
 
 def main():
-    save("mark", 100, 100, "MetisCraft owl", owl())
+    save("mark", 100, 100, "MetisCraft M monogram", monogram())
     for mode, bg, ink, muted, accent in (
         ("light", "#f6faf9", INK, "#546b6d", TEAL),
         ("dark", "#132527", "#edf5f3", "#b0c9c4", "#63d1bc"),
     ):
         save(
             f"wordmark-{mode}",
-            620,
-            116,
+            490,
+            112,
             "MetisCraft",
-            owl(4, 6, 1, accent) + text(124, 78, "MetisCraft", 62, ink, 650),
+            text(12, 82, "MetisCraft", 80, ink, 700, letter_spacing="-2"),
         )
-        body = text(55, 65, "A TOOLKIT FOR TYPED DECISIONS", 16, accent, 650, letter_spacing="2")
-        body += text(50, 160, "MetisCraft", 82, ink, 700, letter_spacing="-3")
-        body += text(55, 218, "Train. Calibrate. Decide.", 32, ink, 500)
-        body += text(55, 262, "Build decision models for your own tasks.", 21, muted)
-        body += f'<path d="M55 308 H745" stroke="{accent}" stroke-opacity=".2"/>'
-        body += text(55, 348, "Typed outputs", 17, muted)
-        body += text(265, 348, "Composable readouts", 17, muted)
-        body += text(553, 348, "Traceable runs", 17, muted)
-        body += owl(868, 68, 2.6, accent)
+        body = text(64, 68, "A TOOLKIT FOR TYPED DECISIONS", 16, accent, 650, letter_spacing="2")
+        body += text(58, 186, "MetisCraft", 104, ink, 700, letter_spacing="-4")
+        body += text(64, 252, "Train. Calibrate. Decide.", 30, ink, 500)
+        body += f'<path d="M64 294 H1136" stroke="{accent}" stroke-opacity=".2"/>'
+        body += text(64, 348, "Your data. Your model. Typed decisions.", 23, muted)
         save(f"hero-{mode}", 1200, 400, "MetisCraft — Train. Calibrate. Decide.", body, bg)
-    body = owl(76, 60, 1.4) + text(250, 160, "MetisCraft", 78, INK, 700)
-    body += text(92, 290, "Train. Calibrate. Decide.", 55, INK, 600)
-    body += text(94, 353, "A toolkit for typed decision models", 30, "#546b6d")
-    body += '<path d="M94 410 H1106" stroke="#c5dbd6"/>'
-    body += text(94, 473, "Your data  /  Your tasks  /  Traceable runs", 25, TEAL)
-    body += text(94, 559, "github.com/Shichaoxx/MetisCraft", 21, "#546b6d")
+    body = text(88, 158, "MetisCraft", 96, INK, 700, letter_spacing="-3")
+    body += text(92, 240, "Train. Calibrate. Decide.", 42, INK, 600)
+    body += text(94, 310, "Train decision models for your own tasks", 28, "#546b6d")
+    body += '<path d="M94 378 H1106" stroke="#c5dbd6"/>'
+    body += text(94, 447, "Typed outputs  /  Composable readouts  /  Traceable runs", 25, TEAL)
+    body += text(94, 553, "github.com/Shichaoxx/MetisCraft", 21, "#546b6d")
     save("social-preview", 1200, 630, "MetisCraft repository preview", body, "#f6faf9")
 
     body = text(32, 46, "One recipe, from data to decisions", 30, INK, 650)
     stages = [
-        ("Data", "Validate & split"),
-        ("Train", "Choose a readout"),
-        ("Calibrate", "Fit on held-out data"),
-        ("Evaluate", "Measure & compare"),
+        ("Data", "Validate splits"),
+        ("Train", "Fit a readout"),
+        ("Calibrate", "Fit temperature"),
+        ("Evaluate", "Compare results"),
         ("Serve", "Load & answer"),
     ]
     for i, (name, detail) in enumerate(stages):
@@ -84,7 +75,7 @@ def main():
         body += f'<rect x="{x}" y="88" width="202" height="104" rx="12" '
         body += 'fill="#edf6f3" stroke="#b6d6cd"/>'
         body += text(x + 17, 127, name, 25, TEAL, 650)
-        body += text(x + 17, 161, detail, 14, "#435e5b")
+        body += text(x + 17, 161, detail, 18, "#435e5b")
         if i < 4:
             body += f'<path d="M{x + 209} 140 H{x + 227} m-5 -5 l5 5 -5 5" '
             body += 'fill="none" stroke="#698883" stroke-width="2"/>'

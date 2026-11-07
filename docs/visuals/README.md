@@ -1,12 +1,12 @@
 # MetisCraft visual assets
 
-The owl is the project's visual motif. Teal `#087f78`, graphite `#243438` and a
+The primary identity is a plain MetisCraft wordmark and a compact M monogram. Teal `#087f78`, graphite `#243438` and a
 small amount of warm gold `#bd8c36` connect the repository and documentation.
 
 | Asset | Use |
 |---|---|
-| [Owl character](figures/avatar.png) | README introduction, community avatar and documentation |
-| [Owl mark](figures/mark.svg) | Small icons and favicon |
+| [Metis character](figures/avatar.png) | Cookbook reading guide |
+| [M monogram](figures/mark.svg) | Documentation header, small icons and favicon |
 | [Light wordmark](figures/wordmark-light.svg) · [dark wordmark](figures/wordmark-dark.svg) | README title and compact brand lockup |
 | [Light banner](figures/hero-light.svg) · [dark banner](figures/hero-dark.svg) | Optional wide banner |
 | [Social preview](figures/social-preview.png) | Repository sharing image, 1200 × 630 |
@@ -16,8 +16,12 @@ small amount of warm gold `#bd8c36` connect the repository and documentation.
 
 The diagrams and marks have editable SVG sources. Rebuild them with
 `python docs/visuals/src/render.py`; the script uses only Python's standard library.
-PNG banner and social exports are rendered from those SVG files with `rsvg-convert`.
-The owl character is a raster illustration generated with Imagegen, not an SVG.
+PNG banner and social exports are rendered from those SVG files at their declared
+canvas sizes; the favicon is a 64 × 64 export of the M monogram. Use an SVG renderer
+(such as a browser or `rsvg-convert`) to refresh the PNGs after changing the SVGs.
+Metis is a raster illustration generated with Imagegen, not an SVG. She appears
+inside the cookbook as a reading guide; repository and documentation homepages use
+the typographic identity.
 
 ## Character direction
 
@@ -32,6 +36,6 @@ The generation prompt is preserved in [avatar-prompt.txt](avatar-prompt.txt).
 
 ## Small-screen use
 
-Use the simple owl mark at favicon sizes. Use the character at avatar sizes where
-its eyes and feather details remain legible. The workflow has a vertical variant
+Use the M monogram at favicon sizes. The cookbook guide uses the existing character
+at a readable size within the document flow; it never floats over reading content. The workflow has a vertical variant
 for narrow screens; diagrams should not be shrunk until their labels are unreadable.

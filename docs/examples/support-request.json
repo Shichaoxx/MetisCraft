@@ -1,0 +1,22 @@
+{
+  "model": "banking77_support",
+  "state": "My card was stolen this morning and there are two payments on it that I did not make.",
+  "questions": {
+    "queue": {
+      "type": "choice",
+      "instructions": "Which support queue should handle this customer message?",
+      "criteria": {
+        "cards": "Ordering, delivering, activating, linking or replacing cards; PINs, card limits and card support.",
+        "payments": "Card payments, cash withdrawals, refunds, fees, exchange rates and currencies.",
+        "transfers": "Sending and receiving money, transfer status, cancellations and beneficiaries.",
+        "top_up": "Topping up the account and problems with top-ups or deposits.",
+        "account": "Identity verification, personal details, passcodes, age limits and closing the account.",
+        "security": "Lost, stolen or compromised cards or phones, and transactions the customer does not recognise."
+      }
+    },
+    "urgent": {
+      "type": "noul",
+      "instructions": "Could the customer lose money or access to their account if this message waits until tomorrow?"
+    }
+  }
+}

@@ -64,5 +64,3 @@ ECE 用 15 个等宽分箱：choice 和 score 取 top-1 概率，noul 和 multi_
 ## 参照
 
 下面的数字来自公开报告，评测子集和协议与这里不同，只用来定位量级。
-
-- BERT-base macro-F1 0.46（原论文），后续工作 0.49（经检索转述，未核对原表，见[数据集调研](../../docs/research/datasets.md)）。

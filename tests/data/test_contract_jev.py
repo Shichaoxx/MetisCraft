@@ -53,8 +53,13 @@ def test_multilabel_probabilities_are_independent(soft):
 @pytest.mark.parametrize("allow_null", [False, True])
 def test_user_options_cannot_use_the_reserved_null_id(allow_null):
     with pytest.raises(ValidationError, match="reserved for the null answer"):
-        rec({"type": "choice", "options": [{"id": "__null__"}, {"id": "b"}],
-             "allow_null": allow_null})
+        rec(
+            {
+                "type": "choice",
+                "options": [{"id": "__null__"}, {"id": "b"}],
+                "allow_null": allow_null,
+            }
+        )
 
 
 @pytest.mark.parametrize(

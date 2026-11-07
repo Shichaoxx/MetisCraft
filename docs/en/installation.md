@@ -31,8 +31,7 @@ metiscraft --version
 ```
 
 This is a local wheel installation, not a claim that `pip install metiscraft`
-is available on PyPI. The [publishing guide](../publishing.md) describes the
-release process.
+is available on PyPI. Check the [releases](https://github.com/Shichaoxx/MetisCraft/releases) for available versions.
 
 ## Optional dependencies
 

@@ -20,8 +20,6 @@ from metiscraft.data.contract import (
 )
 from metiscraft.data.converters import Converter, ConverterContext, register
 from metiscraft.data.converters.common import (
-    argmax,
-    is_one_hot,
     iter_parquet,
     parquet_files,
     provenance,
@@ -34,6 +32,7 @@ class JevRequests(Converter):
     """LocalLLaMA typed-decisions: one row = one official request with several questions."""
 
     name = "jev_requests"
+    version = "2"
 
     def iter_split(self, ctx: ConverterContext, split: str) -> Iterator[dict[str, Any]]:
         for row in iter_parquet(parquet_files(ctx, split), ctx.max_rows):
@@ -75,23 +74,22 @@ def _flat_question(kind: str, options: list[str], target: list[float], parse_des
                 return None
             opts = [Option(id=o) for o in options]
         question = Question(type="choice", options=opts)
-        soft = None if is_one_hot(target) else target
-        return question, opts[argmax(target)].id, soft
+        return question, None, target
     if kind == "score":
         question = Question(
             type="score", levels=[Option(id=str(i), text=o) for i, o in enumerate(options)]
         )
-        soft = None if is_one_hot(target) else target
-        return question, argmax(target), soft
+        return question, None, target
     if kind == "noul":
         p_true = target[-1]
-        soft = None if p_true in (0.0, 1.0) else [p_true]
-        return Question(type="noul"), p_true >= 0.5, soft
+        return Question(type="noul"), None, [p_true]
     return None
 
 
 class _FlatRows(Converter):
     """Shared logic for datasets with one question per row."""
+
+    version = "2"
 
     parse_described = False
 
@@ -127,7 +125,9 @@ class _FlatRows(Converter):
                 input=Input(query=row["question"], context={"state": state}),
                 question=question,
                 group=Group(id=row["group_id"], split_key=row["group_id"]),
-                supervision=Supervision(kind=question.type, labels=label, soft=soft),
+                supervision=Supervision(
+                    has_hard_label=soft is None, kind=question.type, labels=label, soft=soft
+                ),
                 provenance=Provenance(
                     **provenance(
                         ctx,

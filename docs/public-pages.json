@@ -1,0 +1,53 @@
+{
+  "pages": [
+    "docs/en/index.md",
+    "docs/en/installation.md",
+    "docs/en/quickstart.md",
+    "docs/en/data.md",
+    "docs/en/training.md",
+    "docs/en/serving.md",
+    "docs/en/limitations.md",
+    "docs/en/cookbook/index.md",
+    "docs/en/cookbook/decision.md",
+    "docs/en/cookbook/first-model.md",
+    "docs/en/cookbook/own-task.md",
+    "docs/zh/index.md",
+    "docs/zh/installation.md",
+    "docs/zh/quickstart.md",
+    "docs/zh/data.md",
+    "docs/zh/training.md",
+    "docs/zh/serving.md",
+    "docs/zh/limitations.md",
+    "docs/zh/cookbook/index.md",
+    "docs/zh/cookbook/decision.md",
+    "docs/zh/cookbook/first-model.md",
+    "docs/zh/cookbook/own-task.md",
+    "docs/cookbook/principles.md",
+    "docs/cookbook/best-practices.md",
+    "docs/cookbook/recipe-reference.md",
+    "docs/readouts/README.md",
+    "docs/reproductions/tev1.md",
+    "docs/support-matrix.md",
+    "docs/reference.md",
+    "CONTRIBUTING.md",
+    "CHANGELOG.md",
+    "recipes/banking77/README.md",
+    "recipes/banking77_support/README.md",
+    "recipes/boolq/README.md",
+    "recipes/clinc150/README.md",
+    "recipes/go_emotions/README.md",
+    "recipes/sst5/README.md",
+    "recipes/tev1/README.md"
+  ],
+  "aliases": {
+    "docs/cookbook/README.md": "docs/zh/cookbook/index.md",
+    "docs/cookbook/your-own-jev.md": "docs/zh/cookbook/own-task.md"
+  },
+  "development_only": [
+    "docs/status.md",
+    "docs/design.md",
+    "docs/publishing.md",
+    "docs/research"
+  ],
+  "version": "0.1.0rc1"
+}

@@ -1,18 +1,19 @@
 # Contributing
 
-MetisCraft is preparing 0.1.0rc1. Start with the [core documentation](docs/en/index.md)
-and [current status](docs/status.md). Discuss substantial changes to public APIs,
+Start with the [core documentation](docs/en/index.md) and [Cookbook](docs/en/cookbook/index.md). Discuss substantial changes to public APIs,
 judgment semantics or artifact formats before implementing them.
 
 ## Development setup
 
-Work on a feature branch from `main`. In an isolated Python environment:
+Work on a feature branch from `dev`. In an isolated Python environment:
 
 ```bash
 python -m pip install -e '.[dev,serve,reproduce]'
-ruff check .
+python scripts/check_quality.py
 CUDA_VISIBLE_DEVICES='' OMP_NUM_THREADS=1 python -m pytest
 ```
+
+The quality checks use Ruff lint/format and a basic Pyright gate for configuration and Record interfaces. Maintainer hooks use Python 3.11; install them with `pre-commit install`. CI checks formatting without rewriting files.
 
 Tests use tiny random models and constructed data on CPU. They do not require
 downloaded weights or datasets. The `reproduce` extra is needed by tests for
@@ -43,13 +44,11 @@ TypeSafe API outputs.
 Maintain paired core pages in `docs/en/` and `docs/zh/`; English is the default.
 Use `src/metiscraft/templates/quickstart/README.md` as the command source for the
 exported quickstart. Keep documented commands aligned with the actual CLI, and
-distinguish software checks from evidence about model quality. Keep project
-progress in `docs/status.md` and machine-specific information out of public files.
+distinguish software checks from evidence about model quality. Keep development plans and progress on `dev`, in separate commits from public code and documentation. Keep machine-specific information out of public files.
 
 Write commit messages in English, starting with an imperative verb. A pull
 request should explain the behavior change, relevant checks and material
-limitations. Keep experimental claims tied to recorded runs. Release preparation
-is described in [publishing](docs/publishing.md).
+limitations. Keep experimental claims tied to recorded runs. The default branch and release artifacts contain user-facing material; development notes remain on `dev`.
 
 ## License
 

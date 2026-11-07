@@ -1,45 +1,70 @@
-# MetisCraft
+# Your task. A model that decides.
 
-![MetisCraft owl avatar](../visuals/figures/avatar.png)
+<div class="home-lead" markdown="1">
 
-Train decision models that return typed judgments and probabilities in one forward
-pass. MetisCraft brings data preparation, training, calibration, evaluation and
-serving into one recipe for general judges and domain-specific tasks.
+Train typed decision models on your own data. One recipe connects training, calibration, evaluation and serving.
 
-The current preview is **0.1.0rc1**. Check [release availability](https://github.com/Shichaoxx/MetisCraft/releases) for published packages.
-Start with [installation](installation.md), then run the [CPU quickstart](quickstart.md).
-The quickstart uses a random tiny model and synthetic data to check the software
-workflow. It does not establish useful model quality.
+[Get started](cookbook/first-model.md){ .md-button .md-button--primary }
+[Explore the Cookbook](cookbook/index.md){ .md-button }
+
+</div>
+
+## Start with a recorded decision
+
+> My card was stolen this morning and there are two payments on it that I did not make.
+
+<div class="decision-result" markdown="1">
+
+**security** · Route to the security team
+
+`confidence: 0.9999995054983101` · `urgent: 0.9999314182034214`
+
+A constructed message, answered by a recorded customer-routing model. Probabilities are not accuracy scores.
+
+[Open the full example](cookbook/decision.md) →
+
+</div>
+
+## Choose your next step
+
+<div class="start-grid" markdown="1">
+
+<div markdown="1">
+
+### 01 · See a decision
+
+See the input, the typed output and the evidence behind it.
+
+[Understand a decision](cookbook/decision.md)
+
+</div>
+<div markdown="1">
+
+### 02 · Run the workflow
+
+Run your first CPU example without a GPU or weight download.
+
+[Run your first model](cookbook/first-model.md)
+
+</div>
+<div markdown="1">
+
+### 03 · Bring your task
+
+Replace the data and base model, keeping the same training and serving path.
+
+[Bring your own task](cookbook/own-task.md)
+
+</div>
+</div>
+
+## Typed judgments. Recorded evidence.
+
+Use yes/no, choice, ordered score and multiple labels through Python or batch prediction. HTTP `/v1/systemone` supports the first three.
+
+[Recipes and results](limitations.md) · [Data format](data.md) · [Train and calibrate](training.md) · [Predict and serve](serving.md)
 
 <picture>
   <source media="(max-width: 600px)" srcset="../visuals/figures/pipeline-mobile.svg">
-  <img alt="From supervised data to a served decision model" src="../visuals/figures/pipeline.svg">
+  <img src="../visuals/figures/pipeline.svg" alt="Data, train, calibrate, evaluate, serve">
 </picture>
-
-## What can it judge?
-
-| Type | Output | Record API | HTTP `/v1/systemone` |
-|---|---|---|---|
-| `noul` | Probability of yes / true | Yes | Yes |
-| `choice` | One option and a distribution over options | Yes | Yes |
-| `score` | Distribution over ordered levels | Yes | Yes |
-| `multi_label` | Independent probabilities for candidates | Yes | No |
-
-Two readouts are available: answer-token logits for `noul`, `choice` and `score`,
-and a candidate scalar head for all four types. LoRA, full fine-tuning and frozen
-backbones are configurable. Temperature calibration uses a separate split; its
-effect is reported alongside uncalibrated results.
-
-## Choose a starting point
-
-- [Quickstart](quickstart.md): import, train, evaluate and serve a complete CPU example.
-- [Your data](data.md): import supervised JSONL without editing the dataset registry.
-- [Training](training.md): prepare a verified local base and configure a recipe.
-- [Serving](serving.md): load an artifact and keep task-specific calibration consistent.
-- [Limitations](limitations.md): current scope and what the evidence does not establish.
-
-The existing [cookbook](../cookbook/README.md), [readout notes](../readouts/README.md)
-and [research support matrix](../support-matrix.md) provide more detail in Chinese.
-Project progress is recorded in [status](../status.md).
-
-[中文](../zh/index.md)

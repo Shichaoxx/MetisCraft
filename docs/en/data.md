@@ -56,6 +56,8 @@ For `choice` and `score`, soft probabilities must sum to 1 within `1e-6`;
 `noul` and `multi_label` carry independent probabilities. The choice option ID
 `__null__` is reserved: enable `allow_null` to add the null answer instead.
 
+New imports record `supervision.has_hard_label` so absent labels remain distinct from a legal null, `false`, or an empty positive set. You can set it to `false` for soft-only supervision. Training and calibration use the soft target when provided; hard accuracy/F1 use only known hard labels. Reports expose `n_hard`, `n_soft` and `n_hard_unknown`. Ambiguous legacy null-plus-soft records receive soft metrics only. Undefined metrics are JSON `null` with reasons.
+
 ## Keep fitting and evaluation separate
 
 Use `train` for model fitting, `calib` for temperature fitting, and `dev`, `test`

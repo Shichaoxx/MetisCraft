@@ -123,6 +123,8 @@ The model fits only `train`; temperature fits only `calib`; evaluation uses
 `dev`, `test` or `eval_only`. Calibration does not guarantee reliable probabilities
 after a distribution shift.
 
+Epochs count complete micro-batches, including a rounded-up fractional epoch. The last accumulation step uses the remaining micro-batches rather than borrowing from the next epoch. `max_steps` overrides epochs and counts optimizer updates. The artifact records consumed micro-batches and sample presentations, including any distributed-sampler padding. Input and resolved configurations are saved separately; `recipe_sha256` remains the input identity.
+
 ## Inspect the run
 
 | Output | What it records |

@@ -9,6 +9,7 @@ from typing import Any
 import numpy as np
 
 from metiscraft.calibrate import temperature_for
+from metiscraft.data.contract import hard_label_status
 from metiscraft.judgments import probabilities
 from metiscraft.modeling.prompts import NULL_OPTION
 
@@ -20,11 +21,11 @@ ECE_NOTE = (
 EPS = 1e-12
 
 
-def ece(confidence: np.ndarray, outcome: np.ndarray, bins: int = ECE_BINS) -> float:
+def ece(confidence: np.ndarray, outcome: np.ndarray, bins: int = ECE_BINS) -> float | None:
     confidence = np.asarray(confidence, dtype=float)
     outcome = np.asarray(outcome, dtype=float)
     if confidence.size == 0:
-        return float("nan")
+        return None
     index = np.minimum((confidence * bins).astype(int), bins - 1)
     total = 0.0
     for b in range(bins):
@@ -34,11 +35,11 @@ def ece(confidence: np.ndarray, outcome: np.ndarray, bins: int = ECE_BINS) -> fl
     return float(total / confidence.size)
 
 
-def binary_auc(scores: np.ndarray, labels: np.ndarray) -> float:
+def binary_auc(scores: np.ndarray, labels: np.ndarray) -> float | None:
     labels = labels.astype(bool)
     pos, neg = labels.sum(), (~labels).sum()
     if pos == 0 or neg == 0:
-        return float("nan")
+        return None
     order = scores.argsort(kind="mergesort")
     ranks = np.empty(len(scores))
     sorted_scores = scores[order]
@@ -76,7 +77,7 @@ def _gold_index(pred: dict[str, Any]) -> int:
     return ids.index(NULL_OPTION.id if pred["labels"] is None else pred["labels"])
 
 
-def metrics_for_kind(
+def _hard_metrics(
     kind: str, preds: Sequence[dict[str, Any]], probs: Sequence[Sequence[float]]
 ) -> dict[str, Any]:
     out: dict[str, Any] = {"n": len(preds)}
@@ -92,9 +93,6 @@ def metrics_for_kind(
             brier=float(np.mean((p - y) ** 2)),
             ece=ece(p, y),
         )
-        soft = [r["soft"][0] for r in preds if "soft" in r]
-        if len(soft) == len(preds):
-            out["brier_soft"] = float(np.mean((p - np.array(soft)) ** 2))
         return out
 
     if kind in ("choice", "score"):
@@ -118,15 +116,6 @@ def metrics_for_kind(
         if kind == "score":
             expected = [sum(i * pi for i, pi in enumerate(q)) for q in probs]
             out["mae_expected"] = float(np.mean(np.abs(np.array(expected) - np.array(gold))))
-        if all("soft" in r for r in preds):
-            out["brier_soft"] = float(
-                np.mean(
-                    [
-                        sum((a - b) ** 2 for a, b in zip(q, r["soft"], strict=True))
-                        for q, r in zip(probs, preds, strict=True)
-                    ]
-                )
-            )
         return out
 
     p_all, y_all, exact = [], [], []
@@ -167,13 +156,83 @@ def metrics_for_kind(
     return out
 
 
+def metrics_for_kind(
+    kind: str, preds: Sequence[dict[str, Any]], probs: Sequence[Sequence[float]]
+) -> dict[str, Any]:
+    """Report hard-gold and soft-target metrics on their own counted subsets.
+
+    ``nll``/``brier`` and decision metrics use known hard labels only.
+    ``nll_soft``/``brier_soft`` use every supplied soft target, including rows
+    that also have hard gold. Unknown legacy nulls never become hard gold.
+    """
+    pairs = list(zip(preds, probs, strict=True))
+    statuses = [
+        hard_label_status(
+            kind,
+            row.get("labels"),
+            row.get("soft"),
+            allow_null=NULL_OPTION.id in row.get("choice_ids", []),
+            declared=row.get("has_hard_label"),
+        )
+        for row, _ in pairs
+    ]
+    hard = [pair for pair, status in zip(pairs, statuses, strict=True) if status is True]
+    soft = [pair for pair in pairs if pair[0].get("soft") is not None]
+    reasons: dict[str, str] = {}
+    out: dict[str, Any] = {
+        "n": len(pairs),
+        "n_hard": len(hard),
+        "n_soft": len(soft),
+        "n_hard_unknown": sum(status is None for status in statuses),
+    }
+    if hard:
+        hp, hq = zip(*hard, strict=True)
+        out.update({key: value for key, value in _hard_metrics(kind, hp, hq).items() if key != "n"})
+        if kind == "noul" and out["auc"] is None:
+            reasons["auc"] = "hard_labels_have_only_one_class"
+    else:
+        names = (
+            ["accuracy", "auc", "nll", "brier", "ece"]
+            if kind == "noul"
+            else ["accuracy", "macro_f1", "nll", "brier", "ece"]
+            + (["mae_expected"] if kind == "score" else [])
+            if kind in ("choice", "score")
+            else ["exact_match", "micro_f1", "macro_f1", "nll", "brier", "ece"]
+        )
+        out.update(dict.fromkeys(names))
+        reasons.update(dict.fromkeys(names, "no_known_hard_labels"))
+    if soft:
+        losses, errors = [], []
+        for row, probability in soft:
+            target = np.asarray(row["soft"], dtype=float)
+            p = np.clip(np.asarray(probability, dtype=float), EPS, 1 - EPS)
+            if p.shape != target.shape:
+                raise ValueError("soft targets and probabilities must have the same shape")
+            if kind in ("choice", "score"):
+                losses.append(float(-(target * np.log(p)).sum()))
+                errors.append(float(((p - target) ** 2).sum()))
+            else:
+                losses.extend((-(target * np.log(p) + (1 - target) * np.log(1 - p))).tolist())
+                errors.extend(((p - target) ** 2).tolist())
+        out["nll_soft"] = float(np.mean(losses))
+        out["brier_soft"] = float(np.mean(errors))
+    else:
+        out.update(nll_soft=None, brier_soft=None)
+        reasons.update(nll_soft="no_soft_targets", brier_soft="no_soft_targets")
+    if out["n_hard_unknown"]:
+        reasons["hard_label_status"] = "legacy_null_with_soft_is_ambiguous"
+    if reasons:
+        out["undefined_reasons"] = reasons
+    return out
+
+
 def evaluate(
     preds: Sequence[dict[str, Any]], calibration: dict[str, Any] | None = None
 ) -> dict[str, Any]:
     """Metrics per judgment type; probabilities use the calibration's temperatures if given."""
     by_kind: dict[str, list[dict[str, Any]]] = defaultdict(list)
     for p in preds:
-        if "labels" in p:
+        if "labels" in p or p.get("soft") is not None:
             by_kind[p["kind"]].append(p)
     result = {}
     for kind, rows in sorted(by_kind.items()):
@@ -202,7 +261,7 @@ def evaluate_prior(
 ) -> dict[str, Any]:
     by_kind: dict[str, list[dict[str, Any]]] = defaultdict(list)
     for p in preds:
-        if "labels" in p:
+        if "labels" in p or p.get("soft") is not None:
             by_kind[p["kind"]].append(p)
     result = {}
     for kind, rows in sorted(by_kind.items()):

@@ -44,6 +44,6 @@ policy-transfer 的 NLL 从 0.0522 升至 0.0990，准确率不变，原因仍�
 应在有代表性的留出数据上对照校准前后指标，
 并保持各划分用途独立。
 
-实验进展与后续工作统一见[支持矩阵](../support-matrix.md)和[项目状态](../status.md)。
+生态覆盖与核对依据见[支持矩阵](../support-matrix.md)。
 
 [English](../en/limitations.md)

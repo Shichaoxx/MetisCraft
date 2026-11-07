@@ -1,41 +1,70 @@
-# MetisCraft
+# 把业务问题，变成模型的判断。
 
-![MetisCraft owl avatar](../visuals/figures/avatar.png)
+<div class="home-lead" markdown="1">
 
-训练一次前向就能给出类型化判断和概率的决策模型。MetisCraft 用一份配方串起数据准备、
-训练、校准、评测与服务，支持通用 judge，也支持特定业务场景。
+用自己的数据训练类型化判断模型。一份配方，连接训练、校准、评测和部署。
 
-当前预览版是 **0.1.0rc1**，已发布的包见[发行记录](https://github.com/Shichaoxx/MetisCraft/releases)。先[安装](installation.md)，再运行
-[CPU 快速上手](quickstart.md)。示例使用随机初始化的小模型和构造数据，只检查软件流程，
-不能据此判断真实模型效果。
+[开始使用](cookbook/first-model.md){ .md-button .md-button--primary }
+[浏览 Cookbook](cookbook/index.md){ .md-button }
+
+</div>
+
+## 从一条真实响应开始
+
+> My card was stolen this morning and there are two payments on it that I did not make.
+
+<div class="decision-result" markdown="1">
+
+**security** · 转交安全团队
+
+`confidence: 0.9999995054983101` · `urgent: 0.9999314182034214`
+
+来自已记录的客服分流模型：人工构造消息、真实模型响应。概率不是准确率。
+
+[查看完整案例](cookbook/decision.md) →
+
+</div>
+
+## 从这里开始
+
+<div class="start-grid" markdown="1">
+
+<div markdown="1">
+
+### 01 · 看见效果
+
+输入如何变成带概率的判断，结果依据在哪里。
+
+[认识一次判断](cookbook/decision.md)
+
+</div>
+<div markdown="1">
+
+### 02 · 跑通流程
+
+无需 GPU 或下载权重，完成第一个 CPU 示例。
+
+[跑通第一个模型](cookbook/first-model.md)
+
+</div>
+<div markdown="1">
+
+### 03 · 接入任务
+
+替换数据和基座，沿用同一条训练与部署路径。
+
+[接入自己的任务](cookbook/own-task.md)
+
+</div>
+</div>
+
+## 判断有类型，过程有依据
+
+是非、选择、等级和多标签通过 Python／批量预测使用。HTTP `/v1/systemone` 支持前三种。
+
+[配方与真实结果](limitations.md) · [数据格式](data.md) · [训练与校准](training.md) · [预测与服务](serving.md)
 
 <picture>
   <source media="(max-width: 600px)" srcset="../visuals/figures/pipeline-mobile.svg">
-  <img alt="从有监督数据到可部署的决策模型" src="../visuals/figures/pipeline.svg">
+  <img src="../visuals/figures/pipeline.svg" alt="Data, train, calibrate, evaluate, serve">
 </picture>
-
-## 支持哪些判断？
-
-| 类型 | 输出 | Record API | HTTP `/v1/systemone` |
-|---|---|---|---|
-| `noul` | 是／真的概率 | 支持 | 支持 |
-| `choice` | 一个选项及选项概率分布 | 支持 | 支持 |
-| `score` | 有序等级的概率分布 | 支持 | 支持 |
-| `multi_label` | 各候选独立的概率 | 支持 | 不支持 |
-
-提供两种读出：答案 token logits 适用于 `noul`、`choice`、`score`；逐候选标量头支持全部
-四种类型。LoRA、全参微调与冻结基座可通过配置选择。温度校准只拟合独立的校准集，
-评测同时报告校准前后的结果。
-
-## 从哪里开始？
-
-- [快速上手](quickstart.md)：在 CPU 上完成导入、训练、评测与服务。
-- [接入自己的数据](data.md)：直接导入有监督 JSONL，无需修改数据注册表。
-- [训练](training.md)：准备经过校验的本地基座，配置训练配方。
-- [服务](serving.md)：加载产物，保持任务级校准路由一致。
-- [当前边界](limitations.md)：功能范围与已有证据的限制。
-
-深入说明见 [cookbook](../cookbook/README.md)、[读出笔记](../readouts/README.md)和
-[研究支持矩阵](../support-matrix.md)。项目进度统一记录在[状态页](../status.md)。
-
-[English](../en/index.md)

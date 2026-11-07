@@ -73,7 +73,4 @@ ECE 用 15 个等宽分箱：choice 和 score 取 top-1 概率，noul 和 multi_
 
 下面的数字来自公开报告，评测子集和协议与这里不同，只用来定位量级。
 
-- encoder 微调强基线：官方 test 准确率约 0.937–0.944（作者自报，见[调研](../../docs/research/decision-model-sota.md)）。
 - jebadiah 4B-v2：300 题子集准确率 0.700，ECE 0.103（见[支持矩阵](../../docs/support-matrix.md)）。
-- LLM-as-Jev：Qwen3-0.6B + LoRA（选项似然读出）准确率 0.590（作者自报，见[调研](../../docs/research/decision-model-sota.md)）。
-- 零样本 Jev：1,000 条子集准确率约 0.82（作者自报，见[场景调研](../../docs/research/scenarios.md)）。

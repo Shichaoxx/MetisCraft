@@ -8,6 +8,7 @@ script refuses to run if a field has none, so the reference cannot silently fall
 
 from __future__ import annotations
 
+import argparse
 import types
 import typing
 from pathlib import Path
@@ -44,7 +45,7 @@ DESCRIPTIONS = {
     "readout.prompt.style": "① 的提示写法：`plain` 是 MetisCraft 的文本布局；`chat_json` 把题目写成 JSON 载荷放进分词器的对话模板（关闭思考），选项和等级都用字母，即 Tev1 的格式，只接受选择和等级题。",
     "readout.prompt.system": "`chat_json` 的系统提示；不写就没有系统回合。",
     "readout.shuffle_train": "训练时打乱候选顺序（③），避免记住位置。",
-    "readout.infer_permutations": "预留字段，v0.1 未实现，设了也不生效。",
+    "readout.infer_permutations": "当前只接受 1；多次排列推理尚未实现，其他值会被拒绝。",
     "objective.kind": "损失由判断类型决定，`auto`、`bce`、`cross_entropy` 在 v0.1 效果相同，只作标注；`ordinal_soft` 让等级题改用以金标为中心的高斯软目标；`completion` 只用于 ①，像监督微调那样在整个词表上训练答案码和 EOS 两个 token。",
     "objective.brier_weight": "在交叉熵之外再加 Brier 项的权重（选择、等级）。",
     "objective.pos_weight": "多标签正样本权重：`none`、`auto`（训练集负正比，限制在 1 到 100）或一个数；推理时自动扣回 ln w。",
@@ -66,6 +67,7 @@ DESCRIPTIONS = {
     "calibrate.split": "拟合温度用的划分。",
     "eval.splits": "要评测的划分。",
     "eval.baselines": "和模型同表报告的基线；v0.1 支持 `prior`。",
+    "serve.task_map": "HTTP 题名到产物 task_id 的映射；多任务请求需要明确映射，单任务可自动选择。",
     "paths.data_root": "数据根目录。",
     "paths.models_root": "权重根目录。",
     "paths.runs_root": "运行目录的根。",
@@ -80,6 +82,7 @@ SECTION_TITLES = {
     "train": "训练",
     "calibrate": "校准",
     "eval": "评测",
+    "serve": "服务",
     "paths": "路径",
 }
 
@@ -117,6 +120,9 @@ def rows(model: type[BaseModel], prefix: str = "") -> list[tuple[str, str, str]]
 
 
 def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--check", action="store_true", help="fail on drift without writing")
+    args = parser.parse_args()
     table = rows(config.Recipe)
     missing = [p for p, _, _ in table if p not in DESCRIPTIONS]
     stale = [p for p in DESCRIPTIONS if p not in {r[0] for r in table}]
@@ -130,7 +136,7 @@ def main() -> None:
         "路径的优先级是：配方里的 `paths` > 环境变量 `METISCRAFT_DATA_ROOT` 等 > `~/.config/metiscraft/paths.yaml`。",
         "",
         "本页由 [`src/recipe_reference.py`](src/recipe_reference.py) 从代码生成，类型和默认值以代码为准。完整示例见"
-        "[把业务做成 Jev](your-own-jev.md#4-写配方)。",
+        "[接入自己的任务](../zh/cookbook/own-task.md)。",
         "",
     ]
     section = None
@@ -151,7 +157,12 @@ def main() -> None:
             or table[[r[0] for r in table].index(path) + 1][0].split(".")[0] != top
         ):
             lines.append("")
-    OUT.write_text("\n".join(lines), encoding="utf-8")
+    content = "\n".join(lines)
+    if args.check:
+        if OUT.read_text(encoding="utf-8") != content:
+            raise SystemExit("Recipe reference differs; run recipe_reference.py")
+    else:
+        OUT.write_text(content, encoding="utf-8")
     print(OUT, len(table), "fields")
 
 

@@ -12,10 +12,15 @@ import json
 import os
 from collections.abc import Iterable, Mapping
 from pathlib import Path
-from typing import Any, Literal
+from typing import Annotated, Any, Literal
 
 import yaml
 from pydantic import BaseModel, ConfigDict, Field, model_validator
+
+PositiveInt = Annotated[int, Field(gt=0, strict=True)]
+PositiveFloat = Annotated[float, Field(gt=0, allow_inf_nan=False)]
+NonNegativeFloat = Annotated[float, Field(ge=0, allow_inf_nan=False)]
+UnitFloat = Annotated[float, Field(ge=0, le=1, allow_inf_nan=False)]
 
 
 class _Strict(BaseModel):
@@ -35,29 +40,29 @@ class DataConfig(_Strict):
     calib_split: str = "calib"
     dev_split: str = "dev"
     test_split: str = "test"
-    max_train: int | None = None
-    max_eval: int | None = None
+    max_train: PositiveInt | None = None
+    max_eval: PositiveInt | None = None
 
 
 class FinetuneConfig(_Strict):
     kind: Literal["lora", "full", "frozen"] = "lora"
-    r: int = 16
-    alpha: int = 32
-    dropout: float = 0.0
+    r: PositiveInt = 16
+    alpha: PositiveInt = 32
+    dropout: UnitFloat = 0.0
     targets: str | list[str] = "all-linear"
 
 
 class ModelConfig(_Strict):
     base: str
     dtype: Literal["bf16", "fp16", "fp32"] = "bf16"
-    max_length: int = 1024
+    max_length: PositiveInt = 1024
     finetune: FinetuneConfig = Field(default_factory=FinetuneConfig)
     gradient_checkpointing: bool = False
 
 
 class HeadConfig(_Strict):
-    hidden: int = 256
-    dropout: float = 0.0
+    hidden: PositiveInt = 256
+    dropout: UnitFloat = 0.0
 
 
 class PromptConfig(_Strict):
@@ -86,25 +91,25 @@ class ObjectiveConfig(_Strict):
     # completion: next-token cross-entropy over the whole vocabulary on the answer code and
     # the end-of-sequence token, as supervised fine-tuning does (answer-token readout only)
     kind: Literal["auto", "bce", "cross_entropy", "ordinal_soft", "completion"] = "auto"
-    brier_weight: float = 0.0
-    pos_weight: Literal["none", "auto"] | float = "none"
-    ordinal_sigma: float = 1.0
+    brier_weight: NonNegativeFloat = 0.0
+    pos_weight: Literal["none", "auto"] | PositiveFloat = "none"
+    ordinal_sigma: PositiveFloat = 1.0
 
 
 class TrainConfig(_Strict):
-    epochs: float = 1.0
-    max_steps: int | None = None
-    batch_size: int = 8
-    grad_accum: int = 1
-    lr: float = 2e-4
-    head_lr: float = 1e-3
-    weight_decay: float = 0.0
+    epochs: PositiveFloat = 1.0
+    max_steps: PositiveInt | None = None
+    batch_size: PositiveInt = 8
+    grad_accum: PositiveInt = 1
+    lr: NonNegativeFloat = 2e-4
+    head_lr: NonNegativeFloat = 1e-3
+    weight_decay: NonNegativeFloat = 0.0
     scheduler: Literal["linear", "cosine"] = "linear"
-    warmup_ratio: float = 0.0
-    max_grad_norm: float = 1.0
-    seed: int = 42
+    warmup_ratio: UnitFloat = 0.0
+    max_grad_norm: PositiveFloat = 1.0
+    seed: int = Field(default=42, ge=0, lt=2**32, strict=True)
     bf16: bool = True
-    logging_steps: int = 10
+    logging_steps: PositiveInt = 10
 
 
 class CalibrateConfig(_Strict):
@@ -203,7 +208,12 @@ def resolve_paths(explicit: Paths | None = None, user_file: Path | None = None) 
             value = os.environ.get(env_name) or from_file.get(field)
             if value:
                 resolved[field] = Path(value).expanduser()
-    return Paths.model_validate(resolved)
+    return Paths.model_validate(
+        {
+            key: Path(value).expanduser().absolute() if value is not None else None
+            for key, value in resolved.items()
+        }
+    )
 
 
 def require_path(paths: Paths, field: str) -> Path:
