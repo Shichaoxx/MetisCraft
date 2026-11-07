@@ -167,6 +167,8 @@ def main():
             "hatch_build.py",
             "docs/public-pages.json",
         }
+        required.update(pages)
+        required.add("docs/site.css")
         for pattern in (
             "recipes/**/*.yaml",
             "recipes/**/README.md",

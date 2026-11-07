@@ -1,32 +1,52 @@
 # Cookbook
 
-从一道业务问题开始，做出能评测、能接入应用的判断模型。这里先看真实记录的效果，再跑通本地 CPU 流程，最后接入自己的标注数据。
+从一条真实响应开始，逐步构建自己的判断模型。
 
 <div class="cookbook-guide" markdown="1">
 
-<p><img src="../../visuals/figures/avatar.png" alt="Metis，Cookbook 阅读向导" width="96"></p>
+<figure class="cookbook-avatar"><img src="../../visuals/figures/avatar.png" alt="Metis，Cookbook 阅读向导" width="160" height="160"></figure>
+
+<div class="cookbook-guide-copy" markdown="1">
+
+## Metis · 阅读向导
+
+先看一次判断，再跑通示例，最后接入你的数据。
+
+</div>
+</div>
+
+## 选一条起步路线
+
+<div class="start-grid cookbook-paths" markdown="1">
 
 <div markdown="1">
 
-## Metis · 选一条起步路线
+### 01 · 认识一次判断
 
-- **先看能做什么**：[认识一次判断](decision.md)。
-- **先把流程跑起来**：[在 CPU 上训练第一个模型](first-model.md)。
-- **接入自己的标签**：[把自己的任务接进来](own-task.md)。
-- **进一步理解与调优**：[原理](../../cookbook/principles.md)与[最佳实践](../../cookbook/best-practices.md)。
+从一条客服消息到两个业务判断，查看完整请求、真实响应与评测依据。
+
+[看真实案例](decision.md) →
+
+</div>
+<div markdown="1">
+
+### 02 · 跑通第一个模型
+
+无需 GPU 或下载权重。从随机小模型开始，走完训练、校准、评测和 HTTP 调用。
+
+[开始 CPU 教程](first-model.md) →
+
+</div>
+<div markdown="1">
+
+### 03 · 接入自己的任务
+
+替换标注数据与真实基座，用同一份配方产出可加载、可评测的模型。
+
+[接入业务数据](own-task.md) →
 
 </div>
 </div>
-
-## 从你想得到的结果开始
-
-| 你的目标 | 阅读路线 | 读完或完成后得到什么 |
-|---|---|---|
-| 理解输入、输出和业务用途 | [认识一次判断](decision.md) | 一份完整客服请求、真实模型响应，以及理解评测证据的方法 |
-| 检查安装和完整软件流程 | [在 CPU 上训练第一个模型](first-model.md) | 随机小模型的本地产物、评测报告和 HTTP 响应 |
-| 为已有标注的任务训练模型 | [把自己的任务接进来](own-task.md) | 一个有版本的数据集、连接预训练基座的配方，以及评测结果的步骤 |
-
-客服示例来自已训练模型和有记录的评测；CPU 教程使用构造数据与随机权重，验证软件是否正常。前者帮助你理解工具包能产出怎样的结果，后者帮助你掌握操作流程。
 
 ## 从一道题到一个应用
 

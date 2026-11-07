@@ -1,32 +1,52 @@
 # Cookbook
 
-Turn a business question into a decision you can test and use in an application. These guides move from a recorded example to a local CPU workflow, then to your own labeled data.
+From a recorded response to a decision model of your own.
 
 <div class="cookbook-guide" markdown="1">
 
-<p><img src="../../visuals/figures/avatar.png" alt="Metis, your Cookbook guide" width="96"></p>
+<figure class="cookbook-avatar"><img src="../../visuals/figures/avatar.png" alt="Metis, your Cookbook guide" width="160" height="160"></figure>
+
+<div class="cookbook-guide-copy" markdown="1">
+
+## Metis · Your guide
+
+See a decision. Run the example. Bring your own data.
+
+</div>
+</div>
+
+## Choose a starting point
+
+<div class="start-grid cookbook-paths" markdown="1">
 
 <div markdown="1">
 
-## Metis · Choose your next step
+### 01 · See a decision
 
-- **See what you can build:** [Understand a decision](decision.md).
-- **Run the workflow:** [Your first model on CPU](first-model.md).
-- **Use your own labels:** [Bring your own task](own-task.md).
-- **Go deeper:** [Principles](../../cookbook/principles.md) and [best practices](../../cookbook/best-practices.md) (Chinese).
+Follow a customer message through two decisions, with the full request, recorded response and evaluation evidence.
+
+[Open the recorded example](decision.md) →
+
+</div>
+<div markdown="1">
+
+### 02 · Run your first model
+
+No GPU or weight download. Use a tiny random model to learn training, calibration, evaluation and HTTP calls.
+
+[Start the CPU tutorial](first-model.md) →
+
+</div>
+<div markdown="1">
+
+### 03 · Bring your own task
+
+Replace the labels and pretrained base, then produce an artifact you can load, evaluate and serve.
+
+[Use your labeled data](own-task.md) →
 
 </div>
 </div>
-
-## Start with an outcome
-
-| Your goal | Guide | What you will have |
-|---|---|---|
-| Understand the input, output and business use | [Understand a decision](decision.md) | A complete customer-routing request, its recorded model response, and a way to read the evidence |
-| Check your installation and the full workflow | [Your first model on CPU](first-model.md) | A local artifact, evaluation report and HTTP response, using a tiny random model |
-| Train for a task you already label | [Bring your own task](own-task.md) | A versioned dataset, a recipe linked to your pretrained base, and a plan for evaluating the result |
-
-The customer-routing example uses a trained model and a recorded evaluation. The CPU guide uses synthetic data and random weights to check that the software works. Use the former to understand the kind of result the toolkit can produce; use the latter to learn the commands.
 
 ## From a question to an application
 

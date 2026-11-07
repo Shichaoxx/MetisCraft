@@ -12,24 +12,45 @@
 .md-typeset img { border-radius: .6rem; }
 .md-typeset .cookbook-guide {
   display: grid;
-  grid-template-columns: 96px minmax(0, 1fr);
-  gap: 1.25rem;
-  align-items: start;
-  margin: 1.5rem 0;
-  padding: 1.25rem;
+  grid-template-columns: 160px minmax(0, 1fr);
+  gap: 1.5rem;
+  align-items: center;
+  margin: 1.4rem 0 1.8rem;
+  padding: 1.25rem 1.5rem;
   border: 1px solid var(--md-default-fg-color--lightest);
   border-radius: .65rem;
   background: var(--md-code-bg-color);
 }
-.md-typeset .cookbook-guide > p { margin: 0; }
-.md-typeset .cookbook-guide > p img { display: block; width: 96px; }
-.md-typeset .cookbook-guide h2 { margin: 0 0 .35rem; font-size: 1.05rem; }
-.md-typeset .cookbook-guide ul { margin-bottom: 0; }
+.md-typeset .cookbook-guide .cookbook-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 160px;
+  height: 160px;
+  margin: 0;
+}
+.md-typeset .cookbook-avatar img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: contain;
+  object-position: center;
+  margin: 0;
+}
+.md-typeset .cookbook-guide-copy { min-width: 0; }
+.md-typeset .cookbook-guide h2 { margin: 0 0 .6rem; font-size: 1.1rem; }
+.md-typeset .cookbook-guide-copy > p { margin: 0; }
+.md-typeset .cookbook-paths { margin-bottom: 1.8rem; }
+.md-typeset .cookbook-paths > div { display: flex; flex-direction: column; }
+.md-typeset .cookbook-paths > div > p:last-child { margin-top: auto; padding-top: .5rem; }
 .md-typeset table:not([class]) { font-size: .72rem; }
 .md-header__button.md-logo img { border-radius: .25rem; }
 @media (max-width: 600px) {
-  .md-typeset .cookbook-guide { grid-template-columns: minmax(0, 1fr); gap: .75rem; padding: 1rem; }
-  .md-typeset .cookbook-guide > p img { width: 64px; }
+  .md-typeset .cookbook-guide { grid-template-columns: 88px minmax(0, 1fr); gap: 1rem; padding: 1rem; }
+  .md-typeset .cookbook-guide .cookbook-avatar { width: 88px; height: 88px; }
+  .md-typeset .cookbook-guide h2 { font-size: 1rem; }
+  .md-typeset .cookbook-guide-copy > p { font-size: .8rem; line-height: 1.65; }
   .md-typeset h1 { font-size: 1.8rem; }
 }
 @media (max-width: 600px) {
@@ -48,3 +69,8 @@
 .start-grid h3 { margin-top: 0; font-size: 1rem; }
 .start-grid > div > :last-child { margin-bottom: 0; }
 @media (max-width: 760px) { .start-grid { grid-template-columns: minmax(0,1fr); } }
+
+@media (max-width: 360px) {
+  .md-typeset .cookbook-guide { grid-template-columns: 72px minmax(0, 1fr); gap: .75rem; }
+  .md-typeset .cookbook-guide .cookbook-avatar { width: 72px; height: 72px; }
+}
