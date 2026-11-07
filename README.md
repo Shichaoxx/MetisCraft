@@ -109,7 +109,7 @@ The [complete quickstart](docs/en/quickstart.md) also covers integrity checks, e
 | [Customer routing](recipes/banking77_support/README.md) | Multiple business questions with one model | Derived from Banking77; a public example, not a production deployment claim |
 | [BoolQ](recipes/boolq/README.md) · [SST-5](recipes/sst5/README.md) | Yes/no and ordered judgments | Dataset terms apply individually |
 | [GoEmotions](recipes/go_emotions/README.md) | Independent probabilities for multiple labels | Reported training predates the prior-shift fix; corrected-code retraining is pending |
-| [Tev1](docs/reproductions/tev1.md) | Rebuild published data and reproduce a recipe | **Partially met**: 2B test 86.4% vs published 4B 88.0%; transfer 92.0% vs 100%. Model size and readout comparison remain limitations |
+| [Tev1](docs/reproductions/tev1.md) | Rebuild published data and reproduce a recipe | **4B accuracy targets met**: test 87.3% vs 88.0%; transfer 99.33% vs 100%. Answer agreement is 94.6% / 99.33%; calibration and historical-training limitations remain |
 
 MetisCraft is one part of a growing decision-model ecosystem. The [support matrix](docs/support-matrix.md) separates compatibility, implementation and reproduction evidence, including JevAny, ms-swift and Unsloth. It does not claim the first or only unified toolkit.
 

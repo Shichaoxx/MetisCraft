@@ -37,9 +37,13 @@ training evidence, calibration and deployment.
 - Historical `/1` artifacts without base identity require
   `--allow-legacy-artifact` or `allow_legacy_artifact=True`. They emit a warning
   and remain `legacy_unverified`; current files do not retroactively prove a run.
-- Tev1 reproduction remains partially successful. The CPU quickstart provides no
-  new real-model quality evidence. The formal GoEmotions result still predates the
-  inference correction, and the same-protocol encoder comparison remains unfinished.
+- The Qwen3.5-4B Tev1 run meets the predefined accuracy criteria: 87.3% on the main
+  set and 99.33% on policy transfer, versus the published 88.0% / 100%.
+  Per-question answer agreement is 94.6% / 99.33%. Calibration can still worsen
+  NLL, and the historical training settings remain unavailable.
+- The CPU quickstart provides no real-model quality evidence. The formal
+  GoEmotions result still predates the inference correction, and the same-protocol
+  encoder comparison remains unfinished.
 
 See [limitations](docs/en/limitations.md) and [status](docs/status.md) for details.
 

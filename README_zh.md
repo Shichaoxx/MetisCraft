@@ -109,7 +109,7 @@ curl -sS http://127.0.0.1:8000/v1/systemone \
 | [客服分流](recipes/banking77_support/README.md) | 一个模型回答多个业务问题 | 从 Banking77 派生的公开示例，不代表生产部署验证 |
 | [BoolQ](recipes/boolq/README.md) · [SST-5](recipes/sst5/README.md) | 是非与等级判断 | 分别遵循各数据集条款 |
 | [GoEmotions](recipes/go_emotions/README.md) | 多标签的独立概率 | 已报告训练发生在先验偏移修复前；修复后代码重训待完成 |
-| [Tev1](docs/reproductions/tev1.md) | 重建公开数据并复现配方 | **部分达标**：2B test 86.4%，公开 4B 为 88.0%；transfer 92.0%，公开值为 100%。模型规模与读出对照仍有限制 |
+| [Tev1](docs/reproductions/tev1.md) | 重建公开数据并复现配方 | **4B 准确率标准达标**：test 87.3%，原版 88.0%；transfer 99.33%，原版 100%。答案一致率 94.6%／99.33%；校准与历史训练过程仍有限制 |
 
 MetisCraft 是决策模型生态中的一部分。[支持矩阵](docs/support-matrix.md)区分兼容性、实现与复现证据，收录 JevAny、ms-swift、Unsloth 等项目，不宣称首个或唯一的统一工具包。
 

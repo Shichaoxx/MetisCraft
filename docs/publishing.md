@@ -81,3 +81,28 @@ README、站点与 PyPI 元数据在预览准备期指向仓库文档。发行�
 构建 hook 转成 `v0.1.0rc1` 的绝对地址；发布前需确认该 tag 中的目标文件存在，
 发布后再检查公开页面解析、wheel 安装与站点。只有 PyPI 实际成功发布后，才启用
 PyPI 徽章、PyPI 安装命令和正式站点入口。
+
+## 首个公开版本的执行顺序
+
+本次版本仍为 `0.1.0rc1`，GitHub Release 应标为 prerelease。[Tev1 4B](reproductions/tev1.md)
+已达到预先约定的准确率标准，发布说明同时保留校准和历史训练过程的限制。
+
+1. 合并现有 PR #1，让新版代码和发布工作流进入默认分支；检查该提交的 CI。
+2. 按上面的字段配置 `pypi` environment 和 PyPI Trusted Publisher。GitHub 环境只允许
+   `v*` tag 部署，添加发布审核人；PyPI 的私有 publisher 配置不能通过公开项目 JSON 验证。
+3. Pages 选择 GitHub Actions，手动执行 `documentation`。核对站点的 `/MetisCraft/`
+   子路径、中英入口、明暗主题和手机导航。
+4. 在默认分支手动执行 `release` 做不发布的双版本 wheel 验证。通过后，在同一提交上创建
+   `v0.1.0rc1` tag。tag 触发的测试通过并完成环境审批后，由 OIDC 上传 PyPI。
+5. 从该次 `release` 工作流下载已测试的 `distributions`，作为 GitHub prerelease 的附件；
+   不为附件重新构建另一份包。
+6. 在新的外部环境执行公开安装，再核对版本、导出模板、完整闭环、PyPI 图片链接和站点：
+
+   ```bash
+   python -m pip install --pre 'metiscraft[serve]==0.1.0rc1'
+   metiscraft --version
+   metiscraft init my-first-judge
+   ```
+
+公开安装命令在发布成功后启用；当前准备期仍使用源码或本地 wheel。
+平台检查结果和剩余事项统一记录在 [status.md](status.md)。

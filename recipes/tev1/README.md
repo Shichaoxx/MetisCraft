@@ -15,11 +15,12 @@ Tev1 的决策数据：5 个公开数据集改写成的选择题和等级题，�
 | 配方 | 读出 | 提示 | 损失 | 微调 | 每步题数 | 轮数 | 学习率 |
 |---|---|---|---|---|---|---|---|
 | [`qwen3.5-2b_chat-completion.yaml`](qwen3.5-2b_chat-completion.yaml) | ① 答案 token | `chat_json`，Tev1 的系统提示 | `completion`：字母 + EOS，整个词表 | LoRA r=8、alpha 16，全部线性层 | 36（批量 4 × 累积 9） | 1 | 5e-5，cosine，warmup 0.03 |
+| [`qwen3.5-4b_chat-completion.yaml`](qwen3.5-4b_chat-completion.yaml) | ① 答案 token | 同上 | 同上 | 同上 | 36（批量 4 × 累积 9） | 1 | 同上 |
 
 与 Tev1 建议配方相同的部分：LoRA 设置、轮数、学习率与调度、梯度裁剪 1、序列长度 2,048、只在答案上算损失；提示和答案逐 token 与 Tev1 导出的一致（43,708 条全部核对）。
 
 不同的部分：
-- 基座先用 Qwen3.5-2B，与 Tev1 锁定的分词器同一版本；Tev1 用的是 4B。
+- 先验证 Qwen3.5-2B，后补 Qwen3.5-4B；4B 的权重版本锁定为 `851bf6e806efd8d0a36b00ddf55e13ccb7b8cd0a`。
 - Tev1 开启 packing，"批量 8"指 8 条拼满 2,048 token 的序列，每步约 36 道题。MetisCraft 不拼接样本，用批量 4 × 梯度累积 9 保持每步 36 题；显存不够时可以改这两个数，乘积保持 36。
 - Tev1 在 Together 的托管服务上训练，实际用的超参没有留存，这里照的是仓库给的建议配方。
 
@@ -35,4 +36,9 @@ Qwen3.5 的线性注意力层要装 `flash-linear-attention`，否则走 transfo
 
 ## 验收结果
 
-2026-11-06 用 `qwen3.5-2b_chat-completion.yaml` 完整跑了一遍：test 1,000 题 86.4%（Tev1 的 4B 为 88.0%），policy_transfer 300 题 92.0%（Tev1 为 100%）。test 达标，policy_transfer 未达标，待 4B。详情与判断标准见[复现记录](../../docs/reproductions/tev1.md)。
+2026-11-06 的 2B 结果为 test 86.4%、policy_transfer 92.0%，当时仅主集达标。
+2026-11-07 的 4B 结果为 **873／1,000（87.3%）和 298／300（99.33%）**，
+相对原版 88.0%／100% 分别低 0.7／0.67 个百分点，达到原定准确率标准。
+主集逐题答案一致率 94.6%，迁移集 99.33%；这不等于恢复原作者的历史训练作业。
+温度校准仍可能恶化 NLL。运行 ID、校准前后指标、原版读出协议与限制见
+[复现记录](../../docs/reproductions/tev1.md)。
