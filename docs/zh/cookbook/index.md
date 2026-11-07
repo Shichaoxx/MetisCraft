@@ -4,7 +4,7 @@
 
 <div class="cookbook-guide" markdown="1">
 
-<figure class="cookbook-avatar"><img src="../../visuals/figures/avatar.png" alt="Metis，Cookbook 阅读向导" width="160" height="160"></figure>
+<figure class="cookbook-avatar"><img src="../../visuals/figures/metis-guide.png" alt="抱着星图书的 Metis，Cookbook 阅读向导" width="160" height="240"></figure>
 
 <div class="cookbook-guide-copy" markdown="1">
 

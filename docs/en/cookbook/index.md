@@ -4,7 +4,7 @@ From a recorded response to a decision model of your own.
 
 <div class="cookbook-guide" markdown="1">
 
-<figure class="cookbook-avatar"><img src="../../visuals/figures/avatar.png" alt="Metis, your Cookbook guide" width="160" height="160"></figure>
+<figure class="cookbook-avatar"><img src="../../visuals/figures/metis-guide.png" alt="Metis holding a star-chart book, your Cookbook guide" width="160" height="240"></figure>
 
 <div class="cookbook-guide-copy" markdown="1">
 

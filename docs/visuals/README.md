@@ -5,7 +5,7 @@ small amount of warm gold `#bd8c36` connect the repository and documentation.
 
 | Asset | Use |
 |---|---|
-| [Metis character](figures/avatar.png) | Cookbook reading guide |
+| [Metis character](figures/metis-guide.png) | Cookbook reading guide |
 | [M monogram](figures/mark.svg) | Documentation header, small icons and favicon |
 | [Light wordmark](figures/wordmark-light.svg) · [dark wordmark](figures/wordmark-dark.svg) | README title and compact brand lockup |
 | [Light banner](figures/hero-light.svg) · [dark banner](figures/hero-dark.svg) | Optional wide banner |
@@ -25,17 +25,24 @@ the typographic identity.
 
 ## Character direction
 
-The avatar depicts an original owl-themed anime character with teal hair, amber
-eyes, feather tufts and a feather-edged capelet. The visual direction was informed
-by community character references collected for
-[DeepSeek](https://genderswapai.com/zh-CN/ai-gijinka/deepseek),
-[GPT](https://genderswapai.com/zh-CN/ai-gijinka/gpt) and
-[Claude](https://genderswapai.com/zh-CN/ai-gijinka/claude).
-These third-party characters and images are not part of this repository's assets.
-The generation prompt is preserved in [avatar-prompt.txt](avatar-prompt.txt).
+Metis (小墨) is an original scholar character. Her identity combines shoulder-length,
+wavy deep-teal hair with mint highlights, round amber-gold eyes, soft cheeks, a
+small closed-mouth smile, a looped forelock and a gold feather clip. Feather tufts
+are small accents. The guide wears an ivory blouse, a tailored navy waistcoat and
+a teal tie with an astrolabe clasp, and holds a star-chart book.
+
+Keep the face compact and gentle when drawing new poses. A slender body should
+come from balanced anatomy, with a connected head, neck and shoulders. Preserve
+the warm expression and avoid making every pose lean toward one shoulder.
+
+The selected half-body illustration is used for the guide. Its complete generation
+prompt and source hashes are preserved in [metis-guide-prompt.txt](metis-guide-prompt.txt).
+The [initial portrait](figures/avatar.png) and its [prompt](avatar-prompt.txt) remain
+as historical face references. Third-party character images are not included.
 
 ## Small-screen use
 
-Use the M monogram at favicon sizes. The cookbook guide uses the existing character
-at a readable size within the document flow; it never floats over reading content. The workflow has a vertical variant
+Use the M monogram at favicon sizes. The Cookbook displays the guide's upper portrait
+in a fixed square with a top-aligned crop; the original half-body image is retained.
+The guide stays within the document flow and never floats over reading content. The workflow has a vertical variant
 for narrow screens; diagrams should not be shrunk until their labels are unreadable.
