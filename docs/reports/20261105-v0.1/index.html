@@ -1,0 +1,262 @@
+<!DOCTYPE html><html lang=zh-CN><head><meta charset=utf-8><meta name=viewport content='width=device-width,initial-scale=1'><title>MetisCraft v0.1 交付报告</title><style>
+:root { --ink:#273444; --muted:#657080; --line:#DADDE3; --paper:#F7FAFC; --blue:#A7C7E7; --blue-ink:#5878A6;
+        --coral:#F4A7AE; --coral-ink:#C18489; --green:#A6D0C6; --green-ink:#7B9A93; }
+* { box-sizing: border-box; }
+body { margin:0; color:var(--ink); background:#fff; line-height:1.7; font-size:15px;
+       font-family:"Noto Sans CJK SC","Source Han Sans SC","PingFang SC","Microsoft YaHei",system-ui,sans-serif; }
+nav { position:fixed; top:0; left:0; bottom:0; width:220px; padding:28px 18px; background:var(--paper);
+      border-right:1px solid var(--line); overflow-y:auto; }
+nav .brand { font-weight:700; font-size:17px; margin-bottom:2px; }
+nav .sub { color:var(--muted); font-size:12px; margin-bottom:20px; }
+nav a { display:block; color:var(--muted); text-decoration:none; padding:5px 10px; border-left:3px solid transparent;
+        font-size:14px; }
+nav a:hover, nav a.on { color:var(--blue-ink); border-left-color:var(--blue); background:#fff; }
+main { margin-left:220px; padding:36px 56px 80px; max-width:1080px; }
+h1 { font-size:26px; margin:0 0 6px; }
+.lede { color:var(--muted); margin:0 0 26px; }
+h2 { font-size:20px; margin:46px 0 14px; padding-left:12px; border-left:4px solid var(--blue); }
+h3 { font-size:16px; margin:26px 0 8px; }
+p { margin:8px 0; }
+.cards { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin:18px 0 8px; }
+.card { border:1px solid var(--line); border-radius:6px; padding:12px 14px; background:#fff; }
+.card b { display:block; font-size:24px; color:var(--blue-ink); font-variant-numeric:tabular-nums; }
+.card span { color:var(--muted); font-size:13px; }
+table { border-collapse:collapse; width:100%; margin:10px 0 6px; font-size:14px; }
+th, td { border-bottom:1px solid var(--line); padding:6px 8px; text-align:left; vertical-align:top; }
+th { background:var(--paper); font-weight:600; white-space:nowrap; }
+th.n { text-align:right; }
+td.nw { white-space:nowrap; }
+td.n { text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; }
+tr.prior td { color:var(--muted); }
+.better { color:var(--green-ink); font-weight:600; }
+.worse { color:var(--coral-ink); font-weight:600; }
+.pending { color:var(--muted); font-style:italic; }
+figure { margin:14px 0 10px; }
+figure img { max-width:100%; border:1px solid var(--line); border-radius:4px; }
+figcaption { color:var(--muted); font-size:13px; margin-top:4px; }
+pre { background:var(--paper); border:1px solid var(--line); border-radius:4px; padding:10px 12px; overflow-x:auto;
+      font-size:12.5px; line-height:1.5; font-family:"JetBrains Mono","Fira Code",Menlo,Consolas,monospace; }
+code { font-family:"JetBrains Mono","Fira Code",Menlo,Consolas,monospace; font-size:0.92em; background:var(--paper);
+       padding:0 3px; border-radius:3px; }
+pre code { background:none; padding:0; }
+.two { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+.two > div { min-width:0; }
+.note { color:var(--muted); font-size:13px; }
+ul { padding-left:22px; } li { margin:3px 0; }
+footer { margin-top:56px; color:var(--muted); font-size:12px; border-top:1px solid var(--line); padding-top:10px; }
+@media (max-width: 900px) { nav { position:static; width:auto; } main { margin-left:0; padding:20px; }
+  .cards, .two { grid-template-columns:1fr 1fr; } }
+</style></head><body><nav><div class="brand">MetisCraft</div><div class="sub">v0.1 交付报告 · 2026-11-05</div><a href="#overview">一页看懂</a><a href="#pipeline">全流程</a><a href="#data">数据</a><a href="#readouts">判断与读出</a><a href="#results">验收结果</a><a href="#scenario">垂直场景</a><a href="#trace">可追溯</a><a href="#next">局限与下一步</a><a href="#reproduce">复现</a></nav><main><section id="overview"><h1>MetisCraft v0.1 交付报告</h1><p class="lede">训练 Jev 类（System One）决策模型的工具包：一次前向给出类型化判断和校准过的概率。既支持通用 judge，也能把垂直业务场景做成自己的 Jev。</p><div class="cards"><div class=card><b>16</b><span>注册的数据集</span></div><div class=card><b>4</b><span>判断类型（是非、选择、等级、多标签）</span></div><div class=card><b>2</b><span>可对照的读出（① 与 ③）</span></div><div class=card><b>7/7</b><span>验收配方；CPU 测试 85 个通过</span></div></div><h3>验收一览（test 划分）</h3><table><thead><tr><th>配方</th><th>类型</th><th>主指标</th><th class=n>n</th><th class=n>模型 + 温度</th><th class=n>先验</th><th>NLL 校准前 → 后</th><th>ECE 校准前 → 后</th><th class=n>温度</th></tr></thead><tbody><tr><td>BoolQ ①</td><td>是非</td><td>准确率</td><td class=n>3,270</td><td class=n>0.851</td><td class=n>0.622</td><td>0.469 → 0.360</td><td>0.094 → <span class=better>0.024</span></td><td class=n>2.05</td></tr><tr><td>Banking77 ①</td><td>选择</td><td>准确率</td><td class=n>3,080</td><td class=n>0.928</td><td class=n>0.013</td><td>0.307 → 0.298</td><td>0.024 → <span class=better>0.009</span></td><td class=n>1.17</td></tr><tr><td>Banking77 ③</td><td>选择</td><td>准确率</td><td class=n>3,080</td><td class=n>0.927</td><td class=n>0.013</td><td>0.302 → 0.280</td><td>0.025 → <span class=better>0.011</span></td><td class=n>1.33</td></tr><tr><td>CLINC150 ③</td><td>选择</td><td>准确率</td><td class=n>5,500</td><td class=n>0.923</td><td class=n>0.182</td><td>0.341 → 0.294</td><td>0.045 → <span class=better>0.019</span></td><td class=n>1.36</td></tr><tr><td>SST-5 ①</td><td>等级</td><td>准确率</td><td class=n>2,210</td><td class=n>0.555</td><td class=n>0.231</td><td>1.380 → 1.014</td><td>0.270 → <span class=better>0.040</span></td><td class=n>2.45</td></tr><tr><td>GoEmotions ③（修复前）</td><td>多标签</td><td>macro-F1</td><td class=n>5,427</td><td class=n>0.409</td><td class=n>0.000</td><td>0.221 → 0.215</td><td>0.109 → <span class=worse>0.118</span></td><td class=n>1.25</td></tr><tr><td>客服分流 ③</td><td>是非</td><td>准确率</td><td class=n>3,080</td><td class=n>0.986</td><td class=n>0.870</td><td>0.065 → 0.049</td><td>0.012 → <span class=better>0.008</span></td><td class=n>1.55</td></tr><tr><td>客服分流 ③</td><td>选择</td><td>准确率</td><td class=n>3,080</td><td class=n>0.978</td><td class=n>0.247</td><td>0.102 → 0.087</td><td>0.010 → <span class=better>0.006</span></td><td class=n>1.50</td></tr></tbody></table><p class="note">基座都是 Qwen3-0.6B-Base 加 LoRA，单卡训练，每份运行限时 2 小时。① 是答案 token 读出，③ 是逐候选标量头。温度只在 calib 划分上拟合；先验是只看训练集类别频率、不看输入的基线。不设分数门槛，结果照实报告。GoEmotions 标“修复前”：它暴露了多标签正样本加权后没有扣回 ln w 的缺陷（已修复）；在保存的 test 打分上离线扣除后 macro-F1 0.460、NLL 0.076、ECE 0.002，正式重跑待有空卡时进行。</p></section><section id="pipeline"><h2>全流程</h2><figure><a href="figures/01-run-pipeline.png"><img src="figures/01-run-pipeline.png" alt="图 1　一次运行：从注册表到 /v1/systemone"></a><figcaption>图 1　一次运行：从注册表到 /v1/systemone（<a href="figures/01-run-pipeline.svg">SVG</a>）</figcaption></figure><ol><li><b>数据</b>：<code>metiscraft data prepare</code> 按注册表里固定的上游 revision 下载，转成 Jev 记录（<code>state</code> + 问题 + 目标），先按评测集去重，再写进带 <code>SHA256SUMS</code> 的版本目录。</li><li><b>训练</b>：配方选定数据、基座、读出和目标；训练循环按全局问题数归一损失，梯度累积与多卡下数值一致。</li><li><b>封存</b>：产物含 LoRA adapter、读出头、许可证 <code>NOTICE</code> 和 <code>SHA256SUMS</code>。</li><li><b>校准与评测</b>：按 任务|类型 各拟合一个温度，只用 calib；dev 与 test 上同表报告模型、模型 + 温度和先验。</li><li><b>部署</b>：<code>metiscraft serve</code> 用官方 <code>/v1/systemone</code> 请求格式回答。</li></ol><h3>一份真实配方</h3><pre><code class="yaml"># Vertical scenario example: bank support routing built from Banking77. Each customer message
+# answers two business questions in one request -- &quot;which support queue?&quot; (choice, 6 queues)
+# and &quot;is it urgent?&quot; (noul) -- and the model is served with the official request format.
+task: banking77_support
+data: {dataset: banking77_support}
+model:
+  base: qwen3/0.6b-base-da87bfb6
+  dtype: bf16
+  max_length: 384
+  finetune: {kind: lora, r: 16, alpha: 32, dropout: 0.05, targets: all-linear}
+readout: {kind: candidate_scalar, layout: list, head: {hidden: 256}, shuffle_train: true}
+objective: {kind: auto}
+train: {epochs: 2, batch_size: 16, grad_accum: 1, lr: 2.0e-4, head_lr: 1.0e-3, warmup_ratio: 0.03, seed: 42, bf16: true, logging_steps: 20}
+calibrate: {method: temperature, split: calib}
+eval: {splits: [dev, test], baselines: [prior]}</code></pre></section><section id="data"><h2>数据</h2><p>注册表收录 16 个数据集，分必收、可选、只评测三档；每条都固定上游 revision，并带许可证与条款标记。用条款受限数据训练的产物，<code>NOTICE</code> 会写明不可商用。</p><table><thead><tr><th>注册名</th><th>档位</th><th>判断类型</th><th>上游</th><th>许可证</th><th>条款</th></tr></thead><tbody><tr><td><code>boolq</code></td><td><span style="white-space:nowrap">必收</span></td><td>是非</td><td>google/boolq</td><td>cc-by-sa-3.0</td><td>相同方式共享</td></tr><tr><td><code>banking77</code></td><td><span style="white-space:nowrap">必收</span></td><td>选择</td><td>PolyAI/banking77</td><td>cc-by-4.0</td><td>署名</td></tr><tr><td><code>clinc150</code></td><td><span style="white-space:nowrap">必收</span></td><td>选择</td><td>clinc/clinc_oos</td><td>cc-by-3.0</td><td>署名</td></tr><tr><td><code>sst5</code></td><td><span style="white-space:nowrap">必收</span></td><td>等级</td><td>SetFit/sst5</td><td>unspecified</td><td>未声明许可证、仅限研究</td></tr><tr><td><code>go_emotions</code></td><td><span style="white-space:nowrap">必收</span></td><td>多标签</td><td>google-research-datasets/go_emotions</td><td>apache-2.0</td><td>可能含个人信息</td></tr><tr><td><code>nfcorpus</code></td><td><span style="white-space:nowrap">必收</span></td><td>排序（v0.2）</td><td>BeIR/nfcorpus</td><td>cc-by-sa-4.0 on the Hub; the upstream project page states free use for academic purposes</td><td>仅限研究、相同方式共享</td></tr><tr><td><code>open_jev</code></td><td><span style="white-space:nowrap">必收</span></td><td>是非、选择、等级</td><td>ZefanCai/Open-Jev</td><td>cc0-1.0 (generated content only)</td><td>第三方文本未核实</td></tr><tr><td><code>typed_decisions</code></td><td><span style="white-space:nowrap">必收</span></td><td>是非、选择、等级</td><td>LocalLLaMA/typed-decisions</td><td>apache-2.0</td><td>教师模型未知、只评测</td></tr><tr><td><code>tasksource_jev</code></td><td><span style="white-space:nowrap">必收</span></td><td>是非、选择、等级</td><td>tasksource/tasksource-jev-typed-decisions</td><td>other (per-row licence fields)</td><td>逐行许可证不同</td></tr><tr><td><code>multi_nli</code></td><td><span style="white-space:nowrap">可选</span></td><td>选择</td><td>nyu-mll/multi_nli</td><td>cc-by-3.0, cc-by-sa-3.0, mit, other (mixed by genre)</td><td>逐行许可证不同、相同方式共享</td></tr><tr><td><code>ag_news</code></td><td><span style="white-space:nowrap">可选</span></td><td>选择</td><td>fancyzhx/ag_news</td><td>unknown on the Hub; the card allows academic research and other non-commercial use</td><td>非商用、未声明许可证</td></tr><tr><td><code>ms_marco_v1_1</code></td><td><span style="white-space:nowrap">可选</span></td><td>排序（v0.2）</td><td>microsoft/ms_marco</td><td>unspecified on the Hub; upstream terms allow non-commercial research only</td><td>非商用</td></tr><tr><td><code>lex_glue_eurlex</code></td><td><span style="white-space:nowrap">可选</span></td><td>多标签</td><td>coastalcph/lex_glue</td><td>cc-by-4.0</td><td>署名</td></tr><tr><td><code>civil_comments</code></td><td><span style="white-space:nowrap">可选</span></td><td>多标签</td><td>google/civil_comments</td><td>cc0-1.0</td><td>软标签属性</td></tr><tr><td><code>decision_index_public</code></td><td><span style="white-space:nowrap">只评测</span></td><td>选择、是非</td><td></td><td>per upstream (ANLI is CC BY-NC 4.0; RAGTruth MS MARCO contexts are non-commercial; Yelp contexts may not be redistributed); code MIT</td><td>只评测、非商用、逐行许可证不同</td></tr><tr><td><code>banking77_support</code></td><td><span style="white-space:nowrap">可选</span></td><td>选择、是非</td><td>PolyAI/banking77</td><td>cc-by-4.0</td><td>署名</td></tr></tbody></table><div class=two><div><h3>版本目录（真实）</h3><pre><code class="">banking77_support/rev-18469841/
+├── derived/
+│   ├── eval_only/
+│   ├── calib.jsonl
+│   ├── dev.jsonl
+│   └── train.jsonl
+├── manifests/
+│   ├── algorithm_input.json
+│   ├── dedup_report.json
+│   └── eval_only.json
+├── raw/
+│   ├── data/
+│   └── README.md
+├── SHA256SUMS
+└── dataset.yaml</code></pre></div><div><h3>说明</h3><ul><li><code>raw/</code> 是上游原样文件，只读。</li><li><code>derived/</code> 是转换后的 Jev 记录；<code>eval_only/</code> 里的 test 只在评测时读取。</li><li><code>manifests/</code> 记录算法输入、只评测集合和去重报告。</li><li>已有版本只校验、不覆盖；准备过程在临时目录完成。</li></ul></div></div><h3>同一条消息的两条记录（真实）</h3><pre><code class="json">[
+  {
+    &quot;group&quot;: {
+      &quot;id&quot;: &quot;banking77_support:train:0&quot;,
+      &quot;split_key&quot;: &quot;banking77_support:train:0&quot;
+    },
+    &quot;id&quot;: &quot;banking77_support:train:0:queue&quot;,
+    &quot;input&quot;: {
+      &quot;context&quot;: {
+        &quot;state&quot;: &quot;I am still waiting on my card?&quot;
+      },
+      &quot;query&quot;: &quot;Which support queue should handle this customer message?&quot;
+    },
+    &quot;provenance&quot;: {
+      &quot;converter&quot;: &quot;label_mapping&quot;,
+      &quot;converter_version&quot;: &quot;1&quot;,
+      &quot;dataset&quot;: &quot;banking77_support&quot;,
+      &quot;extra&quot;: {
+        &quot;question_name&quot;: &quot;queue&quot;,
+        &quot;source_label&quot;: &quot;card_arrival&quot;
+      },
+      &quot;index&quot;: 0,
+      &quot;input_hash&quot;: &quot;7d46f1aa7c0a83b4fe386b6c72b132fd3650942a23d0110451cf3c3f6b85b8aa&quot;,
+      &quot;label_form&quot;: &quot;hard&quot;,
+      &quot;source&quot;: &quot;PolyAI/banking77@1846984189f2bc0ac51c6fc3a600fa9e1714e0c6&quot;,
+      &quot;split&quot;: &quot;train&quot;
+    },
+    &quot;question&quot;: {
+      &quot;allow_null&quot;: false,
+      &quot;options&quot;: [
+        {
+          &quot;id&quot;: &quot;cards&quot;,
+          &quot;text&quot;: &quot;Ordering, delivering, activating, linking or replacing cards; PINs, card limits and card support.&quot;
+        },
+        {
+          &quot;id&quot;: &quot;payments&quot;,
+          &quot;text&quot;: &quot;Card payments, cash withdrawals, refunds, fees, exchange rates and currencies.&quot;
+        },
+        {
+          &quot;id&quot;: &quot;transfers&quot;,
+          &quot;text&quot;: &quot;Sending and receiving money, transfer status, cancellations and beneficiaries.&quot;
+        },
+        {
+          &quot;id&quot;: &quot;top_up&quot;,
+          &quot;text&quot;: &quot;Topping up the account and problems with top-ups or deposits.&quot;
+        },
+        {
+          &quot;id&quot;: &quot;account&quot;,
+          &quot;text&quot;: &quot;Identity verification, personal details, passcodes, age limits and closing the account.&quot;
+        },
+        {
+          &quot;id&quot;: &quot;security&quot;,
+          &quot;text&quot;: &quot;Lost, stolen or compromised cards or phones, and transactions the customer does not recognise.&quot;
+        }
+      ],
+      &quot;type&quot;: &quot;choice&quot;
+    },
+    &quot;supervision&quot;: {
+      &quot;kind&quot;: &quot;choice&quot;,
+      &quot;labels&quot;: &quot;cards&quot;
+    },
+    &quot;task_id&quot;: &quot;banking77_support&quot;
+  },
+  {
+    &quot;group&quot;: {
+      &quot;id&quot;: &quot;banking77_support:train:0&quot;,
+      &quot;split_key&quot;: &quot;banking77_support:train:0&quot;
+    },
+    &quot;id&quot;: &quot;banking77_support:train:0:urgent&quot;,
+    &quot;input&quot;: {
+      &quot;context&quot;: {
+        &quot;state&quot;: &quot;I am still waiting on my card?&quot;
+      },
+      &quot;query&quot;: &quot;Could the customer lose money or access to their account if this message waits until tomorrow?&quot;
+    },
+    &quot;provenance&quot;: {
+      &quot;converter&quot;: &quot;label_mapping&quot;,
+      &quot;converter_version&quot;: &quot;1&quot;,
+      &quot;dataset&quot;: &quot;banking77_support&quot;,
+      &quot;extra&quot;: {
+        &quot;question_name&quot;: &quot;urgent&quot;,
+        &quot;source_label&quot;: &quot;card_arrival&quot;
+      },
+      &quot;index&quot;: 0,
+      &quot;input_hash&quot;: &quot;7d46f1aa7c0a83b4fe386b6c72b132fd3650942a23d0110451cf3c3f6b85b8aa&quot;,
+      &quot;label_form&quot;: &quot;hard&quot;,
+      &quot;source&quot;: &quot;PolyAI/banking77@1846984189f2bc0ac51c6fc3a600fa9e1714e0c6&quot;,
+      &quot;split&quot;: &quot;train&quot;
+    },
+    &quot;question&quot;: {
+      &quot;allow_null&quot;: false,
+      &quot;type&quot;: &quot;noul&quot;
+    },
+    &quot;supervision&quot;: {
+      &quot;kind&quot;: &quot;noul&quot;,
+      &quot;labels&quot;: false
+    },
+    &quot;task_id&quot;: &quot;banking77_support&quot;
+  }
+]</code></pre></section><section id="readouts"><h2>判断类型与读出</h2><table><thead><tr><th>类型</th><th>输出</th><th>损失</th><th>主要指标</th></tr></thead><tbody><tr><td>是非 noul</td><td>一个概率 p(是)</td><td>二元交叉熵</td><td>准确率、AUC、NLL、Brier、ECE</td></tr><tr><td>选择 choice</td><td>选项上的分布，可含 null 选项</td><td>交叉熵</td><td>准确率、macro-F1、NLL、Brier、ECE</td></tr><tr><td>等级 score</td><td>等级上的分布与期望分</td><td>交叉熵（可用序数软目标）</td><td>准确率、期望分 MAE、NLL、ECE</td></tr><tr><td>多标签 multi_label</td><td>每个候选独立的概率</td><td>逐候选二元交叉熵</td><td>micro/macro-F1、完全匹配、逐候选 ECE</td></tr></tbody></table><div class=two><div><figure><a href="../../readouts/readout-1-lm-token.png"><img src="../../readouts/readout-1-lm-token.png" alt="① 答案 token：在答案位置读选项码的 logits，不加新层"></a><figcaption>① 答案 token：在答案位置读选项码的 logits，不加新层</figcaption></figure></div><div><figure><a href="../../readouts/readout-3-candidate-scalar.png"><img src="../../readouts/readout-3-candidate-scalar.png" alt="③ 逐候选标量头：每个候选末 token 的隐藏状态经 MLP 打分"></a><figcaption>③ 逐候选标量头：每个候选末 token 的隐藏状态经 MLP 打分</figcaption></figure></div></div><p>两种读出只差配方里的 <code>readout.kind</code> 一行，其余设置相同，所以能在同一协议下对照。① 受限于选项码（单 token 的码表），③ 没有选项数限制，也能做多标签。七类读出的完整张量说明见 <a href="../../readouts/README.md">readouts</a>。</p></section><section id="results"><h2>验收结果</h2><h3>验收标准与证据</h3><table><thead><tr><th>类别</th><th>标准（design.md §12）</th><th>证据</th></tr></thead><tbody><tr><td>单元测试</td><td>pytest 在 CPU 上用微型随机初始化模型全部通过，不下载权重</td><td>85 个通过（提交 <code>4ef5a4a</code>）</td></tr><tr><td>等价性</td><td>noul 的 ① 读出与两行 lm_head 之差的线性头一致；list 与 pairs 布局共享前缀的隐藏状态一致；产物在新进程加载后 logits 一致</td><td><code>test_noul_answer_token_equals_linear_head</code><br><code>test_list_and_pairs_share_prefix_states</code><br><code>test_predictor_reload_matches_training_process</code></td></tr><tr><td>可组合性</td><td>2 种架构 × 2 种读出只改配置就能跑通训练、校准、评测</td><td><code>test_composability_matrix</code></td></tr><tr><td>梯度累积</td><td>batch=b、GAS=k 与 batch=k·b、GAS=1 的损失和梯度在容差内一致</td><td><code>test_gradient_accumulation_matches_one_big_batch</code></td></tr><tr><td>校准</td><td>温度缩放前后 argmax 不变；只在 calib 划分拟合</td><td><code>test_temperature_recovers_known_scale_and_keeps_argmax</code></td></tr><tr><td>数据</td><td>首批转换器在样例上通过；SHA256SUMS 校验；产出去重报告</td><td><code>test_prepare_every_converter</code><br><code>test_tampering_is_detected</code><br><code>test_eval_first_dedup_in_pipeline</code></td></tr><tr><td>反馈接口</td><td>奖励函数按 TRL reward_funcs 的签名形状调用，返回逐样本标量</td><td><code>test_reward_has_the_trl_shape</code></td></tr><tr><td>服务</td><td>HTTP 服务对官方格式的请求返回合法响应，概率与 Predictor 一致</td><td><code>test_http_service_speaks_the_official_format</code></td></tr><tr><td>可追溯</td><td>报告里每个数字都能追到运行目录；产物带 SHA256SUMS 与 NOTICE</td><td><code>test_candidate_scalar_run_is_complete_and_traceable</code><br><code>test_answer_token_run_marks_research_only_data</code></td></tr><tr><td>验收训练</td><td>Qwen3-0.6B 上 BoolQ、Banking77（CLINC150 作对照）、SST-5、GoEmotions 各跑通一次，报告含校准前后与基线；Banking77 上出 ① 与 ③ 的对照；不设分数门槛</td><td>7/7 份配方跑完，见下表</td></tr></tbody></table><figure><a href="figures/03-acceptance-results.png"><img src="figures/03-acceptance-results.png" alt="图 3　test 划分上的主指标与校准"></a><figcaption>图 3　test 划分上的主指标与校准（<a href="figures/03-acceptance-results.svg">SVG</a>）</figcaption></figure><h3>BoolQ · ① 答案 token</h3><p class="note">运行 <code>20261105-110024-3a392e61</code> · 提交 <code>244ae64</code> · 数据 <code>rev-35b264d0</code> · 1× RTX 3090 · 1,054 步，训练 38 分钟 · 损失 0.74 → 0.02 · 温度 是非 2.05</p><p class="note">test · 是非 · n=3,270</p><table><thead><tr><th>方法</th><th class=n>准确率</th><th class=n>AUC</th><th class=n>NLL</th><th class=n>Brier</th><th class=n>ECE</th></tr></thead><tbody><tr><td>模型</td><td class=n>0.851</td><td class=n>0.914</td><td class=n>0.469</td><td class=n>0.123</td><td class=n>0.094</td></tr><tr><td>模型 + 温度</td><td class=n>0.851</td><td class=n>0.914</td><td class=n>0.360</td><td class=n>0.111</td><td class=n>0.024</td></tr><tr class="prior"><td>先验</td><td class=n>0.622</td><td class=n>0.500</td><td class=n>0.663</td><td class=n>0.235</td><td class=n>0.001</td></tr></tbody></table><p class="note">dev · 是非 · n=519</p><table><thead><tr><th>方法</th><th class=n>准确率</th><th class=n>AUC</th><th class=n>NLL</th><th class=n>Brier</th><th class=n>ECE</th></tr></thead><tbody><tr><td>模型</td><td class=n>0.861</td><td class=n>0.924</td><td class=n>0.433</td><td class=n>0.116</td><td class=n>0.100</td></tr><tr><td>模型 + 温度</td><td class=n>0.861</td><td class=n>0.924</td><td class=n>0.340</td><td class=n>0.105</td><td class=n>0.045</td></tr><tr class="prior"><td>先验</td><td class=n>0.630</td><td class=n>0.500</td><td class=n>0.659</td><td class=n>0.233</td><td class=n>0.010</td></tr></tbody></table><h3>Banking77 · ① 答案 token</h3><p class="note">运行 <code>20261105-074726-8a84f136</code> · 提交 <code>85fd8ac</code>（工作区有未跟踪文件，已跟踪的代码与提交一致） · 数据 <code>rev-18469841</code> · 1× RTX 3090 · 1,124 步，训练 59 分钟 · 损失 2.17 → 0.05 · 温度 选择 1.17</p><p class="note">test · 选择 · n=3,080</p><table><thead><tr><th>方法</th><th class=n>准确率</th><th class=n>macro-F1</th><th class=n>NLL</th><th class=n>Brier</th><th class=n>ECE</th></tr></thead><tbody><tr><td>模型</td><td class=n>0.928</td><td class=n>0.928</td><td class=n>0.307</td><td class=n>0.114</td><td class=n>0.024</td></tr><tr><td>模型 + 温度</td><td class=n>0.928</td><td class=n>0.928</td><td class=n>0.298</td><td class=n>0.113</td><td class=n>0.009</td></tr><tr class="prior"><td>先验</td><td class=n>0.013</td><td class=n>0.000</td><td class=n>4.384</td><td class=n>0.988</td><td class=n>0.006</td></tr></tbody></table><p class="note">dev · 选择 · n=537</p><table><thead><tr><th>方法</th><th class=n>准确率</th><th class=n>macro-F1</th><th class=n>NLL</th><th class=n>Brier</th><th class=n>ECE</th></tr></thead><tbody><tr><td>模型</td><td class=n>0.896</td><td class=n>0.879</td><td class=n>0.453</td><td class=n>0.163</td><td class=n>0.044</td></tr><tr><td>模型 + 温度</td><td class=n>0.896</td><td class=n>0.879</td><td class=n>0.427</td><td class=n>0.160</td><td class=n>0.033</td></tr><tr class="prior"><td>先验</td><td class=n>0.019</td><td class=n>0.000</td><td class=n>4.303</td><td class=n>0.986</td><td class=n>0.001</td></tr></tbody></table><h3>Banking77 · ③ 逐候选标量头</h3><p class="note">运行 <code>20261105-043310-e809a40e</code> · 提交 <code>42b013c</code> · 数据 <code>rev-18469841</code> · 1× RTX 3090 · 1,124 步，训练 38 分钟 · 损失 1.37 → 0.16 · 温度 选择 1.33</p><p class="note">test · 选择 · n=3,080</p><table><thead><tr><th>方法</th><th class=n>准确率</th><th class=n>macro-F1</th><th class=n>NLL</th><th class=n>Brier</th><th class=n>ECE</th></tr></thead><tbody><tr><td>模型</td><td class=n>0.927</td><td class=n>0.927</td><td class=n>0.302</td><td class=n>0.115</td><td class=n>0.025</td></tr><tr><td>模型 + 温度</td><td class=n>0.927</td><td class=n>0.927</td><td class=n>0.280</td><td class=n>0.114</td><td class=n>0.011</td></tr><tr class="prior"><td>先验</td><td class=n>0.013</td><td class=n>0.000</td><td class=n>4.384</td><td class=n>0.988</td><td class=n>0.006</td></tr></tbody></table><p class="note">dev · 选择 · n=537</p><table><thead><tr><th>方法</th><th class=n>准确率</th><th class=n>macro-F1</th><th class=n>NLL</th><th class=n>Brier</th><th class=n>ECE</th></tr></thead><tbody><tr><td>模型</td><td class=n>0.899</td><td class=n>0.892</td><td class=n>0.391</td><td class=n>0.155</td><td class=n>0.047</td></tr><tr><td>模型 + 温度</td><td class=n>0.899</td><td class=n>0.892</td><td class=n>0.354</td><td class=n>0.151</td><td class=n>0.034</td></tr><tr class="prior"><td>先验</td><td class=n>0.019</td><td class=n>0.000</td><td class=n>4.303</td><td class=n>0.986</td><td class=n>0.001</td></tr></tbody></table><h3>CLINC150 · ③ 逐候选标量头</h3><p class="note">运行 <code>20261105-060357-53ec012a</code> · 提交 <code>85fd8ac</code> · 数据 <code>rev-155b9c71</code> · 1× RTX 3090 · 953 步，训练 77 分钟 · 损失 2.23 → 0.00 · 温度 选择 1.36</p><p class="note">test · 选择 · n=5,500</p><table><thead><tr><th>方法</th><th class=n>准确率</th><th class=n>macro-F1</th><th class=n>NLL</th><th class=n>Brier</th><th class=n>ECE</th></tr></thead><tbody><tr><td>模型</td><td class=n>0.923</td><td class=n>0.938</td><td class=n>0.341</td><td class=n>0.125</td><td class=n>0.045</td></tr><tr><td>模型 + 温度</td><td class=n>0.923</td><td class=n>0.938</td><td class=n>0.294</td><td class=n>0.121</td><td class=n>0.019</td></tr><tr class="prior"><td>先验</td><td class=n>0.182</td><td class=n>0.002</td><td class=n>4.861</td><td class=n>0.990</td><td class=n>0.165</td></tr></tbody></table><p class="note">dev · 选择 · n=1,508</p><table><thead><tr><th>方法</th><th class=n>准确率</th><th class=n>macro-F1</th><th class=n>NLL</th><th class=n>Brier</th><th class=n>ECE</th></tr></thead><tbody><tr><td>模型</td><td class=n>0.961</td><td class=n>0.961</td><td class=n>0.170</td><td class=n>0.059</td><td class=n>0.020</td></tr><tr><td>模型 + 温度</td><td class=n>0.961</td><td class=n>0.961</td><td class=n>0.147</td><td class=n>0.056</td><td class=n>0.009</td></tr><tr class="prior"><td>先验</td><td class=n>0.031</td><td class=n>0.000</td><td class=n>4.999</td><td class=n>0.993</td><td class=n>0.015</td></tr></tbody></table><p class="note">test 拆开看（按 argmax）：范围内 4,500 条准确率 0.959；范围外（应答 null）1,000 条召回 0.765；判为 null 的 788 条精确率 0.971。</p><h3>SST-5 · ① 答案 token</h3><p class="note">运行 <code>20261105-114305-a49998c0</code> · 提交 <code>4299224</code> · 数据 <code>rev-e51bdcd8</code> · 1× RTX 3090 · 1,602 步，训练 27 分钟 · 损失 1.20 → 0.20 · 温度 等级 2.45</p><p class="note">test · 等级 · n=2,210</p><table><thead><tr><th>方法</th><th class=n>准确率</th><th class=n>期望分 MAE</th><th class=n>NLL</th><th class=n>Brier</th><th class=n>ECE</th></tr></thead><tbody><tr><td>模型</td><td class=n>0.555</td><td class=n>0.506</td><td class=n>1.380</td><td class=n>0.682</td><td class=n>0.270</td></tr><tr><td>模型 + 温度</td><td class=n>0.555</td><td class=n>0.559</td><td class=n>1.014</td><td class=n>0.569</td><td class=n>0.040</td></tr><tr class="prior"><td>先验</td><td class=n>0.231</td><td class=n>1.141</td><td class=n>1.580</td><td class=n>0.789</td><td class=n>0.041</td></tr></tbody></table><p class="note">dev · 等级 · n=552</p><table><thead><tr><th>方法</th><th class=n>准确率</th><th class=n>期望分 MAE</th><th class=n>NLL</th><th class=n>Brier</th><th class=n>ECE</th></tr></thead><tbody><tr><td>模型</td><td class=n>0.540</td><td class=n>0.537</td><td class=n>1.463</td><td class=n>0.701</td><td class=n>0.279</td></tr><tr><td>模型 + 温度</td><td class=n>0.540</td><td class=n>0.574</td><td class=n>1.053</td><td class=n>0.584</td><td class=n>0.063</td></tr><tr class="prior"><td>先验</td><td class=n>0.257</td><td class=n>1.082</td><td class=n>1.576</td><td class=n>0.787</td><td class=n>0.014</td></tr></tbody></table><h3>GoEmotions · ③ 逐候选标量头</h3><p class="note">运行 <code>20261105-085531-38a1bf6f</code> · 提交 <code>85fd8ac</code>（工作区有未跟踪文件，已跟踪的代码与提交一致） · 数据 <code>rev-add49224</code> · 1× RTX 3090 · 2,704 步，训练 66 分钟 · 损失 1.21 → 0.58 · 温度 多标签 1.25</p><p class="note">test · 多标签 · n=5,427</p><table><thead><tr><th>方法</th><th class=n>micro-F1</th><th class=n>macro-F1</th><th class=n>完全匹配</th><th class=n>NLL</th><th class=n>Brier</th><th class=n>ECE</th></tr></thead><tbody><tr><td>模型</td><td class=n>0.429</td><td class=n>0.409</td><td class=n>0.065</td><td class=n>0.221</td><td class=n>0.070</td><td class=n>0.109</td></tr><tr><td>模型 + 温度</td><td class=n>0.429</td><td class=n>0.409</td><td class=n>0.065</td><td class=n>0.215</td><td class=n>0.068</td><td class=n>0.118</td></tr><tr class="prior"><td>先验</td><td class=n>0.000</td><td class=n>0.000</td><td class=n>0.000</td><td class=n>0.148</td><td class=n>0.036</td><td class=n>0.000</td></tr></tbody></table><p class="note">dev · 多标签 · n=2,696</p><table><thead><tr><th>方法</th><th class=n>micro-F1</th><th class=n>macro-F1</th><th class=n>完全匹配</th><th class=n>NLL</th><th class=n>Brier</th><th class=n>ECE</th></tr></thead><tbody><tr><td>模型</td><td class=n>0.428</td><td class=n>0.417</td><td class=n>0.056</td><td class=n>0.222</td><td class=n>0.070</td><td class=n>0.109</td></tr><tr><td>模型 + 温度</td><td class=n>0.428</td><td class=n>0.417</td><td class=n>0.056</td><td class=n>0.216</td><td class=n>0.068</td><td class=n>0.118</td></tr><tr class="prior"><td>先验</td><td class=n>0.000</td><td class=n>0.000</td><td class=n>0.000</td><td class=n>0.149</td><td class=n>0.037</td><td class=n>0.000</td></tr></tbody></table><p class="note"><b>这次运行用的是修复前的代码</b>：训练时正样本加权 pos_weight=22.8，推理时没有扣除 ln w，概率整体偏高，温度缩放也修不回来（见上表 ECE 不降反升）。修复后的规则是先扣除 ln w 再校准。下表把它用在已保存的 dev/test 打分上；calib 的打分当时没有保存，所以温度取 1。正式结果待有空卡时用修复后的代码重跑。</p><p class="note">test · 多标签 · 离线修正 · n=5,427</p><table><thead><tr><th>方法</th><th class=n>micro-F1</th><th class=n>macro-F1</th><th class=n>完全匹配</th><th class=n>NLL</th><th class=n>Brier</th><th class=n>ECE</th></tr></thead><tbody><tr><td>扣除 ln w（离线，温度 1）</td><td class=n>0.587</td><td class=n>0.460</td><td class=n>0.466</td><td class=n>0.076</td><td class=n>0.022</td><td class=n>0.002</td></tr></tbody></table><p class="note">dev · 多标签 · 离线修正 · n=2,696</p><table><thead><tr><th>方法</th><th class=n>micro-F1</th><th class=n>macro-F1</th><th class=n>完全匹配</th><th class=n>NLL</th><th class=n>Brier</th><th class=n>ECE</th></tr></thead><tbody><tr><td>扣除 ln w（离线，温度 1）</td><td class=n>0.575</td><td class=n>0.438</td><td class=n>0.457</td><td class=n>0.078</td><td class=n>0.022</td><td class=n>0.003</td></tr></tbody></table><h3>客服分流 · ③ 逐候选标量头</h3><p class="note">运行 <code>20261105-101057-30757bf7</code> · 提交 <code>85fd8ac</code>（工作区有未跟踪文件，已跟踪的代码与提交一致） · 数据 <code>rev-18469841</code> · 1× RTX 3090 · 2,242 步，训练 43 分钟 · 损失 1.21 → 0.00 · 温度 选择 1.50，是非 1.55</p><p class="note">test · 是非 · n=3,080</p><table><thead><tr><th>方法</th><th class=n>准确率</th><th class=n>AUC</th><th class=n>NLL</th><th class=n>Brier</th><th class=n>ECE</th></tr></thead><tbody><tr><td>模型</td><td class=n>0.986</td><td class=n>0.995</td><td class=n>0.065</td><td class=n>0.012</td><td class=n>0.012</td></tr><tr><td>模型 + 温度</td><td class=n>0.986</td><td class=n>0.995</td><td class=n>0.049</td><td class=n>0.011</td><td class=n>0.008</td></tr><tr class="prior"><td>先验</td><td class=n>0.870</td><td class=n>0.500</td><td class=n>0.386</td><td class=n>0.113</td><td class=n>0.002</td></tr></tbody></table><p class="note">test · 选择 · n=3,080</p><table><thead><tr><th>方法</th><th class=n>准确率</th><th class=n>macro-F1</th><th class=n>NLL</th><th class=n>Brier</th><th class=n>ECE</th></tr></thead><tbody><tr><td>模型</td><td class=n>0.978</td><td class=n>0.975</td><td class=n>0.102</td><td class=n>0.037</td><td class=n>0.010</td></tr><tr><td>模型 + 温度</td><td class=n>0.978</td><td class=n>0.975</td><td class=n>0.087</td><td class=n>0.037</td><td class=n>0.006</td></tr><tr class="prior"><td>先验</td><td class=n>0.247</td><td class=n>0.066</td><td class=n>1.704</td><td class=n>0.805</td><td class=n>0.047</td></tr></tbody></table><p class="note">dev · 是非 · n=501</p><table><thead><tr><th>方法</th><th class=n>准确率</th><th class=n>AUC</th><th class=n>NLL</th><th class=n>Brier</th><th class=n>ECE</th></tr></thead><tbody><tr><td>模型</td><td class=n>0.996</td><td class=n>0.998</td><td class=n>0.039</td><td class=n>0.004</td><td class=n>0.006</td></tr><tr><td>模型 + 温度</td><td class=n>0.996</td><td class=n>0.998</td><td class=n>0.031</td><td class=n>0.005</td><td class=n>0.006</td></tr><tr class="prior"><td>先验</td><td class=n>0.886</td><td class=n>0.500</td><td class=n>0.356</td><td class=n>0.101</td><td class=n>0.018</td></tr></tbody></table><p class="note">dev · 选择 · n=501</p><table><thead><tr><th>方法</th><th class=n>准确率</th><th class=n>macro-F1</th><th class=n>NLL</th><th class=n>Brier</th><th class=n>ECE</th></tr></thead><tbody><tr><td>模型</td><td class=n>0.984</td><td class=n>0.984</td><td class=n>0.066</td><td class=n>0.028</td><td class=n>0.013</td></tr><tr><td>模型 + 温度</td><td class=n>0.984</td><td class=n>0.984</td><td class=n>0.063</td><td class=n>0.028</td><td class=n>0.010</td></tr><tr class="prior"><td>先验</td><td class=n>0.287</td><td class=n>0.074</td><td class=n>1.690</td><td class=n>0.801</td><td class=n>0.006</td></tr></tbody></table><p class="note">ECE 用 15 个等宽分箱：choice 和 score 取 top-1 概率，noul 和 multi_label 的每个候选取正类概率。</p></section><section id="scenario"><h2>垂直场景：把客服业务做成 Jev</h2><figure><a href="figures/02-support-scenario.png"><img src="figures/02-support-scenario.png" alt="图 2　客服分流：映射表把 77 个意图改写成两道业务题"></a><figcaption>图 2　客服分流：映射表把 77 个意图改写成两道业务题（<a href="figures/02-support-scenario.svg">SVG</a>）</figcaption></figure><h3>请求（示例消息为构造）</h3><pre><code class="json">{
+  &quot;model&quot;: &quot;banking77_support&quot;,
+  &quot;state&quot;: &quot;My card was stolen this morning and there are two payments on it that I did not make.&quot;,
+  &quot;questions&quot;: {
+    &quot;queue&quot;: {
+      &quot;type&quot;: &quot;choice&quot;,
+      &quot;instructions&quot;: &quot;Which support queue should handle this customer message?&quot;,
+      &quot;criteria&quot;: {
+        &quot;cards&quot;: &quot;Ordering, delivering, activating, linking or replacing cards; PINs, card limits and card support.&quot;,
+        &quot;payments&quot;: &quot;Card payments, cash withdrawals, refunds, fees, exchange rates and currencies.&quot;,
+        &quot;transfers&quot;: &quot;Sending and receiving money, transfer status, cancellations and beneficiaries.&quot;,
+        &quot;top_up&quot;: &quot;Topping up the account and problems with top-ups or deposits.&quot;,
+        &quot;account&quot;: &quot;Identity verification, personal details, passcodes, age limits and closing the account.&quot;,
+        &quot;security&quot;: &quot;Lost, stolen or compromised cards or phones, and transactions the customer does not recognise.&quot;
+      }
+    },
+    &quot;urgent&quot;: {
+      &quot;type&quot;: &quot;noul&quot;,
+      &quot;instructions&quot;: &quot;Could the customer lose money or access to their account if this message waits until tomorrow?&quot;
+    }
+  }
+}</code></pre><h3>验收产物 <code>20261105-101057-30757bf7</code> 的实际响应</h3><pre><code class="json">{
+  &quot;model&quot;: &quot;metiscraft/banking77_support&quot;,
+  &quot;answers&quot;: {
+    &quot;queue&quot;: {
+      &quot;type&quot;: &quot;choice&quot;,
+      &quot;choice&quot;: &quot;security&quot;,
+      &quot;confidence&quot;: 0.9999995054983101,
+      &quot;probabilities&quot;: {
+        &quot;cards&quot;: 2.0465875752668956e-07,
+        &quot;payments&quot;: 2.8552732808090524e-07,
+        &quot;transfers&quot;: 1.3682393373337923e-09,
+        &quot;top_up&quot;: 1.1094860412756372e-09,
+        &quot;account&quot;: 1.8378789176297659e-09,
+        &quot;security&quot;: 0.9999995054983101
+      }
+    },
+    &quot;urgent&quot;: {
+      &quot;type&quot;: &quot;noul&quot;,
+      &quot;noul&quot;: 0.9999314182034214
+    }
+  },
+  &quot;usage&quot;: {
+    &quot;input_tokens&quot;: 199,
+    &quot;output_tokens&quot;: 0
+  }
+}</code></pre><p>换成自己的业务，只要在注册表里写一张映射表和题目说明，其余流程不变。详见 <a href="../../../recipes/banking77_support/README.md">配方说明</a>。</p></section><section id="trace"><h2>可追溯</h2><p>每次运行一个目录，记下完整配置、git 提交（含未提交改动）、环境、数据版本与基座身份；报告里的每个数字都能追到运行 id。</p><div class=two><div><h3>运行目录（真实）</h3><pre><code class="">20261105-101057-30757bf7/
+├── artifact/
+│   ├── adapter/
+│   ├── NOTICE
+│   ├── SHA256SUMS
+│   ├── artifact.json
+│   └── head.safetensors
+├── calibration/
+│   ├── SHA256SUMS
+│   └── calibration.json
+├── eval/
+│   ├── dev.predictions.jsonl
+│   ├── metrics.json
+│   └── test.predictions.jsonl
+├── config.sha256
+├── config.yaml
+├── data.json
+├── env.json
+├── git.json
+├── model.json
+├── report.md
+└── train_log.jsonl</code></pre></div><div><h3>产物里的 NOTICE（真实）</h3><pre><code class="">This artifact was trained with MetisCraft 0.1.0.dev0.
+
+Base model: Qwen/Qwen3-0.6B-Base (revision da87bfb608c14b7cf20ba1ce41287e8de496c0cd).
+The base model&#x27;s own licence applies to the base weights and to derived weights.
+
+Training data: banking77_support@rev-18469841
+  licence: cc-by-4.0
+  terms: attribution
+
+The training data terms do not restrict commercial use.</code></pre></div></div></section><section id="next"><h2>局限与下一步</h2><ul><li>只验收了 Qwen3-0.6B-Base 一个基座；1.7B、4B 和第二个基座家族放到后续版本。</li><li>没有做 encoder 强基线的同协议对照，参照数字都是作者自报、协议不同。</li><li>排序（ranking）判断类型、ms-swift / HF 适配层、vLLM / SGLang / llama.cpp 引擎导出放到 v0.2。</li><li>评测推理沿用训练的批量，候选多的任务（如 CLINC150）评测偏慢，可单独设评测批量。</li><li>每份配方只跑了一个种子，没有扫学习率。</li><li>GoEmotions 要用修复后的代码重跑一次（需要一张 GPU 约 80 分钟），等有空闲的 GPU 再跑。</li><li>encoder 同协议对照（句向量 + 逻辑回归，划分、指标、校准方式与模型相同）还没有跑。</li></ul></section><section id="reproduce"><h2>复现</h2><pre><code class="bash">pip install -e &quot;.[serve]&quot;
+export METISCRAFT_DATA_ROOT=… METISCRAFT_MODELS_ROOT=… METISCRAFT_RUNS_ROOT=…
+metiscraft data prepare banking77_support
+metiscraft train recipes/banking77_support/qwen3-0.6b-base_candidate-scalar.yaml
+metiscraft serve &lt;运行目录&gt;/artifact</code></pre><p class="note">本页由 <code>src/build_report.py</code> 生成，数字来自 <code>src/data/</code>（<code>src/collect.py</code> 从运行目录收集）；流程图规格在 <code>src/*.json</code>，检查记录在 <code>checks/</code>。</p></section><footer>MetisCraft v0.1 · Shichao</footer></main><script>
+const links = [...document.querySelectorAll('nav a')];
+const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) {
+  links.forEach(a => a.classList.toggle('on', a.getAttribute('href') === '#' + e.target.id)); } }),
+  { rootMargin: '-30% 0px -60% 0px' });
+document.querySelectorAll('section[id]').forEach(s => io.observe(s));
+</script></body></html>

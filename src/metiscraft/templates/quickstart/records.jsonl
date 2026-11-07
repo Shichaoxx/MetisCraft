@@ -1,0 +1,1 @@
+{"id":"example","task_id":"quickstart","input":{"query":"Which team should handle this message?","context":{"state":"card arrival case 99"}},"question":{"type":"choice","options":[{"id":"billing","text":"Charges"},{"id":"tech","text":"Bugs"}]}}

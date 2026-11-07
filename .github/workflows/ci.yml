@@ -1,0 +1,65 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Install CPU PyTorch
+        run: pip install torch --index-url https://download.pytorch.org/whl/cpu
+      - name: Install MetisCraft
+        run: pip install -e ".[dev,serve,reproduce]"
+      - name: Lint
+        run: ruff check .
+      - name: Test
+        run: pytest
+
+  wheel:
+    # What `pip install metiscraft` would get: the built wheel in a clean environment, tested
+    # against the installed package rather than the source tree.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Build the wheel and the sdist
+        run: |
+          pip install build
+          python -m build
+      - name: Install CPU PyTorch
+        run: pip install torch --index-url https://download.pytorch.org/whl/cpu
+      - name: Install the wheel
+        run: pip install "$(ls dist/*.whl)[dev,serve,reproduce]"
+      - name: Check that the installed package is the one imported
+        run: python -c "import metiscraft, sys; print(metiscraft.__file__); sys.exit('site-packages' not in metiscraft.__file__)"
+      - name: Test
+        run: pytest
+      - name: Follow the installed-package quickstart outside the checkout
+        run: |
+          cd "$RUNNER_TEMP"
+          python "$GITHUB_WORKSPACE/scripts/verify_installed.py" --work-dir "$RUNNER_TEMP/metiscraft-flow"
+
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.11"
+      - run: pip install -r docs/requirements.txt
+      - run: python scripts/build_docs.py
+      - run: python scripts/check_docs.py
+      - uses: actions/upload-artifact@v7
+        with:
+          name: documentation-preview
+          path: build/documentation/site

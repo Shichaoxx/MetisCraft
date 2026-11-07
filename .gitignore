@@ -5,6 +5,7 @@ __pycache__/
 *.py[cod]
 *.egg-info/
 .pytest_cache/
+.ruff_cache/
 dist/
 build/
 .coverage
@@ -20,18 +21,21 @@ htmlcov/
 /.local
 /workspace.local.json
 
-# Machine and editor state
+# Machine, editor and agent state (agent files at any depth)
 /.agents
+/.claude
 /.codex
+AGENTS.md
+CLAUDE.md
+CLAUDE.local.md
+HANDOFF.md
 .env
 .env.*
 !.env.example
 .DS_Store
 
 # Local supervision and historical documents
-/AGENTS.md
 /CORE.md
-/HANDOFF.md
 /JUPITER.md
 /ops/
 /docs/operations/

@@ -1,0 +1,14 @@
+# CLINC150 plus (150 intents + out-of-scope as "none of the above"), candidate-scalar readout.
+# Control for Banking77: a public intent set with a large option menu and null answers.
+task: clinc150
+data: {dataset: clinc150}
+model:
+  base: qwen3/0.6b-base-da87bfb6
+  dtype: bf16
+  max_length: 1280
+  finetune: {kind: lora, r: 16, alpha: 32, dropout: 0.05, targets: all-linear}
+readout: {kind: candidate_scalar, layout: list, head: {hidden: 256}, shuffle_train: true}
+objective: {kind: cross_entropy}
+train: {epochs: 1, batch_size: 4, grad_accum: 4, lr: 2.0e-4, head_lr: 1.0e-3, warmup_ratio: 0.03, seed: 42, bf16: true, logging_steps: 20}
+calibrate: {method: temperature, split: calib}
+eval: {splits: [dev, test], baselines: [prior]}

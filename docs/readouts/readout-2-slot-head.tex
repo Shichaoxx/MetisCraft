@@ -1,0 +1,85 @@
+% Readout 2: fixed-slot head initialised from lm_head rows.
+% Same input/gather as readout 1; head is an independent Linear(d,K).
+% W_slot stored [K,d], shown transposed [d,K]; W_slot^(0)=W_lm[ell,:].
+% pplx variant: full-attention layers use an all-ones (non-causal) mask.
+\input{readout-style.tex}
+\begin{document}
+\begin{tikzpicture}[x=1cm,y=1cm,text=Ink]
+\node[font=\large] at (10.6,4.05)
+  {$W_{\mathrm{slot}}^{(0)}=W_{\mathrm{lm}}[\ell,:],\quad
+    z_b=W_{\mathrm{slot}}\,h_b,\quad
+    p_b=\operatorname{softmax}_{k}(z_b),\quad
+    \mathcal L=-\tfrac1B\textstyle\sum_b\log p_{b,y_b}$};
+% ---------- stage A ----------
+\node[stage] at (10.3,3.35) {输入与读出 1 相同；mask 默认因果，pplx 把全注意力层改为非因果};
+\node[sym,anchor=east] at (1.0,2.3) {$X$};
+\node[shp,anchor=east] at (1.0,2.0) {$[B,T]$};
+\TokRow{1.2}{2.15}{S,S,S,Q,Q,1,1,2,2,3,3,D}
+\draw[brc] (1.22,2.36) -- (2.08,2.36) node[midway,above=3pt,note] {state};
+\draw[brc] (2.12,2.36) -- (2.68,2.36) node[midway,above=3pt,note] {问题};
+\draw[brc] (2.72,2.36) -- (4.48,2.36) node[midway,above=3pt,note] {选项};
+\draw[brc] (4.52,2.36) -- (4.78,2.36) node[midway,above=3pt,note] {$t^\star$};
+\Mask{1.2}{1.8}{12}{0,0,0,0,0,0,0,0,0,0,0,0}{3}
+\node[sym] at (3.0,-2.07) {$M$};
+\node[shp] at (3.0,-2.4) {$[T,T]$ 因果（默认）};
+\node[font=\small,text=Muted] at (5.3,0) {或};
+\TokRow{5.8}{2.15}{S,S,S,Q,Q,1,1,2,2,3,3,D}
+\Mask{5.8}{1.8}{12}{0,0,0,0,0,0,0,0,0,0,0,0}{1}
+\node[sym] at (7.6,-2.07) {$M^{\mathrm{bi}}$};
+\node[shp] at (7.6,-2.4) {$[T,T]$ 全 1（pplx）};
+\node[op,minimum width=2.4cm,minimum height=1.3cm] (dec) at (11.35,0)
+  {\textbf{Decoder}\\[2pt]$M$ 或 $M^{\mathrm{bi}}$};
+\draw[flow] (9.55,0) -- (dec.west);
+\Tens{H}{13.95}{0}{12}{5}{Hid}{1}{H}{[B,T,d]}
+\RowMark{13.2}{1.8}{12}{5}{Lgt}
+\draw[flow] (dec.east) -- (H-w);
+\node[op,minimum width=2.1cm,minimum height=1.1cm] (g1) at (16.75,0)
+  {\textbf{Gather}\\[2pt]$H_{b,t^\star_b,:}$};
+\draw[flow] (H-e) -- (g1.west);
+\Slots{16.45}{-1.25}{11,11}
+\node[sym] at (16.75,-1.62) {$t^\star$};
+\node[shp] at (16.75,-1.95) {$[B]$};
+\draw[dflow] (16.75,-1.08) -- (g1.south);
+\Tens{h}{19.4}{0}{2}{5}{Hid}{0}{h}{[B,d]}
+\draw[flow] (g1.east) -- (h-w);
+% ---------- stage B ----------
+\node[stage] at (13.0,-3.3) {独立可训练头 $\mathrm{Linear}(d,K)$：每个槽位一行，沿 $K$ 归一化};
+\Tens{h2}{8.0}{-5.0}{2}{5}{Hid}{0}{h}{[B,d]}
+\node[bigop] at (9.2,-5.0) {$\times$};
+\Tens{Ws}{10.15}{-5.0}{5}{3}{Wgt}{0}{W_{\mathrm{slot}}^{\mathsf T}}{[d,K]}
+\Tens{z}{12.3}{-5.0}{2}{3}{Lgt}{0}{z}{[B,K]}
+\draw[flow] (Ws-e) -- (z-w);
+\node[op,minimum width=1.6cm,minimum height=1.1cm] (sm) at (14.35,-5.0)
+  {softmax\\[2pt]沿 $K$};
+\draw[flow] (z-e) -- (sm.west);
+\Tens{p}{16.4}{-5.0}{2}{3}{Lgt}{0}{p}{[B,K]}
+\draw[flow] (sm.east) -- (p-w);
+\node[op,minimum width=2.4cm,minimum height=1.1cm] (loss) at (19.05,-5.0)
+  {\textbf{交叉熵}\\[2pt]$-\log p_{b,y_b}$};
+\draw[flow] (p-e) -- (loss.west);
+\Slots{18.75}{-6.15}{0,2}
+\node[sym] at (19.05,-6.52) {$y$};
+\node[shp] at (19.05,-6.85) {$[B]$};
+\draw[dflow] (19.05,-5.98) -- (loss.south);
+% ---------- stage C: initialisation ----------
+\node[stage] at (6.0,-7.25) {训练前一次：用标签 token 的 lm\_head 行初始化};
+\Tens{Wl}{3.2}{-9.0}{5}{12}{Wgt}{0}{W_{\mathrm{lm}}^{\mathsf T}}{[d,V]}
+\foreach \c in {4,8,11}{\ColMark{1.4}{-8.25}{\c}{5}{Ink!80}}
+\node[op,minimum width=1.9cm,minimum height=1.1cm] (cp) at (7.35,-9.0)
+  {\textbf{复制列}\\[2pt]$W_{\mathrm{lm}}^{\mathsf T}[:,\ell]$};
+\draw[flow] (Wl-e) -- (cp.west);
+\Slots{6.9}{-10.15}{3,7,10}
+\node[sym,anchor=west] at (7.85,-10.15) {$\ell$\;{\scriptsize\color{Muted}$[K]$}};
+\draw[dflow] (7.35,-9.98) -- (cp.south);
+\Tens{W0}{10.15}{-9.0}{5}{3}{Wgt}{0}{W_{\mathrm{slot}}^{(0)\mathsf T}}{[d,K]}
+\draw[flow] (cp.east) -- (W0-w);
+\draw[dflow] (W0-n) -- (10.15,-6.58);
+\node[note,anchor=west] at (10.3,-7.55) {作初值};
+% ---------- meaning ----------
+\Meaning{0.0}{-11.5}{21.6}
+ {$B$ 问题数；$T$ 序列长度；$d$ hidden；$V$ 词表；$K$ 槽位数 = 可表达的选项上限（pplx 与 d3 为 255，AutoTrust 264）。}
+ {$W_{\mathrm{slot}}$ 独立可训练权重，存储 $[K,d]$，图中转置；$W_{\mathrm{slot}}^{(0)}$ 其初值；$\ell$ 槽位对应 token 的词表 id；$M$ 因果、$M^{\mathrm{bi}}$ 全 1 的可见性；$z$ logits，$p$ 槽位上的概率。}
+ {与读出 1 共用输入和 gather，只把“读 $V$ 列再挑 $L$ 列”换成可训练的 $K$ 行；导出时可把 $W_{\mathrm{slot}}$ 写回 lm\_head 的 $\ell$ 行供普通引擎服务。改用 $M^{\mathrm{bi}}$ 后，普通 CausalLM 推理不再等价。}
+ {读出 2：lm\_head 行初始化的固定槽位头@Shichao}
+\end{tikzpicture}
+\end{document}

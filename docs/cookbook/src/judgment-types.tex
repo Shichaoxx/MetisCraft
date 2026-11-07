@@ -1,0 +1,96 @@
+% Judgment types: one score matrix S[B,K] with a validity mask M[B,K]; each row's type
+% decides how scores become probabilities P[B,K] and a per-question loss l[B]; the step
+% loss divides the sum by the global question count N (all micro-batches and ranks).
+% Rows: noul (1 valid column), choice (4), score (5 levels), multi_label (6 candidates).
+% Code: judgments/__init__.py (target_vector, batch_loss, probabilities), train/loop.py (accumulate).
+\input{../../readouts/readout-style.tex}
+% \SupMat{id}{cx}{cy}{rows}{cols}{color}{valid columns per row}{symbol}{shape}
+\newcommand{\SupMat}[9]{%
+  \pgfmathsetmacro{\tw}{#5*\U}\pgfmathsetmacro{\th}{#4*\U}%
+  \pgfmathsetmacro{\tx}{#2-\tw/2}\pgfmathsetmacro{\ty}{#3-\th/2}%
+  \foreach \v [count=\ri] in {#7}{%
+    \foreach \c in {1,...,#5}{%
+      \ifnum\c>\v\relax\else
+        \pgfmathtruncatemacro{\lv}{mod(int(abs(sin(\ri*127.1+\c*311.7+#5*41.3+#4*7.9))*1000),3)}%
+        \pgfmathtruncatemacro{\tone}{\lv==0?30:(\lv==1?55:80)}%
+        \path[fill=#6!\tone,rounded corners=.6pt]
+          ({\tx+(\c-1)*\U+.022},{\ty+\th-\ri*\U+.022}) rectangle ++({\U-.044},{\U-.044});
+      \fi}}%
+  \path[draw=Ink!45,line width=.4pt,rounded corners=.8pt] (\tx,\ty) rectangle ++(\tw,\th);
+  \coordinate (#1-w) at (\tx,#3);\coordinate (#1-e) at ({\tx+\tw},#3);
+  \coordinate (#1-n) at (#2,{\ty+\th});\coordinate (#1-s) at (#2,\ty);
+  \node[sym] at (#2,{\ty-.27}) {$#8$};
+  \node[shp] at (#2,{\ty-.6}) {$#9$};}
+% \MaskMat: like \SupMat but every valid cell gets one colour (a binary mask has no magnitudes)
+\newcommand{\MaskMat}[9]{%
+  \pgfmathsetmacro{\tw}{#5*\U}\pgfmathsetmacro{\th}{#4*\U}%
+  \pgfmathsetmacro{\tx}{#2-\tw/2}\pgfmathsetmacro{\ty}{#3-\th/2}%
+  \foreach \v [count=\ri] in {#7}{%
+    \foreach \c in {1,...,#5}{%
+      \ifnum\c>\v\relax\else
+        \path[fill=#6!70,rounded corners=.6pt]
+          ({\tx+(\c-1)*\U+.022},{\ty+\th-\ri*\U+.022}) rectangle ++({\U-.044},{\U-.044});
+      \fi}}%
+  \path[draw=Ink!45,line width=.4pt,rounded corners=.8pt] (\tx,\ty) rectangle ++(\tw,\th);
+  \coordinate (#1-n) at (#2,{\ty+\th});
+  \node[sym] at (#2,{\ty-.27}) {$#8$};
+  \node[shp] at (#2,{\ty-.6}) {$#9$};}
+% \Cell{x_left}{y_top}{row}{col}{color}{tone}: one filled cell of a 4-row matrix
+\newcommand{\Cell}[6]{%
+  \path[fill=#5!#6,rounded corners=.6pt]
+    ({#1+(#4-1)*\U+.022},{#2-#3*\U+.022}) rectangle ++({\U-.044},{\U-.044});}
+\begin{document}
+\begin{tikzpicture}[x=1cm,y=1cm,text=Ink]
+% ---------- formula ----------
+\node[font=\large] at (10.2,1.85)
+  {$P=g_{\text{类型}}\!\left(S\,\middle|\,M\right),\qquad
+    \mathcal L=\tfrac{1}{N}\textstyle\sum_{b}\ell_b\big(P_{b,:},\,Y_{b,:}\big)$};
+% ---------- row labels ----------
+\foreach \lab [count=\i] in {是非,选择,等级,多标签}{%
+  \node[font=\scriptsize,text=Muted,anchor=east] at (1.0,{.6-(\i-.5)*\U}) {\lab};}
+% ---------- scores and mask ----------
+\SupMat{S}{2.2}{0}{4}{6}{Lgt}{1,4,5,6}{S}{[B,K]}
+\node[op,minimum width=2.7cm,minimum height=1.5cm] (g) at (5.75,0)
+  {\textbf{按类型变成概率}\\[2pt]
+   {\footnotesize 是非 $\sigma(S_{b,0})$}\\
+   {\footnotesize 选择、等级 softmax}\\
+   {\footnotesize 多标签 逐列 $\sigma$}};
+\draw[flow] (S-e) -- (g.west);
+\MaskMat{M}{5.75}{-2.25}{4}{6}{Msk}{1,4,5,6}{M}{[B,K]}
+\draw[dflow] (M-n) -- (g.south);
+% ---------- probabilities ----------
+\SupMat{P}{9.6}{0}{4}{6}{Lgt}{1,4,5,6}{P}{[B,K]}
+\draw[flow] (g.east) -- (P-w);
+% ---------- targets and per-question loss ----------
+\node[op,minimum width=2.7cm,minimum height=1.5cm] (l) at (13.25,0)
+  {\textbf{逐题损失}\\[2pt]{\footnotesize 是非 BCE}\\{\footnotesize 选择、等级 CE}\\{\footnotesize 多标签 有效列 BCE 均值}};
+\draw[flow] (P-e) -- (l.west);
+\path[draw=Ink!45,line width=.4pt,rounded corners=.8pt] (12.35,-1.65) rectangle ++(1.8,-1.2);
+\Cell{12.35}{-1.65}{1}{1}{Idx}{80}
+\Cell{12.35}{-1.65}{2}{3}{Idx}{80}
+\Cell{12.35}{-1.65}{3}{2}{Idx}{30}\Cell{12.35}{-1.65}{3}{3}{Idx}{80}\Cell{12.35}{-1.65}{3}{4}{Idx}{30}
+\Cell{12.35}{-1.65}{4}{2}{Idx}{80}\Cell{12.35}{-1.65}{4}{5}{Idx}{80}
+\node[sym] at (13.25,-3.12) {$Y$};
+\node[shp] at (13.25,-3.45) {$[B,K]$};
+\draw[dflow] (13.25,-1.65) -- (l.south);
+\SupMat{ell}{16.15}{0}{4}{1}{Lgt}{1,1,1,1}{\ell}{[B]}
+\draw[flow] (l.east) -- (ell-w);
+% ---------- global normalisation ----------
+\node[op,minimum width=1.6cm,minimum height=1.5cm] (n) at (18.2,0)
+  {$\tfrac{1}{N}\textstyle\sum_b$};
+\draw[flow] (ell-e) -- (n.west);
+\node[draw=Idx!70,fill=Idx!12,rounded corners=1pt,minimum width=.32cm,minimum height=.32cm,
+  inner sep=0pt] (Nn) at (18.2,-1.95) {};
+\node[sym] at (18.2,-2.42) {$N$};
+\node[shp] at (18.2,-2.75) {标量};
+\draw[dflow] (Nn.north) -- (n.south);
+\SupMat{L}{20.15}{0}{1}{1}{Lgt}{1}{\mathcal L}{\text{标量}}
+\draw[flow] (n.east) -- (L-w);
+% ---------- meaning ----------
+\Meaning{0.0}{-3.95}{20.6}
+ {$B$ 道题，一行一道，不同类型可以混在同一批；$K$ 是这批题里最多的候选数；$N$ 是这一优化步所有微批、所有卡上的题数之和。}
+ {$S$ 原始打分；$M$ 有效列（二值），白格是填充列；$P$ 概率，是非和多标签各列独立，选择和等级每行和为 1；$Y$ 目标，只有着色格非零（等级题可用高斯软目标）；$\ell$ 每题损失。}
+ {填充列既不进 softmax 也不进损失。先按题求损失，再除以全局题数 $N$，所以微批大小、梯度累积和卡数都不改变训练目标。}
+ {MetisCraft 判断类型：打分 → 概率 → 损失 · shichao}
+\end{tikzpicture}
+\end{document}

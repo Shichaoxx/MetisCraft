@@ -1,0 +1,119 @@
+% MetisCraft readout tensor figures: shared notation, palette and macros.
+% Cell counts are illustrative; each symbolic axis keeps one physical edge
+% length inside a figure (u per cell): T=12, d=5, V=12, K=L=3, B=2, d_h=4.
+\documentclass[tikz,border=3mm]{standalone}
+\usepackage[UTF8,fontset=fandol]{ctex}
+\usepackage{amsmath,amssymb,bm}
+\usetikzlibrary{arrows.meta,calc,backgrounds,decorations.pathreplacing}
+\definecolor{Ink}{HTML}{273648}
+\definecolor{Muted}{HTML}{607086}
+% token roles
+\definecolor{Ctx}{HTML}{85898F}    % state / context
+\definecolor{Qst}{HTML}{4F8FA5}    % question
+\definecolor{Opt}{HTML}{5A9A6E}    % options / candidates (three lightness levels)
+\definecolor{Gen}{HTML}{B89A5E}    % generated rationale tokens
+% tensor roles
+\definecolor{Hid}{HTML}{8A74B5}    % hidden activations
+\definecolor{Wgt}{HTML}{E0904F}    % trainable / pretrained weights
+\definecolor{Lgt}{HTML}{C95B5B}    % logits, probabilities, loss
+\definecolor{Idx}{HTML}{7E8B9B}    % integer indices / labels
+\definecolor{Msk}{HTML}{3F5A78}    % binary attention support
+\colorlet{TokS}{Ctx!55}\colorlet{TokQ}{Qst!65}
+\colorlet{Tok1}{Opt!30}\colorlet{Tok2}{Opt!58}\colorlet{Tok3}{Opt!88}
+\colorlet{TokD}{Ink!80}\colorlet{TokG}{Gen!65}\colorlet{TokM}{Opt!100!black!60}
+\colorlet{TokC}{Ink!80}\colorlet{TokP}{white}
+\colorlet{TokL}{Opt!58}\colorlet{TokT}{Qst!65}
+\newcommand{\U}{0.3}
+\newcommand{\Off}{0.14}
+\newcounter{tseed}
+\tikzset{
+  flow/.style={-{Latex[length=2mm,width=1.4mm]},draw=Ink!85,line width=.7pt},
+  dflow/.style={-{Latex[length=2mm,width=1.4mm]},draw=Ink!60,line width=.6pt,dashed},
+  op/.style={draw=Ink!30,fill=white,rounded corners=2pt,line width=.5pt,
+             align=center,font=\small,inner sep=4pt},
+  sym/.style={font=\small,inner sep=1pt},
+  shp/.style={font=\scriptsize,text=Muted,inner sep=1pt},
+  note/.style={font=\scriptsize,text=Muted,align=center,inner sep=1pt},
+  stage/.style={font=\small\bfseries,text=Muted},
+  bigop/.style={font=\Large,text=Ink},
+  brc/.style={decorate,decoration={brace,amplitude=3pt},draw=Ink!55,line width=.5pt},
+}
+% \Tens{id}{cx}{cy}{rows}{cols}{color}{depth}{symbol}{shape}
+\newcommand{\Tens}[9]{%
+  \stepcounter{tseed}%
+  \pgfmathsetmacro{\tw}{#5*\U}\pgfmathsetmacro{\th}{#4*\U}%
+  \pgfmathsetmacro{\tx}{#2-\tw/2}\pgfmathsetmacro{\ty}{#3-\th/2}%
+  \ifnum#7>0
+    \foreach \k in {#7,...,1}{%
+      \path[draw=#6!45,fill=white,rounded corners=.8pt,line width=.4pt]
+        ({\tx+\k*\Off},{\ty+\k*\Off}) rectangle ++(\tw,\th);}%
+  \fi
+  \foreach \r in {1,...,#4}{\foreach \c in {1,...,#5}{%
+    \pgfmathtruncatemacro{\lv}{mod(int(abs(sin(\r*127.1+\c*311.7+\arabic{tseed}*74.7))*1000),7)}%
+    \pgfmathtruncatemacro{\tone}{\lv<3?30:(\lv<6?55:80)}%
+    \path[fill=#6!\tone,rounded corners=.6pt]
+      ({\tx+(\c-1)*\U+.022},{\ty+\th-\r*\U+.022}) rectangle ++({\U-.044},{\U-.044});}}%
+  \coordinate (#1-w) at (\tx,#3);
+  \coordinate (#1-e) at ({\tx+\tw+#7*\Off},#3);
+  \coordinate (#1-n) at (#2,{\ty+\th+#7*\Off});
+  \coordinate (#1-s) at (#2,\ty);
+  \coordinate (#1-nw) at (\tx,{\ty+\th});
+  \coordinate (#1-sw) at (\tx,\ty);
+  \node[sym] (#1-sym) at (#2,{\ty-.27}) {$#8$};
+  \node[shp] (#1-shp) at (#2,{\ty-.6}) {$#9$};}
+% outline one row (r, 1-based) of a tensor whose front face top-left is (x,y)
+% \RowMark{x_left}{y_top}{row}{cols}{color}
+\newcommand{\RowMark}[5]{%
+  \path[draw=#5,line width=1.1pt,rounded corners=1pt]
+    ({#1-.03},{#2-#3*\U-.03}) rectangle ++({#4*\U+.06},{\U+.06});}
+\newcommand{\ColMark}[5]{% x_left y_top col rows color
+  \path[draw=#5,line width=1.1pt,rounded corners=1pt]
+    ({#1+(#3-1)*\U-.03},{#2-#4*\U-.03}) rectangle ++({\U+.06},{#4*\U+.06});}
+% \TokRow{x_left}{y_center}{roles}: one tile per token, roles in {S,Q,1,2,3,D,G,M,C,P,L,T}
+\newcommand{\TokRow}[3]{%
+  \foreach \t [count=\i] in {#3}{%
+    \path[fill=Tok\t,draw=Ink!25,line width=.3pt,rounded corners=.6pt]
+      ({#1+(\i-1)*\U+.022},{#2-\U/2+.022}) rectangle ++({\U-.044},{\U-.044});}}
+\newcommand{\TokCol}[3]{% x_center y_top roles (top to bottom)
+  \foreach \t [count=\i] in {#3}{%
+    \path[fill=Tok\t,draw=Ink!25,line width=.3pt,rounded corners=.6pt]
+      ({#1-\U/2+.022},{#2-\i*\U+.022}) rectangle ++({\U-.044},{\U-.044});}}
+% \Mask{x_left}{y_top}{n}{groups}{mode}
+%  mode 0: causal & (g_j=0 or g_j=g_i)      shared-prefix tree
+%  mode 1: all ones                          bidirectional
+%  mode 2: causal & (g_j=0 or g_j=g_i or g_i=9)  pointer (9 = decision token)
+%  mode 3: causal                            plain causal
+%  mode 4: g_j=g_i                           independent bidirectional blocks
+%  mode 5: causal with generated tokens (g=5) drawn in Gen colour
+\newcommand{\Mask}[5]{%
+  \foreach \i in {1,...,#3}{\foreach \j in {1,...,#3}{%
+    \pgfmathtruncatemacro{\gi}{{#4}[\i-1]}%
+    \pgfmathtruncatemacro{\gj}{{#4}[\j-1]}%
+    \ifcase#5
+      \pgfmathtruncatemacro{\ok}{and(\j<=\i,or(\gj==0,\gj==\gi))}\or
+      \pgfmathtruncatemacro{\ok}{1}\or
+      \pgfmathtruncatemacro{\ok}{and(\j<=\i,or(or(\gj==0,\gj==\gi),\gi==9))}\or
+      \pgfmathtruncatemacro{\ok}{\j<=\i}\or
+      \pgfmathtruncatemacro{\ok}{\gj==\gi}\or
+      \pgfmathtruncatemacro{\ok}{\j<=\i}\fi
+    \ifnum\ok=1
+      \path[fill=Msk!70,rounded corners=.5pt]
+        ({#1+(\j-1)*\U+.022},{#2-\i*\U+.022}) rectangle ++({\U-.044},{\U-.044});
+    \fi}}%
+  \path[draw=Ink!40,line width=.4pt] (#1,#2) rectangle ++({#3*\U},{-#3*\U});}
+% integer slot strip: \Slots{x_left}{y_center}{entries}
+\newcommand{\Slots}[3]{%
+  \foreach \v [count=\i] in {#3}{%
+    \node[draw=Idx!70,fill=Idx!12,rounded corners=1pt,minimum width=\U cm-.04cm,
+      minimum height=\U cm-.04cm,inner sep=0pt,font=\tiny,text=Ink]
+      at ({#1+(\i-.5)*\U},#2) {$\v$};}}
+% bottom meaning box: \Meaning{x0}{y_top}{width}{axes}{objects}{mechanism}{id line}
+\newcommand{\Meaning}[7]{%
+  \node[anchor=north west,fill=Ink!4,rounded corners=3pt,inner sep=9pt,
+    text width=#3cm-18pt,align=left,font=\small] (meaning) at (#1,#2) {%
+    \begin{tabular}{@{}p{1.1cm}@{\hspace{6pt}}p{\dimexpr #3cm-2.0cm\relax}@{}}
+    \textbf{轴} & \raggedright #4\tabularnewline[5pt]
+    \textbf{对象} & \raggedright #5\tabularnewline[5pt]
+    \textbf{机制} & \raggedright #6\tabularnewline
+    \end{tabular}};
+  \node[font=\scriptsize,text=Ink!45,anchor=north] at ($(meaning.south)+(0,-.18)$) {#7};}

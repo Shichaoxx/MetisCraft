@@ -1,0 +1,231 @@
+{
+  "id": "MetisCraft v0.1：一次运行的全流程",
+  "top": [
+    "问题：同一套流程既要训练通用 judge，也要把垂直业务做成自己的 Jev，并且每个数字都能追溯",
+    "方案：版本化数据 → 配方驱动训练 → 封存产物 → 只在 calib 上校准 → 与先验同表评测 → 部署"
+  ],
+  "cols": 4,
+  "lanes": [
+    {
+      "label": "数据",
+      "nodes": [
+        {
+          "id": "reg",
+          "role": "io",
+          "title": "数据注册表",
+          "lines": [
+            "16 个数据集",
+            "固定上游 revision",
+            {
+              "text": "许可证与条款标记",
+              "muted": true
+            }
+          ]
+        },
+        {
+          "id": "prep",
+          "role": "own",
+          "title": "data prepare",
+          "lines": [
+            "下载 → 转成 Jev 记录",
+            "评测集优先去重"
+          ]
+        },
+        {
+          "id": "ver",
+          "role": "result",
+          "span": 2,
+          "title": "版本化数据目录",
+          "lines": [
+            "train · calib · dev · test（test 只供评测）",
+            {
+              "text": "SHA256SUMS · 已有版本只校验不覆盖",
+              "muted": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "label": "训练",
+      "nodes": [
+        {
+          "id": "recipe",
+          "role": "io",
+          "title": "配方 YAML",
+          "lines": [
+            "数据 · 基座 · 读出 · 目标",
+            {
+              "text": "命令行 a.b=c 覆盖",
+              "muted": true
+            }
+          ]
+        },
+        {
+          "id": "base",
+          "role": "third",
+          "title": "Qwen3-0.6B-Base",
+          "lines": [
+            "主干冻结，训练 LoRA"
+          ]
+        },
+        {
+          "id": "readout",
+          "role": "own",
+          "title": "读出",
+          "lines": [
+            "① 答案 token",
+            "③ 逐候选标量头"
+          ]
+        },
+        {
+          "id": "loop",
+          "role": "own",
+          "title": "训练循环",
+          "lines": [
+            "按全局问题数归一的损失",
+            "bf16 · 梯度累积"
+          ]
+        }
+      ]
+    },
+    {
+      "label": "封存、校准\n与评测",
+      "nodes": [
+        {
+          "id": "art",
+          "role": "result",
+          "title": "产物",
+          "lines": [
+            "adapter · head · NOTICE",
+            "SHA256SUMS"
+          ]
+        },
+        {
+          "id": "cal",
+          "role": "own",
+          "title": "温度校准",
+          "lines": [
+            "每个任务与类型",
+            "各拟合一个温度",
+            {
+              "text": "只用 calib",
+              "muted": true
+            }
+          ]
+        },
+        {
+          "id": "ev",
+          "role": "eval",
+          "title": "dev / test 评测",
+          "lines": [
+            "模型 · 模型+温度 · 先验",
+            "准确率 · NLL · Brier · ECE"
+          ]
+        },
+        {
+          "id": "rep",
+          "role": "result",
+          "title": "报告",
+          "lines": [
+            "report.md",
+            "metrics.json",
+            {
+              "text": "带运行 id 与提交",
+              "muted": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "label": "部署",
+      "nodes": [
+        {
+          "id": "pred",
+          "role": "own",
+          "col": 1,
+          "title": "Predictor",
+          "lines": [
+            "加载产物与温度"
+          ]
+        },
+        {
+          "id": "http",
+          "role": "own",
+          "span": 2,
+          "title": "POST /v1/systemone",
+          "lines": [
+            "官方请求格式：state + questions",
+            "按类型返回答案与校准后的概率"
+          ]
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "from": "reg",
+      "to": "prep"
+    },
+    {
+      "from": "prep",
+      "to": "ver"
+    },
+    {
+      "from": "recipe",
+      "to": "base"
+    },
+    {
+      "from": "base",
+      "to": "readout"
+    },
+    {
+      "from": "readout",
+      "to": "loop"
+    },
+    {
+      "from": "ver",
+      "to": "loop",
+      "label": "train"
+    },
+    {
+      "from": "loop",
+      "to": "art"
+    },
+    {
+      "from": "art",
+      "to": "cal"
+    },
+    {
+      "from": "cal",
+      "to": "ev"
+    },
+    {
+      "from": "ev",
+      "to": "rep"
+    },
+    {
+      "from": "art",
+      "to": "pred"
+    },
+    {
+      "from": "pred",
+      "to": "http"
+    }
+  ],
+  "notes": [
+    [
+      "可追溯",
+      "运行目录记下配置、git 提交、环境、数据版本与基座身份；产物带 SHA256SUMS 与许可证 NOTICE"
+    ],
+    [
+      "可替换",
+      "基座、读出、微调方式都由配方决定；① 与 ③ 只改 readout.kind 一行"
+    ],
+    [
+      "评测边界",
+      "test 划分只在评测时读取；温度只在 calib 上拟合，不碰 dev 与 test"
+    ]
+  ]
+}

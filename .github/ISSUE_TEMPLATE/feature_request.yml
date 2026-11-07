@@ -1,0 +1,17 @@
+name: Feature request
+description: Propose a use case, integration or improvement.
+body:
+  - type: textarea
+    id: usecase
+    attributes:
+      label: Use case
+      description: What decision task or workflow are you trying to support?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed behavior
+      description: Include alternatives and what would demonstrate that this works.
+    validations:
+      required: true

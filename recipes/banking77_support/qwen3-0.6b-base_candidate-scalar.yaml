@@ -1,0 +1,15 @@
+# Vertical scenario example: bank support routing built from Banking77. Each customer message
+# answers two business questions in one request -- "which support queue?" (choice, 6 queues)
+# and "is it urgent?" (noul) -- and the model is served with the official request format.
+task: banking77_support
+data: {dataset: banking77_support}
+model:
+  base: qwen3/0.6b-base-da87bfb6
+  dtype: bf16
+  max_length: 384
+  finetune: {kind: lora, r: 16, alpha: 32, dropout: 0.05, targets: all-linear}
+readout: {kind: candidate_scalar, layout: list, head: {hidden: 256}, shuffle_train: true}
+objective: {kind: auto}
+train: {epochs: 2, batch_size: 16, grad_accum: 1, lr: 2.0e-4, head_lr: 1.0e-3, warmup_ratio: 0.03, seed: 42, bf16: true, logging_steps: 20}
+calibrate: {method: temperature, split: calib}
+eval: {splits: [dev, test], baselines: [prior]}

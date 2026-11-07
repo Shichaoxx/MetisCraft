@@ -1,0 +1,97 @@
+% Readout 4: pointer head, drawn after Kev @2074cc4 kev/model.py
+% (encode, branch_mask_batch, PointerHead). One sequence per state:
+% [<state> state] then per question [<q> instr (<opt> o </opt>)xK <decide>].
+% seg 0 = state, seg k = question k; branches see the state and themselves
+% (causal), never other branches; branch positions restart at len(state).
+% Option representation = hidden at </opt>; decision = hidden at <decide>.
+% option_isolation (optional): option spans see state+instr+own span only.
+% X:int64[R,T]  H:[R,T,d]  E:[B,K,d]  h^d:[B,d]  (B = R * N_q questions)
+% W_q,W_k: nn.Linear(d,d_p) with bias, stored [d_p,d], shown [d,d_p].
+\input{readout-style.tex}
+\begin{document}
+\begin{tikzpicture}[x=1cm,y=1cm,text=Ink]
+\node[font=\large] at (11.2,5.35)
+  {$e_{b,k}=H_{r,o_{b,k},:},\quad h^{d}_b=H_{r,t^{d}_b,:},\quad
+    z_{b,k}=\dfrac{(W_qh^{d}_b+c_q)^{\mathsf T}(W_ke_{b,k}+c_k)}{\sqrt{d_p}},\quad
+    p_b=\operatorname{softmax}_k(z_b)$};
+% ---------- stage A ----------
+\node[stage] at (11.2,4.2) {一条序列 = 共享 state + 每个问题一条分支（选项 span + 末尾 decide token）；block-causal mask};
+\node[sym,anchor=east] at (1.0,3.2) {$X$};
+\node[shp,anchor=east] at (1.0,2.9) {$[R,T]$};
+\TokRow{1.2}{3.05}{S,S,Q,1,1,2,2,3,3,D,Q,1,1,2,2,3,3,D}
+\draw[brc] (1.22,3.26) -- (1.78,3.26) node[midway,above=3pt,note] {state};
+\draw[brc] (1.82,3.26) -- (4.18,3.26) node[midway,above=3pt,note] {问题 1 分支};
+\draw[brc] (4.22,3.26) -- (6.58,3.26) node[midway,above=3pt,note] {问题 2 分支};
+\Mask{1.2}{2.7}{18}{0,0,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2}{0}
+\node[note,anchor=east] at (1.08,-3.05) {pos};
+\Slots{1.2}{-3.05}{0,1,2,3,4,5,6,7,8,9,2,3,4,5,6,7,8,9}
+\node[sym] at (3.9,-3.45) {$M_{\mathrm{ptr}}$};
+\node[shp] at (3.9,-3.78) {$[T,T]$，分支间隔离，分支内因果};
+% option_isolation inset (one branch)
+\node[font=\small,text=Muted] at (7.0,0) {或};
+\TokRow{7.4}{1.85}{S,S,Q,1,1,2,2,3,3,D}
+\Mask{7.4}{1.5}{10}{0,0,0,1,1,2,2,3,3,9}{2}
+\node[sym] at (8.9,-1.77) {$M_{\mathrm{iso}}$};
+\node[shp] at (8.9,-2.1) {可选 option\_isolation（单个分支）};
+\node[op,minimum width=2.2cm,minimum height=1.3cm] (dec) at (12.0,0)
+  {\textbf{Decoder}\\[2pt]$M_{\mathrm{ptr}}$ 或 $M_{\mathrm{iso}}$};
+\draw[flow] (10.55,0) -- (dec.west);
+\Tens{H}{14.65}{0}{18}{5}{Hid}{1}{H}{[R,T,d]}
+\foreach \r in {5,7,9,13,15,17}{\RowMark{13.9}{2.7}{\r}{5}{TokM}}
+\foreach \r in {10,18}{\RowMark{13.9}{2.7}{\r}{5}{Lgt}}
+\draw[flow] (dec.east) -- (H-w);
+\node[op,minimum width=2.2cm,minimum height=1.0cm] (go) at (17.9,1.3)
+  {\textbf{Gather}\\[2pt]$H_{r,o_{b,k},:}$};
+\node[op,minimum width=2.2cm,minimum height=1.0cm] (gd) at (17.9,-1.3)
+  {\textbf{Gather}\\[2pt]$H_{r,t^{d}_b,:}$};
+\draw[flow] (H-e) -- (go.west);
+\draw[flow] (H-e) -- (gd.west);
+\Slots{17.45}{2.55}{4,6,8}
+\Slots{17.45}{2.25}{12,14,16}
+\node[sym,anchor=west] at (18.4,2.4) {$o$\;{\scriptsize\color{Muted}$[B,K]$}};
+\draw[dflow] (17.9,2.08) -- (go.north);
+\Slots{17.6}{-2.25}{9,17}
+\node[sym,anchor=west] at (18.25,-2.25) {$t^{d}$\;{\scriptsize\color{Muted}$[B]$}};
+\draw[dflow] (17.9,-2.08) -- (gd.south);
+\Tens{E}{21.1}{1.3}{3}{5}{Hid}{1}{E}{[B,K,d]}
+\Tens{hd}{21.1}{-1.3}{2}{5}{Hid}{0}{h^{d}}{[B,d]}
+\draw[flow] (go.east) -- (E-w);
+\draw[flow] (gd.east) -- (hd-w);
+% ---------- stage B ----------
+\node[stage] at (11.2,-4.6) {PointerHead：两路 $\mathrm{Linear}(d,d_p)$ 后做点积，decision 表示“指向”一个选项};
+\Tens{hd2}{1.95}{-6.0}{2}{5}{Hid}{0}{h^{d}}{[B,d]}
+\node[bigop] at (3.15,-6.0) {$\times$};
+\Tens{Wq}{4.2}{-6.0}{5}{4}{Wgt}{0}{W_q^{\mathsf T}}{[d,d_p]}
+\Tens{q}{6.4}{-6.0}{2}{4}{Hid}{0}{q}{[B,d_p]}
+\draw[flow] (Wq-e) -- (q-w);
+\Tens{E2}{1.95}{-9.0}{3}{5}{Hid}{1}{E}{[B,K,d]}
+\node[bigop] at (3.3,-9.0) {$\times$};
+\Tens{Wk}{4.2}{-9.0}{5}{4}{Wgt}{0}{W_k^{\mathsf T}}{[d,d_p]}
+\Tens{kk}{6.4}{-9.0}{3}{4}{Hid}{1}{\kappa}{[B,K,d_p]}
+\draw[flow] (Wk-e) -- (kk-w);
+\node[op,minimum width=2.5cm,minimum height=1.3cm] (es) at (9.75,-7.5)
+  {\textbf{einsum}\\[2pt]$bp,bkp\to bk$\\[2pt]$/\sqrt{d_p}$};
+\draw[flow] (q-e) -- (es.north west);
+\draw[flow] (kk-e) -- (es.south west);
+\Tens{z}{12.4}{-7.5}{2}{3}{Lgt}{0}{z}{[B,K]}
+\draw[flow] (es.east) -- (z-w);
+\node[op,minimum width=1.6cm,minimum height=1.1cm] (sm) at (14.4,-7.5)
+  {softmax\\[2pt]沿 $K$};
+\draw[flow] (z-e) -- (sm.west);
+\Tens{p}{16.4}{-7.5}{2}{3}{Lgt}{0}{p}{[B,K]}
+\draw[flow] (sm.east) -- (p-w);
+\node[op,minimum width=2.4cm,minimum height=1.1cm] (loss) at (19.05,-7.5)
+  {\textbf{交叉熵}\\[2pt]$-\log p_{b,y_b}$};
+\draw[flow] (p-e) -- (loss.west);
+\Slots{18.75}{-8.65}{0,2}
+\node[sym] at (19.05,-9.02) {$y$};
+\node[shp] at (19.05,-9.35) {$[B]$};
+\draw[dflow] (19.05,-8.48) -- (loss.south);
+% ---------- meaning ----------
+\Meaning{0.0}{-10.75}{22.4}
+ {$R$ 序列数（每条一个 state）；$N_q$ 每条序列的问题数，$B=R\,N_q$；$T$ 序列长度；$d$ hidden；$K$ 选项数（可变长）；$d_p$ pointer 宽度（Kev 默认 256）。}
+ {$o_{b,k}$ 第 $k$ 个选项 span 末尾 \texttt{</opt>} 的下标（图中 span 简化为 2 格）；$t^{d}_b$ \texttt{<decide>} 下标；pos 为位置 id，分支从 state 长度续接；$W_q,W_k$ 带偏置 $c_q,c_k$，存储 $[d_p,d]$，图中转置；$\kappa$ 选项键。}
+ {默认 $M_{ij}=\mathbf 1[j\le i]\cdot\mathbf 1[g_j{=}0\lor g_j{=}g_i]$：问题之间隔离，分支内选项按顺序因果可见；$M_{\mathrm{iso}}$ 再让各选项只看 state、问题与自身，选项共享位置 id，$d$ 看见全部选项。一次前向读出全部 $N_q$ 个问题；推理时 logits 可再除以拟合温度。}
+ {读出 4：pointer 头（按 Kev 源码）@Shichao}
+\end{tikzpicture}
+\end{document}
