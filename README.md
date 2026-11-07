@@ -1,12 +1,16 @@
 <p align="center">
+  <img src="docs/visuals/figures/avatar.png" alt="MetisCraft owl character" width="176">
+</p>
+<p align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="docs/visuals/figures/hero-dark.svg">
-    <img src="docs/visuals/figures/hero-light.svg" alt="MetisCraft — Train. Calibrate. Decide." width="100%">
+    <source media="(prefers-color-scheme: dark)" srcset="docs/visuals/figures/wordmark-dark.svg">
+    <img src="docs/visuals/figures/wordmark-light.svg" alt="MetisCraft" width="420">
   </picture>
+  <br><b>Train. Calibrate. Decide.</b>
 </p>
 
 <p align="center">
-  <a href="https://github.com/Shichaoxx/MetisCraft/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/Shichaoxx/MetisCraft/actions/workflows/ci.yml/badge.svg?branch=toolkit-rewrite"></a>
+  <a href="https://github.com/Shichaoxx/MetisCraft/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/Shichaoxx/MetisCraft/actions/workflows/ci.yml/badge.svg?branch=main"></a>
   <a href="LICENSE"><img alt="Apache 2.0" src="https://img.shields.io/badge/license-Apache--2.0-087f78"></a>
   <a href="docs/en/installation.md"><img alt="Python 3.10 and 3.11" src="https://img.shields.io/badge/python-3.10%20%7C%203.11-243438"></a>
   <a href="CHANGELOG.md"><img alt="Release candidate" src="https://img.shields.io/badge/preview-0.1.0rc1-bd8c36"></a>
@@ -14,15 +18,15 @@
 
 <p align="center">
   <b>English</b> · <a href="README_zh.md">简体中文</a><br>
-  <a href="docs/en/quickstart.md">Quickstart</a> ·
-  <a href="docs/en/index.md">Documentation</a> ·
+  <a href="https://shichaoxx.github.io/MetisCraft/en/quickstart/">Quickstart</a> ·
+  <a href="https://shichaoxx.github.io/MetisCraft/en/">Documentation</a> ·
   <a href="docs/support-matrix.md">Ecosystem</a> ·
   <a href="CONTRIBUTING.md">Contribute</a>
 </p>
 
 **Build decision models for your own tasks.** MetisCraft trains Jev-style System One models that answer typed questions in a forward pass. A recipe connects your data, model, readout, training, calibration, evaluation and deployment.
 
-> **Public preview in preparation.** `0.1.0rc1` is a release candidate, not yet available on PyPI. APIs may change. See the [validation boundaries](docs/en/limitations.md) and [project status](docs/status.md).
+> **0.1.0rc1 · Public preview.** APIs may change. Check [release availability](https://github.com/Shichaoxx/MetisCraft/releases), [validation boundaries](docs/en/limitations.md) and [project status](docs/status.md).
 
 ## What does a decision look like?
 
@@ -71,7 +75,7 @@ Calibration is fitted on held-out data. Its benefit must be measured on your eva
 Use Python 3.10 or 3.11. Install a suitable PyTorch build for your hardware, then install from source:
 
 ```bash
-git clone --branch toolkit-rewrite https://github.com/Shichaoxx/MetisCraft.git
+git clone --branch main https://github.com/Shichaoxx/MetisCraft.git
 cd MetisCraft
 python -m pip install '.[serve]'
 ```

@@ -5,10 +5,10 @@ small amount of warm gold `#bd8c36` connect the repository and documentation.
 
 | Asset | Use |
 |---|---|
-| [Owl character](figures/avatar.png) | Community avatar and documentation introduction |
+| [Owl character](figures/avatar.png) | README introduction, community avatar and documentation |
 | [Owl mark](figures/mark.svg) | Small icons and favicon |
-| [Light wordmark](figures/wordmark-light.svg) · [dark wordmark](figures/wordmark-dark.svg) | Name and icon together |
-| [Light banner](figures/hero-light.svg) · [dark banner](figures/hero-dark.svg) | README header |
+| [Light wordmark](figures/wordmark-light.svg) · [dark wordmark](figures/wordmark-dark.svg) | README title and compact brand lockup |
+| [Light banner](figures/hero-light.svg) · [dark banner](figures/hero-dark.svg) | Optional wide banner |
 | [Social preview](figures/social-preview.png) | Repository sharing image, 1200 × 630 |
 | [Workflow](figures/pipeline.svg) · [mobile workflow](figures/pipeline-mobile.svg) | Data → train → calibrate → evaluate → serve |
 | [Mobile judgments](figures/judgments-mobile.svg) | Four illustrative examples in a readable vertical layout |

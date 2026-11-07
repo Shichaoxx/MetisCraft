@@ -1,12 +1,16 @@
 <p align="center">
+  <img src="docs/visuals/figures/avatar.png" alt="MetisCraft 猫头鹰娘" width="176">
+</p>
+<p align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="docs/visuals/figures/hero-dark.svg">
-    <img src="docs/visuals/figures/hero-light.svg" alt="MetisCraft — 训练、校准、决策" width="100%">
+    <source media="(prefers-color-scheme: dark)" srcset="docs/visuals/figures/wordmark-dark.svg">
+    <img src="docs/visuals/figures/wordmark-light.svg" alt="MetisCraft" width="420">
   </picture>
+  <br><b>Train. Calibrate. Decide.</b>
 </p>
 
 <p align="center">
-  <a href="https://github.com/Shichaoxx/MetisCraft/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/Shichaoxx/MetisCraft/actions/workflows/ci.yml/badge.svg?branch=toolkit-rewrite"></a>
+  <a href="https://github.com/Shichaoxx/MetisCraft/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/Shichaoxx/MetisCraft/actions/workflows/ci.yml/badge.svg?branch=main"></a>
   <a href="LICENSE"><img alt="Apache 2.0" src="https://img.shields.io/badge/license-Apache--2.0-087f78"></a>
   <a href="docs/zh/installation.md"><img alt="Python 3.10 和 3.11" src="https://img.shields.io/badge/python-3.10%20%7C%203.11-243438"></a>
   <a href="CHANGELOG.md"><img alt="候选预览版" src="https://img.shields.io/badge/preview-0.1.0rc1-bd8c36"></a>
@@ -14,15 +18,15 @@
 
 <p align="center">
   <a href="README.md">English</a> · <b>简体中文</b><br>
-  <a href="docs/zh/quickstart.md">快速上手</a> ·
-  <a href="docs/zh/index.md">文档</a> ·
+  <a href="https://shichaoxx.github.io/MetisCraft/zh/quickstart/">快速上手</a> ·
+  <a href="https://shichaoxx.github.io/MetisCraft/zh/">文档</a> ·
   <a href="docs/support-matrix.md">生态与支持矩阵</a> ·
   <a href="CONTRIBUTING.md">参与贡献</a>
 </p>
 
 **把自己的业务做成决策模型。** MetisCraft 是训练 Jev 类 System One 模型的工具包：一次前向回答有明确类型的问题，用一份配方连接数据、基座、读出、训练、校准、评测与部署。
 
-> **公开预览版准备中。** 当前为 `0.1.0rc1` 候选版，尚未发布到 PyPI，接口可能调整。已验证的范围与限制见[能力边界](docs/zh/limitations.md)，开发进展见[项目状态](docs/status.md)。
+> **0.1.0rc1 · 公开预览版。** 接口可能调整。版本是否已发布请查看[发行记录](https://github.com/Shichaoxx/MetisCraft/releases)；已验证的范围与限制见[能力边界](docs/zh/limitations.md)，开发进展见[项目状态](docs/status.md)。
 
 ## 一次决策是什么样的？
 
@@ -71,7 +75,7 @@
 使用 Python 3.10 或 3.11，先安装适合硬件的 PyTorch，再从源码安装：
 
 ```bash
-git clone --branch toolkit-rewrite https://github.com/Shichaoxx/MetisCraft.git
+git clone --branch main https://github.com/Shichaoxx/MetisCraft.git
 cd MetisCraft
 python -m pip install '.[serve]'
 ```

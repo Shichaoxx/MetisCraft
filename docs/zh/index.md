@@ -5,14 +5,14 @@
 训练一次前向就能给出类型化判断和概率的决策模型。MetisCraft 用一份配方串起数据准备、
 训练、校准、评测与服务，支持通用 judge，也支持特定业务场景。
 
+当前预览版是 **0.1.0rc1**，已发布的包见[发行记录](https://github.com/Shichaoxx/MetisCraft/releases)。先[安装](installation.md)，再运行
+[CPU 快速上手](quickstart.md)。示例使用随机初始化的小模型和构造数据，只检查软件流程，
+不能据此判断真实模型效果。
+
 <picture>
   <source media="(max-width: 600px)" srcset="../visuals/figures/pipeline-mobile.svg">
   <img alt="从有监督数据到可部署的决策模型" src="../visuals/figures/pipeline.svg">
 </picture>
-
-当前发行候选版是 **0.1.0rc1**，尚未发布到 PyPI。先[安装](installation.md)，再运行
-[CPU 快速上手](quickstart.md)。示例使用随机初始化的小模型和构造数据，只检查软件流程，
-不能据此判断真实模型效果。
 
 ## 支持哪些判断？
 

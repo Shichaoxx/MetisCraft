@@ -6,15 +6,15 @@ Train decision models that return typed judgments and probabilities in one forwa
 pass. MetisCraft brings data preparation, training, calibration, evaluation and
 serving into one recipe for general judges and domain-specific tasks.
 
+The current preview is **0.1.0rc1**. Check [release availability](https://github.com/Shichaoxx/MetisCraft/releases) for published packages.
+Start with [installation](installation.md), then run the [CPU quickstart](quickstart.md).
+The quickstart uses a random tiny model and synthetic data to check the software
+workflow. It does not establish useful model quality.
+
 <picture>
   <source media="(max-width: 600px)" srcset="../visuals/figures/pipeline-mobile.svg">
   <img alt="From supervised data to a served decision model" src="../visuals/figures/pipeline.svg">
 </picture>
-
-The current release candidate is **0.1.0rc1**. It has not been published to PyPI.
-Start with [installation](installation.md), then run the [CPU quickstart](quickstart.md).
-The quickstart uses a random tiny model and synthetic data to check the software
-workflow. It does not establish useful model quality.
 
 ## What can it judge?
 

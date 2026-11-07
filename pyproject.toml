@@ -42,9 +42,9 @@ metiscraft = "metiscraft.cli:main"
 
 [project.urls]
 Repository = "https://github.com/Shichaoxx/MetisCraft"
-Documentation = "https://github.com/Shichaoxx/MetisCraft/tree/toolkit-rewrite/docs/en"
+Documentation = "https://shichaoxx.github.io/MetisCraft/en/"
 Issues = "https://github.com/Shichaoxx/MetisCraft/issues"
-Changelog = "https://github.com/Shichaoxx/MetisCraft/blob/toolkit-rewrite/CHANGELOG.md"
+Changelog = "https://github.com/Shichaoxx/MetisCraft/blob/main/CHANGELOG.md"
 
 [tool.hatch.metadata.hooks.custom]
 path = "hatch_build.py"

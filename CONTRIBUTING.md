@@ -6,7 +6,7 @@ judgment semantics or artifact formats before implementing them.
 
 ## Development setup
 
-Work on a feature branch from `toolkit-rewrite`. In an isolated Python environment:
+Work on a feature branch from `main`. In an isolated Python environment:
 
 ```bash
 python -m pip install -e '.[dev,serve,reproduce]'

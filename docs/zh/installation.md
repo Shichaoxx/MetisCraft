@@ -6,10 +6,10 @@ MetisCraft 要求 Python **3.10 或更高版本**。建议从 Python 3.11 的独
 
 ## 从源码安装
 
-0.1.0rc1 尚未发布到 PyPI，当前安装开发分支：
+从主分支安装当前预览版；已发布的发行包见 [GitHub 发行记录](https://github.com/Shichaoxx/MetisCraft/releases)：
 
 ```bash
-git clone --branch toolkit-rewrite https://github.com/Shichaoxx/MetisCraft.git
+git clone --branch main https://github.com/Shichaoxx/MetisCraft.git
 cd MetisCraft
 python3.11 -m venv .venv
 . .venv/bin/activate

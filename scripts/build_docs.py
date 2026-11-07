@@ -14,7 +14,7 @@ ROOT = Path(__file__).resolve().parents[1]
 BUILD = ROOT / "build" / "documentation"
 SITE = BUILD / "site"
 PREFIX = "/MetisCraft/"
-REPO = "https://github.com/Shichaoxx/MetisCraft/blob/toolkit-rewrite/"
+REPO = "https://github.com/Shichaoxx/MetisCraft/blob/main/"
 
 
 def toml(value):
