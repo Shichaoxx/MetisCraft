@@ -31,7 +31,7 @@ DESCRIPTIONS = {
     "data.max_eval": "每个评测划分最多取多少条。",
     "model.base": "基座在 `models_root` 下的相对路径；目录里要有 `SOURCE.json` 和 `SHA256SUMS`。",
     "model.dtype": "加载权重的精度。",
-    "model.max_length": "提示的最大 token 数；超出时截短材料，问题和选项保留（`chat_json` 不截短，超出就报错）。",
+    "model.max_length": "模型输入的最大 token 数；completion 训练为追加的答案码预留 1 个 token（EOS 仅作目标）。超出时截短材料，问题和选项保留；`chat_json` 不截短，超出就报错。",
     "model.finetune.kind": "`lora` 只训 LoRA；`full` 全参；`frozen` 冻结主干，只训读出头。",
     "model.finetune.r": "LoRA 秩。",
     "model.finetune.alpha": "LoRA 缩放系数。",

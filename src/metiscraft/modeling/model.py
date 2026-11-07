@@ -39,6 +39,13 @@ class DecisionModel(nn.Module):
             if readout.kind == "candidate_scalar"
             else None
         )
+        if self.head is not None:
+            # Scalar readouts bypass the LM output layer. Exclude its unused weights
+            # from DDP reduction, but keep weights tied to the decoder trainable.
+            decoder_params = {id(p) for p in backbone.get_decoder().parameters()}
+            for param in backbone.get_output_embeddings().parameters():
+                if id(param) not in decoder_params:
+                    param.requires_grad_(False)
 
     def hidden(self, input_ids, attention_mask, position_ids) -> torch.Tensor:
         decoder = self.backbone.get_decoder()

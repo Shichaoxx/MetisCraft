@@ -100,7 +100,9 @@ paths:
 | `candidate_scalar` | 四种全部 | 用学习到的头为候选表示打分 |
 
 `chat_json` 提示和全词表 `completion` 损失要求使用 `answer_token`。学习率调度支持
-linear 与 cosine。完整字段见[配方参考](../cookbook/recipe-reference.md)。
+linear 与 cosine。`model.max_length` 限制完整模型输入；completion 训练为追加的答案码
+预留 1 个 token，EOS 仅作目标。普通提示截短材料以适配预算，`chat_json` 超出剩余预算则报错。
+完整字段见[配方参考](../cookbook/recipe-reference.md)。
 
 ```bash
 metiscraft config show recipe.yaml

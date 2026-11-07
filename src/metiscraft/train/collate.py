@@ -48,7 +48,8 @@ class Collator:
         ordinal_sigma: float | None = None,
         completion: bool = False,
     ) -> None:
-        self.builder = PromptBuilder(tokenizer, max_length, readout.prompt)
+        # Completion appends one code to the prompt; EOS is a target, not an input.
+        self.builder = PromptBuilder(tokenizer, max_length - int(completion), readout.prompt)
         self.readout = readout
         self.train = train
         self.rng = random.Random(seed)

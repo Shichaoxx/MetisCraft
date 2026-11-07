@@ -128,10 +128,17 @@ def supervision_from_gold(question: Question, gold: dict[str, Any]) -> Supervisi
             labels=str(label) if label is not None else None,
             soft=soft,
         )
+    if has_label:
+        if isinstance(label, bool) or not isinstance(label, (int, str)):
+            raise JevFormatError("score gold label must be an integer level index")
+        try:
+            label = int(label)
+        except ValueError as exc:
+            raise JevFormatError("score gold label must be an integer level index") from exc
     return Supervision(
         has_hard_label=has_label,
         kind="score",
-        labels=int(label) if has_label else None,
+        labels=label if has_label else None,
         soft=soft,
     )
 

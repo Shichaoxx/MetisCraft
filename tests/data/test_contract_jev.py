@@ -131,6 +131,22 @@ def test_request_to_records():
     assert by_name["needs_human"].supervision.soft == [0.25]
 
 
+@pytest.mark.parametrize("label", [True, False, 1.9, 1.0, None, "1.9", "high"])
+def test_jev_score_gold_rejects_non_integer_labels(label):
+    request = {"state": "message", "questions": {"urgency": REQUEST["questions"]["severity"]}}
+    with pytest.raises(JevFormatError, match="score gold label must be an integer"):
+        request_to_records(request, task_id="t", request_id="r", gold={"urgency": {"label": label}})
+
+
+@pytest.mark.parametrize("label", [0, 1, "0", "1"])
+def test_jev_score_gold_preserves_integer_labels(label):
+    request = {"state": "message", "questions": {"urgency": REQUEST["questions"]["severity"]}}
+    records = request_to_records(
+        request, task_id="t", request_id="r", gold={"urgency": {"label": label}}
+    )
+    assert records[0].supervision.labels == int(label)
+
+
 def test_request_format_errors():
     bad = {"state": "s", "questions": {"q": {"type": "choice", "criteria": ["a", "b"]}}}
     with pytest.raises(JevFormatError, match="object mapping"):

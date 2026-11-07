@@ -111,6 +111,9 @@ paths are resolved from the working directory.
 
 The `chat_json` prompt and full-vocabulary `completion` loss require
 `answer_token`. Training supports linear and cosine learning-rate schedules.
+`model.max_length` bounds the complete model input. Completion training reserves
+one token for the appended answer code; EOS is a target only. Plain prompts shorten
+the state to fit, while `chat_json` rejects prompts that exceed the remaining budget.
 See the [recipe reference](../cookbook/recipe-reference.md) for the full schema.
 
 ```bash

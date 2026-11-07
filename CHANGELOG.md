@@ -70,6 +70,11 @@ The earlier Metis 0.1.0 project is archived under the `metis-v0.1.0` tag; it is
 distinct from the MetisCraft release line.
 ### Reliability and documentation
 
+- Candidate-scalar DDP training excludes unused, untied LM output weights while
+  preserving shared input embeddings. CPU regressions cover tied weights,
+  gradient checkpointing and two optimizer steps with gradient accumulation.
+- Completion inputs include the answer code within `model.max_length`; Jev score
+  gold rejects boolean, fractional and null labels instead of silently coercing them.
 - Bilingual Cookbook routes cover a recorded decision, a local CPU workflow and custom data. Tutorial commands are drawn from packaged English/Chinese templates.
 - Epoch tails no longer consume the next epoch to fill gradient accumulation. Numeric recipe domains are checked before model loading.
 - Hard-label presence is explicit for new imports; soft-only and ambiguous legacy records do not produce invented hard-label metrics. Undefined metrics serialize as null.
