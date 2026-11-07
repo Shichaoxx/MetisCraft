@@ -89,6 +89,42 @@ HTTP 响应应包含 `answers.team.choice`，值为 `billing` 或 `tech`，并�
 
 如果在服务运行时检查 `/health`，`status: "ok"`、`calibrated: true` 和 `base_verification: "verified"` 描述的是加载状态，不是模型质量。
 
+## 一次 CPU 运行的完整响应
+
+下面的完整 HTTP 响应来自 Python 3.11 安装 wheel 后的实际运行。浮点值可能因版本而变化，请检查结构与选项 ID。这是随机模型的流程示例，不是业务效果结果。
+
+```json
+{
+  "model": "metiscraft/quickstart",
+  "answers": {
+    "team": {
+      "type": "choice",
+      "choice": "tech",
+      "confidence": 0.5048721980511196,
+      "probabilities": {
+        "billing": 0.4951278019488803,
+        "tech": 0.5048721980511196
+      }
+    }
+  },
+  "usage": {
+    "input_tokens": 25,
+    "output_tokens": 0
+  }
+}
+```
+
+[响应 JSON](../../examples/quickstart-response.json) · [运行与安装包身份](../../examples/quickstart-evidence.json)。健康响应说明加载状态：
+
+```json
+{
+  "status": "ok",
+  "model": "metiscraft/quickstart",
+  "calibrated": true,
+  "base_verification": "verified"
+}
+```
+
 ## 遇到问题时
 
 | 现象 | 检查方法 |

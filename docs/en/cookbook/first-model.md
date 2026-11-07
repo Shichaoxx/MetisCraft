@@ -91,6 +91,42 @@ The HTTP response should include `answers.team.choice`, either `billing` or `tec
 
 If you inspect `/health` while the service is running, `status: "ok"`, `calibrated: true` and `base_verification: "verified"` describe the loaded state. They do not measure model quality.
 
+## A recorded CPU response
+
+This full HTTP response was recorded from the installed wheel on Python 3.11. Your floating-point values may differ; check the shape and option IDs. It is a random-model workflow example, not a business-quality result.
+
+```json
+{
+  "model": "metiscraft/quickstart",
+  "answers": {
+    "team": {
+      "type": "choice",
+      "choice": "tech",
+      "confidence": 0.5048721980511196,
+      "probabilities": {
+        "billing": 0.4951278019488803,
+        "tech": 0.5048721980511196
+      }
+    }
+  },
+  "usage": {
+    "input_tokens": 25,
+    "output_tokens": 0
+  }
+}
+```
+
+[Response JSON](../../examples/quickstart-response.json) · [Run and package identity](../../examples/quickstart-evidence.json). The health response describes what was loaded:
+
+```json
+{
+  "status": "ok",
+  "model": "metiscraft/quickstart",
+  "calibrated": true,
+  "base_verification": "verified"
+}
+```
+
 ## When a step fails
 
 | Symptom | Check |
