@@ -343,6 +343,8 @@ def _distributed_tail_worker(rank, rendezvous, output):
     import torch.distributed as dist
     from torch.nn.parallel import DistributedDataParallel
 
+    # Match the other CPU DDP fixture: each spawned rank gets a bounded pool.
+    torch.set_num_threads(1)
     dist.init_process_group(
         "gloo",
         init_method=f"file://{rendezvous}",

@@ -4,6 +4,11 @@ on:
   push:
   pull_request:
 
+env:
+  CUDA_VISIBLE_DEVICES: ""
+  OMP_NUM_THREADS: "2"
+  MKL_NUM_THREADS: "2"
+
 jobs:
   test:
     runs-on: ubuntu-latest
