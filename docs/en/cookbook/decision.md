@@ -82,6 +82,19 @@ The following response was produced by the trained Banking77-derived artifact fr
 
 The high probability describes this prediction. It does not by itself establish that the system is reliable. An application can use the two answers for routing and review, but a real escalation rule needs evaluation on the cases that application receives.
 
+<aside class="metis-reading-note" data-metis-theme="light" data-metis-light-src="../../visuals/figures/metis-guide-chibi.png" data-metis-dark-src="../../visuals/figures/metis-guide-night.png" data-metis-light-alt="Metis in her academy outfit, holding a star-chart book" data-metis-dark-alt="Metis in her night outfit, holding a star-chart book" aria-label="Metis's reading tip" markdown="1">
+
+<figure class="metis-reading-avatar"><a data-metis-full href="../../visuals/figures/metis-guide-chibi.png" target="_blank" rel="noopener" aria-label="View Metis's illustration in a new tab"><img data-metis-portrait src="../../visuals/figures/metis-guide-chibi.png" alt="Metis in her academy outfit, holding a star-chart book" width="120" height="120"></a></figure>
+
+<div class="metis-reading-copy" markdown="1">
+
+<p class="metis-reading-title"><strong>Metis · Check, then compare</strong></p>
+
+Match the response's option IDs to the request, then compare the held-out results below with the prior baseline. A confident answer to one message does not establish reliability.
+
+</div>
+</aside>
+
 ## 3. Check the result against a baseline
 
 The same recorded run was evaluated on **3,080 held-out messages**, with one queue label and one urgency label per message. Labels were derived from Banking77 intents using a fixed mapping.

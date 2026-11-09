@@ -2,22 +2,15 @@
 
 从一条真实响应开始，逐步构建自己的判断模型。
 
-<div class="cookbook-guide" data-metis-wardrobe data-metis-outfit="academy" data-metis-preference="auto" data-metis-academy-src="../../visuals/figures/metis-guide-chibi.png" data-metis-gown-src="../../visuals/figures/metis-night-gown.png" data-metis-academy-alt="穿着学院装、抱着星图书的小墨" data-metis-gown-alt="穿着星图裙摆黑夜礼服的小墨" markdown="1">
+<div class="cookbook-guide" data-metis-theme="light" data-metis-light-src="../../visuals/figures/metis-guide-chibi.png" data-metis-dark-src="../../visuals/figures/metis-guide-night.png" data-metis-light-alt="穿着学院装、抱着星图书的小墨" data-metis-dark-alt="穿着夜间衣装、抱着星图书的小墨" markdown="1">
 
-<figure class="cookbook-avatar"><a data-metis-full href="../../visuals/figures/metis-guide-chibi.png" target="_blank" rel="noopener" aria-label="在新标签页查看小墨完整立绘"><img data-metis-portrait src="../../visuals/figures/metis-guide-chibi.png" alt="穿着学院装、抱着星图书的小墨" width="160" height="160"></a></figure>
+<figure class="cookbook-avatar"><a data-metis-full href="../../visuals/figures/metis-guide-chibi.png" target="_blank" rel="noopener" aria-label="在新标签页查看小墨插图"><img data-metis-portrait src="../../visuals/figures/metis-guide-chibi.png" alt="穿着学院装、抱着星图书的小墨" width="160" height="160"></a></figure>
 
 <div class="cookbook-guide-copy" markdown="1">
 
 ## Metis · 阅读向导
 
 先看一次判断，再跑通示例，最后接入你的数据。
-
-<div class="metis-wardrobe-controls">
-<label>小墨衣装 <select data-metis-outfit-choice aria-describedby="metis-outfit-note"><option value="auto">随主题</option><option value="academy">学院装</option><option value="gown">黑夜礼服</option></select></label>
-<span data-metis-outfit-label aria-live="polite">学院装</span>
-<a data-metis-full href="../../visuals/figures/metis-guide-chibi.png" target="_blank" rel="noopener">查看完整立绘 ↗</a>
-</div>
-<p class="metis-wardrobe-note" id="metis-outfit-note">随主题时，浅色穿学院装，深色穿黑夜礼服。手动选择会为你保留。</p>
 
 </div>
 </div>

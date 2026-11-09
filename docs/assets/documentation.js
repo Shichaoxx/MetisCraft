@@ -1,14 +1,5 @@
 (function () {
   "use strict";
-  const outfitKey = "metiscraft.metis-outfit";
-  const outfits = ["auto", "academy", "gown"];
-  let outfitPreference = readOutfitPreference();
-  function readOutfitPreference() {
-    try {
-      const saved = window.localStorage.getItem(outfitKey);
-      return outfits.includes(saved) ? saved : "auto";
-    } catch (_) { return "auto"; }
-  }
   function isDarkTheme() {
     const scheme = document.body?.getAttribute("data-md-color-scheme") || document.documentElement.getAttribute("data-md-color-scheme");
     if (scheme) return scheme === "slate";
@@ -23,36 +14,21 @@
     document.querySelectorAll(".md-logo img").forEach(function (img) { img.src = src; });
     document.querySelectorAll('link[rel~="icon"]').forEach(function (icon) { icon.href = src; });
   }
-  function syncWardrobes() {
-    const outfit = outfitPreference === "auto" ? (isDarkTheme() ? "gown" : "academy") : outfitPreference;
-    document.querySelectorAll("[data-metis-wardrobe]").forEach(function (guide) {
-      const src = guide.getAttribute("data-metis-" + outfit + "-src");
-      const alt = guide.getAttribute("data-metis-" + outfit + "-alt");
+  function syncPortraits() {
+    const theme = isDarkTheme() ? "dark" : "light";
+    document.querySelectorAll("[data-metis-theme]").forEach(function (guide) {
+      const src = guide.getAttribute("data-metis-" + theme + "-src");
+      const alt = guide.getAttribute("data-metis-" + theme + "-alt");
       if (!src || !alt) return;
-      guide.dataset.metisOutfit = outfit;
-      guide.dataset.metisPreference = outfitPreference;
+      guide.dataset.metisTheme = theme;
       guide.querySelectorAll("img[data-metis-portrait]").forEach(function (portrait) {
         if (portrait.getAttribute("src") !== src) portrait.setAttribute("src", src);
         portrait.alt = alt;
       });
       guide.querySelectorAll("a[data-metis-full]").forEach(function (link) { link.setAttribute("href", src); });
-      guide.querySelectorAll("select[data-metis-outfit-choice]").forEach(function (choice) {
-        choice.value = outfitPreference;
-        const label = Array.from(choice.options).find(function (option) { return option.value === outfit; });
-        guide.querySelectorAll("[data-metis-outfit-label]").forEach(function (status) {
-          if (label && status.textContent !== label.textContent) status.textContent = label.textContent;
-        });
-        if (choice.dataset.metisReady) return;
-        choice.dataset.metisReady = "true";
-        choice.addEventListener("change", function () {
-          outfitPreference = outfits.includes(choice.value) ? choice.value : "auto";
-          try { window.localStorage.setItem(outfitKey, outfitPreference); } catch (_) { /* Keep the choice for this page when storage is unavailable. */ }
-          syncWardrobes();
-        });
-      });
     });
   }
-  function syncAppearance() { syncBrand(); syncWardrobes(); }
+  function syncAppearance() { syncBrand(); syncPortraits(); }
   function hydrate() {
     syncAppearance();
     const links = (window.METIS_DOCUMENTATION_LANGUAGES || {})[location.pathname];
@@ -109,7 +85,4 @@
   themeObserver.observe(document.documentElement, themeAttributes);
   if (document.body) themeObserver.observe(document.body, themeAttributes);
   window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", syncAppearance);
-  window.addEventListener("storage", function (event) {
-    if (event.key === outfitKey || event.key === null) { outfitPreference = readOutfitPreference(); syncWardrobes(); }
-  });
 }());

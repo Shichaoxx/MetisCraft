@@ -66,6 +66,19 @@ curl -sS http://127.0.0.1:8000/v1/systemone \
 
 <!-- metiscraft:quickstart:end -->
 
+<aside class="metis-reading-note" data-metis-theme="light" data-metis-light-src="../../visuals/figures/metis-guide-chibi.png" data-metis-dark-src="../../visuals/figures/metis-guide-night.png" data-metis-light-alt="穿着学院装、抱着星图书的小墨" data-metis-dark-alt="穿着夜间衣装、抱着星图书的小墨" aria-label="小墨阅读提示" markdown="1">
+
+<figure class="metis-reading-avatar"><a data-metis-full href="../../visuals/figures/metis-guide-chibi.png" target="_blank" rel="noopener" aria-label="在新标签页查看小墨插图"><img data-metis-portrait src="../../visuals/figures/metis-guide-chibi.png" alt="穿着学院装、抱着星图书的小墨" width="120" height="120"></a></figure>
+
+<div class="metis-reading-copy" markdown="1">
+
+<p class="metis-reading-title"><strong>小墨提示 · 先检查产物</strong></p>
+
+用训练打印的运行路径找到 `report.md`，确认 `artifact/` 与 `calibration/` 位于同一目录。对照下一节检查产物是否齐全。
+
+</div>
+</aside>
+
 ## 完成后应该看到什么
 
 训练命令打印的运行目录中，主要文件如下：

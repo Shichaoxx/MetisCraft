@@ -68,6 +68,19 @@ and Record requests select the same calibration group.
 
 <!-- metiscraft:quickstart:end -->
 
+<aside class="metis-reading-note" data-metis-theme="light" data-metis-light-src="../../visuals/figures/metis-guide-chibi.png" data-metis-dark-src="../../visuals/figures/metis-guide-night.png" data-metis-light-alt="Metis in her academy outfit, holding a star-chart book" data-metis-dark-alt="Metis in her night outfit, holding a star-chart book" aria-label="Metis's reading tip" markdown="1">
+
+<figure class="metis-reading-avatar"><a data-metis-full href="../../visuals/figures/metis-guide-chibi.png" target="_blank" rel="noopener" aria-label="View Metis's illustration in a new tab"><img data-metis-portrait src="../../visuals/figures/metis-guide-chibi.png" alt="Metis in her academy outfit, holding a star-chart book" width="120" height="120"></a></figure>
+
+<div class="metis-reading-copy" markdown="1">
+
+<p class="metis-reading-title"><strong>Metis · Check your outputs</strong></p>
+
+Use the run path printed by training to find `report.md`, and check that `artifact/` and `calibration/` are siblings. Compare your outputs with the next section to see whether the run is complete.
+
+</div>
+</aside>
+
 ## What you should have
 
 Under the path printed by training, the important outputs are:

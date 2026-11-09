@@ -82,6 +82,19 @@
 
 高概率描述的是这一次预测，本身不能证明系统可靠。应用可以据此分流或安排复核，但实际的升级处理规则仍需在应用会遇到的数据上评测。
 
+<aside class="metis-reading-note" data-metis-theme="light" data-metis-light-src="../../visuals/figures/metis-guide-chibi.png" data-metis-dark-src="../../visuals/figures/metis-guide-night.png" data-metis-light-alt="穿着学院装、抱着星图书的小墨" data-metis-dark-alt="穿着夜间衣装、抱着星图书的小墨" aria-label="小墨阅读提示" markdown="1">
+
+<figure class="metis-reading-avatar"><a data-metis-full href="../../visuals/figures/metis-guide-chibi.png" target="_blank" rel="noopener" aria-label="在新标签页查看小墨插图"><img data-metis-portrait src="../../visuals/figures/metis-guide-chibi.png" alt="穿着学院装、抱着星图书的小墨" width="120" height="120"></a></figure>
+
+<div class="metis-reading-copy" markdown="1">
+
+<p class="metis-reading-title"><strong>小墨提示 · 先核对，再比较</strong></p>
+
+先核对响应与请求中的选项 ID，再把下方留出评测结果与先验基线比较。单条消息上的高置信回答不能证明系统可靠。
+
+</div>
+</aside>
+
 ## 3. 先和基线比较，再看校准
 
 同一次运行在 **3,080 条留出消息**上评测，每条消息各有一个客服组标签与紧急程度标签。这些标签由 Banking77 意图通过固定映射得到。

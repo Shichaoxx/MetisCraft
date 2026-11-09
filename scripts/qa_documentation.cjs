@@ -60,6 +60,7 @@ function ensure(ok, detail) { if (!ok) report.failures.push(detail); }
       await page.waitForFunction(m=>document.querySelector('link[rel="icon"]').href.includes(m==='slate'?'mark-dark.svg':'mark-light.svg'),mode);
     }
     for (const route of Object.keys(mapping)) {
+      if(args.mode==='themes') continue;
       if(args.mode==='interactions' && !route.includes('/recipes/tev1/')) continue;
       await go(route);
       const facts=await page.evaluate(()=>({
@@ -76,7 +77,7 @@ function ensure(ok, detail) { if (!ok) report.failures.push(detail); }
       report.pages.push({route,...facts});
     }
     const slugs=['','cookbook/','tensor-analysis/','tensor-analysis/answer-token/','tensor-analysis/scalar-heads/','tensor-analysis/training-calibration/','tensor-analysis/readout-comparison/','tensor-analysis/notation/','tensor-analysis/walkthrough/'];
-    if(args.mode!=='interactions') {
+    if(!['interactions','themes'].includes(args.mode)) {
     for (const lang of ['en','zh']) for (const width of [1440,390]) for (const mode of ['default','slate']) {
       await page.setViewportSize({width,height:1080});
       for (const slug of slugs) {
@@ -91,6 +92,50 @@ function ensure(ok, detail) { if (!ok) report.failures.push(detail); }
       }
     }
     }
+    // A stale manual preference must never override the page's actual theme.
+    await go('/MetisCraft/en/cookbook/');
+    await page.evaluate(()=>localStorage.setItem('metiscraft.metis-outfit','gown'));
+    for(const lang of ['en','zh']) for(const width of [1440,390]) {
+      await page.setViewportSize({width,height:1080});
+      for(const slug of ['','decision/','first-model/','own-task/']) {
+        const route='/MetisCraft/'+lang+'/cookbook/'+slug;
+        let lightGeometry;
+        for(const mode of ['default','slate']) {
+          await go(route);await theme(mode);
+          const expected=mode==='slate'?'dark':'light';
+          await page.waitForFunction(t=>[...document.querySelectorAll('[data-metis-theme]')].every(n=>n.dataset.metisTheme===t),expected);
+          await page.evaluate(async()=>{for(const img of document.querySelectorAll('img[data-metis-portrait]'))await img.decode();});
+          const facts=await page.evaluate(()=>({
+            controls:document.querySelectorAll('[data-metis-outfit-choice],.metis-wardrobe-controls').length,
+            scroll:document.documentElement.scrollWidth,
+            guides:[...document.querySelectorAll('[data-metis-theme]')].map(n=>{
+              const img=n.querySelector('img[data-metis-portrait]'),box=img?.getBoundingClientRect(),css=img&&getComputedStyle(img);
+              return{theme:n.dataset.metisTheme,src:img?.src,alt:img?.alt,width:box?.width,height:box?.height,fit:css?.objectFit,transform:css?.transform,full:n.querySelector('a[data-metis-full]')?.href};
+            })
+          }));
+          ensure(facts.controls===0,route+' independent outfit control remains');
+          ensure(facts.scroll<=width+1,route+' guide overflows '+width+' '+mode);
+          ensure(facts.guides.length===1,route+' expected one reading guide');
+          const expectedSize=slug?(width<=600?100:120):160;
+          for(const guide of facts.guides) {
+            ensure(guide.src.endsWith(expected==='dark'?'metis-guide-night.png':'metis-guide-chibi.png'),route+' wrong themed portrait');
+            ensure(guide.width===expectedSize&&guide.height===expectedSize,route+' unexpected portrait size '+guide.width+'x'+guide.height);
+            ensure(guide.fit==='contain'&&guide.transform==='none',route+' portrait crop or scale');
+            ensure(guide.full===guide.src&&Boolean(guide.alt),route+' original link or alt missing');
+          }
+          const geometry=facts.guides.map(g=>[g.width,g.height]);
+          if(mode==='default')lightGeometry=geometry;
+          else ensure(JSON.stringify(lightGeometry)===JSON.stringify(geometry),route+' day/night geometry differs');
+          const file=lang+'-theme-guide-'+(slug.replaceAll('/','')||'index')+'-'+width+'-'+mode+'.png';
+          await page.screenshot({path:path.join(output,file)});
+          report.layouts.push({route,width,mode,file,...facts});
+        }
+      }
+    }
+    await page.reload({waitUntil:'load'});
+    await page.waitForFunction(()=>document.querySelector('[data-metis-theme]')?.dataset.metisTheme==='dark');
+    ensure((await page.locator('img[data-metis-portrait]').getAttribute('src')).endsWith('metis-guide-night.png'),'Theme-only portrait after reload');
+    report.interactions.push('Theme-only portraits ignore old manual preference and preserve size across 32 layouts');
     await page.setViewportSize({width:1440,height:1080});
     await go('/MetisCraft/en/tensor-analysis/scalar-heads/');await theme('default');
     const figure=page.locator('.md-content img[data-figure-ready]').first();
