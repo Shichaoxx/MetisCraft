@@ -141,6 +141,21 @@ function ensure(ok, detail) { if (!ok) report.failures.push(detail); }
     const figure=page.locator('.md-content img[data-figure-ready]').first();
     await figure.scrollIntoViewIfNeeded();await figure.press('Enter');
     ensure(await page.locator('#metis-figure-dialog').evaluate(n=>n.open),'Figure keyboard open');
+    for(const mode of ['default','slate']) {
+      await page.keyboard.press('Escape');
+      await theme(mode);
+      await figure.press('Enter');
+      const contrast=await page.locator('#metis-figure-dialog button').evaluate(n=>{
+        const css=getComputedStyle(n),dialog=getComputedStyle(n.closest('dialog'));
+        const rgb=value=>value.match(/[\d.]+/g).slice(0,3).map(Number);
+        const luminance=value=>rgb(value).map(x=>x/255).map(x=>x<=.04045?x/12.92:((x+.055)/1.055)**2.4).reduce((sum,x,i)=>sum+x*[.2126,.7152,.0722][i],0);
+        const background=css.backgroundColor==='rgba(0, 0, 0, 0)'?dialog.backgroundColor:css.backgroundColor;
+        const a=luminance(css.color),b=luminance(background);
+        return(Math.max(a,b)+.05)/(Math.min(a,b)+.05);
+      });
+      ensure(contrast>=4.5,'Figure close text contrast '+mode+': '+contrast);
+    }
+    report.interactions.push('Figure close button text is readable in light and dark themes');
     const figUrl=await page.locator('#metis-figure-dialog > a').getAttribute('href');
     ensure((await context.request.get(figUrl)).status()===200,'Figure original resource');
     await page.screenshot({path:path.join(output,'figure-zoom.png')});
