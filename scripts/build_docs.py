@@ -165,10 +165,18 @@ def main():
                     original = None
                 source_snapshots[relative] = original == target.read_bytes()
             if not source_snapshots[relative]:
-                output = SITE / "assets" / relative
+                # Raw Markdown downloads are source text, not another published
+                # page. A shallow checkout may not contain SOURCE_REF, so this
+                # fallback must also pass the documentation engine's link check.
+                download = (
+                    relative.with_name(relative.name + ".txt")
+                    if relative.suffix == ".md"
+                    else relative
+                )
+                output = SITE / "assets" / download
                 output.parent.mkdir(parents=True, exist_ok=True)
                 shutil.copyfile(target, output)
-                return PREFIX + "assets/" + quote(relative.as_posix()) + suffix
+                return PREFIX + "assets/" + quote(download.as_posix()) + suffix
         return REPO + quote(relative.as_posix()) + suffix
 
     for source in sources:
@@ -413,6 +421,12 @@ pymdownx.arithmatex.generic = true
                 alternate,
                 output.read_text(encoding="utf-8"),
             )
+            if destination.parts[0] == "zh":
+                text = re.sub(
+                    r'(<div class="md-copyright">\s*)Made with\b',
+                    r"\1构建工具：",
+                    text,
+                )
             output.write_text(text, encoding="utf-8")
     (SITE / "assets/language-map.js").write_text(
         "window.METIS_DOCUMENTATION_LANGUAGES="
