@@ -4,11 +4,30 @@
 
 统一决策工具包已经存在，包括 JevAny 和 ms-swift 的决策能力。MetisCraft 定位是连接自有数据、训练、校准、评测与服务的 JevLike 工具包；价值通过可核查配方与实际使用路径体现，不宣称首个或唯一。
 
-## 固定版本对照
+## 已运行配方架构
+
+架构由**基座、读出和训练目标**共同确定。下表链接已经保存训练与评测记录的配方：Tev1 对照第三方公开结果，其余为数据集任务验证，不表示复现了同名第三方模型。
+
+| 配方与记录 | 基座与微调 | 读出／训练目标 | 证据定位 |
+|---|---|---|---|
+| [Tev1 4B](reproductions/tev1.md) | Qwen3.5-4B `851bf6e8`；LoRA r=8 | 答案 token；全词表 `completion`，字母 + EOS | 主集与迁移集均达到预定准确率标准；历史托管训练未恢复。 |
+| [Tev1 2B 对照](../recipes/tev1/README.md) | Qwen3.5-2B `15852e8c`；LoRA r=8 | 答案 token；同上 | 仅主集达到原定标准，不能替代 4B 结果。 |
+| [Banking77](../recipes/banking77/README.md) | Qwen3-0.6B-Base；LoRA r=16 | 答案 token／scalar-list；分类 CE | 两种读出有记录；长度上限不同，不是只改读出的严格消融。 |
+| [客服分流](../recipes/banking77_support/README.md) | Qwen3-0.6B-Base；LoRA r=16 | scalar-list；choice CE + noul BCE | Banking77 衍生教学任务，保留真实请求与响应。 |
+| [BoolQ](../recipes/boolq/README.md) | Qwen3-0.6B-Base；LoRA r=16 | 答案 token；yes/no logit 差值上的 BCE | 是非判断任务验证。 |
+| [SST-5](../recipes/sst5/README.md) | Qwen3-0.6B-Base；LoRA r=16 | 答案 token；等级代码分类 CE | 五级 `score` 任务验证。 |
+| [GoEmotions](../recipes/go_emotions/README.md) | Qwen3-0.6B-Base；LoRA r=16 | scalar-list；逐标签 sigmoid、加权 BCE | 已记录训练早于先验修正；修正后仅有离线诊断，尚无重新训练结果。 |
+| [CLINC150](../recipes/clinc150/README.md) | Qwen3-0.6B-Base；LoRA r=16 | scalar-list；151 候选分类 CE | 包含范围外 null 选项的意图任务验证。 |
+
+上述 0.6B 配方均使用[固定的 Qwen3-0.6B-Base 配置](https://huggingface.co/Qwen/Qwen3-0.6B-Base/blob/da87bfb608c14b7cf20ba1ce41287e8de496c0cd/config.json)：28 层因果主干、隐藏宽度 1,024。配方指定 `all-linear` LoRA，r=16、alpha=32、dropout=0.05；scalar-list 另用共享 MLP `1024 → 256 → 1` 对候选末位表示打分。候选位于同一因果序列，不能视为独立 pairs。机制见[答案 token](zh/tensor-analysis/answer-token.md)与[标量头](zh/tensor-analysis/scalar-heads.md)；Tev1 的 32 层混合主干和张量链见[复现页架构说明](reproductions/tev1.md)。
+
+## 第三方项目与固定版本对照
+
+下表记录外部项目的固定版本来源及本包适配状态。除明确列出的 Tev1 准确率复现外，机制核对不代表已经训练、导入或复现了这些检查点。
 
 | 项目 | 机制与许可依据 | MetisCraft 状态 |
 |---|---|---|
-| [Tev1][gh-tev1] / [4B weights][hf-tev1] | 答案 token；代码 MIT，权重卡未声明许可 | 4B 预定准确率达标；同题逐题核对完成，历史托管训练未恢复 |
+| [Tev1][gh-tev1] / [4B weights][hf-tev1] | Qwen3.5-4B + 原 LM head，LoRA SFT；代码 MIT，权重卡未声明许可 | [架构与复现](reproductions/tev1.md)：4B 预定准确率达标；同题逐题核对完成，历史托管训练未恢复 |
 | [jebadiah][gh-jebadiah] / [4b-v2][hf-jebadiah] | 答案 token；代码／权重 Apache-2.0 | 同类读出可重训，未复现；合成训练池是否完整公开未核实 |
 | [Hmm][gh-hmm] / [weights][hf-hmm] | 答案 token；代码 MIT，权重 Apache-2.0 | 未复现；仓库不含合成数据与逐题结果 |
 | [JevForge][gh-jevforge] / [weights][hf-jevforge] | 独立候选标量头；代码仅一行 MIT 声明，权重 Apache-2.0 | 对应 pairs 机制；未导入检查点，未复现其 RL 或榜单协议 |

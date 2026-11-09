@@ -4,11 +4,30 @@ This page separates external capabilities, MetisCraft implementation scope and a
 
 Unified decision-model toolkits already exist, including JevAny and ms-swift's decision functionality. MetisCraft is a JevLike toolkit connecting custom data, training, calibration, evaluation and serving. Its value is demonstrated through inspectable recipes and usable workflows, without claiming to be first or unique.
 
-## Pinned-version comparison
+## Architectures of recorded recipe runs
+
+An architecture combines a **base model, readout and training objective**. The table links recipes with saved training and evaluation records: Tev1 compares against published third-party results; the remaining rows validate dataset tasks, rather than reproducing third-party models with those names.
+
+| Recipe and record | Base and tuning | Readout / training objective | Evidence scope |
+|---|---|---|---|
+| [Tev1 4B](reproductions/tev1.md) | Qwen3.5-4B `851bf6e8`; LoRA r=8 | Answer token; full-vocabulary `completion`, letter + EOS | Both main and transfer sets meet predeclared accuracy criteria; historical hosted training not recovered. |
+| [Tev1 2B control](../../recipes/tev1/README_en.md) | Qwen3.5-2B `15852e8c`; LoRA r=8 | Answer token; same objective | Only the main criterion passed; this does not replace the 4B result. |
+| [Banking77](../../recipes/banking77/README_en.md) | Qwen3-0.6B-Base; LoRA r=16 | Answer token / scalar-list; categorical CE | Recorded runs for both readouts; different length limits prevent a strict readout-only ablation. |
+| [Customer routing](../../recipes/banking77_support/README_en.md) | Qwen3-0.6B-Base; LoRA r=16 | Scalar-list; choice CE + noul BCE | Banking77-derived teaching task with a recorded request and response. |
+| [BoolQ](../../recipes/boolq/README_en.md) | Qwen3-0.6B-Base; LoRA r=16 | Answer token; BCE on the yes/no logit difference | Yes/no task validation. |
+| [SST-5](../../recipes/sst5/README_en.md) | Qwen3-0.6B-Base; LoRA r=16 | Answer token; level-code categorical CE | Five-level `score` task validation. |
+| [GoEmotions](../../recipes/go_emotions/README_en.md) | Qwen3-0.6B-Base; LoRA r=16 | Scalar-list; per-label sigmoid, weighted BCE | Recorded training predates the prior correction; only offline diagnostics apply the fix, without retraining results. |
+| [CLINC150](../../recipes/clinc150/README_en.md) | Qwen3-0.6B-Base; LoRA r=16 | Scalar-list; 151-candidate categorical CE | Intent-task validation including an out-of-scope null option. |
+
+These 0.6B recipes share the [pinned Qwen3-0.6B-Base configuration](https://huggingface.co/Qwen/Qwen3-0.6B-Base/blob/da87bfb608c14b7cf20ba1ce41287e8de496c0cd/config.json): a 28-layer causal backbone with hidden width 1,024. Their recipes specify `all-linear` LoRA with r=16, alpha=32 and dropout=0.05; scalar-list adds a shared `1024 → 256 → 1` MLP to score candidate-end representations. Candidates share a causal sequence and are not independent pairs. See [answer tokens](tensor-analysis/answer-token.md), [scalar heads](tensor-analysis/scalar-heads.md), and [Tev1's architecture section](reproductions/tev1.md) for its 32-layer hybrid backbone and tensor chain.
+
+## Third-party projects at pinned revisions
+
+This table records external sources and package adaptation status. Apart from the explicitly reported Tev1 accuracy reproduction, mechanism inspection does not establish training, importing or reproducing these checkpoints.
 
 | Project | Mechanism and license evidence | MetisCraft status |
 |---|---|---|
-| [Tev1][gh-tev1] / [4B weights][hf-tev1] | Answer token; code MIT, weight-card license undeclared | 4B predeclared accuracy criteria met; per-question comparison complete, hosted training not recovered |
+| [Tev1][gh-tev1] / [4B weights][hf-tev1] | Qwen3.5-4B + existing LM head, LoRA SFT; code MIT, weight-card license undeclared | [Architecture and reproduction](reproductions/tev1.md): 4B predeclared accuracy criteria met; per-question comparison complete, hosted training not recovered |
 | [jebadiah][gh-jebadiah] / [4b-v2][hf-jebadiah] | Answer token; code/weights Apache-2.0 | Same-family retraining is possible; not reproduced; synthetic-pool availability unverified |
 | [Hmm][gh-hmm] / [weights][hf-hmm] | Answer token; code MIT, weights Apache-2.0 | Not reproduced; synthetic data and per-question results absent from the reviewed repository |
 | [JevForge][gh-jevforge] / [weights][hf-jevforge] | Independent-candidate scalar head; code has one-line MIT declaration, weights Apache-2.0 | Pairs mechanism corresponds; no checkpoint import or reproduction of its RL/benchmark protocol |
