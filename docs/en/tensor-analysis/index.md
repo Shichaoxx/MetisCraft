@@ -2,6 +2,8 @@
 
 This chapter follows a decision from a named question to a probability distribution and a program-facing answer. The System One interface supplies the public contract; MetisCraft supplies inspectable implementations of answer-token and candidate-scalar readouts. A matching interface does not establish an identical model architecture.
 
+New to the model family? Start with [0. Introduction: task, data and architecture](introduction.md).
+
 ## Question
 
 How does a model turn `state` and a finite answer space into an answer that software can use? Three distinctions organize the explanation:

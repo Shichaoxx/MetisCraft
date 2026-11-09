@@ -78,6 +78,7 @@ def main():
     check(len({route(p, destinations) for p in pages}) == len(pages), "public page routes collide")
     for lang in ("en", "zh"):
         for stem in (
+            "introduction",
             "index",
             "notation",
             "answer-token",
@@ -89,6 +90,8 @@ def main():
             name = f"docs/{lang}/tensor-analysis/{stem}.md"
             check(name in pages, f"Missing public tensor chapter: {name}")
     figure_names = (
+        "metiscraft-architecture",
+        "jevlike-architecture",
         "readout-0-notation",
         "readout-1-lm-token",
         "readout-2-slot-head",
@@ -105,13 +108,13 @@ def main():
     )
     for stem in figure_names:
         for lang in ("en", "zh"):
-            for suffix in ("svg", "pdf", "tex"):
+            for suffix in ("svg", "pdf", "tex", "dark.svg", "dark.pdf", "dark.tex"):
                 figure = root / f"docs/tensor-analysis/figures/{stem}.{lang}.{suffix}"
                 check(
                     figure.is_file(),
                     f"Missing vector or editable source: {figure.relative_to(root)}",
                 )
-                if suffix == "svg" and figure.is_file():
+                if suffix.endswith("svg") and figure.is_file():
                     text = figure.read_text(encoding="utf-8")
                     check(
                         not re.search(r"<(?:\w+:)?image\b|data:image|<foreignObject", text, re.I),
@@ -169,10 +172,11 @@ def main():
                 page = site / route(name, destinations)
                 if page.is_file():
                     text = page.read_text(encoding="utf-8")
-                    check(
-                        "assets/math.js" in text and "katex.min.js" in text,
-                        f"Local math assets absent: {name}",
-                    )
+                    if 'class="arithmatex"' in text:
+                        check(
+                            "assets/math.js" in text and "katex.min.js" in text,
+                            f"Local math assets absent: {name}",
+                        )
                     check(
                         "assets/documentation.js" in text,
                         f"Same-page language and figure controls absent: {name}",

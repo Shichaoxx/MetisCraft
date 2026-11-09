@@ -8,16 +8,115 @@
   "poppler": "pdftocairo version 0.86.1",
   "source_date_epoch": 1794182400,
   "source_sha256": {
-    "docs/tensor-analysis/src/figures.py": "4e8a5c702f7beaa35394ae26d9d53f890898a1d1d1b31b7a0706b882d1375d02",
+    "docs/tensor-analysis/src/architecture.tex": "18f0376b28c062e5a584f16e8aec34c3695d8890427b673f3d3e7af62bb9c8f2",
+    "docs/tensor-analysis/src/figures.py": "c7fbc00d91e012a81e3af392465acbd5f4585f47bd2f99942ca538c8074a401e",
     "docs/tensor-analysis/src/geometry.json": "4cb3d1dbf2bb4a723bde9b4823acb3c702524e65cd97746a36bac306bf90164b",
-    "docs/tensor-analysis/src/labels.json": "84277ed0a90349e906e0a2984e8971fcee2d234378dc0dc9370a1379dc67b843",
-    "docs/tensor-analysis/src/tensor-style.tex": "da19f4e6314cf89c8cf7175b0621f63dd3c17f528bbb749d022b88eac96a0f27"
+    "docs/tensor-analysis/src/labels.json": "52c4422e79fb33262f7227d3310d687c6f552539a28c19057eba1305268478da",
+    "docs/tensor-analysis/src/tensor-style.tex": "da19f4e6314cf89c8cf7175b0621f63dd3c17f528bbb749d022b88eac96a0f27",
+    "docs/tensor-analysis/src/themes.json": "a1ff7bb6a462f132ecfa2cb4d96e0831ed6880a7f999b1e78598fb3c1fb9f0ba"
   },
-  "builder_sha256": "39d6259fd4649c289f8fedfa4651cb5d3a9e6b4da64a14430de4de83c8360e14",
+  "builder_sha256": "5d7e6fed30b2bd14a5c3038f76fc03c24824adbd5f03cfa89791e898f087f9e0",
   "figures": [
+    {
+      "slug": "metiscraft-architecture",
+      "language": "en",
+      "theme": "light",
+      "files": {
+        "metiscraft-architecture.en.tex": "f1a52a1d48bd9676cf4a3e7dcb5bfe5f8626dc7a430a3f563acd1d5a46d2d658",
+        "metiscraft-architecture.en.pdf": "be514f2e845b109ff374485f79e6a83a19fa17f4adc69f6e55bf25170733a8ea",
+        "metiscraft-architecture.en.svg": "0ca3429d11aa732c7082df7b2c92890723484ec7926f46d6888356567301b2d3"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "metiscraft-architecture",
+      "language": "en",
+      "theme": "dark",
+      "files": {
+        "metiscraft-architecture.en.dark.tex": "739bc0be54c340f05be83a814aa1e87945bd7b08836f81cdaf7e74add0396c61",
+        "metiscraft-architecture.en.dark.pdf": "bb613af60019ca3956ec4b16f9ea84d78e06b15aafdb8ebb5fec69ed1be6be41",
+        "metiscraft-architecture.en.dark.svg": "7009195ba9f5ae376e6f961f4cdcdb980f07097fbad5613cd8f9679cc767431c"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "metiscraft-architecture",
+      "language": "zh",
+      "theme": "light",
+      "files": {
+        "metiscraft-architecture.zh.tex": "3b6a6f2627f4911eacf2d705f1d1e21a4cc2ea4aebb7359606231a83a8c30bf8",
+        "metiscraft-architecture.zh.pdf": "05794fbef95bd2e3ed461adc7bd842c9622f737b9695fe397c97f9d84f4fe382",
+        "metiscraft-architecture.zh.svg": "8cd849c7799943bac04dde12465d229d2850eede147b22ce6fded73812fc839c"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "metiscraft-architecture",
+      "language": "zh",
+      "theme": "dark",
+      "files": {
+        "metiscraft-architecture.zh.dark.tex": "ce5703fffce8d6da47aa41a13b569bd6d5e38fa9a60f4f8bf72c421a0a98d33b",
+        "metiscraft-architecture.zh.dark.pdf": "489457f0097d55312ab0c719b2db5ef846a8607350970b2d30f5c477edc49641",
+        "metiscraft-architecture.zh.dark.svg": "69b2761bd965d4c5ac94aa163d4fc10145e159338daaa0df41a59cb0247ef4e7"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "jevlike-architecture",
+      "language": "en",
+      "theme": "light",
+      "files": {
+        "jevlike-architecture.en.tex": "6b313527a89bf539d70c6ad30a28195ac71b45abba9802fd2e05fd55e5b5b99f",
+        "jevlike-architecture.en.pdf": "0592664ad3613ec8fcba21e6ee347a83bfe3c0d59bf9ffc908057639630e6ef2",
+        "jevlike-architecture.en.svg": "2684faded02d5f7d173c43acffe87f570d03911c35adac392cfa3376ac42bab2"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "jevlike-architecture",
+      "language": "en",
+      "theme": "dark",
+      "files": {
+        "jevlike-architecture.en.dark.tex": "e81a1dfcf241151f86ff6a21cdae7454fa6761e22b0211c2fe66b06ed13d78ee",
+        "jevlike-architecture.en.dark.pdf": "5d6f005f3e5a230e79bc47aac37e058f40ee5052d415e44413cec8a734c9f0d7",
+        "jevlike-architecture.en.dark.svg": "4aa899a1357f362035f62bef641038dd81dab0667df58ca0ee513db9f2a6da78"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "jevlike-architecture",
+      "language": "zh",
+      "theme": "light",
+      "files": {
+        "jevlike-architecture.zh.tex": "a2b87ca5da06b096e530cb3fe6b74969ec564a993a80f5e9f266ca94b21fe83c",
+        "jevlike-architecture.zh.pdf": "1a41669591ccad60b58067ff7dff4779a7cc7469fe509f0741d2d20bfc7212df",
+        "jevlike-architecture.zh.svg": "50fd08b5a73597f66ba2b4e39e5dcae59c74106c5b34d73e42f231e684d99517"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "jevlike-architecture",
+      "language": "zh",
+      "theme": "dark",
+      "files": {
+        "jevlike-architecture.zh.dark.tex": "d76a9711ba2cf39bf0e2d53229d5d5a25fc0080c894c6eff31271a28ad582dcb",
+        "jevlike-architecture.zh.dark.pdf": "32594fd884245cf83cc58eef70bb563378f48efab119a16d19941bd5e0707263",
+        "jevlike-architecture.zh.dark.svg": "7bb20ac8144dcb1aefd7814b77f067506e51af26413130496b8e3b352fec9184"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
     {
       "slug": "readout-0-notation",
       "language": "en",
+      "theme": "light",
       "files": {
         "readout-0-notation.en.tex": "0d0428629b87c7772d05b9492f15009757cf679f87d3c7d8a2e6d9cc50aa5c6e",
         "readout-0-notation.en.pdf": "99d08ecb14c393a672cc3708d233fb0e690c110354d3b5d9c2ab5984ff37145e",
@@ -28,7 +127,20 @@
     },
     {
       "slug": "readout-0-notation",
+      "language": "en",
+      "theme": "dark",
+      "files": {
+        "readout-0-notation.en.dark.tex": "83bc3dd7922a3c98f9ccc1ce180922b66290921f6d23c7a560bf4ffda1173961",
+        "readout-0-notation.en.dark.pdf": "03a3fc0005570916412b10d600c381ee4da283d13e6020ff99ff0e4b2562f3cd",
+        "readout-0-notation.en.dark.svg": "ce81641ede070cf0ddd4782eac50a4dce7e453f3b700d8439c5682f6b4d2fdc9"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "readout-0-notation",
       "language": "zh",
+      "theme": "light",
       "files": {
         "readout-0-notation.zh.tex": "7a407a64f54a6db4a7d530814e7e4c11b3ee4316dee804bd013c89386776ecf2",
         "readout-0-notation.zh.pdf": "0cc334d63e90d2f8813123798cd250610dbe54dcd5cae3187b542b524830c7f7",
@@ -38,8 +150,21 @@
       "svg_embedded_images": 0
     },
     {
+      "slug": "readout-0-notation",
+      "language": "zh",
+      "theme": "dark",
+      "files": {
+        "readout-0-notation.zh.dark.tex": "0f0efd38e1916a9c3f208b3ed3865202741710f6b048206eb6b19053dc7a3580",
+        "readout-0-notation.zh.dark.pdf": "501ba5660703668a3d366ad8ea475e3e05ec5daef50760eacda318456aeea068",
+        "readout-0-notation.zh.dark.svg": "6a3389a473c53faf64b7ace05b8be2f51ecac2c3a71438d7071907e5e10cd168"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
       "slug": "readout-1-lm-token",
       "language": "en",
+      "theme": "light",
       "files": {
         "readout-1-lm-token.en.tex": "5753be4bd0552190d5f56676e39f808b5ab5131d31e20ff994100fd2625f10db",
         "readout-1-lm-token.en.pdf": "7d3c5b67034ecde5d05eb08def52b019f977d345d5a93ae408caf00bac47616e",
@@ -50,7 +175,20 @@
     },
     {
       "slug": "readout-1-lm-token",
+      "language": "en",
+      "theme": "dark",
+      "files": {
+        "readout-1-lm-token.en.dark.tex": "4fd58b9d44b3852b49cbff90cca392dbecbb61821bba667c612bf65b15dedb5d",
+        "readout-1-lm-token.en.dark.pdf": "b493de2c519f125b031c0b847993d32b2e757685071c8dbdd315950a822242d4",
+        "readout-1-lm-token.en.dark.svg": "8a056fa69c281c668a11e1bb206161d49d84a9c003e60ae6cdaa5e13f89694e6"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "readout-1-lm-token",
       "language": "zh",
+      "theme": "light",
       "files": {
         "readout-1-lm-token.zh.tex": "0321dcee4a9bc916ae3ac4f6af9dd0fd5932ddea409f429d63158c5f02fb88eb",
         "readout-1-lm-token.zh.pdf": "8635dfbac149db05fe344989c99f59aaa71c65b7ff0de3c6354f4e311c9e3cb7",
@@ -60,8 +198,21 @@
       "svg_embedded_images": 0
     },
     {
+      "slug": "readout-1-lm-token",
+      "language": "zh",
+      "theme": "dark",
+      "files": {
+        "readout-1-lm-token.zh.dark.tex": "66fc413dbdc2eed7cbc68edcd046f14ecdc8c89c49541489c420bbca5f095b76",
+        "readout-1-lm-token.zh.dark.pdf": "b8f52e952003899ad39d76f8a883859eee98add438ebf613684cc006da277262",
+        "readout-1-lm-token.zh.dark.svg": "e73abbf8b4b2a0d9b0032ec008cceb8f4e9a61b325bc9998a45b9ed91c384bac"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
       "slug": "readout-2-slot-head",
       "language": "en",
+      "theme": "light",
       "files": {
         "readout-2-slot-head.en.tex": "8c0c10b3a1cea82aca5373742f6af01b9bfbd1d80821d19b155580427103bd32",
         "readout-2-slot-head.en.pdf": "a718aa2c7cc22af9aeb3d597cb07b7dd1a71e5ff4514990d8ccc2f9af5725f00",
@@ -72,7 +223,20 @@
     },
     {
       "slug": "readout-2-slot-head",
+      "language": "en",
+      "theme": "dark",
+      "files": {
+        "readout-2-slot-head.en.dark.tex": "4c527d61b5683689c5e1f2bc93214cda3ed73b68c13e0e4baeb5bab31a58c3e8",
+        "readout-2-slot-head.en.dark.pdf": "291fce6527c441053967094a43f012187fff12d2c3667505f9814c7f35a4a10b",
+        "readout-2-slot-head.en.dark.svg": "44523ad5d41900435a0d5cb31689b743a4091758044ccaec965818a83a22d55d"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "readout-2-slot-head",
       "language": "zh",
+      "theme": "light",
       "files": {
         "readout-2-slot-head.zh.tex": "6fb7e93f1d35a25558806c181fb17879491b45f791f23c46932cab0cd01e3d83",
         "readout-2-slot-head.zh.pdf": "a1d6b91ee30d87bcc25db26f3fe3e354eeca2e17db2b74270f715a27a0c69f33",
@@ -82,8 +246,21 @@
       "svg_embedded_images": 0
     },
     {
+      "slug": "readout-2-slot-head",
+      "language": "zh",
+      "theme": "dark",
+      "files": {
+        "readout-2-slot-head.zh.dark.tex": "b7d6d0b75a60565f98f60888b97f1fd7f35fea555a3eadc26e46f9ad91f32d7f",
+        "readout-2-slot-head.zh.dark.pdf": "525be7d1f1e3db19a17fce6a5f5ab04cffc807a696419c976d741dbfee049dd6",
+        "readout-2-slot-head.zh.dark.svg": "a9035505f28651a9eefa0582a0759ef023bfa358c1218bfea2487e77e8292e94"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
       "slug": "readout-3-candidate-scalar",
       "language": "en",
+      "theme": "light",
       "files": {
         "readout-3-candidate-scalar.en.tex": "e6e7a067c04ead55f31777f163982e7a0d1f561bbaaf3f2cfbe28f81f0af2380",
         "readout-3-candidate-scalar.en.pdf": "55dcea85bdef89a560dc5228f2488fd9c863e55fc7b215d6beffabe6bb3f88ae",
@@ -94,7 +271,20 @@
     },
     {
       "slug": "readout-3-candidate-scalar",
+      "language": "en",
+      "theme": "dark",
+      "files": {
+        "readout-3-candidate-scalar.en.dark.tex": "1a41887694ee5b2acad13160c633ddea2dc92d22026dc0bc4bc9b55273cab8dd",
+        "readout-3-candidate-scalar.en.dark.pdf": "15d51682dbcacd59df9a88a1a7c9369bfe07f4474cb5f69d9e113c58d7993374",
+        "readout-3-candidate-scalar.en.dark.svg": "be5a2dc42a9f245b7610ad4917fd2c73ad02c77d19bb8013c8c230c567a4aebc"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "readout-3-candidate-scalar",
       "language": "zh",
+      "theme": "light",
       "files": {
         "readout-3-candidate-scalar.zh.tex": "3ebdc987ac27fb0625d4c6753b83695ad9956b67572072bd4cbfcbaf75f14931",
         "readout-3-candidate-scalar.zh.pdf": "e93fda055645772cddadfc2737884b811a19a777423ed843a032997c6b43d18a",
@@ -104,8 +294,21 @@
       "svg_embedded_images": 0
     },
     {
+      "slug": "readout-3-candidate-scalar",
+      "language": "zh",
+      "theme": "dark",
+      "files": {
+        "readout-3-candidate-scalar.zh.dark.tex": "c4dc4c0975dbc42670624e1cff83bbb0e98b74b0a13779c5ebf9941551ae9cd4",
+        "readout-3-candidate-scalar.zh.dark.pdf": "c1769882f4a66f4023547bbdcb87bac530e3bf814ec7a80f5ad17734fac7a909",
+        "readout-3-candidate-scalar.zh.dark.svg": "d38f9f4e3689e0d7cdf38071ca09085a5103fa55b23c5f3ce3f5919c3a5b78ee"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
       "slug": "readout-4-pointer",
       "language": "en",
+      "theme": "light",
       "files": {
         "readout-4-pointer.en.tex": "56a5f1f1927b292c2c1daf5fa456faf6cae8d568e18f7ddaeae34ee24e58b007",
         "readout-4-pointer.en.pdf": "8ffdd15dbe2c693923ebaced4b405d8d49840924b13d343a0ac8bfa5fb726cc4",
@@ -116,7 +319,20 @@
     },
     {
       "slug": "readout-4-pointer",
+      "language": "en",
+      "theme": "dark",
+      "files": {
+        "readout-4-pointer.en.dark.tex": "25297fed6d6c830a681468fe31fcff1b4ba8b89e8dae560df0cde1b7f81711b6",
+        "readout-4-pointer.en.dark.pdf": "4b1d74c38f5f2fb8ba727d1437fcd79f412b7440b5743bf6ec7e38738d7a654d",
+        "readout-4-pointer.en.dark.svg": "26ab6b4ba470baee289964619c09563fddcd1574073273e61d25678e0cdfc049"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "readout-4-pointer",
       "language": "zh",
+      "theme": "light",
       "files": {
         "readout-4-pointer.zh.tex": "94345422a2c674144a7138ca52cc563603af89d1933d04afed652b07a2c4c72b",
         "readout-4-pointer.zh.pdf": "70b36343eda1eb789d3f26d25b5e9ac62ca270eeed8b3a53796745686da51c97",
@@ -126,8 +342,21 @@
       "svg_embedded_images": 0
     },
     {
+      "slug": "readout-4-pointer",
+      "language": "zh",
+      "theme": "dark",
+      "files": {
+        "readout-4-pointer.zh.dark.tex": "d29f2ad28e779891e8280a3c63c20e4ce01f1fec1a507c0b9a0361963b7aa490",
+        "readout-4-pointer.zh.dark.pdf": "e712f7e07988e3017a35a42bf8da78bbbf670437882c1864b5011934f3b77faf",
+        "readout-4-pointer.zh.dark.svg": "ed14ab133d2f708c4161a6e22c96727a630b06ca198d603faa4e4e545ba9438b"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
       "slug": "readout-5-joint-schema",
       "language": "en",
+      "theme": "light",
       "files": {
         "readout-5-joint-schema.en.tex": "39d8e956afbe70300c790c1f7ad3dfbf500af7a6c7bee53381f553d8c54e6505",
         "readout-5-joint-schema.en.pdf": "900f1834f37709fe767e2c48c07642400e0e5001f957ba783f6f0f2fced5820e",
@@ -138,7 +367,20 @@
     },
     {
       "slug": "readout-5-joint-schema",
+      "language": "en",
+      "theme": "dark",
+      "files": {
+        "readout-5-joint-schema.en.dark.tex": "64a3120130568ec9bf9f21650d410763aebc7cdf0f3f865827c375b56d4c0b78",
+        "readout-5-joint-schema.en.dark.pdf": "d1a6f1c4186a02735ed6ec2f6c5513b4dd6315a6eed3e5e66a74f926f323c7e4",
+        "readout-5-joint-schema.en.dark.svg": "a1744725307a484df05ac3cc659a38c1fbaa8e7c2772154c6c4aa64b3e670e3a"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "readout-5-joint-schema",
       "language": "zh",
+      "theme": "light",
       "files": {
         "readout-5-joint-schema.zh.tex": "2cc5e9856b6da247c13ded4bebfd4a150696fc1e360a51dc5d2e7afbcf1f9958",
         "readout-5-joint-schema.zh.pdf": "5a96bd364ce8dc11ae84d9b0174d48c063a1b70333afd4de2a0f11ac2c3149f5",
@@ -148,8 +390,21 @@
       "svg_embedded_images": 0
     },
     {
+      "slug": "readout-5-joint-schema",
+      "language": "zh",
+      "theme": "dark",
+      "files": {
+        "readout-5-joint-schema.zh.dark.tex": "985fe853dde7506e494b08e5a3daf55c69c8a59191ed1f4159016ee6bb821f57",
+        "readout-5-joint-schema.zh.dark.pdf": "b3d075cf76d507d7f0b122b060b659fa61c59c9659d7ab24f542b00a84ba5442",
+        "readout-5-joint-schema.zh.dark.svg": "fcb04b2672ede1892604b9f483dad8b08df3d20b628c8b4d723758a27a51d394"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
       "slug": "readout-6-encoder",
       "language": "en",
+      "theme": "light",
       "files": {
         "readout-6-encoder.en.tex": "14739a3d77afff589441bc790a5273560c83aadd086cf0bd4cb8a0551ef780a2",
         "readout-6-encoder.en.pdf": "eaf13ed18d8d011add7b520ae85dea9e30c16d82191e4b58bd113fc87ea2835a",
@@ -160,7 +415,20 @@
     },
     {
       "slug": "readout-6-encoder",
+      "language": "en",
+      "theme": "dark",
+      "files": {
+        "readout-6-encoder.en.dark.tex": "e74d2cde4c9fade5765ef2458dc43c0ea6e45af726d6b7846ae2b40e1c7971d8",
+        "readout-6-encoder.en.dark.pdf": "856fa68bf005fba7235575f327668b3e8f3ab87c359ed592a19932f58ed9f861",
+        "readout-6-encoder.en.dark.svg": "e76014ad4df522201662d7d08d9908d2603bf604f7f69b8e51b857a0acd6e5dd"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "readout-6-encoder",
       "language": "zh",
+      "theme": "light",
       "files": {
         "readout-6-encoder.zh.tex": "789a7f8385d2744c639a2da51724a59ae90fd92bcaf9a7d0d78c6652dbbcfae8",
         "readout-6-encoder.zh.pdf": "9cd693b3619b900ae8a745541b3e22b4b7e3c47cb126a3b8661da5075c2e3d56",
@@ -170,8 +438,21 @@
       "svg_embedded_images": 0
     },
     {
+      "slug": "readout-6-encoder",
+      "language": "zh",
+      "theme": "dark",
+      "files": {
+        "readout-6-encoder.zh.dark.tex": "8e970d6321e69097df6c5065b076f1f63f72fb6c821995e1e9037f31bb408c44",
+        "readout-6-encoder.zh.dark.pdf": "4f4463a5688b40e98242ea85e533e43a9a23df52d405402c68ff5bed4318c1d3",
+        "readout-6-encoder.zh.dark.svg": "9020732bca6cb160d00b7181550d349423ec7c62b85d6e5a7030be95fbdfa047"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
       "slug": "readout-7-generate-then-read",
       "language": "en",
+      "theme": "light",
       "files": {
         "readout-7-generate-then-read.en.tex": "a5c3a0169ed0b77140402e1a2a54bc8dbeb87d7f01db7b8d0b7d4dba8e0b3fdf",
         "readout-7-generate-then-read.en.pdf": "2f71f3ac08f1ac1918bf0b43ac0d74b20a4b670fe3cf0045c72857ab45f03b3b",
@@ -182,7 +463,20 @@
     },
     {
       "slug": "readout-7-generate-then-read",
+      "language": "en",
+      "theme": "dark",
+      "files": {
+        "readout-7-generate-then-read.en.dark.tex": "e9b394c164072ffea1317653a514afa660e8125c045d7b59ce76343ed179a1a5",
+        "readout-7-generate-then-read.en.dark.pdf": "ee5f9ca2a53670d09b865af35e0a459348a3d392a1e0eea5eecfa8db56158896",
+        "readout-7-generate-then-read.en.dark.svg": "90781d4ba40ff31847be919a79945c25ed5ecf77109e236e27b8e07bf14e0978"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "readout-7-generate-then-read",
       "language": "zh",
+      "theme": "light",
       "files": {
         "readout-7-generate-then-read.zh.tex": "af4c10467f15001660b2be82e8aacc0f0a279d3ea5e1da8152b3428fbd9a78cc",
         "readout-7-generate-then-read.zh.pdf": "ec246d7a03ef91c690c1f6855796edfb2c6d61519f475ead24ef7056870fd432",
@@ -192,8 +486,21 @@
       "svg_embedded_images": 0
     },
     {
+      "slug": "readout-7-generate-then-read",
+      "language": "zh",
+      "theme": "dark",
+      "files": {
+        "readout-7-generate-then-read.zh.dark.tex": "fa6a264e047be1ad97cb34dfab8cd0af9f650c695fe5b6bc21f982d71b0f9472",
+        "readout-7-generate-then-read.zh.dark.pdf": "86fa4902c39abce6cac67279d62b84f81e159ee9034299802429e799e91132fb",
+        "readout-7-generate-then-read.zh.dark.svg": "02da91e259de6fa5bee32bfe4383589cff37d082368693f473cb7f9076d57acf"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
       "slug": "readout-overview",
       "language": "en",
+      "theme": "light",
       "files": {
         "readout-overview.en.tex": "8e2a1d04efed3fa0138ee688fa64683cdd4a3e23523863708daa9be3ef828a08",
         "readout-overview.en.pdf": "e36fa020fa65507d86ab11c33b3d66e0e6614a3b81b6dcc04c7101392bca57d1",
@@ -204,7 +511,20 @@
     },
     {
       "slug": "readout-overview",
+      "language": "en",
+      "theme": "dark",
+      "files": {
+        "readout-overview.en.dark.tex": "a7a6f691163fdcbb5366546019a1f4aa637c276063675b69cb17dfb70b3e83f2",
+        "readout-overview.en.dark.pdf": "d72fa63464ac9b7557adecb8a5f05c57cba3f81353571ac4890f2d46d783acbd",
+        "readout-overview.en.dark.svg": "98c70a7188fe8a5d3864509bb1c8c1030385be8ef298fb318f6b266196327f51"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "readout-overview",
       "language": "zh",
+      "theme": "light",
       "files": {
         "readout-overview.zh.tex": "ae793c7cf87a93ea7f3cabbec0a9f0c80b0960d9c1637bdba2760fc88685c76a",
         "readout-overview.zh.pdf": "1e6c2e35d9f1c0eafeeb3c0d1119114c6d6166a223c21efba29c72156dfa17ca",
@@ -214,8 +534,21 @@
       "svg_embedded_images": 0
     },
     {
+      "slug": "readout-overview",
+      "language": "zh",
+      "theme": "dark",
+      "files": {
+        "readout-overview.zh.dark.tex": "019a1cb10f0c95a78965f9d2bc3fbb1c356e4960c855196b82604c73af39bae0",
+        "readout-overview.zh.dark.pdf": "603678d73125abd633ca427448736eaca40bea5e6f6433163a8f753a27f376a8",
+        "readout-overview.zh.dark.svg": "ad028aebcf6be2c9891c2159f46cb8baac1ded4387e1b796d0dac95461a65dc2"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
       "slug": "system-one-contract",
       "language": "en",
+      "theme": "light",
       "files": {
         "system-one-contract.en.tex": "b4d69124f787ed2b26709137e80dc9311d115c96049030bd1e319998a2d6b16a",
         "system-one-contract.en.pdf": "ddb751559ca1e97ddd7a44f9fcf589d46d27bc070a342c898706433240d6cd40",
@@ -226,7 +559,20 @@
     },
     {
       "slug": "system-one-contract",
+      "language": "en",
+      "theme": "dark",
+      "files": {
+        "system-one-contract.en.dark.tex": "272e78bbaf2f9c8120afa3ecfa86c1877b3cc232c3b975a1ec94f6a14d3cb0e6",
+        "system-one-contract.en.dark.pdf": "ffef6ca7b4dc415de9ec8c4b76a2f130ce932bb9768e52502d989bf0c5548d50",
+        "system-one-contract.en.dark.svg": "00d8600dc799d486a7069a25f7655ae0ad84da4574565cc9cb55192f54733073"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "system-one-contract",
       "language": "zh",
+      "theme": "light",
       "files": {
         "system-one-contract.zh.tex": "881cafb37e1c3c2f32b4bf87e6d9cbb4e97cad887857f8311ae7d929f74be5b7",
         "system-one-contract.zh.pdf": "16b66d3dba7840aec455da551c993c9c67d7ce44e48c3f6d8ef2ea216c654f10",
@@ -236,8 +582,21 @@
       "svg_embedded_images": 0
     },
     {
+      "slug": "system-one-contract",
+      "language": "zh",
+      "theme": "dark",
+      "files": {
+        "system-one-contract.zh.dark.tex": "5bbcee2caf9e9190ce3cf86c8f55245f72328d5d7c742def913fc867783fb794",
+        "system-one-contract.zh.dark.pdf": "64c4553bba6bf0e8b009217cda2b572479d39d7d990af744dbbde7d641858ef1",
+        "system-one-contract.zh.dark.svg": "8995ba9fde53eb677e2b660d9335a7f7c9a6b81eff244958abc55f6ec346e8d8"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
       "slug": "metiscraft-tensor-flow",
       "language": "en",
+      "theme": "light",
       "files": {
         "metiscraft-tensor-flow.en.tex": "8439c69039894ce9b91b4636510bb9d22d45a62833a7197ce05a57b077d6b98c",
         "metiscraft-tensor-flow.en.pdf": "8da257bf3537c08c13980f48a649d85f3d617a77d0fc2d08d78f031ff984a4f3",
@@ -248,7 +607,20 @@
     },
     {
       "slug": "metiscraft-tensor-flow",
+      "language": "en",
+      "theme": "dark",
+      "files": {
+        "metiscraft-tensor-flow.en.dark.tex": "469a29825f05b9a486fc27ad7d1a1597bc1b9af033d8a6e457627764a013c9fa",
+        "metiscraft-tensor-flow.en.dark.pdf": "a7285a235a580a8bad40bf888f36ccd3338a99c98ce1a10cfd1321cc2f455125",
+        "metiscraft-tensor-flow.en.dark.svg": "7cc11308e846694489af17db5273a4cc6e1d3a57b36a0129c52e130a794437c2"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "metiscraft-tensor-flow",
       "language": "zh",
+      "theme": "light",
       "files": {
         "metiscraft-tensor-flow.zh.tex": "5bf32bf0a2f8b5476350ebd74ec50cee7cb39245bc50f1e0c3c6e472f10b9626",
         "metiscraft-tensor-flow.zh.pdf": "d9b0c22e4165d8877d6b510d3132de25250c13ec2c5733fbd973350ba3ea7843",
@@ -258,8 +630,21 @@
       "svg_embedded_images": 0
     },
     {
+      "slug": "metiscraft-tensor-flow",
+      "language": "zh",
+      "theme": "dark",
+      "files": {
+        "metiscraft-tensor-flow.zh.dark.tex": "308b0968152c21266bc21da977fef15dbcf906cb93547d487f931ae22cd5ab0d",
+        "metiscraft-tensor-flow.zh.dark.pdf": "7946788d89c1d050864e802bedb394fcaccb3b00fd7d1c6c62e7986ba99f8987",
+        "metiscraft-tensor-flow.zh.dark.svg": "c673eb712741e75aeccc90e99748c0fba514e1f71782f2535f32e36ed5d65772"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
       "slug": "scalar-list",
       "language": "en",
+      "theme": "light",
       "files": {
         "scalar-list.en.tex": "fd6b8eb55897077543ce81753acf05b9f11d0e916eca95bdcc1b2b9f4767307e",
         "scalar-list.en.pdf": "89e277d0c98eecf033f9978472b4147352f15fafb69ab068483d124486602083",
@@ -270,7 +655,20 @@
     },
     {
       "slug": "scalar-list",
+      "language": "en",
+      "theme": "dark",
+      "files": {
+        "scalar-list.en.dark.tex": "383603f2d84d7c33d51a4f628868340801e246c507ac78931b3ee09d2f84c4f1",
+        "scalar-list.en.dark.pdf": "664ecf143a0d19919e08138de3449dc360e9b2e89f7ad03637cf523cbd1122ad",
+        "scalar-list.en.dark.svg": "c26b6a62edcdc5dacac2001005db6917d5d4dd3ed53c44fcf8a71b83511a64c7"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "scalar-list",
       "language": "zh",
+      "theme": "light",
       "files": {
         "scalar-list.zh.tex": "57acdd48741babc582fd3ac5040e6938672c1115363ffef364b5964dcd899a01",
         "scalar-list.zh.pdf": "d63834aedcab90ebb47052b587c421054ac3dfe49a08db7a54a4a424f812dfa9",
@@ -280,8 +678,21 @@
       "svg_embedded_images": 0
     },
     {
+      "slug": "scalar-list",
+      "language": "zh",
+      "theme": "dark",
+      "files": {
+        "scalar-list.zh.dark.tex": "44cd8998c06b0a1bf283b198710a90d9ec723b5098f7d186087e9c48537133a7",
+        "scalar-list.zh.dark.pdf": "006a4de64bb25d8a16922363ccfb4166f766161ec35598bcbd7b1969d7895425",
+        "scalar-list.zh.dark.svg": "3029d140639e2a4e130a36bcd35e58de026d1fbe84b151dd2f958b74d04b62ee"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
       "slug": "training-calibration",
       "language": "en",
+      "theme": "light",
       "files": {
         "training-calibration.en.tex": "dd277fd4ea122a8ed098b2d040664870bbf2ea6af41d31b1869667da168a4283",
         "training-calibration.en.pdf": "e301d12ec393812e99a3a1f876b6e6e3cbc065f2857511f86e4b38247a9f3f85",
@@ -292,11 +703,36 @@
     },
     {
       "slug": "training-calibration",
+      "language": "en",
+      "theme": "dark",
+      "files": {
+        "training-calibration.en.dark.tex": "ca16147059f3e41321dff11b50bde8995ff1cbc1d48cde6e62a4bec72bab2308",
+        "training-calibration.en.dark.pdf": "0bd9e45e906b420b40d4ebe799c3b609bb6094d10b8636f10e7e86d86cb7ea18",
+        "training-calibration.en.dark.svg": "ebe74d5270eb12c40fb50a1a21a192c2874d562b201f2c3b4531c74cec621013"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "training-calibration",
       "language": "zh",
+      "theme": "light",
       "files": {
         "training-calibration.zh.tex": "02383bad2760dcae81c43fb13bf86416203bcc165cfecf8fd86330152c6f1047",
         "training-calibration.zh.pdf": "490de088ce569b6d0454890c5f09c918e36ffe0ee0cddd94c347c6b8a32364c1",
         "training-calibration.zh.svg": "b6405ef627294de3fbda312fc772bb05fd5f231781de3416551b75dc0cfac98b"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "training-calibration",
+      "language": "zh",
+      "theme": "dark",
+      "files": {
+        "training-calibration.zh.dark.tex": "93337ebefc3f5105bbab92b7bb79b984c3e810e901632ac48b5be4182516b9aa",
+        "training-calibration.zh.dark.pdf": "d5784c5194935b34337a2f6f26105b5f50e1e692ea9e2ebf88699a05b157550e",
+        "training-calibration.zh.dark.svg": "ee63fe2181419b8aec10a47958067675add89340d7522f35689a4fbfa32930ab"
       },
       "pdf_raster_images": 0,
       "svg_embedded_images": 0

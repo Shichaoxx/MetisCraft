@@ -25,10 +25,10 @@
         if (portrait.getAttribute("src") !== src) portrait.setAttribute("src", src);
         portrait.alt = alt;
       });
-      guide.querySelectorAll("a[data-metis-full]").forEach(function (link) { link.setAttribute("href", src); });
+      guide.querySelectorAll("a[data-metis-full]").forEach(function (link) { link.setAttribute("href", guide.getAttribute("data-metis-" + theme + "-full-src") || src); });
     });
   }
-  function syncAppearance() { syncBrand(); syncPortraits(); }
+  function syncAppearance() { syncBrand(); syncPortraits(); window.MetisFigures?.sync(document, isDarkTheme()); }
   function hydrate() {
     syncAppearance();
     const links = (window.METIS_DOCUMENTATION_LANGUAGES || {})[location.pathname];
@@ -71,10 +71,11 @@
     const close = dialog.querySelector("button");
     close.textContent = zh ? "关闭 ×" : "Close ×";
     const enlarged = dialog.querySelector("img");
-    enlarged.src = img.src;
+    enlarged.src = img.currentSrc || img.src;
     enlarged.alt = img.alt;
     const original = dialog.querySelector("a");
-    original.href = img.src;
+    original.dataset.figureOriginal = "true";
+    original.href = enlarged.src;
     original.textContent = zh ? "在新标签页查看原尺寸 ↗" : "Open original size in a new tab ↗";
     dialog.showModal();
   }

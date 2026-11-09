@@ -462,5 +462,165 @@
   "flow.scalar.title": {
     "en": "Candidate-scalar branch: all four Record judgment types",
     "zh": "候选标量分支：全部四种 Record 判断类型"
+  },
+  "architecture.input": {
+    "en": "1. A question becomes a causal candidate-list sequence",
+    "zh": "1. 一个问题组织为一条候选列表序列"
+  },
+  "architecture.prompt": {
+    "en": "State + question\\\\Candidates in order",
+    "zh": "材料与问题\\\\按顺序排列的候选"
+  },
+  "architecture.embedding": {
+    "en": "Token embedding\\\\vocabulary ID $\\to\\mathbb{R}^{1024}$",
+    "zh": "Token embedding\\\\词表 ID $\\to\\mathbb{R}^{1024}$"
+  },
+  "architecture.backbone": {
+    "en": "2. Qwen3-0.6B-Base backbone; LoRA r=16 on adapted linear layers",
+    "zh": "2. Qwen3-0.6B-Base 主干；适配线性层使用 LoRA r=16"
+  },
+  "architecture.block": {
+    "en": "28 decoder blocks\\\\RMSNorm $\\to$ causal GQA $+$ residual\\\\RMSNorm $\\to$ SwiGLU $+$ residual",
+    "zh": "28 层 decoder block\\\\RMSNorm $\\to$ 因果 GQA $+$ 残差\\\\RMSNorm $\\to$ SwiGLU $+$ 残差"
+  },
+  "architecture.norm": {
+    "en": "Final\\\\RMSNorm",
+    "zh": "最终\\\\RMSNorm"
+  },
+  "architecture.readout": {
+    "en": "3. Select candidate-end representations; bypass the vocabulary head",
+    "zh": "3. 选择候选末端表示；不经过词表输出头"
+  },
+  "architecture.output": {
+    "en": "4. Calibrate scores; normalize according to the question type",
+    "zh": "4. 校准分数；按问题类型归一化"
+  },
+  "architecture.probabilities": {
+    "en": "Task/type temperature $\\tau$\\\\Valid-choice softmax / yes sigmoid",
+    "zh": "任务／类型温度 $\\tau$\\\\有效候选 softmax／肯定事件 sigmoid"
+  },
+  "architecture.axes": {
+    "en": "$B$: questions (queue and urgency are separate rows); $T$: padded tokens; $d=1024$: hidden channels; $K$: padded candidate slots. The queue uses 6 slots; urgency uses 1.",
+    "zh": "$B$：问题数（队列与紧急程度各占一行）；$T$：填充后 token 数；$d=1024$：隐藏维度；$K$：补齐的候选槽位。队列使用 6 个槽位，紧急程度使用 1 个。"
+  },
+  "architecture.meaning": {
+    "en": "One inspectable JevLike implementation: the recorded Banking77 support recipe uses a shared $1024\\to256\\to1$ scalar MLP. Later candidates can see earlier ones in list layout. This is not a reconstruction of Jev internals or the Tev1 answer-token architecture.",
+    "zh": "一个可核查的 JevLike 实现：Banking77 客服配方采用共享 $1024\\to256\\to1$ 标量 MLP。list 布局中后面的候选可看见前面的候选。本图不推断 Jev 内部结构，也不等同于 Tev1 的答案 token 架构。"
+  },
+  "arch.recipe": {
+    "en": "Recipe + versioned task/data contracts",
+    "zh": "Recipe 配方与版本化任务／数据契约"
+  },
+  "arch.recipe.detail": {
+    "en": "base identity / readout / tuning / objective / split roles / task routing",
+    "zh": "基座身份／读出／微调方式／目标／划分用途／任务路由"
+  },
+  "arch.train.input": {
+    "en": "Training Records",
+    "zh": "训练 Record"
+  },
+  "arch.train.detail": {
+    "en": "Local manifest or registry\\\\state + question + candidates; labels $y$",
+    "zh": "本地 manifest 或内置数据\\\\材料、问题、候选；标签 $y$"
+  },
+  "arch.request": {
+    "en": "Inference inputs",
+    "zh": "推理输入"
+  },
+  "arch.request.detail": {
+    "en": "HTTP: request\\_to\\_records\\\\Python / batch: Record; no target labels",
+    "zh": "HTTP：request\\_to\\_records\\\\Python／批量：Record；不带目标标签"
+  },
+  "arch.shared": {
+    "en": "Shared encoding and readouts: train / evaluate / predict",
+    "zh": "训练／评测／预测共用编码与读出"
+  },
+  "arch.backbone": {
+    "en": "Replaceable pretrained backbone",
+    "zh": "可替换的预训练基座"
+  },
+  "arch.backbone.detail": {
+    "en": "AutoModelForCausalLM decoder; LoRA / full / frozen\\\\one readout selected by configuration",
+    "zh": "AutoModelForCausalLM decoder；LoRA／全参／冻结\\\\配方选择一条读出路径"
+  },
+  "arch.token": {
+    "en": "Gather answer-code columns",
+    "zh": "按答案码选择词表列"
+  },
+  "arch.list": {
+    "en": "Gather candidate-end positions",
+    "zh": "选择候选末端位置"
+  },
+  "arch.pairs": {
+    "en": "Scatter by question and candidate",
+    "zh": "按问题与候选回填"
+  },
+  "arch.scores": {
+    "en": "Raw scores + valid candidates",
+    "zh": "原始分数与有效候选"
+  },
+  "arch.loss": {
+    "en": "Supervised loss / optimizer",
+    "zh": "监督损失／优化器"
+  },
+  "arch.loss.detail": {
+    "en": "Candidate CE / BCE\\\\Gradients update selected parameters",
+    "zh": "候选 CE／BCE\\\\梯度更新选定的参数"
+  },
+  "arch.labels": {
+    "en": "Train labels enter the loss only",
+    "zh": "训练标签仅进入损失"
+  },
+  "arch.gradient": {
+    "en": "Parameter updates",
+    "zh": "参数更新"
+  },
+  "arch.artifact": {
+    "en": "Sealed artifact",
+    "zh": "封存产物 artifact"
+  },
+  "arch.artifact.detail": {
+    "en": "Adapter or full model + head\\\\configuration, base identity, SHA256",
+    "zh": "Adapter 或完整模型＋读出头\\\\配置、基座身份、SHA256"
+  },
+  "arch.seal": {
+    "en": "Seal trained parameters",
+    "zh": "封存训练参数"
+  },
+  "arch.calibration": {
+    "en": "Held-out calibration",
+    "zh": "独立校准"
+  },
+  "arch.calibration.detail": {
+    "en": "calib scores + targets $\\to\\tau$\\\\calibration bound to artifact hash",
+    "zh": "calib 分数与目标 $\\to\\tau$\\\\校准绑定产物哈希"
+  },
+  "arch.post": {
+    "en": "Shared probability and calibration semantics",
+    "zh": "共享概率语义与校准路由"
+  },
+  "arch.post.detail": {
+    "en": "Prior correction $\\to$ task/type $\\tau$\\\\valid softmax / independent sigmoid",
+    "zh": "先验修正 $\\to$ 任务／类型温度 $\\tau$\\\\有效候选 softmax／逐候选 sigmoid"
+  },
+  "arch.evaluate": {
+    "en": "Evaluation and evidence",
+    "zh": "评测与证据"
+  },
+  "arch.evaluate.detail": {
+    "en": "dev / test targets: metrics only\\\\raw vs calibrated vs prior; run provenance",
+    "zh": "dev／test 真值仅用于评测\\\\原始／校准／先验对照；运行来源"
+  },
+  "arch.serve": {
+    "en": "Python / batch: 4 Record types\\\\HTTP /v1/systemone: noul, choice, score",
+    "zh": "Python／批量：四类 Record\\\\HTTP /v1/systemone：noul、choice、score"
+  },
+  "arch.legend": {
+    "en": "$B$: questions; $K$: padded candidates; $N=B$ (answer/list), $N=R=\\sum_bK_b$ (pairs). Solid: values / saved parameters. Dashed: supervision or configuration dependencies.",
+    "zh": "$B$：问题；$K$：补齐候选；答案／list 使用 $N=B$，pairs 使用 $N=R=\\sum_bK_b$。实线：数值／保存参数；虚线：监督或配置依赖。"
+  },
+  "arch.scope": {
+    "en": "Candidate-loss path shown. Completion training separately uses vocabulary logits $[B,2,V]$. Calibration is stored beside the artifact and verified against its hash.",
+    "zh": "图示候选损失路径；completion 训练另使用全词表 logits $[B,2,V]$。校准与产物分开保存，并校验绑定的哈希。"
   }
 }

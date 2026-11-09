@@ -22,6 +22,8 @@
     "docs/zh/cookbook/first-model.md",
     "docs/en/cookbook/own-task.md",
     "docs/zh/cookbook/own-task.md",
+    "docs/en/tensor-analysis/introduction.md",
+    "docs/zh/tensor-analysis/introduction.md",
     "docs/en/tensor-analysis/index.md",
     "docs/zh/tensor-analysis/index.md",
     "docs/en/tensor-analysis/notation.md",
@@ -212,6 +214,10 @@
     "recipes/tev1": {
       "en": "recipes/tev1/README_en.md",
       "zh": "recipes/tev1/README.md"
+    },
+    "tensor-analysis/introduction": {
+      "en": "docs/en/tensor-analysis/introduction.md",
+      "zh": "docs/zh/tensor-analysis/introduction.md"
     }
   }
 }

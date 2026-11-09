@@ -33,6 +33,9 @@ its APIs and artifact formats may change.
 - Paired English and Chinese public documentation, Cookbook and Concepts & Tensors.
 - Editable bilingual tensor diagrams, vector SVG/PDF downloads, local mathematics rendering and same-page language switching.
 
+- A bilingual JevLike introduction connects an actual task, split-specific data samples, inference and a Qwen3 scalar-head architecture.
+- Tensor figures follow the page theme, with centered vector layouts and dark SVG/PDF/editable exports.
+
 ### Changed
 
 - Training validates split purposes and rejects shared fitting/evaluation inputs

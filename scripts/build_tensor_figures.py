@@ -61,16 +61,43 @@ def load_specs():
     return module, module.figures()
 
 
-def document(figure, lang, module, labels, geometry):
+def document(figure, lang, module, labels, geometry, theme="light"):
     def label(key):
         return labels[key][lang]
 
     unit, offset, gutter = (geometry[k] for k in ("cell_cm", "sheet_offset_cm", "gutter_cm"))
+    preamble = (SOURCE / "tensor-style.tex").read_text()
+    if theme == "dark":
+        palette = json.loads((SOURCE / "themes.json").read_text())["dark"]
+        # PGF expands implicit tints against the original white. Name the canvas
+        # explicitly so low-intensity panels stay dark and their text readable.
+        preamble = preamble.replace("fill=white", "fill=Canvas")
+        preamble = re.sub(
+            r"(Ink|Msk|#6)!(\d+|\\level)",
+            lambda m: m[0] + "!Canvas",
+            preamble,
+        )
+        preamble += (
+            "\n"
+            + "\n".join(
+                rf"\definecolor{{{name}}}{{HTML}}{{{value}}}" for name, value in palette.items()
+            )
+            + "\n"
+            + r"\pagecolor{Canvas}"
+            + "\n"
+        )
     lines = [
-        (SOURCE / "tensor-style.tex").read_text(),
+        preamble,
         r"\begin{document}",
         r"\begin{tikzpicture}[x=1cm,y=1cm,text=Ink]",
     ]
+    if figure.slug == "metiscraft-architecture":
+        body = (SOURCE / "architecture.tex").read_text()
+        body = re.sub(r"@@([\w.]+)@@", lambda m: label(m[1]), body)
+        return (
+            preamble + "\n" + r"\providecolor{Canvas}{HTML}{FFFFFF}" + "\n" + body,
+            [],
+        )
     widths = []
     for _, items in figure.rows:
         widths.append(
@@ -162,9 +189,9 @@ def document(figure, lang, module, labels, geometry):
     return "\n".join(lines) + "\n", bounds
 
 
-def build_one(slug, lang, specs, module, labels, geometry, args):
-    stem = slug + "." + lang
-    text, bounds = document(specs[slug], lang, module, labels, geometry)
+def build_one(slug, lang, theme, specs, module, labels, geometry, args):
+    stem = slug + "." + lang + (".dark" if theme == "dark" else "")
+    text, bounds = document(specs[slug], lang, module, labels, geometry, theme)
     tex = OUTPUT / (stem + ".tex")
     if args.check:
         if not tex.is_file() or tex.read_text() != text:
@@ -219,6 +246,7 @@ def build_one(slug, lang, specs, module, labels, geometry, args):
     entry = {
         "slug": slug,
         "language": lang,
+        "theme": theme,
         "files": {p.name: sha256(p) for p in (tex, pdf, svg)},
         "pdf_raster_images": 0,
         "svg_embedded_images": 0,
@@ -232,6 +260,7 @@ def main():
     parser.add_argument("--tectonic", type=Path, required=True)
     parser.add_argument("--slug", action="append")
     parser.add_argument("--language", choices=("en", "zh"), action="append")
+    parser.add_argument("--theme", choices=("light", "dark"), action="append")
     parser.add_argument("--qa-dir", type=Path)
     parser.add_argument(
         "--check", action="store_true", help="verify committed artifacts without rebuilding"
@@ -249,8 +278,8 @@ def main():
         help="concurrent CPU-only figure builds (1--4)",
     )
     args = parser.parse_args()
-    if args.record_manifest and (args.slug or args.language):
-        parser.error("--record-manifest requires all figures and both languages")
+    if args.record_manifest and (args.slug or args.language or args.theme):
+        parser.error("--record-manifest requires all figures, languages and themes")
     module, specs = load_specs()
     labels = json.loads((SOURCE / "labels.json").read_text())
     geometry = json.loads((SOURCE / "geometry.json").read_text())
@@ -260,7 +289,10 @@ def main():
         if slug not in specs:
             raise SystemExit("Unknown figure: " + slug)
     requests = [
-        (slug, lang) for slug in args.slug or specs for lang in args.language or ("en", "zh")
+        (slug, lang, theme)
+        for slug in args.slug or specs
+        for lang in args.language or ("en", "zh")
+        for theme in args.theme or ("light", "dark")
     ]
     with ThreadPoolExecutor(max_workers=args.jobs) as pool:
         entries = list(
@@ -296,12 +328,14 @@ def main():
             raise SystemExit("Figure source inventory changed; rebuild or record the manifest")
         if saved["builder_sha256"] != manifest["builder_sha256"]:
             raise SystemExit("Figure builder changed; rebuild or record the manifest")
-        expected = {(e["slug"], e["language"]): e["files"] for e in saved["figures"]}
+        expected = {(e["slug"], e["language"], e["theme"]): e["files"] for e in saved["figures"]}
         for entry in entries:
-            key = (entry["slug"], entry["language"])
+            key = (entry["slug"], entry["language"], entry["theme"])
             if expected.get(key) != entry["files"]:
                 raise SystemExit(f"Vector export content drift: {key}")
-    if args.record_manifest or (not args.check and not args.slug and not args.language):
+    if args.record_manifest or (
+        not args.check and not args.slug and not args.language and not args.theme
+    ):
         (OUTPUT / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
     print("Verified", len(entries), "localized figures")
 

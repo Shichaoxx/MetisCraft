@@ -103,6 +103,8 @@ CUDA_VISIBLE_DEVICES='' OMP_NUM_THREADS=1 metiscraft train recipe.yaml
 
 欢迎[贡献](CONTRIBUTING_zh.md)、[报告问题](https://github.com/Shichaoxx/MetisCraft/issues/new?template=bug_report.yml)与[提出建议](https://github.com/Shichaoxx/MetisCraft/issues/new?template=feature_request.yml)。
 
+[JevLike 引言：任务、数据与张量架构](docs/zh/tensor-analysis/introduction.md)
+
 ## 许可证
 
 代码采用 [Apache-2.0](LICENSE)。数据集和基座模型保留各自条款；分发训练产物前请检查元数据和 `NOTICE`。

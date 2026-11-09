@@ -20,7 +20,8 @@
 }
 .md-typeset .arithmatex .katex { font-size: 1.04em; }
 .math-render-error { border-inline-start: 3px solid #c95b5b; padding-inline-start: .8rem; }
-.md-typeset img[data-figure-ready] { cursor: zoom-in; background: #fff; border: 1px solid #dce4e5; }
+.md-typeset img[data-figure-ready] { display: block; margin: 1.4rem auto; max-width: 100%; height: auto; cursor: zoom-in; background: #fff; border: 1px solid #dce4e5; }
+.md-typeset img[data-figure-theme="dark"] { background: #18212c; border-color: #465367; }
 .md-typeset img[data-figure-ready]:focus-visible { outline: 3px solid #4f8fa5; outline-offset: 4px; }
 #metis-figure-dialog { width: min(96vw, 1600px); max-width: 96vw; max-height: 94vh; padding: 1rem; border: 1px solid #879b9b; border-radius: .6rem; background: #fff; color: #243338; }
 #metis-figure-dialog::backdrop { background: #17292ccc; }
@@ -29,4 +30,7 @@
 #metis-figure-dialog .figure-canvas { overflow: auto; max-height: 76vh; }
 #metis-figure-dialog img { width: 100%; min-width: min(800px, 170vw); height: auto; display: block; }
 #metis-figure-dialog > a { color: #087f78; display: block; margin-top: .8rem; }
+[data-md-color-scheme="slate"] #metis-figure-dialog { background: #18212c; color: #e2eaf3; border-color: #607086; }
+[data-md-color-scheme="slate"] #metis-figure-dialog button { background: #263746; color: #e2eaf3; }
+[data-md-color-scheme="slate"] #metis-figure-dialog > a { color: #89d5cc; }
 @media (prefers-reduced-motion: reduce) { #metis-figure-dialog { scroll-behavior: auto; } }

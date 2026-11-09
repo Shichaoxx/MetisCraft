@@ -100,3 +100,5 @@ Use yes/no, choice, ordered score and multiple labels through Python or batch pr
 ## Understand the computation
 
 Follow [Concepts & Tensors](tensor-analysis/index.md) from the System One contract to answer-token and scalar-head readouts. The [five-minute technical walkthrough](tensor-analysis/walkthrough.md) connects editable vector figures, numerical examples and source references.
+
+[What is JevLike? Task, data and architecture](tensor-analysis/introduction.md)

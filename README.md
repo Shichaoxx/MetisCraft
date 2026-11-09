@@ -103,6 +103,8 @@ Every number links to a recipe or reproduction record. The [ecosystem matrix](do
 
 [Contribute](CONTRIBUTING.md), [report a bug](https://github.com/Shichaoxx/MetisCraft/issues/new?template=bug_report.yml) or [suggest a feature](https://github.com/Shichaoxx/MetisCraft/issues/new?template=feature_request.yml).
 
+[JevLike introduction: task, data and tensor architecture](docs/en/tensor-analysis/introduction.md)
+
 ## License
 
 Code is [Apache-2.0](LICENSE). Datasets and base models retain their own terms; check metadata and the artifact `NOTICE` before distributing trained weights.

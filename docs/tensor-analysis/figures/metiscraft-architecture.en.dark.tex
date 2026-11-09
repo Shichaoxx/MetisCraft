@@ -1,0 +1,176 @@
+% Shared vector grammar. Generated figure TeX files inline this source.
+\documentclass[tikz,border=4mm,12pt]{standalone}
+\usepackage[UTF8,fontset=fandol]{ctex}
+\usepackage{amsmath,amssymb,bm}
+\renewcommand{\familydefault}{\sfdefault}
+\hyphenpenalty=10000
+\exhyphenpenalty=10000
+\usetikzlibrary{arrows.meta,backgrounds,calc}
+\definecolor{Ink}{HTML}{273648}
+\definecolor{Muted}{HTML}{607086}
+\definecolor{Ctx}{HTML}{85898F}
+\definecolor{Qst}{HTML}{4F8FA5}
+\definecolor{Opt}{HTML}{5A9A6E}
+\definecolor{Gen}{HTML}{B89A5E}
+\definecolor{Hid}{HTML}{8A74B5}
+\definecolor{Wgt}{HTML}{E0904F}
+\definecolor{Lgt}{HTML}{C95B5B}
+\definecolor{Idx}{HTML}{7E8B9B}
+\definecolor{Msk}{HTML}{3F5A78}
+\newcommand{\Unit}{0.30}
+\newcommand{\Offset}{0.12}
+\newcommand{\BinarySupport}{0}
+\newcounter{texture}
+\tikzset{
+ flow/.style={-{Latex[length=2mm,width=1.5mm]},draw=Ink!75!Canvas,line width=.65pt},
+ tensorlabel/.style={font=\small,text=Ink,align=center,inner sep=0pt},
+ tenshape/.style={font=\scriptsize,text=Muted,align=center,inner sep=0pt},
+ stage/.style={font=\small\bfseries,text=Muted,align=left,anchor=west},
+ operation/.style={draw=Ink!25!Canvas,fill=Canvas,rounded corners=2pt,align=center,
+  font=\small,text=Ink,inner sep=5pt,line width=.5pt},
+}
+% The last two axes define a matrix face. Leading axes use offset sheets.
+% Every symbolic dimension maps to the same cell count throughout the set.
+\newcommand{\Tensor}[9]{%
+ \stepcounter{texture}
+ \pgfmathsetmacro{\ww}{#5*\Unit}
+ \pgfmathsetmacro{\hh}{#4*\Unit}
+ \pgfmathsetmacro{\xx}{#2-\ww/2}
+ \pgfmathsetmacro{\yy}{#3-\hh/2}
+ \ifnum#7>0
+  \foreach \s in {#7,...,1}{
+   \path[draw=#6!40!Canvas,fill=Canvas,line width=.45pt,rounded corners=.7pt]
+    ({\xx+\s*\Offset},{\yy+\s*\Offset}) rectangle ++(\ww,\hh);}
+ \fi
+ \foreach \r in {1,...,#4}{\foreach \c in {1,...,#5}{
+  \ifnum\BinarySupport>0
+   \pgfmathtruncatemacro{\level}{\BinarySupport==1?(\c>3-\r?75:0):(\BinarySupport==2?(\c<=4-\r?75:0):(\c<=\r?75:0))}
+  \else
+   \pgfmathtruncatemacro{\tone}{mod(\r*13+\c*7+\arabic{texture}*11,7)}
+   \pgfmathtruncatemacro{\level}{\tone<3?30:(\tone<6?55:80)}
+  \fi
+  \path[fill=#6!\level!Canvas,rounded corners=.5pt]
+   ({\xx+(\c-1)*\Unit+.021},{\yy+\hh-\r*\Unit+.021})
+    rectangle ++({\Unit-.042},{\Unit-.042});}}
+ \ifnum\BinarySupport>0
+  \path[draw=Msk!35!Canvas,line width=.4pt] (\xx,\yy) rectangle ++(\ww,\hh);
+ \fi
+ \coordinate (#1-w) at (\xx,#3);
+ \coordinate (#1-e) at ({\xx+\ww+#7*\Offset},#3);
+ \node[tensorlabel] at (#2,{\yy-.28}) {$#8$};
+ \node[tenshape] at (#2,{\yy-.63}) {$#9$};
+}
+% Exact binary support; row i is a query and column j a key.
+\newcommand{\Support}[5]{%
+ \foreach \i in {1,...,#4}{\foreach \j in {1,...,#4}{
+  \pgfmathtruncatemacro{\on}{#5}
+  \ifnum\on>0
+   \path[fill=Msk!65!Canvas,rounded corners=.4pt]
+    ({#2+(\j-1)*\Unit+.021},{#3-\i*\Unit+.021})
+     rectangle ++({\Unit-.042},{\Unit-.042});
+  \fi}}
+ \path[draw=Ink!35!Canvas,line width=.4pt] (#2,#3) rectangle ++({#4*\Unit},{-#4*\Unit});
+}
+\newcommand{\Meaning}[7]{%
+ \node[anchor=north west,fill=Ink!4!Canvas,rounded corners=3pt,inner sep=9pt,
+  text width=#3cm-18pt,align=left,font=\small] (meaning) at (#1,#2) {
+  \begin{tabular}{@{}p{1.8cm}@{\hspace{7pt}}p{\dimexpr #3cm-2.8cm\relax}@{}}
+   \textbf{#4} & \raggedright #5\tabularnewline[6pt]
+   \textbf{#6} & \raggedright #7\tabularnewline
+  \end{tabular}};
+}
+
+\definecolor{Canvas}{HTML}{18212C}
+\definecolor{Ink}{HTML}{E2EAF3}
+\definecolor{Muted}{HTML}{AABCD0}
+\definecolor{Ctx}{HTML}{ABB3BE}
+\definecolor{Qst}{HTML}{72B8D0}
+\definecolor{Opt}{HTML}{83C396}
+\definecolor{Gen}{HTML}{D9BC7B}
+\definecolor{Hid}{HTML}{B49BDB}
+\definecolor{Wgt}{HTML}{F0AB71}
+\definecolor{Lgt}{HTML}{ED9191}
+\definecolor{Idx}{HTML}{A9BBD1}
+\definecolor{Msk}{HTML}{91B6DF}
+\pagecolor{Canvas}
+
+\providecolor{Canvas}{HTML}{FFFFFF}
+% MetisCraft module architecture. Geometry is shared; labels live in labels.json.
+\begin{document}
+\begin{tikzpicture}[x=1cm,y=1cm,text=Ink,
+ box/.style={draw=Ink!28!Canvas,fill=Ink!3!Canvas,rounded corners=3pt,
+ align=center,font=\small,inner sep=8pt},
+ pathflow/.style={-{Latex[length=2.2mm]},draw=Ink!80!Canvas,line width=.7pt},
+ dependency/.style={pathflow,dashed},
+ caption/.style={font=\scriptsize,text=Muted,align=center}]
+\node[box,minimum width=24cm,text width=22.7cm,minimum height=1.05cm] (recipe) at (12,1.2)
+ {\textbf{Recipe + versioned task/data contracts}\\ base identity / readout / tuning / objective / split roles / task routing};
+\node[box,text width=6.2cm,minimum height=1.45cm] (train) at (3.6,-1)
+ {\textbf{Training Records}\\ Local manifest or registry\\state + question + candidates; labels $y$};
+\node[box,text width=6.2cm,minimum height=1.45cm] (request) at (20.4,-1)
+ {\textbf{Inference inputs}\\ HTTP: request\_to\_records\\Python / batch: Record; no target labels};
+\node[box,text width=9cm,minimum height=1.4cm] (collator) at (12,-3.2)
+ {\textbf{PromptBuilder $\to$ Collator}\\
+ $X,A\;[N,T]$; positions / codes / pair maps};
+\draw[pathflow] (train.east) -| (collator.north west);
+\draw[pathflow] (request.west) -| (collator.north east);
+\draw[dependency] (recipe.south) -- (collator.north);
+
+\begin{scope}[on background layer]
+\node[draw=Hid!55!Canvas,fill=Hid!3!Canvas,rounded corners=5pt,
+ minimum width=24cm,minimum height=6.7cm] (core) at (12,-8.1) {};
+\end{scope}
+\node[anchor=west,font=\small\bfseries] at (.5,-5.1) {DecisionModel};
+\node[anchor=east,caption] at (23.5,-5.1) {Shared encoding and readouts: train / evaluate / predict};
+\node[box,text width=13.3cm,minimum height=1.3cm] (backbone) at (12,-6.6)
+ {\textbf{Replaceable pretrained backbone}\\
+ AutoModelForCausalLM decoder; LoRA / full / frozen\\one readout selected by configuration\\ $H\;[N,T,d]$};
+\draw[pathflow] (collator.south) -- (backbone.north);
+\node[box,text width=6.25cm,minimum height=1.9cm] (token) at (4,-9.6)
+ {\textbf{answer\_token}\\ $H_{b,-1,:}\to W_{\rm lm}\to z[B,V]$\\
+ Gather answer-code columns $\to S[B,K]$};
+\node[box,text width=6.25cm,minimum height=1.9cm] (list) at (12,-9.6)
+ {\textbf{candidate\_scalar / list}\\
+ Gather candidate-end positions\\ $h[B,K,d]\to\mathrm{MLP}\to S[B,K]$};
+\node[box,text width=6.25cm,minimum height=1.9cm] (pairs) at (20,-9.6)
+ {\textbf{candidate\_scalar / pairs}\\
+ $H_{r,-1,:}\to\mathrm{MLP}\to s[R]$\\
+ Scatter by question and candidate $\to S[B,K]$};
+\draw[pathflow] (backbone.south) -- ++(0,-.35) -| (token.north);
+\draw[pathflow] (backbone.south) -- (list.north);
+\draw[pathflow] (backbone.south) -- ++(0,-.35) -| (pairs.north);
+
+\node[box,text width=5.4cm,minimum height=1.3cm] (scores) at (12,-12.8)
+ {\textbf{Raw scores + valid candidates}\\ $S[B,K],\quad M^{cand}[B,K]$};
+\draw[pathflow] (token.south) -- ++(0,-1) -| (scores.north);
+\draw[pathflow] (list.south) -- (scores.north);
+\draw[pathflow] (pairs.south) -- ++(0,-1) -| (scores.north);
+\node[box,text width=5.3cm,minimum height=1.4cm] (loss) at (3.3,-12.8)
+ {\textbf{Supervised loss / optimizer}\\ Candidate CE / BCE\\Gradients update selected parameters};
+\draw[pathflow] (scores.west) -- (loss.east);
+\draw[dependency] (train.south) -- ++(0,-.5) -- (-.9,-2.3) |- (loss.west);
+\node[caption,rotate=90] at (-1.2,-7.2) {Train labels enter the loss only};
+\draw[dependency] (loss.north) -- ++(0,.45) -- (-.3,-11.65) -- (-.3,-8) -- (core.west);
+\node[caption,rotate=90] at (.1,-10.8) {Parameter updates};
+
+\node[box,text width=5.3cm,minimum height=1.5cm] (artifact) at (20.7,-12.8)
+ {\textbf{Sealed artifact}\\ Adapter or full model + head\\configuration, base identity, SHA256};
+\draw[pathflow] (core.east) -- (25,-8.1) |- (artifact.east);
+\node[caption,rotate=90] at (25.3,-10.7) {Seal trained parameters};
+\node[box,text width=5.3cm,minimum height=1.4cm] (calib) at (3.3,-15.7)
+ {\textbf{Held-out calibration}\\ calib scores + targets $\to\tau$\\calibration bound to artifact hash};
+\node[box,text width=8.7cm,minimum height=1.4cm] (probabilities) at (13.1,-15.25)
+ {\textbf{Shared probability and calibration semantics}\\ Prior correction $\to$ task/type $\tau$\\valid softmax / independent sigmoid\\ $p_b\;[K_b]$};
+\draw[pathflow] (scores.south) -- (probabilities.north);
+\draw[dependency] (calib.east) -- (7,-15.7) -- (7,-15.25) -- (probabilities.west);
+\node[box,text width=7.9cm,minimum height=1.4cm] (evaluate) at (5,-19)
+ {\textbf{Evaluation and evidence}\\ dev / test targets: metrics only\\raw vs calibrated vs prior; run provenance};
+\node[box,text width=10.5cm,minimum height=1.4cm] (serve) at (18.7,-19)
+ {\textbf{Predictor: Python / batch / HTTP}\\ Python / batch: 4 Record types\\HTTP /v1/systemone: noul, choice, score};
+\draw[pathflow] (probabilities.south) -- (13.1,-17.55) -| (evaluate.north);
+\draw[pathflow] (probabilities.south) -- (13.1,-17.55) -| (serve.north);
+\draw[dependency] (artifact.south) -- (20.7,-16.55) -- (serve.north east);
+\node[caption] at (22.3,-15.1) {Predictor.load};
+\node[caption,text width=24cm] at (12,-21.3) {$B$: questions; $K$: padded candidates; $N=B$ (answer/list), $N=R=\sum_bK_b$ (pairs). Solid: values / saved parameters. Dashed: supervision or configuration dependencies.\\[4pt] Candidate-loss path shown. Completion training separately uses vocabulary logits $[B,2,V]$. Calibration is stored beside the artifact and verified against its hash.\\[4pt] MetisCraft $\cdot$ shichao};
+\end{tikzpicture}
+\end{document}

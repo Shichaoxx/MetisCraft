@@ -1,0 +1,19 @@
+{
+  "dataset": "banking77_support",
+  "version": "rev-18469841",
+  "source": "https://huggingface.co/datasets/PolyAI/banking77/tree/1846984189f2bc0ac51c6fc3a600fa9e1714e0c6",
+  "license": "CC-BY-4.0",
+  "converter": "label_mapping@1",
+  "samples": {
+    "support-train-record.json": {
+      "id": "banking77_support:train:0:queue",
+      "source_file": "derived/train.jsonl",
+      "source_file_sha256": "fbee753056d08b178141fb493ea8bdaaa53e9792ebd9db1ba6b0ce05ec658f6d"
+    },
+    "support-test-record.json": {
+      "id": "banking77_support:test:0:queue",
+      "source_file": "derived/eval_only/test.jsonl",
+      "source_file_sha256": "76c58aaa05806eb29a7f64f2b952373733182868cf4406a5b8a185f452a3eaf0"
+    }
+  }
+}
