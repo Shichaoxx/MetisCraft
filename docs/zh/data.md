@@ -51,6 +51,8 @@ splits:
 `choice` 和 `score` 的软概率之和须在 `1e-6` 容差内等于 1；`noul` 与
 `multi_label` 使用独立概率。选项 ID `__null__` 为保留值，需空答案时使用 `allow_null`。
 
+新导入会记录 `supervision.has_hard_label`，区分缺失标签与合法 null、`false`、空正例集合；仅有软监督时也可显式设为 `false`。提供软目标时训练和校准沿用软目标，硬准确率／F1 只在已知硬标签上计算。报告给出 `n_hard`、`n_soft` 和 `n_hard_unknown`；含义不明的历史 null＋soft 记录只算软指标。未定义指标以 JSON `null` 和原因表示。
+
 ## 分开拟合与评测用途
 
 `train` 用于模型拟合，`calib` 用于温度拟合，`dev`、`test` 和 `eval_only` 用于评测。

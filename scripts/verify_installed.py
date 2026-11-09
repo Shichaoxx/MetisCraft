@@ -167,6 +167,21 @@ def main():
             with urllib.request.urlopen(req, timeout=60) as r:
                 served = json.load(r)
             assert served == offline_http
+            # Retain the exact public tutorial response and health from this installed wheel.
+            tutorial = json.loads((example / "request.json").read_text())
+            tutorial_request = urllib.request.Request(
+                f"http://127.0.0.1:{port}/v1/systemone",
+                data=json.dumps(tutorial).encode(),
+                headers={"Content-Type": "application/json"},
+            )
+            with urllib.request.urlopen(tutorial_request, timeout=60) as response:
+                tutorial_response = json.load(response)
+            (root / "tutorial-response.json").write_text(
+                json.dumps(tutorial_response, indent=2, allow_nan=False) + "\n"
+            )
+            (root / "tutorial-health.json").write_text(
+                json.dumps(health, indent=2, allow_nan=False) + "\n"
+            )
             by_name = {r["id"].split(":", 1)[1]: r for r in batch}
             for name, answer in served["answers"].items():
                 actual = (

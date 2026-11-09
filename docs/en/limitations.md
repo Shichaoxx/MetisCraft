@@ -24,11 +24,11 @@ unknown historical training settings or establish identical weights.
 Only one seed was run, and the upstream evaluation sets were used during
 development; these results are not evidence of generalization to untouched tasks.
 Details are in the
-[Tev1 record](../reproductions/tev1.md).
+[Tev1 record](reproductions/tev1.md).
 
 The published GoEmotions run used code from before the `pos_weight` inference
 correction. Its offline corrected scores are not a completed training rerun with
-the fix. See the [recipe results](../../recipes/go_emotions/README.md).
+the fix. See the [recipe results](../../recipes/go_emotions/README_en.md).
 
 An encoder baseline under the same splits, metrics and calibration protocol has
 not been completed. There is no established accuracy or cost advantage over an
@@ -59,7 +59,6 @@ the fitted policy temperature; the cause remains unresolved. Accuracy was unchan
 Compare calibrated and raw
 metrics on representative held-out data, and keep their split roles separate.
 
-The broader [support matrix](../support-matrix.md) and [project status](../status.md)
-track experiments and future work separately from this installation guide.
+The [support matrix](support-matrix.md) records ecosystem coverage and the evidence available for each project.
 
 [中文](../zh/limitations.md)

@@ -27,6 +27,8 @@ def target_vector(record: Record, ordinal_sigma: float | None = None) -> list[fl
     q = record.question
     if sup.soft is not None:
         return list(sup.soft)
+    if record.hard_label_status() is not True:
+        raise ValueError(f"{record.id} has no known hard label or soft target")
     if q.type == "noul":
         return [1.0 if sup.labels else 0.0]
     choices = choices_of(record)

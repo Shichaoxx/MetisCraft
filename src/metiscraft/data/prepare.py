@@ -86,6 +86,10 @@ def prepare_dataset(
     fetcher: Fetcher | None = None,
     staging_parent: Path | None = None,
 ) -> DatasetVersion:
+    if max_rows is not None and (
+        isinstance(max_rows, bool) or not isinstance(max_rows, int) or max_rows <= 0
+    ):
+        raise ValueError("max_rows must be a positive integer")
     entry = get_entry(name)
     if entry.converter is None:
         raise NotImplementedError(f"{name} is registered but has no converter in v0.1")

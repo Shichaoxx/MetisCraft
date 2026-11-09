@@ -71,6 +71,20 @@ def import_dataset(manifest_path: Path, data_root: Path) -> DatasetVersion:
         source_files.add(inode)
         raw[role] = path.read_bytes()
         source_hashes[role] = hashlib.sha256(raw[role]).hexdigest()
+
+    fingerprint = canonical_sha256({"manifest": spec.model_dump(), "files": source_hashes})
+    target = DatasetVersion(Path(data_root) / spec.name / spec.version)
+    if target.root.exists():
+        target.verify()
+        if target.meta().get("local_import_sha256") != fingerprint:
+            raise FileExistsError(
+                f"{target.root}: version exists with different local inputs; choose a new version"
+            )
+        # Keep identical historical imports byte-for-byte; only new versions use
+        # the current converter's normalization and validation semantics.
+        return target
+
+    for role, relative in spec.splits.items():
         rows = []
         for index, line in enumerate(raw[role].decode("utf-8").splitlines(), start=1):
             if not line.strip():
@@ -78,6 +92,15 @@ def import_dataset(manifest_path: Path, data_root: Path) -> DatasetVersion:
             try:
                 value = json.loads(line)
                 rec = Record.model_validate(value)
+                if rec.supervision is not None:
+                    supervision = value["supervision"]
+                    if supervision.get("has_hard_label") is None:
+                        supervision["has_hard_label"] = rec.supervision.labels is not None or (
+                            "labels" in supervision
+                            and rec.question.type == "choice"
+                            and rec.question.allow_null
+                        )
+                        rec = Record.model_validate(value)
                 if not rec.id.strip() or not rec.task_id.strip():
                     raise ValueError("record id and task_id must be nonempty")
                 if rec.id in ids:
@@ -93,7 +116,7 @@ def import_dataset(manifest_path: Path, data_root: Path) -> DatasetVersion:
                     "split": role,
                     "index": index,
                     "converter": "local_record_jsonl",
-                    "converter_version": "1",
+                    "converter_version": "2",
                     "input_hash": record_input_hash(row),
                     "label_form": "soft" if rec.supervision.soft is not None else "hard",
                     "extra": {"imported_provenance": original} if original else {},
@@ -105,16 +128,6 @@ def import_dataset(manifest_path: Path, data_root: Path) -> DatasetVersion:
             raise ValueError(f"{role}: split must contain at least one supervised record")
         rows_by_role[role] = rows
     validate_split_isolation(rows_by_role)
-
-    fingerprint = canonical_sha256({"manifest": spec.model_dump(), "files": source_hashes})
-    target = DatasetVersion(Path(data_root) / spec.name / spec.version)
-    if target.root.exists():
-        target.verify()
-        if target.meta().get("local_import_sha256") != fingerprint:
-            raise FileExistsError(
-                f"{target.root}: version exists with different local inputs; choose a new version"
-            )
-        return target
 
     target.root.parent.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory(prefix=".local-import-", dir=target.root.parent) as tmp:
@@ -171,7 +184,7 @@ def import_dataset(manifest_path: Path, data_root: Path) -> DatasetVersion:
             "judgment": sorted(
                 {r["question"]["type"] for rows in rows_by_role.values() for r in rows}
             ),
-            "converter": {"name": "local_record_jsonl", "version": "1"},
+            "converter": {"name": "local_record_jsonl", "version": "2"},
             "splits": split_meta,
             "eval_frozen": True,
             "local_import_sha256": fingerprint,

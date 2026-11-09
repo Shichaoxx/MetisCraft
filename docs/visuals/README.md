@@ -1,12 +1,12 @@
 # MetisCraft visual assets
 
-The owl is the project's visual motif. Teal `#087f78`, graphite `#243438` and a
+The primary identity combines the MetisCraft wordmark with three slanted vertical planes, preserving the original project-showcase silhouette. Teal `#087f78`, graphite `#243438` and a
 small amount of warm gold `#bd8c36` connect the repository and documentation.
 
 | Asset | Use |
 |---|---|
-| [Owl character](figures/avatar.png) | README introduction, community avatar and documentation |
-| [Owl mark](figures/mark.svg) | Small icons and favicon |
+| [Academy guide](figures/metis-guide-chibi.png) · [night guide](figures/metis-guide-night.png) | Cookbook entrance and one reading tip in each core tutorial |
+| [Adaptive three-plane mark](figures/mark.svg) | Documentation header, small icons and favicon |
 | [Light wordmark](figures/wordmark-light.svg) · [dark wordmark](figures/wordmark-dark.svg) | README title and compact brand lockup |
 | [Light banner](figures/hero-light.svg) · [dark banner](figures/hero-dark.svg) | Optional wide banner |
 | [Social preview](figures/social-preview.png) | Repository sharing image, 1200 × 630 |
@@ -16,22 +16,59 @@ small amount of warm gold `#bd8c36` connect the repository and documentation.
 
 The diagrams and marks have editable SVG sources. Rebuild them with
 `python docs/visuals/src/render.py`; the script uses only Python's standard library.
-PNG banner and social exports are rendered from those SVG files with `rsvg-convert`.
-The owl character is a raster illustration generated with Imagegen, not an SVG.
+PNG banner and social exports are rendered from those SVG files at their declared
+canvas sizes; the favicon is a 64 × 64 export of the three-plane mark. Use an SVG renderer
+(such as a browser or `rsvg-convert`) to refresh the PNGs after changing the SVGs.
+Metis is a raster illustration generated with Imagegen, not an SVG. She appears
+at the Cookbook entrance and selected tutorial steps as a reading guide; repository and documentation homepages use
+the typographic identity.
 
 ## Character direction
 
-The avatar depicts an original owl-themed anime character with teal hair, amber
-eyes, feather tufts and a feather-edged capelet. The visual direction was informed
-by community character references collected for
-[DeepSeek](https://genderswapai.com/zh-CN/ai-gijinka/deepseek),
-[GPT](https://genderswapai.com/zh-CN/ai-gijinka/gpt) and
-[Claude](https://genderswapai.com/zh-CN/ai-gijinka/claude).
-These third-party characters and images are not part of this repository's assets.
-The generation prompt is preserved in [avatar-prompt.txt](avatar-prompt.txt).
+Metis (小墨) is an original scholar character. Her identity combines shoulder-length,
+wavy deep-teal hair with mint highlights, round amber-gold eyes, soft cheeks, a
+small closed-mouth smile, a looped forelock and a gold feather clip. Feather tufts
+are small accents. The academy guide wears an ivory blouse, a tailored navy waistcoat and
+a teal tie with an astrolabe clasp, and holds a star-chart book.
 
-## Small-screen use
+Keep the face compact and gentle when drawing new poses. A slender body should
+come from balanced anatomy, with a connected head, neck and shoulders. Preserve
+the warm expression and avoid making every pose lean toward one shoulder.
 
-Use the simple owl mark at favicon sizes. Use the character at avatar sizes where
-its eyes and feather details remain legible. The workflow has a vertical variant
-for narrow screens; diagrams should not be shrunk until their labels are unreadable.
+The selected transparent chibi illustration is used for the academy outfit; the previous half-body image remains as a source reference. Its complete generation
+prompt and source hashes are preserved in [metis-guide-chibi-prompt.txt](metis-guide-chibi-prompt.txt).
+The [night guide](figures/metis-guide-night.png) changes the clothing to deep navy,
+silver gauze and restrained gold star-chart details, with a light half-up hairstyle
+and fine braid. Preserve the academy guide's face, head-to-body ratio, book and
+square waist-up framing; small natural gesture changes distinguish the night version.
+Its generation
+prompt is preserved in [metis-guide-night-prompt.txt](metis-guide-night-prompt.txt).
+The earlier [full-length gown](figures/metis-night-gown.png) and its
+[prompt](metis-night-gown-prompt.txt) remain clothing references; do not use that
+full-body image for the reading guide.
+The [initial portrait](figures/avatar.png) and its [prompt](avatar-prompt.txt) remain
+as historical face references. Third-party character images are not included.
+
+## Reading guide placement
+
+Use the three-plane mark at favicon sizes. Both guide images use the same 160 × 160
+square at the Cookbook entrance, with contain sizing and no cropping or scaling.
+On narrow screens the card stacks vertically to retain that size. Each of the three
+core tutorials includes one reading tip at a useful transition: compare the recorded
+response with a baseline, inspect the CPU run's files, or align task names before training.
+These tips use the same images at 120 × 120, reduced together to 100 × 100 on small screens.
+
+The actual page theme selects the academy guide in light mode and the night guide
+in dark mode. There is no separate outfit control or stored outfit preference.
+Containers provide `data-metis-light-src`, `data-metis-dark-src` and their localized
+`-alt` values; `data-metis-theme` records the selected theme. Images and their ordinary
+new-tab links use `data-metis-portrait` and `data-metis-full`.
+
+Keep the image background transparent and borderless, with its surrounding surface
+following the page theme. The guide stays in the document flow, never floats over
+reading content and adds no animation. The workflow has a vertical variant for narrow
+screens; diagrams should not be shrunk until their labels are unreadable.
+
+## Theme variants
+
+The [light mark](figures/mark-light.svg) is teal, the [dark mark](figures/mark-dark.svg) is silver-gray, and a [graphite monochrome export](figures/mark-ink.svg) supports neutral contexts. The site header and favicon follow the selected theme; the adaptive SVG also follows the system color scheme when opened independently. The GitHub wordmark uses its light/dark picture sources. These are project assets, not account-avatar changes.

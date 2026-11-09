@@ -1,0 +1,22 @@
+Metis Cookbook guide — approved chibi candidate, 2026-11-09
+
+Generated with the built-in Imagegen tool; the platform selects the model revision.
+Template guidance: character-design-sheet identity anchors and illustration-art-style.
+References: avatar.png (original face) and metis-guide.png (selected academic outfit).
+
+Prompt: Preserve the reference character's compact gentle face, rounded gold eyes,
+deep-teal wavy hair with mint highlights, gold feather clip and looped forelock.
+Keep head, neck and shoulders connected and upright. A lightly stylized waist-up
+Cookbook guide holds a star-chart book and presents an open palm. Ivory blouse,
+navy tailored waistcoat, teal tie and small astrolabe clasp. Feather tufts are small
+accents; no feather cape. Clean two-dimensional anime linework, limited soft shading,
+restrained palette, clear at 160px. Centered square composition, safe margins, transparent
+background. One character, no text, watermark or logo. Keep the face recognizable;
+do not elongate the face, sharpen the chin or create a large bobblehead.
+
+The illustration is used only in Cookbook navigation; primary project identity is vector.
+
+SHA256 identities:
+c84670f29aa0e8b619fcb2c1d756c187b9d9582188fb3b45f106b99ed3c20547  avatar.png
+a1146c828d02fd7adbe2ba11c0283765e6260445c92759fd6b561c3966e23a23  metis-guide.png
+6877fbe7378270b88d40e0b130308e5066482e32cd2ef70451d24e63111fb7a1  metis-guide-chibi.png

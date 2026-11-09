@@ -111,7 +111,10 @@ paths are resolved from the working directory.
 
 The `chat_json` prompt and full-vocabulary `completion` loss require
 `answer_token`. Training supports linear and cosine learning-rate schedules.
-See the [recipe reference](../cookbook/recipe-reference.md) for the full schema.
+`model.max_length` bounds the complete model input. Completion training reserves
+one token for the appended answer code; EOS is a target only. Plain prompts shorten
+the state to fit, while `chat_json` rejects prompts that exceed the remaining budget.
+See the [recipe reference](recipe-reference.md) for the full schema.
 
 ```bash
 metiscraft config show recipe.yaml
@@ -122,6 +125,8 @@ Dotted overrides are accepted, for example `metiscraft train recipe.yaml train.l
 The model fits only `train`; temperature fits only `calib`; evaluation uses
 `dev`, `test` or `eval_only`. Calibration does not guarantee reliable probabilities
 after a distribution shift.
+
+Epochs count complete micro-batches, including a rounded-up fractional epoch. The last accumulation step uses the remaining micro-batches rather than borrowing from the next epoch. `max_steps` overrides epochs and counts optimizer updates. The artifact records consumed micro-batches and sample presentations, including any distributed-sampler padding. Input and resolved configurations are saved separately; `recipe_sha256` remains the input identity.
 
 ## Inspect the run
 

@@ -50,7 +50,7 @@ def main():
             "install",
             "--index-url",
             args.index_url,
-            "hatchling>=1.24",
+            "hatchling>=1.27",
             "build",
             "twine",
         ],

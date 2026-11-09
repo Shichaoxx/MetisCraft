@@ -118,6 +118,34 @@ def test_completion_predicts_the_answer_code_then_eos(readout):
     torch.testing.assert_close(logits[:, 0], read, rtol=1e-4, atol=1e-5)
 
 
+def test_completion_reserves_answer_token_inside_max_length():
+    model, tok = tiny_decision_model("qwen3", ANSWER)
+    row = choice_row(0, "tech", state=" ".join(["red"] * 500))
+    cfg = ReadoutConfig(**ANSWER)
+    prompt = Collator(tok, cfg, 63)([row])
+    batch = Collator(tok, cfg, 64, train=True, completion=True)([row])
+    assert batch["input_ids"].shape == (1, 64)
+    assert torch.equal(batch["input_ids"][:, :-1], prompt["input_ids"])
+    assert batch["input_ids"][0, -1] == batch["answer_ids"][0, 0]
+    assert batch["answer_ids"][0, 1] == tok.eos_token_id
+    loss, count = completion_loss(model(batch), batch["answer_ids"])
+    loss.backward()
+    assert count == 1 and torch.isfinite(loss)
+
+
+def test_chat_completion_rejects_prompt_without_room_for_answer():
+    _, tok = tiny_decision_model("qwen3", CHAT)
+    row = choice_row(0)
+    cfg = ReadoutConfig(**CHAT)
+    prompt = Collator(tok, cfg, 256)([row])
+    length = prompt["input_ids"].shape[1]
+    with pytest.raises(ValueError, match="prompt needs.*max_length"):
+        Collator(tok, cfg, length, train=True, completion=True)([row])
+    batch = Collator(tok, cfg, length + 1, train=True, completion=True)([row])
+    assert batch["input_ids"].shape[1] == length + 1
+    assert torch.equal(batch["input_ids"][:, :-1], prompt["input_ids"])
+
+
 def test_completion_gradient_accumulation_matches_one_big_batch():
     model, tok = tiny_decision_model("qwen3", ANSWER)
     other = copy.deepcopy(model)
@@ -245,3 +273,80 @@ def test_ece_and_helpers():
     )
     assert decide("choice", [0.1, 0.9], ["a", "__null__"]) is None
     assert decide("multi_label", [0.6, 0.4], ["a", "b"]) == ["a"]
+
+
+def _decision_ddp_worker(rank, rendezvous):
+    from datetime import timedelta
+
+    import torch.distributed as dist
+    from torch.nn.parallel import DistributedDataParallel
+
+    from metiscraft.modeling.model import DecisionModel
+    from tests.modeling.tiny import tiny_backbone, tiny_tokenizer
+
+    torch.set_num_threads(1)
+    dist.init_process_group(
+        "gloo",
+        init_method=f"file://{rendezvous}",
+        rank=rank,
+        world_size=2,
+        timeout=timedelta(seconds=40),
+    )
+    try:
+        cases = [
+            ("candidate_scalar", False, False),
+            ("candidate_scalar", True, False),
+            ("answer_token", False, False),
+            ("candidate_scalar", False, True),
+        ]
+        for kind, tied, checkpointing in cases:
+            tokenizer = tiny_tokenizer()
+            backbone = tiny_backbone("qwen3", len(tokenizer))
+            if tied:
+                backbone.config.tie_word_embeddings = True
+                backbone.tie_weights()
+            if checkpointing:
+                backbone.gradient_checkpointing_enable()
+            readout = ReadoutConfig(kind=kind, shuffle_train=False)
+            model = DecisionModel(backbone, readout, backbone.config.hidden_size)
+            input_weight = backbone.get_input_embeddings().weight
+            output_weight = backbone.get_output_embeddings().weight
+            before_input = input_weight.detach().clone()
+            before_output = output_weight.detach().clone()
+            rows = [choice_row(i, ["billing", "tech", "refund"][i % 3]) for i in range(8)]
+            summary = train_loop(
+                model,
+                rows,
+                Collator(tokenizer, readout, 256, train=True),
+                TrainConfig(batch_size=1, grad_accum=2, max_steps=2, bf16=False),
+                ObjectiveConfig(),
+                device=torch.device("cpu"),
+                net=DistributedDataParallel(model),
+            )
+            assert summary["steps"] == 2 and summary["micro_batches"] == 4
+            assert input_weight.requires_grad
+            assert not torch.equal(before_input, input_weight)
+            if tied:
+                assert input_weight is output_weight and output_weight.requires_grad
+            elif kind == "answer_token":
+                assert output_weight.requires_grad
+                assert not torch.equal(before_output, output_weight)
+            else:
+                assert not output_weight.requires_grad
+                torch.testing.assert_close(output_weight, before_output, rtol=0, atol=0)
+            # Distinct rank-local data must still yield identical complete model states.
+            state = torch.cat([p.detach().reshape(-1) for p in model.parameters()])
+            gathered = [torch.empty_like(state) for _ in range(2)]
+            dist.all_gather(gathered, state)
+            torch.testing.assert_close(gathered[0], gathered[1], rtol=0, atol=0)
+    finally:
+        dist.destroy_process_group()
+
+
+def test_real_decision_model_cpu_ddp_updates_shared_and_used_weights(tmp_path):
+    import torch.distributed as dist
+    import torch.multiprocessing as mp
+
+    if not dist.is_available() or not dist.is_gloo_available():
+        pytest.skip("CPU gloo is unavailable")
+    mp.spawn(_decision_ddp_worker, args=(str(tmp_path / "decision-ddp"),), nprocs=2)

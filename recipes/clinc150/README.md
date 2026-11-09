@@ -52,5 +52,3 @@ ECE 用 15 个等宽分箱：choice 和 score 取 top-1 概率，noul 和 multi_
 ## 参照
 
 下面的数字来自公开报告，评测子集和协议与这里不同，只用来定位量级。
-
-- 有标签的 encoder 基线（BGE-small 向量 + 逻辑回归）准确率 0.948，零样本 Jev 0.913（作者自报，评测口径未必包含 `oos`，见[场景调研](../../docs/research/scenarios.md)）。

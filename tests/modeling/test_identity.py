@@ -105,9 +105,10 @@ def test_new_model_files_need_checksums_and_change_the_recorded_identity(base, n
 def test_source_is_recorded_even_when_written_after_the_manifest(base):
     seal(base, include_source=False)
     expected = capture_identity(base)
-    assert expected["files"]["SOURCE.json"] == hashlib.sha256(
-        (base / "SOURCE.json").read_bytes()
-    ).hexdigest()
+    assert (
+        expected["files"]["SOURCE.json"]
+        == hashlib.sha256((base / "SOURCE.json").read_bytes()).hexdigest()
+    )
     (base / "SOURCE.json").write_text('{"repo":"different/source"}')
     with pytest.raises(IntegrityError, match="changed SOURCE.json"):
         verify_identity(base, expected)

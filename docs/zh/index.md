@@ -1,41 +1,102 @@
-# MetisCraft
+# JevLike 模型工具包
 
-![MetisCraft owl avatar](../visuals/figures/avatar.png)
+<div class="home-lead" markdown="1">
 
-训练一次前向就能给出类型化判断和概率的决策模型。MetisCraft 用一份配方串起数据准备、
-训练、校准、评测与服务，支持通用 judge，也支持特定业务场景。
+训练、复现与部署 JevLike 判断模型。一份配方，连接训练、校准、评测和服务。
 
-当前预览版是 **0.1.0rc1**，已发布的包见[发行记录](https://github.com/Shichaoxx/MetisCraft/releases)。先[安装](installation.md)，再运行
-[CPU 快速上手](quickstart.md)。示例使用随机初始化的小模型和构造数据，只检查软件流程，
-不能据此判断真实模型效果。
+[开始使用](cookbook/first-model.md){ .md-button .md-button--primary }
+[浏览 Cookbook](cookbook/index.md){ .md-button }
+
+</div>
+
+## Tev1 4B 复现结果
+
+<div class="reproduction-results" markdown="1">
+
+<div markdown="1">
+
+<span class="result-label">主决策集 · 1,000 题</span>
+
+**87.3%**
+
+873/1,000 答对 · 原版 Tev1 **88.0%**
+
+</div>
+<div markdown="1">
+
+<span class="result-label">政策迁移 · 300 题</span>
+
+**99.33%**
+
+298/300 答对 · 原版 Tev1 **100%**
+
+</div>
+</div>
+
+两项预定准确率验收均达标。单种子、同一批公开开发题；原始训练历史未恢复，校准可能恶化 NLL。
+
+[复现记录与限制](../reproductions/tev1.md) · [训练配方](../../recipes/tev1/README.md)
+
+## 从一条真实响应开始
+
+> My card was stolen this morning and there are two payments on it that I did not make.
+
+<div class="decision-result" markdown="1">
+
+**security** · 转交安全团队
+
+`confidence: 0.9999995054983101` · `urgent: 0.9999314182034214`
+
+来自已记录的客服分流模型：人工构造消息、真实模型响应。概率不是准确率。
+
+[查看完整案例](cookbook/decision.md) →
+
+</div>
+
+## 从这里开始
+
+<div class="start-grid" markdown="1">
+
+<div markdown="1">
+
+### 01 · 看见效果
+
+输入如何变成带概率的判断，结果依据在哪里。
+
+[认识一次判断](cookbook/decision.md)
+
+</div>
+<div markdown="1">
+
+### 02 · 跑通流程
+
+无需 GPU 或下载权重，完成第一个 CPU 示例。
+
+[跑通第一个模型](cookbook/first-model.md)
+
+</div>
+<div markdown="1">
+
+### 03 · 接入任务
+
+替换数据和基座，沿用同一条训练与部署路径。
+
+[接入自己的任务](cookbook/own-task.md)
+
+</div>
+</div>
+
+## 判断有类型，过程有依据
+
+是非、选择、等级和多标签通过 Python／批量预测使用。HTTP `/v1/systemone` 支持前三种。
+
+[配方与真实结果](limitations.md) · [数据格式](data.md) · [训练与校准](training.md) · [预测与服务](serving.md)
 
 <picture>
-  <source media="(max-width: 600px)" srcset="../visuals/figures/pipeline-mobile.svg">
-  <img alt="从有监督数据到可部署的决策模型" src="../visuals/figures/pipeline.svg">
+  <source media="(max-width: 600px)" srcset="../visuals/figures/pipeline-mobile-zh.svg">
+  <img src="../visuals/figures/pipeline-zh.svg" alt="数据、训练、校准、评测与服务">
 </picture>
 
-## 支持哪些判断？
+## 理解计算机制
 
-| 类型 | 输出 | Record API | HTTP `/v1/systemone` |
-|---|---|---|---|
-| `noul` | 是／真的概率 | 支持 | 支持 |
-| `choice` | 一个选项及选项概率分布 | 支持 | 支持 |
-| `score` | 有序等级的概率分布 | 支持 | 支持 |
-| `multi_label` | 各候选独立的概率 | 支持 | 不支持 |
-
-提供两种读出：答案 token logits 适用于 `noul`、`choice`、`score`；逐候选标量头支持全部
-四种类型。LoRA、全参微调与冻结基座可通过配置选择。温度校准只拟合独立的校准集，
-评测同时报告校准前后的结果。
-
-## 从哪里开始？
-
-- [快速上手](quickstart.md)：在 CPU 上完成导入、训练、评测与服务。
-- [接入自己的数据](data.md)：直接导入有监督 JSONL，无需修改数据注册表。
-- [训练](training.md)：准备经过校验的本地基座，配置训练配方。
-- [服务](serving.md)：加载产物，保持任务级校准路由一致。
-- [当前边界](limitations.md)：功能范围与已有证据的限制。
-
-深入说明见 [cookbook](../cookbook/README.md)、[读出笔记](../readouts/README.md)和
-[研究支持矩阵](../support-matrix.md)。项目进度统一记录在[状态页](../status.md)。
-
-[English](../en/index.md)
+[原理与张量解析](tensor-analysis/index.md)从 System One 契约展开答案 token 和标量头计算；[五分钟技术导览](tensor-analysis/walkthrough.md)串联矢量图、数值例与源码依据。

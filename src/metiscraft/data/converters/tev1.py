@@ -33,7 +33,7 @@ from metiscraft.data.store import read_jsonl
 @register
 class Tev1Records(Converter):
     name = "tev1"
-    version = "1"
+    version = "2"
 
     def iter_split(self, ctx: ConverterContext, split: str) -> Iterator[dict[str, Any]]:
         build, _, part = split.rpartition("/")
@@ -68,7 +68,7 @@ class Tev1Records(Converter):
             input=Input(query=row["question"], context={"state": row["state"]}),
             question=question,
             group=Group(id=row["group_id"]),
-            supervision=Supervision(kind=question.type, labels=label),
+            supervision=Supervision(has_hard_label=True, kind=question.type, labels=label),
             provenance=Provenance(
                 **provenance(ctx, self, split, row["id"], content_hash(row["state"]), extra=extra)
             ),

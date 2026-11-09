@@ -21,7 +21,8 @@ import torch.distributed as dist
 from torch.utils.data import DataLoader, DistributedSampler, RandomSampler
 
 from metiscraft.config import ObjectiveConfig, TrainConfig
-from metiscraft.judgments import batch_loss, completion_loss
+from metiscraft.data.contract import Record
+from metiscraft.judgments import batch_loss, completion_loss, target_vector
 from metiscraft.train.collate import Collator, to_device
 
 
@@ -58,7 +59,7 @@ def pos_weight_for(
         if row["question"]["type"] != "multi_label":
             continue
         k = len(row.get("candidates") or [])
-        p = len(row["supervision"].get("labels") or [])
+        p = sum(target_vector(Record.model_validate(row)))
         pos, neg = pos + p, neg + k - p
     if pos == 0:
         return None
@@ -126,8 +127,16 @@ def train_loop(
     else:
         sampler = RandomSampler(rows, generator=torch.Generator().manual_seed(cfg.seed))
     loader = DataLoader(rows, batch_size=cfg.batch_size, sampler=sampler, collate_fn=collator)
-    steps_per_epoch = max(1, math.ceil(len(loader) / cfg.grad_accum))
-    total = cfg.max_steps or max(1, math.ceil(steps_per_epoch * cfg.epochs))
+    length = len(loader)
+    if not length:
+        raise ValueError("training requires at least one micro-batch")
+    # Epoch budgets count micro-batches, including the final fractional epoch.
+    budget = None if cfg.max_steps is not None else math.ceil(length * cfg.epochs)
+    if budget is None:
+        total = cfg.max_steps
+    else:
+        full, tail = divmod(budget, length)
+        total = full * math.ceil(length / cfg.grad_accum) + math.ceil(tail / cfg.grad_accum)
 
     from transformers import get_scheduler
 
@@ -143,53 +152,53 @@ def train_loop(
     if pos_weight is not None:
         pos_weight = pos_weight.to(device)
     use_bf16 = cfg.bf16 and device.type == "cuda"
-    log = open(log_path, "a", encoding="utf-8") if (log_path and rank == 0) else None
-
     model.train()
     start = time.monotonic()
-    epoch, step = 0, 0
-    batches = iter(loader)
+    epoch, step, consumed, presentations = 0, 0, 0, 0
     last: dict[str, Any] = {}
-    while step < total:
-        micro = []
-        while len(micro) < cfg.grad_accum:
-            try:
-                micro.append(next(batches))
-            except StopIteration:
-                epoch += 1
-                if isinstance(sampler, DistributedSampler):
-                    sampler.set_epoch(epoch)
-                batches = iter(loader)
-        loss_sum_total, n_local = accumulate(
-            net,
-            micro,
-            objective,
-            device=device,
-            world=world,
-            use_bf16=use_bf16,
-            pos_weight=pos_weight,
-        )
-        grad_norm = torch.nn.utils.clip_grad_norm_(params, cfg.max_grad_norm)
-        optimizer.step()
-        scheduler.step()
-        optimizer.zero_grad(set_to_none=True)
-        step += 1
-        last = {
-            "step": step,
-            "epoch": epoch,
-            "loss": loss_sum_total / max(n_local, 1),
-            "grad_norm": float(grad_norm),
-            "lr": scheduler.get_last_lr()[0],
-            "elapsed_s": round(time.monotonic() - start, 2),
-        }
-        if log is not None and (step % cfg.logging_steps == 0 or step == total):
-            log.write(json.dumps(last) + "\n")
-            log.flush()
-    if log is not None:
-        log.close()
+    log_context = open(log_path, "a", encoding="utf-8") if log_path and rank == 0 else nullcontext()
+    with log_context as log:
+        while step < total:
+            if isinstance(sampler, DistributedSampler):
+                sampler.set_epoch(epoch)
+            batches = iter(loader)
+            remaining = length if budget is None else min(length, budget - consumed)
+            while remaining and step < total:
+                micro = [next(batches) for _ in range(min(cfg.grad_accum, remaining))]
+                consumed += len(micro)
+                remaining -= len(micro)
+                loss_sum_total, n_local = accumulate(
+                    net,
+                    micro,
+                    objective,
+                    device=device,
+                    world=world,
+                    use_bf16=use_bf16,
+                    pos_weight=pos_weight,
+                )
+                presentations += n_local * world
+                grad_norm = torch.nn.utils.clip_grad_norm_(params, cfg.max_grad_norm)
+                optimizer.step()
+                scheduler.step()
+                optimizer.zero_grad(set_to_none=True)
+                step += 1
+                last = {
+                    "step": step,
+                    "epoch": epoch,
+                    "loss": loss_sum_total / max(n_local, 1),
+                    "grad_norm": float(grad_norm),
+                    "lr": scheduler.get_last_lr()[0],
+                    "elapsed_s": round(time.monotonic() - start, 2),
+                }
+                if log is not None and (step % cfg.logging_steps == 0 or step == total):
+                    log.write(json.dumps(last, allow_nan=False) + "\n")
+                    log.flush()
+            epoch += 1
     return {
-        "steps": total,
-        "epochs_seen": epoch + 1,
+        "steps": step,
+        "epochs_seen": last["epoch"] + 1,
+        "micro_batches": consumed,
+        "sample_presentations": presentations,
         "last": last,
         "pos_weight": None if pos_weight is None else float(pos_weight),
     }

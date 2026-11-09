@@ -8,6 +8,9 @@ from metiscraft.evaluate.metrics import ECE_NOTE
 
 METRIC_ORDER = [
     "n",
+    "n_hard",
+    "n_soft",
+    "n_hard_unknown",
     "accuracy",
     "macro_f1",
     "micro_f1",
@@ -17,6 +20,7 @@ METRIC_ORDER = [
     "nll",
     "brier",
     "brier_soft",
+    "nll_soft",
     "ece",
 ]
 
@@ -24,7 +28,7 @@ METRIC_ORDER = [
 def _fmt(name: str, value: Any) -> str:
     if value is None:
         return "-"
-    if name == "n":
+    if name in {"n", "n_hard", "n_soft", "n_hard_unknown"}:
         return str(int(value))
     if isinstance(value, float) and value != value:  # nan
         return "-"
@@ -40,6 +44,7 @@ def render_report(header: dict[str, Any], results: dict[str, dict[str, dict[str,
         "readout",
         "finetune",
         "recipe_sha256",
+        "resolved_config_sha256",
         "git",
         "calibration",
     ):
@@ -60,5 +65,11 @@ def render_report(header: dict[str, Any], results: dict[str, dict[str, dict[str,
                 if m is None:
                     continue
                 lines.append(f"| {method} | " + " | ".join(_fmt(c, m.get(c)) for c in cols) + " |")
+            lines.append("")
+            for method, by_kind in methods.items():
+                reasons = by_kind.get(kind, {}).get("undefined_reasons", {})
+                if reasons:
+                    detail = "; ".join(f"{key}: {value}" for key, value in reasons.items())
+                    lines.append(f"- {method}: {detail}")
             lines.append("")
     return "\n".join(lines)

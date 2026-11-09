@@ -51,5 +51,4 @@ ECE 用 15 个等宽分箱：choice 和 score 取 top-1 概率，noul 和 multi_
 
 下面的数字来自公开报告，评测子集和协议与这里不同，只用来定位量级。
 
-- encoder 微调强基线：官方 validation 准确率 0.884（作者自报，见[调研](../../docs/research/decision-model-sota.md)）。这里的 test 就是官方 validation，可以直接对照。
 - jebadiah 4B-v2：300 题子集准确率 0.847（随权重公开的逐题记录，见[支持矩阵](../../docs/support-matrix.md)）。

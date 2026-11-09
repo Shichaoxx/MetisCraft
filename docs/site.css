@@ -10,14 +10,80 @@
 .md-typeset h2 { font-weight: 650; letter-spacing: -.02em; }
 .md-typeset { line-height: 1.75; }
 .md-typeset img { border-radius: .6rem; }
-.md-typeset img[alt="MetisCraft owl avatar"] { width: 8rem; float: right; margin: 0 0 1rem 1rem; }
+.md-typeset .cookbook-guide {
+  display: grid;
+  grid-template-columns: 160px minmax(0, 1fr);
+  gap: 1.5rem;
+  align-items: center;
+  margin: 1.4rem 0 1.8rem;
+  padding: 1.25rem 1.5rem;
+  border: 1px solid var(--md-default-fg-color--lightest);
+  border-radius: .65rem;
+  background: var(--md-code-bg-color);
+}
+.md-typeset .cookbook-guide .cookbook-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 160px;
+  height: 160px;
+  margin: 0;
+}
+.md-typeset .cookbook-avatar img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
+  object-position: center top;
+  margin: 0;
+}
+.md-typeset .cookbook-guide-copy { min-width: 0; }
+.md-typeset .cookbook-guide h2 { margin: 0 0 .6rem; font-size: 1.1rem; }
+.md-typeset .cookbook-guide-copy > p { margin: 0; }
+.md-typeset .cookbook-paths { margin-bottom: 1.8rem; }
+.md-typeset .cookbook-paths > div { display: flex; flex-direction: column; }
+.md-typeset .cookbook-paths > div > p:last-child { margin-top: auto; padding-top: .5rem; }
 .md-typeset table:not([class]) { font-size: .72rem; }
-.md-header__button.md-logo img { background: #f6faf9; border-radius: 5px; padding: 2px; }
+.md-header__button.md-logo img { border-radius: .25rem; }
 @media (max-width: 600px) {
-  .md-typeset img[alt="MetisCraft owl avatar"] { width: 5.5rem; }
+  .md-typeset .cookbook-guide { grid-template-columns: 88px minmax(0, 1fr); gap: 1rem; padding: 1rem; }
+  .md-typeset .cookbook-guide .cookbook-avatar { width: 88px; height: 88px; }
+  .md-typeset .cookbook-guide h2 { font-size: 1rem; }
+  .md-typeset .cookbook-guide-copy > p { font-size: .8rem; line-height: 1.65; }
   .md-typeset h1 { font-size: 1.8rem; }
 }
 @media (max-width: 600px) {
   .md-typeset table:not([class]) { min-width: 32rem; }
   .md-typeset table:not([class]) td:first-child code { white-space: nowrap; }
+}
+
+/* Product pages use the same neutral, teal and warm-gold hierarchy as the README. */
+.home-lead { max-width: 48rem; font-size: 1.1rem; margin-bottom: 2rem; }
+.md-typeset .md-button { border-radius: .35rem; font-size: .85rem; margin: .25rem .5rem .25rem 0; }
+.decision-result { border-left: 4px solid var(--md-primary-fg-color); padding: 1rem 1.25rem; background: var(--md-code-bg-color); border-radius: 0 .5rem .5rem 0; }
+.decision-result > :first-child { font-size: 1.25rem; margin-top: 0; }
+.decision-result > :last-child { margin-bottom: 0; }
+.start-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 1rem; margin: 1.5rem 0; }
+.start-grid > div { padding: 1.1rem; border: 1px solid var(--md-default-fg-color--lightest); border-radius: .5rem; }
+.start-grid h3 { margin-top: 0; font-size: 1rem; }
+.start-grid > div > :last-child { margin-bottom: 0; }
+@media (max-width: 760px) { .start-grid { grid-template-columns: minmax(0,1fr); } }
+
+@media (max-width: 360px) {
+  .md-typeset .cookbook-guide { grid-template-columns: 72px minmax(0, 1fr); gap: .75rem; }
+  .md-typeset .cookbook-guide .cookbook-avatar { width: 72px; height: 72px; }
+}
+
+/* Reported model results stay visible before the usage example. */
+.reproduction-results { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; margin: 1rem 0; }
+.reproduction-results > div { padding: 1rem 1.25rem; border: 1px solid var(--md-default-fg-color--lightest); border-top: 3px solid var(--md-primary-fg-color); border-radius: .5rem; background: var(--md-code-bg-color); }
+.reproduction-results .result-label { font-size: .8rem; color: var(--md-default-fg-color--light); }
+.reproduction-results > div > p { margin: 0; }
+.reproduction-results > div > p:nth-child(2) { margin: .25rem 0 .4rem; font-size: 2rem; line-height: 1.2; color: var(--md-primary-fg-color); }
+.reproduction-results > div > p:last-child { font-size: .75rem; }
+.start-grid > div { display: flex; flex-direction: column; }
+.start-grid > div > p:last-child { margin-top: auto; padding-top: .5rem; }
+@media (max-width: 600px) {
+  .reproduction-results { grid-template-columns: minmax(0, 1fr); }
 }

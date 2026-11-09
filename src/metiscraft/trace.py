@@ -30,7 +30,8 @@ COMMERCIAL_NEUTRAL_TERMS = {"attribution", "share_alike", "pii_possible", "soft_
 def write_json(path: Path, obj: Any) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(
-        json.dumps(obj, indent=2, ensure_ascii=False, default=str) + "\n", encoding="utf-8"
+        json.dumps(obj, indent=2, ensure_ascii=False, default=str, allow_nan=False) + "\n",
+        encoding="utf-8",
     )
 
 

@@ -199,3 +199,25 @@ def test_chat_json_completion_run_reloads_with_its_prompt(roots):
     rows = resolve_version(roots["data"], "banking77").load("dev")
     for result in predictor.predict_records(rows):
         assert result["raw_scores"] == pytest.approx(saved[result["id"]]["scores"], abs=1e-5)
+
+
+def test_raw_and_resolved_configuration_identities_are_recomputable(roots, monkeypatch):
+    from metiscraft.cli import main
+    from metiscraft.config import Paths, load_recipe
+
+    for field, value in roots.items():
+        monkeypatch.setenv(f"METISCRAFT_{field.upper()}_ROOT", str(value))
+    cfg = recipe(roots, "banking77", {"kind": "candidate_scalar"})
+    cfg = cfg.model_copy(update={"paths": Paths()})
+    run = run_recipe(cfg)
+    raw = load_recipe(run / "config.raw.yaml")
+    resolved = load_recipe(run / "config.yaml")
+    assert raw.sha256() == cfg.sha256()
+    assert raw.sha256() == (run / "config.raw.sha256").read_text().strip()
+    assert resolved.sha256() == (run / "config.sha256").read_text().strip()
+    assert raw.sha256() != resolved.sha256()
+    assert run.name.endswith(raw.sha256()[:8])
+    meta = read_artifact_meta(run / "artifact")
+    assert meta["recipe_sha256"] == raw.sha256()
+    assert meta["resolved_config_sha256"] == resolved.sha256()
+    assert main(["config", "show", str(run / "config.raw.yaml")]) == 0

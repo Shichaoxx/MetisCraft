@@ -97,7 +97,9 @@ def build_model(recipe: Recipe, paths) -> tuple[DecisionModel, Any, dict[str, An
 
 
 def run_recipe(recipe: Recipe, *, model_factory=build_model) -> Path:
+    raw_recipe = recipe
     paths = resolve_paths(recipe.paths)
+    recipe = recipe.model_copy(update={"paths": paths})
     data_root = require_path(paths, "data_root")
     runs_root = require_path(paths, "runs_root")
     dv = resolve_version(data_root, recipe.data.dataset, recipe.data.version)
@@ -105,14 +107,20 @@ def run_recipe(recipe: Recipe, *, model_factory=build_model) -> Path:
     validate_usage(recipe, dv)
     rank, world, device = init_distributed()
     data_meta = dv.meta()
-    run = _shared_run_dir(rank, world, lambda: new_run_dir(runs_root, recipe.task, recipe.sha256()))
+    run = _shared_run_dir(
+        rank, world, lambda: new_run_dir(runs_root, recipe.task, raw_recipe.sha256())
+    )
     if rank == 0:
-        resolved = recipe.model_copy(update={"paths": paths})
         (run / "config.yaml").write_text(
-            yaml.safe_dump(resolved.to_dict(), sort_keys=False, allow_unicode=True),
+            yaml.safe_dump(recipe.to_dict(), sort_keys=False, allow_unicode=True),
             encoding="utf-8",
         )
         (run / "config.sha256").write_text(recipe.sha256() + "\n", encoding="utf-8")
+        (run / "config.raw.yaml").write_text(
+            yaml.safe_dump(raw_recipe.to_dict(), sort_keys=False, allow_unicode=True),
+            encoding="utf-8",
+        )
+        (run / "config.raw.sha256").write_text(raw_recipe.sha256() + "\n", encoding="utf-8")
         git, diff = git_info()
         write_json(run / "git.json", git)
         if diff:
@@ -189,7 +197,8 @@ def run_recipe(recipe: Recipe, *, model_factory=build_model) -> Path:
                 "license": data_meta.get("license"),
                 "terms": terms,
             },
-            "recipe_sha256": recipe.sha256(),
+            "recipe_sha256": raw_recipe.sha256(),
+            "resolved_config_sha256": recipe.sha256(),
             "train": summary,
             "commercial_use": commercial_use(terms),
         }
@@ -257,7 +266,8 @@ def evaluate_run(
         "base": recipe.model.base,
         "readout": f"{recipe.readout.kind} ({recipe.readout.layout})",
         "finetune": recipe.model.finetune.kind,
-        "recipe_sha256": recipe.sha256(),
+        "recipe_sha256": read_artifact_meta(artifact)["recipe_sha256"],
+        "resolved_config_sha256": recipe.sha256(),
         "calibration": None if calibration is None else calibration["temperatures"],
     }
     git = run / "git.json"

@@ -98,6 +98,8 @@ def write_jsonl(path: Path, rows: Iterable[dict[str, Any]]) -> int:
 
 
 def read_jsonl(path: Path, limit: int | None = None) -> Iterator[dict[str, Any]]:
+    if limit is not None and (isinstance(limit, bool) or not isinstance(limit, int) or limit <= 0):
+        raise ValueError("limit must be a positive integer")
     with open(path, encoding="utf-8") as fh:
         for i, line in enumerate(fh):
             if limit is not None and i >= limit:

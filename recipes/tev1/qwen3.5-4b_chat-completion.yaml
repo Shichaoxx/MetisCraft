@@ -1,6 +1,6 @@
 # Follow-up to the 2B reproduction, using the same objective and effective batch.
 # Base: Qwen/Qwen3.5-4B @ 851bf6e806efd8d0a36b00ddf55e13ccb7b8cd0a.
-# Prepare and seal this exact version before running; no 4B result is claimed yet.
+# Prepare and seal this exact version before running; recorded 4B results and protocol limits are documented in docs/reproductions/tev1.md.
 task: tev1-4b
 data: {dataset: tev1, version: rev-1dde7782}
 model:

@@ -88,6 +88,8 @@ class Supervision(_Strict):
     kind: JudgmentType
     labels: bool | int | str | list[str] | None = None
     soft: list[float] | None = None
+    # None preserves legacy records; explicit flags survive exclude_none serialization.
+    has_hard_label: bool | None = Field(default=None, strict=True)
 
 
 class Provenance(_Strict):
@@ -113,6 +115,17 @@ class Record(_Strict):
     group: Group | None = None
     supervision: Supervision | None = None
     provenance: Provenance | None = None
+
+    def hard_label_status(self) -> bool | None:
+        if self.supervision is None:
+            return False
+        return hard_label_status(
+            self.question.type,
+            self.supervision.labels,
+            self.supervision.soft,
+            allow_null=self.question.allow_null,
+            declared=self.supervision.has_hard_label,
+        )
 
     def target_size(self) -> int:
         q = self.question
@@ -147,7 +160,11 @@ class Record(_Strict):
                 math.fsum(sup.soft), 1.0, rel_tol=0.0, abs_tol=1e-6
             ):
                 raise ValueError("choice/score soft probabilities must sum to 1 (tolerance 1e-6)")
-        _check_labels(self, sup.labels)
+        if sup.has_hard_label is False:
+            if sup.soft is None or sup.labels is not None:
+                raise ValueError("has_hard_label=false requires soft and no hard label")
+        else:
+            _check_labels(self, sup.labels)
         return self
 
 
@@ -156,7 +173,11 @@ def _check_labels(record: Record, labels: Any) -> None:
     if labels is None:
         if q.type == "choice" and q.allow_null:
             return
-        if record.supervision is not None and record.supervision.soft is not None:
+        if (
+            record.supervision is not None
+            and record.supervision.soft is not None
+            and record.supervision.has_hard_label is not True
+        ):
             return
         raise ValueError("supervision needs labels or soft")
     if q.type == "noul":
@@ -178,6 +199,28 @@ def _check_labels(record: Record, labels: Any) -> None:
         unknown = set(labels) - ids
         if unknown:
             raise ValueError(f"multi_label labels are not candidates: {sorted(unknown)}")
+
+
+def hard_label_status(
+    kind: str,
+    labels: Any,
+    soft: list[float] | None,
+    *,
+    allow_null: bool = False,
+    declared: bool | None = None,
+) -> bool | None:
+    """Whether hard gold is known; None is an irrecoverably ambiguous legacy null.
+
+    Old writers omitted None values. A null-capable choice with soft supervision
+    therefore cannot tell an explicit hard null from absent hard supervision.
+    """
+    if declared is not None:
+        return declared
+    if labels is not None:
+        return True  # False and [] are valid labels, not missing values.
+    if kind == "choice" and allow_null:
+        return True if soft is None else None
+    return False
 
 
 _WHITESPACE = re.compile(r"\s+")

@@ -91,38 +91,56 @@ def parse_request(request: dict[str, Any]) -> tuple[Any, dict[str, Question], di
     return request["state"], parsed, instructions
 
 
-def _argmax(values: list[float]) -> int:
-    return max(range(len(values)), key=values.__getitem__)
-
-
 def supervision_from_gold(question: Question, gold: dict[str, Any]) -> Supervision:
-    """Read a gold answer written in the official response shape."""
+    """Preserve explicit hard gold; probabilities alone never invent hard truth."""
     probs = gold.get("probabilities")
+    has_label = "label" in gold
     label = gold.get("label")
     if question.type == "noul":
         p = gold.get("probability_true", gold.get("probability"))
         if p is None and isinstance(probs, dict):
             p = probs.get("true")
-        if label is None:
-            if p is None:
-                raise JevFormatError("noul gold needs a label or probability_true")
-            value = float(p) >= 0.5
+        if not has_label and p is None:
+            raise JevFormatError("noul gold needs a label or probability_true")
+        if has_label:
+            if isinstance(label, bool):
+                value = label
+            elif isinstance(label, str) and label.strip().lower() in {"true", "false"}:
+                value = label.strip().lower() == "true"
+            else:
+                raise JevFormatError("noul gold label must be a boolean or true/false")
         else:
-            value = label if isinstance(label, bool) else str(label).strip().lower() == "true"
-        return Supervision(kind="noul", labels=value, soft=None if p is None else [float(p)])
+            value = None
+        return Supervision(
+            has_hard_label=has_label,
+            kind="noul",
+            labels=value,
+            soft=None if p is None else [float(p)],
+        )
     ids = [o.id for o in (question.options if question.type == "choice" else question.levels) or []]
     soft = [float(probs.get(i, 0.0)) for i in ids] if isinstance(probs, dict) else None
+    if not has_label and soft is None:
+        raise JevFormatError(f"{question.type} gold needs a label or probabilities")
     if question.type == "choice":
-        if label is None:
-            if soft is None:
-                raise JevFormatError("choice gold needs a label or probabilities")
-            label = ids[_argmax(soft)]
-        return Supervision(kind="choice", labels=str(label), soft=soft)
-    if label is None:
-        if soft is None:
-            raise JevFormatError("score gold needs a label or probabilities")
-        label = _argmax(soft)
-    return Supervision(kind="score", labels=int(label), soft=soft)
+        return Supervision(
+            has_hard_label=has_label,
+            kind="choice",
+            labels=str(label) if label is not None else None,
+            soft=soft,
+        )
+    if has_label:
+        if isinstance(label, bool) or not isinstance(label, (int, str)):
+            raise JevFormatError("score gold label must be an integer level index")
+        try:
+            label = int(label)
+        except ValueError as exc:
+            raise JevFormatError("score gold label must be an integer level index") from exc
+    return Supervision(
+        has_hard_label=has_label,
+        kind="score",
+        labels=label if has_label else None,
+        soft=soft,
+    )
 
 
 def request_to_records(

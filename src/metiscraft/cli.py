@@ -10,6 +10,16 @@ from collections.abc import Sequence
 from metiscraft import __version__
 
 
+def _positive_int(value: str) -> int:
+    try:
+        result = int(value)
+    except ValueError as exc:
+        raise argparse.ArgumentTypeError("expected a positive integer") from exc
+    if result <= 0:
+        raise argparse.ArgumentTypeError("expected a positive integer")
+    return result
+
+
 def _cmd_version(args: argparse.Namespace) -> int:
     print(__version__)
     return 0
@@ -49,7 +59,7 @@ def _cmd_config_show(args: argparse.Namespace) -> int:
     recipe = load_recipe(args.recipe, args.overrides)
     recipe = recipe.model_copy(update={"paths": resolve_paths(recipe.paths)})
     print(json.dumps(recipe.to_dict(), indent=2, ensure_ascii=False))
-    print(f"# sha256 {recipe.sha256()}", file=sys.stderr)
+    print(f"# resolved_config_sha256 {recipe.sha256()}", file=sys.stderr)
     return 0
 
 
@@ -156,12 +166,20 @@ def _cmd_predict(args: argparse.Namespace) -> int:
     rows = list(read_jsonl(Path(args.input)))
     out = open(args.output, "w", encoding="utf-8") if args.output else sys.stdout
     try:
-        requests = [r for r in rows if "questions" in r]
-        records = [r for r in rows if "questions" not in r]
-        for request in requests:
-            out.write(json.dumps(predictor.answer_request(request), ensure_ascii=False) + "\n")
-        for result in predictor.predict_records(records) if records else []:
-            out.write(json.dumps(result, ensure_ascii=False) + "\n")
+        # Batch consecutive records while preserving one output per input line.
+        start = 0
+        while start < len(rows):
+            if "questions" in rows[start]:
+                results = [predictor.answer_request(rows[start])]
+                stop = start + 1
+            else:
+                stop = start + 1
+                while stop < len(rows) and "questions" not in rows[stop]:
+                    stop += 1
+                results = predictor.predict_records(rows[start:stop])
+            for result in results:
+                out.write(json.dumps(result, ensure_ascii=False, allow_nan=False) + "\n")
+            start = stop
     finally:
         if out is not sys.stdout:
             out.close()
@@ -213,7 +231,7 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("dataset", help="registered dataset name")
     p.add_argument("--version", help="dataset version (default: the only one)")
     p.add_argument("--split", nargs="+", default=["dev"], help="splits to evaluate")
-    p.add_argument("--max-eval", type=int, help="cap rows per split")
+    p.add_argument("--max-eval", type=_positive_int, help="cap rows per split")
     p.add_argument("--calibration", help="calibration directory (default: the run's)")
     p.add_argument("--output", help="also write the metrics as JSON here")
     p.add_argument("--base-path", help="verified base directory after a path migration")
@@ -264,13 +282,15 @@ def build_parser() -> argparse.ArgumentParser:
             q.add_argument("name", help="registered dataset name")
         if cmd == "prepare":
             q.add_argument(
-                "--max-rows", type=int, help="cap rows per upstream split (subset version)"
+                "--max-rows",
+                type=_positive_int,
+                help="cap rows per upstream split (subset version)",
             )
         if cmd in ("verify", "show"):
             q.add_argument("--version", help="dataset version (default: the only one)")
         if cmd == "show":
             q.add_argument("--split", default="dev")
-            q.add_argument("-n", type=int, default=2)
+            q.add_argument("-n", type=_positive_int, default=2)
         q.set_defaults(func=func)
 
     return parser

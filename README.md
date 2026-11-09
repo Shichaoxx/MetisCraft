@@ -1,90 +1,80 @@
 <p align="center">
-  <img src="docs/visuals/figures/avatar.png" alt="MetisCraft owl character" width="176">
-</p>
-<p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="docs/visuals/figures/wordmark-dark.svg">
-    <img src="docs/visuals/figures/wordmark-light.svg" alt="MetisCraft" width="420">
+    <img src="docs/visuals/figures/wordmark-light.svg" alt="MetisCraft" width="320">
   </picture>
-  <br><b>Train. Calibrate. Decide.</b>
+  <br><b>A toolkit for JevLike decision models.</b>
 </p>
 
 <p align="center">
   <a href="https://github.com/Shichaoxx/MetisCraft/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/Shichaoxx/MetisCraft/actions/workflows/ci.yml/badge.svg?branch=main"></a>
   <a href="LICENSE"><img alt="Apache 2.0" src="https://img.shields.io/badge/license-Apache--2.0-087f78"></a>
   <a href="docs/en/installation.md"><img alt="Python 3.10 and 3.11" src="https://img.shields.io/badge/python-3.10%20%7C%203.11-243438"></a>
-  <a href="CHANGELOG.md"><img alt="Release candidate" src="https://img.shields.io/badge/preview-0.1.0rc1-bd8c36"></a>
+  <a href="CHANGELOG.md"><img alt="0.1.0rc1 public preview" src="https://img.shields.io/badge/preview-0.1.0rc1-bd8c36"></a>
 </p>
 
 <p align="center">
   <b>English</b> · <a href="README_zh.md">简体中文</a><br>
-  <a href="https://shichaoxx.github.io/MetisCraft/en/quickstart/">Quickstart</a> ·
+  <a href="docs/en/cookbook/first-model.md">Get started</a> ·
+  <a href="docs/en/cookbook/index.md">Cookbook</a> ·
+  <a href="docs/en/tensor-analysis/index.md">Concepts & Tensors</a> ·
   <a href="https://shichaoxx.github.io/MetisCraft/en/">Documentation</a> ·
-  <a href="docs/support-matrix.md">Ecosystem</a> ·
   <a href="CONTRIBUTING.md">Contribute</a>
 </p>
 
-**Build decision models for your own tasks.** MetisCraft trains Jev-style System One models that answer typed questions in a forward pass. A recipe connects your data, model, readout, training, calibration, evaluation and deployment.
+**Train, reproduce and deploy JevLike models.** One toolkit connects training, calibration, evaluation and serving. Reproduce an open recipe or build a decision model for your own labeled task.
 
-> **0.1.0rc1 · Public preview.** APIs may change. Check [release availability](https://github.com/Shichaoxx/MetisCraft/releases), [validation boundaries](docs/en/limitations.md) and [project status](docs/status.md).
+## Tev1 4B, reproduced with MetisCraft
 
-## What does a decision look like?
+| Evaluation set | MetisCraft 4B | Original Tev1 4B | Difference |
+|---|---:|---:|---:|
+| Main decisions · 1,000 questions | **87.3% · 873/1,000** | 88.0% | −0.70 pp |
+| Policy transfer · 300 questions | **99.33% · 298/300** | 100% | −0.67 pp |
 
-Give the model a situation and a question with a defined answer space. Get a structured decision and probabilities you can evaluate and calibrate.
+**Both predeclared accuracy checks passed.** Single seed, the same public development questions; the original training history was not recovered, and calibration can worsen NLL. [Reproduction record and limits](docs/en/reproductions/tev1.md) · [Training recipe](recipes/tev1/README_en.md).
+
+## One message. Two decisions.
+
+> “My card was stolen this morning and there are two payments on it that I did not make.”
+
+An existing customer-routing model selects **security** and answers whether the message is urgent. This is an actual response excerpt from run `20261105-101057-30757bf7`, on a constructed message. A probability is not an accuracy score.
 
 ```json
 {
-  "state": "My card was stolen and I see two payments I did not make.",
-  "questions": {
-    "queue": {
-      "type": "choice",
-      "instructions": "Which team should handle this message?",
-      "criteria": {"security": "Lost cards and unrecognised payments", "support": "General account help"}
-    }
-  }
+  "queue": {"choice": "security", "confidence": 0.9999995054983101},
+  "urgent": {"noul": 0.9999314182034214}
 }
 ```
 
-The response contains `answers.queue.choice`, `confidence` and a probability for each option. The question defines the decision; your data teaches the model how to answer it. See a [recorded customer-routing example](recipes/banking77_support/README.md).
+[Full request and response](docs/en/cookbook/decision.md) · [Recipe and test results](recipes/banking77_support/README_en.md). On the same run, queue accuracy is **97.8%**, versus a **24.7%** prior baseline (n=3,080). This is a teaching scenario, not a production deployment.
 
-<picture>
-  <source media="(max-width: 600px)" srcset="docs/visuals/figures/judgments-mobile.svg">
-  <img src="docs/visuals/figures/judgments.svg" alt="Four judgment types with illustrative outputs">
-</picture>
+## Four kinds of judgment. One workflow.
 
-## What you can build
+| Judgment | A question you can ask | Python / batch | HTTP |
+|---|---|:---:|:---:|
+| Yes/no `noul` | Is this message urgent? | ✓ | ✓ |
+| Choice `choice` | Which team should handle it? | ✓ | ✓ |
+| Ordered score `score` | What severity level applies? | ✓ | ✓ |
+| Multiple labels `multi_label` | Which topics are present? | ✓ | — |
 
-| Capability | Available in the preview |
-|---|---|
-| Typed judgments | Yes/no, choice, ordered score and multiple labels through the Record API |
-| Composable readouts | Answer-token logits or a candidate scalar head; LoRA, full or frozen backbones |
-| Your own data | Import local Record JSONL with explicit train/calibration/evaluation splits |
-| Calibration and evaluation | Task/type temperatures; NLL, Brier, ECE and task metrics; visible fallback selection |
-| Recorded runs | Configuration, data version, source revision when available, environment and verified base identity |
-| Serving | Python/batch prediction for all four types; `/v1/systemone` for yes/no, choice and score |
+Choose answer-token logits or a candidate scalar head in your recipe. Train with LoRA, full or frozen backbones. Artifacts record configuration, data versions, base identity and evaluation results. Calibration uses held-out data; its benefit must be measured on your target distribution.
 
 <picture>
   <source media="(max-width: 600px)" srcset="docs/visuals/figures/pipeline-mobile.svg">
-  <img alt="From data to training, calibration, evaluation and serving" src="docs/visuals/figures/pipeline.svg">
+  <img src="docs/visuals/figures/pipeline.svg" alt="Data, train, calibrate, evaluate, serve">
 </picture>
 
-Calibration is fitted on held-out data. Its benefit must be measured on your evaluation distribution; it does not guarantee reliable confidence under distribution shift.
+## Get started
 
-## Install
-
-Use Python 3.10 or 3.11. Install a suitable PyTorch build for your hardware, then install from source:
+Use Python 3.10 or 3.11 and install a suitable PyTorch build for your hardware. Source installation is available now:
 
 ```bash
-git clone --branch main https://github.com/Shichaoxx/MetisCraft.git
+git clone --branch release/0.1.0rc1 https://github.com/Shichaoxx/MetisCraft.git
 cd MetisCraft
 python -m pip install '.[serve]'
 ```
 
-For development, use `python -m pip install -e '.[dev,serve,reproduce]'`. A locally built release wheel can also be installed with `python -m pip install './dist/metiscraft-0.1.0rc1-py3-none-any.whl[serve]'`. Full prerequisites and model preparation are in the [installation guide](docs/en/installation.md).
-
-## Run your first workflow
-
-This example uses a **tiny random model and synthetic data**. It checks the software workflow on CPU without downloading models; its scores are not model-quality results. Run it in a new workspace, outside the source repository:
+In a workspace outside the checkout:
 
 ```bash
 metiscraft init my-first-judge
@@ -94,38 +84,25 @@ metiscraft data import dataset.yaml --data-root ./data
 CUDA_VISIBLE_DEVICES='' OMP_NUM_THREADS=1 metiscraft train recipe.yaml
 ```
 
-Training prints the run directory. Use its artifact to start a service:
+[Run your first model](docs/en/cookbook/first-model.md) includes installation, expected outputs, evaluation and HTTP calls. It uses a tiny random model and synthetic data: **no GPU or weight download required**. Then [bring your own task](docs/en/cookbook/own-task.md).
 
-```bash
-CUDA_VISIBLE_DEVICES='' metiscraft serve <run-directory>/artifact
-# In a second terminal in the same workspace:
-curl -sS http://127.0.0.1:8000/v1/systemone \
-  -H 'Content-Type: application/json' --data-binary @request.json
-```
+## Recipes and results
 
-The [complete quickstart](docs/en/quickstart.md) also covers integrity checks, evaluation, batch prediction and stopping the server. Then [import your own data](docs/en/data.md) and replace the random model with a versioned pretrained base.
-
-## Recipes and evidence
-
-| Recipe | What it demonstrates | Evidence boundary |
+| Recipe | Recorded evidence | Boundary |
 |---|---|---|
-| [Banking77](recipes/banking77/README.md) | Compare two readouts under one task | Qwen3-0.6B recipe results; no matched encoder comparison yet |
-| [Customer routing](recipes/banking77_support/README.md) | Multiple business questions with one model | Derived from Banking77; a public example, not a production deployment claim |
-| [BoolQ](recipes/boolq/README.md) · [SST-5](recipes/sst5/README.md) | Yes/no and ordered judgments | Dataset terms apply individually |
-| [GoEmotions](recipes/go_emotions/README.md) | Independent probabilities for multiple labels | Reported training predates the prior-shift fix; corrected-code retraining is pending |
-| [Tev1](docs/reproductions/tev1.md) | Rebuild published data and reproduce a recipe | **4B accuracy targets met**: test 87.3% vs 88.0%; transfer 99.33% vs 100%. Answer agreement is 94.6% / 99.33%; calibration and historical-training limitations remain |
+| [Customer routing](recipes/banking77_support/README_en.md) | One model answers choice and yes/no questions | A teaching scenario derived from Banking77 |
+| [Banking77](recipes/banking77/README_en.md) | Two readouts under one protocol | No matched encoder comparison yet |
+| [Tev1 4B](docs/en/reproductions/tev1.md) | 87.3% vs original 88.0%; transfer 99.33% vs 100% | Accuracy targets met; training-history and calibration limits remain |
+| [BoolQ](recipes/boolq/README_en.md) · [SST-5](recipes/sst5/README_en.md) · [GoEmotions](recipes/go_emotions/README_en.md) | Recipes across judgment types | GoEmotions results predate the prior-shift fix; see the recipe |
 
-MetisCraft is one part of a growing decision-model ecosystem. The [support matrix](docs/support-matrix.md) separates compatibility, implementation and reproduction evidence, including JevAny, ms-swift and Unsloth. It does not claim the first or only unified toolkit.
+Every number links to a recipe or reproduction record. The [ecosystem matrix](docs/en/support-matrix.md) covers JevAny, ms-swift and other projects; [limitations](docs/en/limitations.md) distinguish software checks from model-quality evidence.
 
-## Learn and contribute
+## Documentation and community
 
-- **Use it:** [Installation](docs/en/installation.md) · [Your own data](docs/en/data.md) · [Training](docs/en/training.md) · [Serving](docs/en/serving.md).
-- **Understand it:** [Cookbook (中文)](docs/cookbook/README.md) · [Readouts and tensor diagrams (中文)](docs/readouts/README.md).
-- **Help improve it:** [Contribution guide](CONTRIBUTING.md) · [Report a bug](https://github.com/Shichaoxx/MetisCraft/issues/new?template=bug_report.yml) · [Suggest a feature](https://github.com/Shichaoxx/MetisCraft/issues/new?template=feature_request.yml).
-- **Follow development:** [Changes](CHANGELOG.md) · [Status and next steps](docs/status.md) · [Known limitations](docs/en/limitations.md).
+[Cookbook](docs/en/cookbook/index.md) · [Concepts & Tensors](docs/en/tensor-analysis/index.md) · [Five-minute walkthrough](docs/en/tensor-analysis/walkthrough.md) · [Data format](docs/en/data.md) · [Training](docs/en/training.md) · [Serving](docs/en/serving.md) · [Changelog](CHANGELOG.md)
+
+[Contribute](CONTRIBUTING.md), [report a bug](https://github.com/Shichaoxx/MetisCraft/issues/new?template=bug_report.yml) or [suggest a feature](https://github.com/Shichaoxx/MetisCraft/issues/new?template=feature_request.yml).
 
 ## License
 
-The code is [Apache-2.0](LICENSE). Datasets and base models retain their own terms; inspect the dataset metadata and artifact `NOTICE` before using or distributing trained weights.
-
-MetisCraft takes its name from *mētis*, practical intelligence, and *craft*, the act of making. The owl mark draws on Athena's association with wisdom. Maintained by [shichao](https://github.com/Shichaoxx). The earlier Metis 0.1.0 is preserved at [`metis-v0.1.0`](https://github.com/Shichaoxx/MetisCraft/tree/metis-v0.1.0).
+Code is [Apache-2.0](LICENSE). Datasets and base models retain their own terms; check metadata and the artifact `NOTICE` before distributing trained weights.

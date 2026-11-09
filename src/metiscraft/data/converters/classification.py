@@ -35,6 +35,7 @@ class BoolQ(Converter):
     """BoolQ: a yes/no question about a passage -> noul."""
 
     name = "boolq"
+    version = "2"
 
     def iter_split(self, ctx: ConverterContext, split: str) -> Iterator[dict[str, Any]]:
         for i, row in enumerate(iter_parquet(parquet_files(ctx, split), ctx.max_rows)):
@@ -50,7 +51,9 @@ class BoolQ(Converter):
                     task_id=ctx.entry.name,
                     input=Input(query=question, context={"state": passage}),
                     question=Question(type="noul"),
-                    supervision=Supervision(kind="noul", labels=bool(row["answer"])),
+                    supervision=Supervision(
+                        has_hard_label=True, kind="noul", labels=bool(row["answer"])
+                    ),
                     provenance=Provenance(**provenance(ctx, self, split, i, digest)),
                 )
             )
@@ -65,6 +68,7 @@ class TextChoice(Converter):
     """
 
     name = "text_choice"
+    version = "2"
 
     def iter_split(self, ctx: ConverterContext, split: str) -> Iterator[dict[str, Any]]:
         p = ctx.entry.params
@@ -86,7 +90,9 @@ class TextChoice(Converter):
                     task_id=ctx.entry.name,
                     input=Input(query=p["instructions"], context={"state": text}),
                     question=question,
-                    supervision=Supervision(kind="choice", labels=None if name == null else name),
+                    supervision=Supervision(
+                        has_hard_label=True, kind="choice", labels=None if name == null else name
+                    ),
                     provenance=Provenance(**provenance(ctx, self, split, i, content_hash(text))),
                 )
             )
@@ -97,6 +103,7 @@ class PairChoice(Converter):
     """Sentence-pair classification (MNLI) -> choice; params name the two text fields."""
 
     name = "pair_choice"
+    version = "2"
 
     def iter_split(self, ctx: ConverterContext, split: str) -> Iterator[dict[str, Any]]:
         p = ctx.entry.params
@@ -118,7 +125,9 @@ class PairChoice(Converter):
                     task_id=ctx.entry.name,
                     input=Input(query=p["instructions"], context={"state": state}),
                     question=question,
-                    supervision=Supervision(kind="choice", labels=names[label]),
+                    supervision=Supervision(
+                        has_hard_label=True, kind="choice", labels=names[label]
+                    ),
                     provenance=Provenance(
                         **provenance(ctx, self, split, i, content_hash(row[first], row[second]))
                     ),
@@ -131,6 +140,7 @@ class SST5(Converter):
     """SST-5 sentence sentiment (SetFit jsonl files) -> score with five levels."""
 
     name = "sst5"
+    version = "2"
 
     def iter_split(self, ctx: ConverterContext, split: str) -> Iterator[dict[str, Any]]:
         p = ctx.entry.params
@@ -152,7 +162,9 @@ class SST5(Converter):
                         task_id=ctx.entry.name,
                         input=Input(query=p["instructions"], context={"state": text}),
                         question=question,
-                        supervision=Supervision(kind="score", labels=int(row["label"])),
+                        supervision=Supervision(
+                            has_hard_label=True, kind="score", labels=int(row["label"])
+                        ),
                         provenance=Provenance(
                             **provenance(ctx, self, split, i, content_hash(text))
                         ),
@@ -165,6 +177,7 @@ class TextMultiLabel(Converter):
     """Multi-label text classification (GoEmotions) -> multi_label over the label set."""
 
     name = "text_multilabel"
+    version = "2"
 
     def iter_split(self, ctx: ConverterContext, split: str) -> Iterator[dict[str, Any]]:
         p = ctx.entry.params
@@ -181,7 +194,7 @@ class TextMultiLabel(Converter):
                     input=Input(query=p["instructions"], context={"state": text}),
                     question=question,
                     candidates=candidates,
-                    supervision=Supervision(kind="multi_label", labels=labels),
+                    supervision=Supervision(has_hard_label=True, kind="multi_label", labels=labels),
                     provenance=Provenance(**provenance(ctx, self, split, i, content_hash(text))),
                 )
             )

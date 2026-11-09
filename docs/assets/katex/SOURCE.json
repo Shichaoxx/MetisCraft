@@ -1,0 +1,87 @@
+{
+  "name": "KaTeX",
+  "version": "0.19.1",
+  "checked_at": "2026-11-04",
+  "release_published_at": "2026-10-23T20:38:31Z",
+  "official_version_url": "https://katex.org/versions",
+  "official_release_url": "https://github.com/KaTeX/KaTeX/releases/tag/v0.19.1",
+  "release_api_url": "https://api.github.com/repos/KaTeX/KaTeX/releases/tags/v0.19.1",
+  "release_prerelease": false,
+  "release_draft": false,
+  "archive": {
+    "url": "https://github.com/KaTeX/KaTeX/releases/download/v0.19.1/katex.tar.gz",
+    "bytes": 1314797,
+    "sha256": "751e29ffb0c5bc184f08692a0aa905ff86a59ced07f635a27e72a7b7bc53036c",
+    "sha256_verified": true
+  },
+  "license": {
+    "identifier": "MIT",
+    "source_url": "https://raw.githubusercontent.com/KaTeX/KaTeX/v0.19.1/LICENSE",
+    "note": "发行压缩包未附 LICENSE；从相同官方版本 tag 原文取得。"
+  },
+  "documentation": {
+    "auto_render": "https://katex.org/docs/autorender",
+    "options": "https://katex.org/docs/options",
+    "security": "https://katex.org/docs/security"
+  },
+  "selection": {
+    "javascript": [
+      "katex.min.js",
+      "contrib/auto-render.min.js"
+    ],
+    "css": "katex.min.css",
+    "fonts": "仅保留原版 CSS url() 实际引用的全部 60 个字体：20 woff2、20 woff、20 ttf。",
+    "css_modified": false,
+    "third_party_sources_modified": false,
+    "font_priority": "保留原版 CSS 的 woff2 → woff → truetype 优先顺序；未裁剪 CSS。"
+  },
+  "recommended_auto_render_options": {
+    "delimiters": [
+      {
+        "left": "$$",
+        "right": "$$",
+        "display": true
+      },
+      {
+        "left": "\\(",
+        "right": "\\)",
+        "display": false
+      },
+      {
+        "left": "\\[",
+        "right": "\\]",
+        "display": true
+      }
+    ],
+    "trust": false,
+    "strict": "warn",
+    "throwOnError": false,
+    "output": "htmlAndMathml",
+    "maxExpand": 1000
+  },
+  "integration_note": "先 CSS，后 defer katex.min.js，再 defer contrib/auto-render.min.js；DOMContentLoaded 后对报告正文根元素调用 renderMathInElement。显式不启用单美元符号分隔符。strict:warn 是语法/字形兼容告警，不是安全开关；信任边界由 trust:false 控制。",
+  "validation": {
+    "archive_digest": "matched GitHub Release asset digest",
+    "fonts": "all original CSS font references present",
+    "runtime": {
+      "version": "0.19.1",
+      "formula_parse_checks_passed": 3,
+      "untrusted_includegraphics_blocked": true,
+      "auto_render_global_defined": true,
+      "browser_visual_test": "未进行"
+    },
+    "official_documentation_sri_sha384": {
+      "katex.min.css": "sha384-WwGtaC6ywCHxA5cstpj/3+xIZvTez8dq2IcBQaXRkenHZ7FVVq1ZROtURwfbtTlG",
+      "katex.min.js": "sha384-a1WQdjRj162i159OYq041X6I4K8NenkrI09LlPmiHg0YOb7CR+wJOraXwK9abpnE",
+      "contrib/auto-render.min.js": "sha384-bjyGPfbij8/NDKJhSGZNP/khQVgtHUE5exjm4Ydllo42FwIgYsdLO2lXGmRBf5Mz"
+    },
+    "sri_verified": true,
+    "asset_bytes": 1377932,
+    "font_formats": {
+      ".ttf": 20,
+      ".woff": 20,
+      ".woff2": 20
+    }
+  },
+  "environment_changes": "未安装包、未修改环境、未运行 GPU 或研究实验。"
+}

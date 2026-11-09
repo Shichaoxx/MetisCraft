@@ -53,8 +53,13 @@ def test_multilabel_probabilities_are_independent(soft):
 @pytest.mark.parametrize("allow_null", [False, True])
 def test_user_options_cannot_use_the_reserved_null_id(allow_null):
     with pytest.raises(ValidationError, match="reserved for the null answer"):
-        rec({"type": "choice", "options": [{"id": "__null__"}, {"id": "b"}],
-             "allow_null": allow_null})
+        rec(
+            {
+                "type": "choice",
+                "options": [{"id": "__null__"}, {"id": "b"}],
+                "allow_null": allow_null,
+            }
+        )
 
 
 @pytest.mark.parametrize(
@@ -124,6 +129,22 @@ def test_request_to_records():
     assert by_name["severity"].supervision.labels == 1
     assert by_name["needs_human"].supervision.labels is False
     assert by_name["needs_human"].supervision.soft == [0.25]
+
+
+@pytest.mark.parametrize("label", [True, False, 1.9, 1.0, None, "1.9", "high"])
+def test_jev_score_gold_rejects_non_integer_labels(label):
+    request = {"state": "message", "questions": {"urgency": REQUEST["questions"]["severity"]}}
+    with pytest.raises(JevFormatError, match="score gold label must be an integer"):
+        request_to_records(request, task_id="t", request_id="r", gold={"urgency": {"label": label}})
+
+
+@pytest.mark.parametrize("label", [0, 1, "0", "1"])
+def test_jev_score_gold_preserves_integer_labels(label):
+    request = {"state": "message", "questions": {"urgency": REQUEST["questions"]["severity"]}}
+    records = request_to_records(
+        request, task_id="t", request_id="r", gold={"urgency": {"label": label}}
+    )
+    assert records[0].supervision.labels == int(label)
 
 
 def test_request_format_errors():

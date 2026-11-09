@@ -6,7 +6,7 @@
 |---|---|
 | 注册名 | `sst5` |
 | 上游 | [`SetFit/sst5`](https://huggingface.co/datasets/SetFit/sst5) @ `e51bdcd8` |
-| 许可证 | 上游未声明；条款：上游未声明许可证、仅限研究；用它训练的产物：不可商用 |
+| 许可证 | 上游未声明；注册表按仅限研究处理；产物不标为可商用，实际权利须核查来源条款 |
 | 判断类型 | 等级 score |
 | 划分 | train 8,540（上游 train）；calib 549（上游 dev 按哈希分半的前一半）；dev 552（上游 dev 按哈希分半的后一半）；test 2,210（上游 test） |
 
@@ -50,5 +50,3 @@ ECE 用 15 个等宽分箱：choice 和 score 取 top-1 概率，noul 和 multi_
 ## 参照
 
 下面的数字来自公开报告，评测子集和协议与这里不同，只用来定位量级。
-
-- encoder 微调强基线：test 准确率 0.596–0.623（作者自报，见[调研](../../docs/research/decision-model-sota.md)）。

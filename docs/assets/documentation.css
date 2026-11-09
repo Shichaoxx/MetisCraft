@@ -1,0 +1,32 @@
+.md-typeset .arithmatex { overflow-x: auto; padding-block: .35em; }
+.md-typeset .cookbook-guide { grid-template-columns: 160px minmax(0, 1fr); }
+.md-typeset .cookbook-guide .cookbook-avatar { width: 160px; height: 160px; }
+.md-typeset .cookbook-avatar > a, .md-typeset .metis-reading-avatar > a { display: block; width: 100%; height: 100%; }
+.md-typeset [data-metis-theme] img[data-metis-portrait] { display: block; width: 100%; height: 100%; max-width: none; margin: 0; object-fit: contain; object-position: center; transform: none; border: 0; border-radius: 0; background: transparent; }
+.md-typeset .metis-reading-note { display: grid; grid-template-columns: 120px minmax(0, 1fr); gap: 1rem; align-items: center; margin: 1.4rem 0; padding: 1rem 1.2rem; border-inline-start: 3px solid var(--md-primary-fg-color); border-radius: .45rem; background: var(--md-code-bg-color); }
+.md-typeset .metis-reading-note .metis-reading-avatar { width: 120px; height: 120px; margin: 0; }
+.md-typeset .metis-reading-copy { min-width: 0; font-size: .75rem; }
+.md-typeset .metis-reading-copy > p { margin: 0; }
+.md-typeset .metis-reading-copy > p + p { margin-top: .4rem; }
+.md-typeset .metis-reading-title { font-size: .8rem; }
+.md-typeset [data-metis-theme] a:focus-visible { outline: 3px solid var(--md-accent-fg-color); outline-offset: 3px; }
+@media (max-width: 600px) {
+  .md-typeset .cookbook-guide { grid-template-columns: minmax(0, 1fr); justify-items: center; gap: .8rem; text-align: center; }
+  .md-typeset .metis-reading-note { grid-template-columns: 100px minmax(0, 1fr); gap: .75rem; padding: .8rem; }
+  .md-typeset .metis-reading-note .metis-reading-avatar { width: 100px; height: 100px; }
+}
+@media (max-width: 360px) {
+  .md-typeset .metis-reading-note { grid-template-columns: minmax(0, 1fr); justify-items: center; }
+}
+.md-typeset .arithmatex .katex { font-size: 1.04em; }
+.math-render-error { border-inline-start: 3px solid #c95b5b; padding-inline-start: .8rem; }
+.md-typeset img[data-figure-ready] { cursor: zoom-in; background: #fff; border: 1px solid #dce4e5; }
+.md-typeset img[data-figure-ready]:focus-visible { outline: 3px solid #4f8fa5; outline-offset: 4px; }
+#metis-figure-dialog { width: min(96vw, 1600px); max-width: 96vw; max-height: 94vh; padding: 1rem; border: 1px solid #879b9b; border-radius: .6rem; background: #fff; color: #243338; }
+#metis-figure-dialog::backdrop { background: #17292ccc; }
+#metis-figure-dialog .figure-toolbar { display: flex; justify-content: space-between; gap: 1rem; align-items: center; margin-bottom: 1rem; }
+#metis-figure-dialog button { padding: .4rem .8rem; border: 1px solid #879b9b; border-radius: .25rem; cursor: pointer; }
+#metis-figure-dialog .figure-canvas { overflow: auto; max-height: 76vh; }
+#metis-figure-dialog img { width: 100%; min-width: min(800px, 170vw); height: auto; display: block; }
+#metis-figure-dialog > a { color: #087f78; display: block; margin-top: .8rem; }
+@media (prefers-reduced-motion: reduce) { #metis-figure-dialog { scroll-behavior: auto; } }

@@ -2,26 +2,26 @@
 
 配方是 YAML，结构与 `metiscraft.config.Recipe` 一致；未知字段会直接报错。命令行可以用 `a.b=c` 覆盖任意字段，例如 `metiscraft train <配方> readout.kind=answer_token train.lr=1e-4`。路径的优先级是：配方里的 `paths` > 环境变量 `METISCRAFT_DATA_ROOT` 等 > `~/.config/metiscraft/paths.yaml`。
 
-本页由 [`src/recipe_reference.py`](src/recipe_reference.py) 从代码生成，类型和默认值以代码为准。完整示例见[把业务做成 Jev](your-own-jev.md#4-写配方)。
+本页由 [`src/recipe_reference.py`](src/recipe_reference.py) 从代码生成，类型和默认值以代码为准。完整示例见[接入自己的任务](../zh/cookbook/own-task.md)。
 
 ## 任务
 
 | 字段 | 类型 | 默认 | 说明 |
 |---|---|---|---|
-| `task` | str | 必填 | 任务名，写进每条记录的 `task_id`、产物和报告；温度按“任务\|类型”拟合。 |
+| `task` | str | 必填 | 运行与模型的名称标签，写入配方元数据；不覆盖 `Record.task_id`。产物的 `task_ids` 取训练记录的任务集合，温度按记录的任务与判断类型分组。 |
 
 ## 数据
 
 | 字段 | 类型 | 默认 | 说明 |
 |---|---|---|---|
-| `data.dataset` | str | 必填 | 注册表里的数据集名。 |
+| `data.dataset` | str | 必填 | 已准备的数据集名称，包括通过本地 manifest 导入的数据集。 |
 | `data.version` | str \| `null` | `null` | 数据集版本目录名；只有一个版本时可以不写。 |
 | `data.train_split` | str | `train` | 训练用的划分。 |
 | `data.calib_split` | str | `calib` | 拟合温度用的划分。 |
 | `data.dev_split` | str | `dev` | 选择用的评测划分。 |
 | `data.test_split` | str | `test` | 封存后才评的测试划分。 |
-| `data.max_train` | int \| `null` | `null` | 训练集最多取多少条，调试用；不写就是全部。 |
-| `data.max_eval` | int \| `null` | `null` | 每个评测划分最多取多少条。 |
+| `data.max_train` | Annotated \| `null` | `null` | 训练集最多取多少条，调试用；不写就是全部。 |
+| `data.max_eval` | Annotated \| `null` | `null` | 每个评测划分最多取多少条。 |
 
 ## 基座与微调
 
@@ -29,8 +29,8 @@
 |---|---|---|---|
 | `model.base` | str | 必填 | 基座在 `models_root` 下的相对路径；目录里要有 `SOURCE.json` 和 `SHA256SUMS`。 |
 | `model.dtype` | `bf16` \| `fp16` \| `fp32` | `bf16` | 加载权重的精度。 |
-| `model.max_length` | int | `1024` | 提示的最大 token 数；超出时截短材料，问题和选项保留（`chat_json` 不截短，超出就报错）。 |
-| `model.finetune.kind` | `lora` \| `full` \| `frozen` | `lora` | `lora` 只训 LoRA；`full` 全参；`frozen` 冻结主干，只训读出头。 |
+| `model.max_length` | int | `1024` | 模型输入的最大 token 数；completion 训练为追加的答案码预留 1 个 token（EOS 仅作目标）。超出时截短材料，问题和选项保留；`chat_json` 不截短，超出就报错。 |
+| `model.finetune.kind` | `lora` \| `full` \| `frozen` | `lora` | `lora` 训练 LoRA 适配器；`full` 微调基座；`frozen` 冻结主干。冻结时只有标量读出的新 MLP 头可训练，答案 token 读出没有新头，会跳过训练。 |
 | `model.finetune.r` | int | `16` | LoRA 秩。 |
 | `model.finetune.alpha` | int | `32` | LoRA 缩放系数。 |
 | `model.finetune.dropout` | float | `0.0` | LoRA dropout。 |
@@ -41,14 +41,14 @@
 
 | 字段 | 类型 | 默认 | 说明 |
 |---|---|---|---|
-| `readout.kind` | `answer_token` \| `candidate_scalar` | 必填 | `answer_token` 是 ① 答案 token；`candidate_scalar` 是 ③ 逐候选标量头。 |
-| `readout.layout` | `list` \| `pairs` | `list` | ③ 的布局：`list` 把候选写在同一条序列；`pairs` 每个候选单独一条，用作对照。 |
+| `readout.kind` | `answer_token` \| `candidate_scalar` | 必填 | `answer_token` 选取答案码 logits；`candidate_scalar` 对候选表示应用标量 MLP。 |
+| `readout.layout` | `list` \| `pairs` | `list` | 标量布局：`list`（默认）将候选放在同一条因果序列；`pairs` 将每个候选放在独立序列。 |
 | `readout.head.hidden` | int | `256` | ③ 的 MLP 头隐藏层宽度。 |
 | `readout.head.dropout` | float | `0.0` | ③ 的 MLP 头 dropout。 |
 | `readout.prompt.style` | `plain` \| `chat_json` | `plain` | ① 的提示写法：`plain` 是 MetisCraft 的文本布局；`chat_json` 把题目写成 JSON 载荷放进分词器的对话模板（关闭思考），选项和等级都用字母，即 Tev1 的格式，只接受选择和等级题。 |
 | `readout.prompt.system` | str \| `null` | `null` | `chat_json` 的系统提示；不写就没有系统回合。 |
-| `readout.shuffle_train` | bool | `True` | 训练时打乱候选顺序（③），避免记住位置。 |
-| `readout.infer_permutations` | int | `1` | 预留字段，v0.1 未实现，设了也不生效。 |
+| `readout.shuffle_train` | bool | `True` | 仅在标量 `list` 训练时打乱候选的提示排列，减少位置偏差；不作用于 `pairs`。 |
+| `readout.infer_permutations` | `1` | `1` | 当前只接受 1；多次排列推理尚未实现，其他值会被拒绝。 |
 
 ## 目标
 
@@ -56,7 +56,7 @@
 |---|---|---|---|
 | `objective.kind` | `auto` \| `bce` \| `cross_entropy` \| `ordinal_soft` \| `completion` | `auto` | 损失由判断类型决定，`auto`、`bce`、`cross_entropy` 在 v0.1 效果相同，只作标注；`ordinal_soft` 让等级题改用以金标为中心的高斯软目标；`completion` 只用于 ①，像监督微调那样在整个词表上训练答案码和 EOS 两个 token。 |
 | `objective.brier_weight` | float | `0.0` | 在交叉熵之外再加 Brier 项的权重（选择、等级）。 |
-| `objective.pos_weight` | `none` \| `auto` \| float | `none` | 多标签正样本权重：`none`、`auto`（训练集负正比，限制在 1 到 100）或一个数；推理时自动扣回 ln w。 |
+| `objective.pos_weight` | `none` \| `auto` \| Annotated | `none` | 多标签正样本权重：`none`、`auto`（训练集负正比，限制在 1 到 100）或一个数；推理时自动扣回 ln w。 |
 | `objective.ordinal_sigma` | float | `1.0` | 序数软目标的高斯宽度，单位是等级。 |
 
 ## 训练
@@ -64,7 +64,7 @@
 | 字段 | 类型 | 默认 | 说明 |
 |---|---|---|---|
 | `train.epochs` | float | `1.0` | 训练轮数，可以是小数。 |
-| `train.max_steps` | int \| `null` | `null` | 最多优化步数；写了就覆盖 `epochs`。 |
+| `train.max_steps` | Annotated \| `null` | `null` | 最多优化步数；写了就覆盖 `epochs`。 |
 | `train.batch_size` | int | `8` | 每个微批的题数（每张卡）。 |
 | `train.grad_accum` | int | `1` | 梯度累积步数；有效批量是 `batch_size × grad_accum × 卡数`，损失按全局题数归一。 |
 | `train.lr` | float | `0.0002` | LoRA（或全参）的学习率。 |
@@ -90,6 +90,12 @@
 |---|---|---|---|
 | `eval.splits` | list[str] | `['dev']` | 要评测的划分。 |
 | `eval.baselines` | list[str] | `['prior']` | 和模型同表报告的基线；v0.1 支持 `prior`。 |
+
+## 服务
+
+| 字段 | 类型 | 默认 | 说明 |
+|---|---|---|---|
+| `serve.task_map` | dict | `{}` | HTTP 题名到产物 task_id 的映射；多任务请求需要明确映射，单任务可自动选择。 |
 
 ## 路径
 

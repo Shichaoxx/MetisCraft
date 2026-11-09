@@ -1,0 +1,26 @@
+{
+  "model": "metiscraft/banking77_support",
+  "answers": {
+    "queue": {
+      "type": "choice",
+      "choice": "security",
+      "confidence": 0.9999995054983101,
+      "probabilities": {
+        "cards": 2.0465875752668956e-07,
+        "payments": 2.8552732808090524e-07,
+        "transfers": 1.3682393373337923e-09,
+        "top_up": 1.1094860412756372e-09,
+        "account": 1.8378789176297659e-09,
+        "security": 0.9999995054983101
+      }
+    },
+    "urgent": {
+      "type": "noul",
+      "noul": 0.9999314182034214
+    }
+  },
+  "usage": {
+    "input_tokens": 199,
+    "output_tokens": 0
+  }
+}
