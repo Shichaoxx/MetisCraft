@@ -71,6 +71,10 @@ The earlier Metis 0.1.0 project is archived under the `metis-v0.1.0` tag; it is
 distinct from the MetisCraft release line.
 ### Reliability and documentation
 
+- CPU distributed training initializes Gloo after loading PyTorch's autograd
+  collectives, preventing lazy imports from retaining a process group until
+  interpreter shutdown. A fresh-process regression checks gradients, group
+  release and native worker-thread cleanup.
 - Candidate-scalar DDP training excludes unused, untied LM output weights while
   preserving shared input embeddings. CPU regressions cover tied weights,
   gradient checkpointing and two optimizer steps with gradient accumulation.
