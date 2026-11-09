@@ -4,6 +4,59 @@ MetisCraft retrains a Tev1-style model using the public data builder and recomme
 
 The source is pinned to [togethercomputer/tev1@1dde778](https://github.com/togethercomputer/tev1/tree/1dde7782382c9f49d627153759b8d1deab426ce0), reviewed 2026-11-05. Original readout and per-question checks were completed 2026-11-07.
 
+## Model architecture
+
+**Tev1 fine-tunes Qwen3.5-4B for decisions, predicting answer letters with its existing LM head.** The [upstream description](https://github.com/togethercomputer/tev1/blob/1dde7782382c9f49d627153759b8d1deab426ce0/README.md) documents LoRA supervised fine-tuning; the [pinned model card](https://huggingface.co/togethercomputer/Tev1-4B-experimental/blob/0b7becf017daa0e5eb222f8ce7483c8c8259c52f/README.md) states that it retains the standard next-token output head. MetisCraft's 4B reproduction uses the same readout family.
+
+| Component | Published architecture and this reproduction |
+|---|---|
+| Base | Upstream uses Qwen3.5-4B; this run pins `Qwen/Qwen3.5-4B@851bf6e8` and uses its text causal-language-model branch. |
+| Hybrid backbone | 32 layers, hidden width 2,560; groups of 3 Gated DeltaNet linear-attention layers and 1 gated full-attention layer, totaling 24 + 8; each layer includes a dense FFN. |
+| Output projection | The existing LM head, tied to token embeddings, has vocabulary width 248,320; the readout is `answer_token`. |
+| Tuning and objective | `all-linear` LoRA: r=8, alpha=16, dropout=0; non-thinking `chat_json` prompts; teacher-forced `completion` training applies full-vocabulary cross-entropy only to the answer letter and EOS. |
+| Inference protocol | MetisCraft reads candidate-letter logits and normalizes over candidates; upstream saved results use temperature-0 generation constrained by an option regex. |
+
+The [upstream configuration](https://huggingface.co/togethercomputer/Tev1-4B-experimental/blob/0b7becf017daa0e5eb222f8ce7483c8c8259c52f/config.json) and [this run's base configuration](https://huggingface.co/Qwen/Qwen3.5-4B/blob/851bf6e806efd8d0a36b00ddf55e13ccb7b8cd0a/config.json) are byte-identical; see the [pinned Qwen model description](https://huggingface.co/Qwen/Qwen3.5-4B/blob/851bf6e806efd8d0a36b00ddf55e13ccb7b8cd0a/README.md) for the layer layout. Matching configurations do not establish identical trained weights or recovery of the historical hosted job. LoRA settings follow the [public recommendation](https://github.com/togethercomputer/tev1/blob/1dde7782382c9f49d627153759b8d1deab426ce0/docs/TRAINING.md); this run's [recipe](../../../recipes/tev1/qwen3.5-4b_chat-completion.yaml) does not pack samples. The public configuration includes vision modules, but this experiment and MetisCraft's interfaces validate text tasks only.
+
+### Tensor objects and indices
+
+The following describes our 4B inference implementation. \(B\) counts questions, \(T\) is the padded sequence length, \(K_b\) counts valid options for question \(b\), \(K_{\max}\) is the batch maximum, and \(V=248320\).
+
+| Object | Type and shape | Meaning of one entry |
+|---|---|---|
+| `input_ids` \(X\) | int64, \([B,T]\) | A vocabulary ID in \(0\ldots V-1\), distinct from an option index. |
+| `attention_mask` \(M\) | int64, \([B,T]\) | 1 marks a valid input token; 0 marks left padding. This is not a complete attention-probability matrix. |
+| Final-position index \(t_b\) | Integer, conceptual \([B]\) index | \(\max\{t:M_{b,t}=1\}\); current left padding gives \(t_b=T-1\) for every row. |
+| Hidden states \(H\), decision representation \(h\) | Floating point, \([B,T,2560]\), \([B,2560]\) | \(h_b=H_{b,t_b,:}\) is the final prompt position's contextual representation. |
+| LM weights \(W_{\mathrm{lm}}\) | Floating point, \([V,2560]\) | Each row projects to one vocabulary token. |
+| Vocabulary logits \(Z\) | float32, \([B,V]\) | \(Z=hW_{\mathrm{lm}}^{\mathsf T}\), before normalization. |
+| `codes` \(\ell\) | int64, \([B,K_{\max}]\) | Vocabulary IDs for option letters; \(\ell_{b,k}\) maps a candidate column to a vocabulary column. |
+| Candidate `mask` \(C\) | bool, \([B,K_{\max}]\) | True marks a valid candidate; its axes differ from the token-padding mask. |
+| Candidate scores \(S\), probabilities \(p_b\) | Floating point, \([B,K_{\max}]\), per-question \([K_b]\) | Scores come from code columns; probabilities normalize only over the question's valid candidates. |
+
+### Operator chain and probabilities
+
+`State/question/all options → non-thinking chat template → left padding → hybrid causal backbone → final representation → full LM projection → gather letter columns → select valid candidates → softmax`
+
+\[
+h_b=H_{b,t_b,:},\qquad
+Z=hW_{\mathrm{lm}}^{\mathsf T},\qquad
+S_{b,k}=Z_{b,\ell_{b,k}},\qquad
+p_{b,k}=\frac{\exp(S_{b,k}/\tau_b)}{\sum_{j=0}^{K_b-1}\exp(S_{b,j}/\tau_b)}.
+\]
+
+The matrix product contracts the hidden axis: \((B\times2560)(2560\times V)\rightarrow B\times V\). Current [`DecisionModel.forward`](../../../src/metiscraft/modeling/model.py#L62) computes the complete vocabulary logits before `gather`; `H[:, -1]` implements the final-valid-position selection above. The [collator](../../../src/metiscraft/train/collate.py#L21) derives `position_ids` from cumulative valid-mask counts, so left padding does not advance valid-token positions. Prediction [removes padded candidate columns by valid count](../../../src/metiscraft/evaluate/infer.py#L49) before [normalization](../../../src/metiscraft/judgments/__init__.py#L112). The candidate-space denominator includes only valid answer codes and generally differs from the letter's full-vocabulary softmax probability.
+
+All candidates share one causal prompt: earlier options cannot read later options, while the final answer position can read the preceding prompt. Reordering options can change contextual representations and logits; the shared softmax denominator also couples candidate probabilities.
+
+**Teaching example:** valid logits \([0,1,2]\) give \([0.090031,0.244728,0.665241]\) at \(\tau=1\), and \([0.186324,0.307196,0.506480]\) at \(\tau=2\). Positive temperature preserves the highest-scoring candidate while changing the distribution. These constructed numbers are not measured Tev1 results.
+
+### Training objective and inference readout
+
+`completion` training appends the correct letter as input and applies the LM head to \(H[:, -2:]\), producing \([B,2,V]\) logits for the answer letter and EOS. Loss averages the **full-vocabulary** cross-entropy at those two positions. Inference appends no target: it reads the final prompt position and normalizes over the candidate subset. See [`Collator`](../../../src/metiscraft/train/collate.py#L105) and [`completion_loss`](../../../src/metiscraft/judgments/__init__.py#L63). Candidate-space CE and this recipe's completion objective are therefore distinct.
+
+See the existing diagrams and derivations in [answer-token tensor analysis](../tensor-analysis/answer-token.md) and [training, calibration and output](../tensor-analysis/training-calibration.md). The [upstream request code](https://github.com/togethercomputer/tev1/blob/1dde7782382c9f49d627153759b8d1deab426ce0/examples/decide.py) additionally specifies constrained generation, the non-thinking template and logprobs parameters. A shared readout family does not establish identical serving protocols, calibration or latency, or reveal Jev's undisclosed internal architecture.
+
 ## Results against the original
 
 | Set | MetisCraft 2B | MetisCraft 4B | Original Tev1 4B | 4B difference |

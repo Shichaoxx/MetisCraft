@@ -4,6 +4,59 @@ MetisCraft 使用公开数据构建器与建议配方重训 Tev1 类模型，核
 
 来源固定为 [togethercomputer/tev1@1dde778](https://github.com/togethercomputer/tev1/tree/1dde7782382c9f49d627153759b8d1deab426ce0)，2026-11-05 读取，2026-11-07 完成原版读出与逐题核对。
 
+## 模型架构
+
+**Tev1 是 Qwen3.5-4B 的决策任务微调模型，使用原有 LM head 预测答案字母。** [上游说明](https://github.com/togethercomputer/tev1/blob/1dde7782382c9f49d627153759b8d1deab426ce0/README.md)公开了 LoRA 监督微调方法；[固定版本模型卡](https://huggingface.co/togethercomputer/Tev1-4B-experimental/blob/0b7becf017daa0e5eb222f8ce7483c8c8259c52f/README.md)说明它保留标准 next-token 输出头。MetisCraft 的 4B 复现采用相同读出家族。
+
+| 部分 | 公开架构与本次复现 |
+|---|---|
+| 基座 | 原版为 Qwen3.5-4B；本次固定 `Qwen/Qwen3.5-4B@851bf6e8`，使用文本因果语言模型分支。 |
+| 混合主干 | 32 层，隐藏宽度 2,560；每组 3 层 Gated DeltaNet 线性注意力与 1 层 gated full attention，共 24 + 8 层；各层包含稠密 FFN。 |
+| 输出投影 | 沿用与 token embedding 共享权重的 LM head，词表宽度 248,320；读出采用 `answer_token`。 |
+| 微调与目标 | `all-linear` LoRA：r=8、alpha=16、dropout=0；`chat_json` 非思考提示；教师强制 `completion` 训练，只对答案字母和 EOS 计算全词表交叉熵。 |
+| 推理协议 | MetisCraft 读取候选字母 logits 并按候选归一化；上游保存结果使用 temperature=0 的选项 regex 约束生成。 |
+
+[原版配置](https://huggingface.co/togethercomputer/Tev1-4B-experimental/blob/0b7becf017daa0e5eb222f8ce7483c8c8259c52f/config.json)与[本次基座配置](https://huggingface.co/Qwen/Qwen3.5-4B/blob/851bf6e806efd8d0a36b00ddf55e13ccb7b8cd0a/config.json)逐字一致，层布局也见 [Qwen 固定版本模型说明](https://huggingface.co/Qwen/Qwen3.5-4B/blob/851bf6e806efd8d0a36b00ddf55e13ccb7b8cd0a/README.md)。配置相同不代表训练权重相同或恢复了历史托管任务。LoRA 设置对齐的是[公开建议](https://github.com/togethercomputer/tev1/blob/1dde7782382c9f49d627153759b8d1deab426ce0/docs/TRAINING.md)；本次[配方](../../recipes/tev1/qwen3.5-4b_chat-completion.yaml)不拼接样本。公开配置包含视觉模块，但本次实验与 MetisCraft 接口只验证文本任务。
+
+### 张量对象与索引
+
+以下说明我方 4B 推理实现。\(B\) 为问题数，\(T\) 为填充后的序列长度，\(K_b\) 为问题 \(b\) 的有效选项数，\(K_{\max}\) 为批内最大选项数，\(V=248320\)。
+
+| 对象 | 类型与形状 | 一个元素的含义 |
+|---|---|---|
+| `input_ids` \(X\) | int64，\([B,T]\) | 词表 ID，取值 \(0\ldots V-1\)；不是选项下标。 |
+| `attention_mask` \(M\) | int64，\([B,T]\) | 1 为有效输入 token，0 为左侧 padding；不是完整的注意力概率矩阵。 |
+| 末位索引 \(t_b\) | 整数，\([B]\) 的概念索引 | \(\max\{t:M_{b,t}=1\}\)；当前左填充使每行 \(t_b=T-1\)。 |
+| 隐状态 \(H\)、决策表示 \(h\) | 浮点，\([B,T,2560]\)、\([B,2560]\) | \(h_b=H_{b,t_b,:}\)，表示整条提示的末位上下文。 |
+| LM 权重 \(W_{\mathrm{lm}}\) | 浮点，\([V,2560]\) | 每行对应一个词表 token 的输出投影。 |
+| 词表 logits \(Z\) | float32，\([B,V]\) | \(Z=hW_{\mathrm{lm}}^{\mathsf T}\)，尚未归一化。 |
+| `codes` \(\ell\) | int64，\([B,K_{\max}]\) | 选项字母的词表 ID；\(\ell_{b,k}\) 将候选列映射到词表列。 |
+| 候选 `mask` \(C\) | bool，\([B,K_{\max}]\) | True 为有效候选；与 token padding mask 的轴不同。 |
+| 候选分数 \(S\)、概率 \(p_b\) | 浮点，\([B,K_{\max}]\)、每题 \([K_b]\) | 分数来自代码列；概率只对该题有效候选归一化。 |
+
+### 算子链与概率
+
+`状态／问题／全部选项 → 非思考 chat 模板 → 左填充 → 混合因果主干 → 末位表示 → 完整 LM 投影 → gather 字母列 → 选择有效候选 → softmax`
+
+\[
+h_b=H_{b,t_b,:},\qquad
+Z=hW_{\mathrm{lm}}^{\mathsf T},\qquad
+S_{b,k}=Z_{b,\ell_{b,k}},\qquad
+p_{b,k}=\frac{\exp(S_{b,k}/\tau_b)}{\sum_{j=0}^{K_b-1}\exp(S_{b,j}/\tau_b)}.
+\]
+
+矩阵乘法收缩隐藏轴：\((B\times2560)(2560\times V)\rightarrow B\times V\)。当前 [`DecisionModel.forward`](../../src/metiscraft/modeling/model.py#L62)确实先计算完整词表 logits，再 `gather`；`H[:, -1]` 等价于这里的末有效位置选择。[组批代码](../../src/metiscraft/train/collate.py#L21)以有效 mask 的累积值生成 `position_ids`，左侧 padding 不增加有效 token 的位置编号。预测时[按有效候选数切除填充列](../../src/metiscraft/evaluate/infer.py#L49)，再[归一化](../../src/metiscraft/judgments/__init__.py#L112)。候选空间概率的分母仅包含有效答案码，通常不同于全词表 softmax 中该字母的概率。
+
+全部候选共同出现在同一因果提示中：前面的选项不能读取后面的选项，最终答案位置可以读取前面的全部提示。改变选项顺序可能改变上下文表示与 logits；候选共同参与 softmax 分母也会耦合概率。
+
+**教学数例：** 三个有效候选的 logits 为 \([0,1,2]\) 时，\(\tau=1\) 得到 \([0.090031,0.244728,0.665241]\)，\(\tau=2\) 得到 \([0.186324,0.307196,0.506480]\)。正温度缩放保留最大分数的候选，只改变概率分布；这些构造数字不是 Tev1 的实测结果。
+
+### 训练目标与推理读出
+
+`completion` 训练将正确字母追加到输入，使用 \(H[:, -2:]\) 经 LM head 得到 \([B,2,V]\) logits，分别预测答案字母与 EOS。损失是这两个位置的**全词表**交叉熵平均；推理不追加真值，读取提示末位并在候选子集上归一化。源码见 [`Collator`](../../src/metiscraft/train/collate.py#L105)和 [`completion_loss`](../../src/metiscraft/judgments/__init__.py#L63)。该区别也意味着候选空间 CE 与本配方的 completion 目标不能混称。
+
+图示与通用推导见[答案 token 张量解析](../zh/tensor-analysis/answer-token.md)及[训练、校准与输出](../zh/tensor-analysis/training-calibration.md)。上游的[实际请求代码](https://github.com/togethercomputer/tev1/blob/1dde7782382c9f49d627153759b8d1deab426ce0/examples/decide.py)还包含约束生成、非思考模板和 logprobs 参数；读出家族相同不意味着服务协议、校准或延迟相同，也不用于推断 Jev 未公开的内部架构。
+
 ## 结果与原版对照
 
 | 题集 | MetisCraft 2B | MetisCraft 4B | 原版 Tev1 4B | 4B 差距 |
