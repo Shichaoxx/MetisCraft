@@ -343,19 +343,22 @@ def _distributed_tail_worker(rank, rendezvous, output):
     import torch.distributed as dist
     from torch.nn.parallel import DistributedDataParallel
 
+    from metiscraft.train.distributed import init_process_group
+
     # Match the other CPU DDP fixture: each spawned rank gets a bounded pool.
     torch.set_num_threads(1)
-    dist.init_process_group(
+    init_process_group(
         "gloo",
         init_method=f"file://{rendezvous}",
         rank=rank,
         world_size=2,
         timeout=timedelta(seconds=40),
     )
+    original = loop.accumulate
+    net = None
     try:
         model = Scalar()
         net = DistributedDataParallel(model)
-        original = loop.accumulate
         seen, grads = [], []
 
         def observe(net, micro, objective, **kwargs):
@@ -378,6 +381,8 @@ def _distributed_tail_worker(rank, rendezvous, output):
             json.dumps({"summary": summary, "seen": seen, "grads": grads})
         )
     finally:
+        loop.accumulate = original
+        net = None
         dist.destroy_process_group()
 
 

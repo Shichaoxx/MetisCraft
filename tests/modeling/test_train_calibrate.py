@@ -282,10 +282,11 @@ def _decision_ddp_worker(rank, rendezvous):
     from torch.nn.parallel import DistributedDataParallel
 
     from metiscraft.modeling.model import DecisionModel
+    from metiscraft.train.distributed import init_process_group
     from tests.modeling.tiny import tiny_backbone, tiny_tokenizer
 
     torch.set_num_threads(1)
-    dist.init_process_group(
+    init_process_group(
         "gloo",
         init_method=f"file://{rendezvous}",
         rank=rank,

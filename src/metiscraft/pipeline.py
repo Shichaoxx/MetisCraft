@@ -42,13 +42,14 @@ from metiscraft.trace import (
     write_json,
 )
 from metiscraft.train.collate import Collator
+from metiscraft.train.distributed import init_process_group
 from metiscraft.train.loop import train_loop
 
 
 def init_distributed() -> tuple[int, int, torch.device]:
     world = int(os.environ.get("WORLD_SIZE", "1"))
     if world > 1 and not dist.is_initialized():
-        dist.init_process_group("nccl" if torch.cuda.is_available() else "gloo")
+        init_process_group("nccl" if torch.cuda.is_available() else "gloo")
     rank = dist.get_rank() if world > 1 else 0
     local = int(os.environ.get("LOCAL_RANK", "0"))
     if torch.cuda.is_available():
