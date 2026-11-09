@@ -278,7 +278,11 @@ def main():
         project = {
             "site_name": "MetisCraft",
             "site_url": f"https://shichaoxx.github.io/MetisCraft/{lang}/",
-            "site_description": "A JevLike model toolkit. Train, reproduce, calibrate and serve.",
+            "site_description": (
+                "JevLike 模型工具包：训练、复现、校准与服务。"
+                if zh
+                else "A JevLike model toolkit. Train, reproduce, calibrate and serve."
+            ),
             "docs_dir": f"sources/{lang}",
             "site_dir": f"site/{lang}",
             "repo_url": "https://github.com/Shichaoxx/MetisCraft",
@@ -328,6 +332,7 @@ admonition = {}
 attr_list = {}
 md_in_html = {}
 toc.permalink = true
+toc.permalink_title = "Permanent link"
 toc.slugify = { kwds = { case = "lower" } }
 pymdownx.highlight = {}
 pymdownx.superfences = {}
@@ -335,6 +340,14 @@ pymdownx.details = {}
 pymdownx.tasklist.custom_checkbox = true
 pymdownx.arithmatex.generic = true
 """.replace('language = "LANG"', f'language = "{lang}"')
+        if zh:
+            config = (
+                config.replace('toggle.name = "Dark mode"', 'toggle.name = "深色主题"')
+                .replace('toggle.name = "Light mode"', 'toggle.name = "浅色主题"')
+                .replace(
+                    'toc.permalink_title = "Permanent link"', 'toc.permalink_title = "章节链接"'
+                )
+            )
         path = BUILD / f"zensical-{lang}.toml"
         path.write_text(config, encoding="utf-8")
         subprocess.run(
@@ -359,7 +372,7 @@ pymdownx.arithmatex.generic = true
             f'<meta http-equiv="refresh" content="0;url={destination}">'
             f'<link rel="canonical" href="{destination}"><title>MetisCraft</title>'
             f"<script>location.replace({json.dumps(destination)}+location.search+location.hash)</script>"
-            f'<a href="{destination}">Continue to the documentation</a></html>',
+            f'<a href="{destination}">继续阅读文档</a></html>',
             encoding="utf-8",
         )
     assets = SITE / "assets" / "docs" / "visuals" / "figures"

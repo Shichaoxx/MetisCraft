@@ -1,5 +1,13 @@
 .md-typeset .arithmatex { overflow-x: auto; padding-block: .35em; }
 .md-typeset .cookbook-avatar img { object-fit: contain; object-position: center; }
+.md-typeset .cookbook-avatar > a { display: block; width: 100%; height: 100%; overflow: hidden; border-radius: .5rem; }
+.md-typeset .cookbook-guide[data-metis-outfit="gown"] .cookbook-avatar img { object-fit: cover; object-position: center top; transform: scale(1.4); transform-origin: center top; }
+.md-typeset .metis-wardrobe-controls { display: flex; flex-wrap: wrap; align-items: center; gap: .45rem .7rem; margin-top: .8rem; font-size: .7rem; }
+.md-typeset .metis-wardrobe-controls label { display: inline-flex; flex-wrap: wrap; align-items: center; gap: .4rem; }
+.md-typeset .metis-wardrobe-controls select { max-width: 100%; min-height: 2rem; padding: .25rem .5rem; border: 1px solid var(--md-default-fg-color--lighter); border-radius: .35rem; background: var(--md-default-bg-color); color: var(--md-default-fg-color); font: inherit; cursor: pointer; }
+.md-typeset [data-metis-outfit-label] { color: var(--md-default-fg-color--light); }
+.md-typeset .cookbook-guide-copy > .metis-wardrobe-note { margin-top: .5rem; color: var(--md-default-fg-color--light); font-size: .65rem; line-height: 1.65; }
+.md-typeset [data-metis-wardrobe] a:focus-visible, .md-typeset [data-metis-outfit-choice]:focus-visible { outline: 3px solid var(--md-accent-fg-color); outline-offset: 3px; }
 .md-typeset .arithmatex .katex { font-size: 1.04em; }
 .math-render-error { border-inline-start: 3px solid #c95b5b; padding-inline-start: .8rem; }
 .md-typeset img[data-figure-ready] { cursor: zoom-in; background: #fff; border: 1px solid #dce4e5; }

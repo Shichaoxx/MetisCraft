@@ -153,6 +153,57 @@ def main():
     body += text(28, 875, "Probability semantics differ by type.", 18, "#546b6d")
     save("judgments-mobile", 480, 904, "Four judgment types, vertical examples", body, "#ffffff")
 
+    # Both languages share geometry and typography; only editorial labels differ.
+    labels_zh = {
+        "One recipe, from data to decisions": "一份配方，从数据到判断",
+        "Data, training, calibration, evaluation and serving": "数据、训练、校准、评测与服务",
+        "Data to decisions, vertical overview": "从数据到判断：纵向流程",
+        "From data to decisions": "从数据到判断",
+        "Recorded along the way": "全流程记录",
+        "Configuration · data version · model identity · metrics": (
+            "配置 · 数据版本 · 模型身份 · 指标"
+        ),
+        "Configuration · data · model · metrics": "配置 · 数据 · 模型 · 指标",
+        "Validate splits": "校验数据划分",
+        "Fit a readout": "训练读出",
+        "Fit temperature": "拟合温度",
+        "Compare results": "比较结果",
+        "Load & answer": "加载与判断",
+        "Data": "数据",
+        "Train": "训练",
+        "Calibrate": "校准",
+        "Evaluate": "评测",
+        "Serve": "服务",
+        "Four judgment types, with illustrative outputs": "四种判断类型及构造示例",
+        "Four judgment types, vertical examples": "四种判断类型：纵向示例",
+        "Four ways to ask a decision model": "向判断模型提出四类问题",
+        "Four types of judgment": "四种判断类型",
+        "Yes / no": "是非判断",
+        "Choice": "选择判断",
+        "Ordered score": "等级判断",
+        "Multiple labels": "多标签判断",
+        "Does this need a human?": "需要人工处理吗？",
+        "Which team should handle it?": "应该交给哪个团队？",
+        "How urgent is this request?": "请求的紧急程度是几级？",
+        "Which topics are present?": "包含哪些主题？",
+        (
+            "Illustrative outputs, not benchmark results. "
+            "Each type has its own probability semantics."
+        ): "构造输出示例，并非评测结果。不同类型采用各自的概率语义。",
+        "Illustrative outputs, not benchmark results.": "构造输出示例，并非评测结果。",
+        "Probability semantics differ by type.": "概率语义因类型而异。",
+        "P(yes) = 0.85": "P(是) = 0.85",
+        "billing: 0.70 · support: 0.30": "账单: 0.70 · 支持: 0.30",
+        "P(level 1), …, P(level 5)": "P(等级 1), …, P(等级 5)",
+        "P(payments), P(cards), …": "P(支付), P(卡片), …",
+    }
+    for name in ("pipeline", "pipeline-mobile", "judgments", "judgments-mobile"):
+        svg = (OUT / f"{name}.svg").read_text(encoding="utf-8")
+        for source, translated in sorted(labels_zh.items(), key=lambda item: -len(item[0])):
+            svg = svg.replace(f">{escape(source)}<", f">{escape(translated)}<")
+        svg = svg.replace('"DejaVu Sans", Arial', '"Noto Sans CJK SC", "WenQuanYi Zen Hei", Arial')
+        (OUT / f"{name}-zh.svg").write_text(svg, encoding="utf-8")
+
 
 if __name__ == "__main__":
     main()

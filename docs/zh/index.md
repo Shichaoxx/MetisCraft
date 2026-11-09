@@ -93,8 +93,8 @@
 [配方与真实结果](limitations.md) · [数据格式](data.md) · [训练与校准](training.md) · [预测与服务](serving.md)
 
 <picture>
-  <source media="(max-width: 600px)" srcset="../visuals/figures/pipeline-mobile.svg">
-  <img src="../visuals/figures/pipeline.svg" alt="Data, train, calibrate, evaluate, serve">
+  <source media="(max-width: 600px)" srcset="../visuals/figures/pipeline-mobile-zh.svg">
+  <img src="../visuals/figures/pipeline-zh.svg" alt="数据、训练、校准、评测与服务">
 </picture>
 
 ## 理解计算机制

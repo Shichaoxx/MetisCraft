@@ -7,7 +7,7 @@ A teaching scenario maps Banking77's 77 intents to two business questions. One r
 | Registry name | `banking77_support` |
 | Upstream | [`PolyAI/banking77`](https://huggingface.co/datasets/PolyAI/banking77) @ `18469841` |
 | License | CC-BY-4.0; attribution required; trained artifacts retain applicable upstream terms |
-| Judgment type | Choice、Yes/no noul |
+| Judgment type | Choice and yes/no (`noul`) |
 | Splits (questions; two per message) | train 17,934 (upstream train); calib 1,054 (5% hash split from upstream train); dev 1,002 (5% hash split from upstream train); test 6,160 (upstream test) |
 
 ## Scenario definition

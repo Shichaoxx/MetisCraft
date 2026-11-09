@@ -1,0 +1,21 @@
+Metis Cookbook guide — approved midnight gown, 2026-11-09
+
+Generated with the built-in Imagegen tool; the platform selects the model revision.
+References: avatar.png (face identity), metis-guide.png (character finish),
+metis-guide-chibi.png (recognizable features and expression).
+Approved for the Cookbook wardrobe alongside the academy outfit.
+The 1024 × 1536 original is preserved without pixel changes; the guide uses CSS
+upper-body framing and links to this complete illustration.
+
+SHA256 identity:
+c1d3cc2adb730179c9bd5e70389b6fb8aeed0917502b50d930e7c891d6aa8e07  metis-night-gown.png
+
+Original generation prompt (Chinese):
+
+用途：stylized-concept；MetisCraft 看板角色「Metis / 小墨」的黑夜主题礼服换装候选。只生成一位角色的一张精致完整全身立绘，不做角色设定表、不做拼图。
+参考图片身份分工：图1 avatar.png 是最重要的脸部身份参考；图2 metis-guide.png 用于已有角色的线条、头发、服装细节完成度参考；图3 metis-guide-chibi.png 用于确认辨识特征和亲切神态。本次仅换成黑夜礼服，严格保持同一位 Metis，不能把参考图的巨大Q版头身比例搬到全身图。
+人物身份：柔和的椭圆小脸，紧凑的下半脸、圆润的下颌和很短的小巧下巴；大而明亮、上眼缘有优美圆弧的琥珀金色眼睛，柔和微笑、淡淡红晕。可爱亲切而有书卷气，绝不能变成成熟尖V脸。青墨蓝绿色的丰盈波浪中长发，漂亮流畅的发束与薄荷浅绿挑染，头顶保留醒目的环形呆毛，左右保留深青与米白的小羽毛状发饰，侧面一枚小金羽夹配珍珠和细短流苏。发丝弯曲有层次，发尾轻轻飘动。
+服装：深海军蓝黑夜礼服，端庄、优雅、有轻盈的星夜感。细致合身的缎面上身，适度露出锁骨的平缓船形领口、精致细金包边；短而轻薄的银灰蓝半透明纱袖，肩线自然。自然腰线，以精巧古铜星盘腰扣和一小段细链作点缀。多层A字长裙，海军蓝缎面内裙与轻盈半透明银蓝外纱错层，局部精细且克制的古铜金星图与小星纹刺绣，裙摆有优美流动褶皱、轻轻离地，能清楚看到一双精致深蓝礼鞋的鞋尖和少量脚踝。衣装细节丰富但不堆满，每种材质都能分清。仅用小羽毛装饰，不要厚重羽毛披肩、厚斗篷、大翼。
+体态和动作：完整全身，约5.5至6头身的轻度简化动漫立绘，修长自然的躯干和腿部，头部尺寸协调，肩颈连接自然。身体与头部正立，头颅竖直、眼线水平，不能歪头。重心自然落在一条腿，双脚贴地，一只手轻轻提起侧边一点裙摆，另一手放松靠近腰前。手势简洁自然、手指准确；神态温柔、自信且亲近。头颈躯干必须是一个连贯自然的结构，不能像换头拼贴。
+画风：与参考图一致的高质量日系二维角色插画，细腻清晰的线稿，温柔精致的赛璐璐与柔和绘画阴影，头发光泽漂亮，衣料褶皱可信，金属与纱质区别清楚。角色视觉成熟度以图2为基础，面部保持图1的可爱程度；不要3D，不要照片，不要玩偶，不要大头娃娃。
+构图与输出：竖版2:3，一位角色居中，完整保留环形呆毛、所有发尾、两手、裙摆和鞋子，四周留适量安全边距。真正透明背景，保留alpha，不能有任何背景色块、棋盘格、场景、台座、投影、文字、标记、水印。为适配暗色网页，在头发与深色裙摆外缘加极细、自然的淡银蓝受光边缘，让轮廓清楚，不能变成发光描边或白色贴纸边。

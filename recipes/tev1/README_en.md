@@ -29,7 +29,7 @@ metiscraft data prepare tev1
 metiscraft train recipes/tev1/qwen3.5-2b_chat-completion.yaml
 ```
 
-Qwen3.5 linear-attention layers use `flash-linear-attention`. In the recorded 2B smoke configuration, the PyTorch reference path at batch 4 without gradient checkpointing reached 23.5 GB and did not finish its first step within 1.5 minutes. With the optimized kernel and checkpointing, peak memory was approximately 6 GB and each 36-question step took approximately 26 seconds; first-use kernel compilation added approximately 10 minutes. The original 1,052-step estimate was approximately 7.5 hours. These are configuration-specific observations, not a general hardware guarantee or a 4B memory claim.
+Qwen3.5 linear-attention layers use `flash-linear-attention`. In the recorded 2B smoke configuration on an RTX 3090, the PyTorch reference path at batch 4 without gradient checkpointing reached 23.5 GB and did not finish its first step within 1.5 minutes. With the optimized kernel and checkpointing, peak memory was approximately 6 GB and each 36-question step took approximately 26 seconds; first-use kernel compilation added approximately 10 minutes. The original 1,052-step estimate was approximately 7.5 hours. These are configuration-specific observations, not a general hardware guarantee or a 4B memory claim.
 
 ## Recorded results
 

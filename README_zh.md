@@ -9,8 +9,8 @@
 <p align="center">
   <a href="https://github.com/Shichaoxx/MetisCraft/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/Shichaoxx/MetisCraft/actions/workflows/ci.yml/badge.svg?branch=main"></a>
   <a href="LICENSE"><img alt="Apache 2.0" src="https://img.shields.io/badge/license-Apache--2.0-087f78"></a>
-  <a href="docs/zh/installation.md"><img alt="Python 3.10 and 3.11" src="https://img.shields.io/badge/python-3.10%20%7C%203.11-243438"></a>
-  <a href="CHANGELOG_zh.md"><img alt="0.1.0rc1 public preview" src="https://img.shields.io/badge/preview-0.1.0rc1-bd8c36"></a>
+  <a href="docs/zh/installation.md"><img alt="Python 3.10 与 3.11" src="https://img.shields.io/badge/python-3.10%20%7C%203.11-243438"></a>
+  <a href="CHANGELOG_zh.md"><img alt="0.1.0rc1 公开预览" src="https://img.shields.io/badge/公开预览-0.1.0rc1-bd8c36"></a>
 </p>
 
 <p align="center">
@@ -60,8 +60,8 @@
 答案 token 或逐候选标量头，两种读出按配方选择。支持 LoRA、全参和冻结基座；产物记录配置、数据版本、基座身份与评测结果。校准使用独立划分，收益需要在目标分布上验证。
 
 <picture>
-  <source media="(max-width: 600px)" srcset="docs/visuals/figures/pipeline-mobile.svg">
-  <img src="docs/visuals/figures/pipeline.svg" alt="Data, train, calibrate, evaluate, serve">
+  <source media="(max-width: 600px)" srcset="docs/visuals/figures/pipeline-mobile-zh.svg">
+  <img src="docs/visuals/figures/pipeline-zh.svg" alt="数据、训练、校准、评测与服务">
 </picture>
 
 ## 开始使用
