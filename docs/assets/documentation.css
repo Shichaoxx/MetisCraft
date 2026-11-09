@@ -25,7 +25,7 @@
 #metis-figure-dialog { width: min(96vw, 1600px); max-width: 96vw; max-height: 94vh; padding: 1rem; border: 1px solid #879b9b; border-radius: .6rem; background: #fff; color: #243338; }
 #metis-figure-dialog::backdrop { background: #17292ccc; }
 #metis-figure-dialog .figure-toolbar { display: flex; justify-content: space-between; gap: 1rem; align-items: center; margin-bottom: 1rem; }
-#metis-figure-dialog button { padding: .4rem .8rem; border: 1px solid #879b9b; border-radius: .25rem; cursor: pointer; }
+#metis-figure-dialog button { padding: .4rem .8rem; border: 1px solid #879b9b; border-radius: .25rem; color: #243338; background: #edf6f3; font-size: 14px; cursor: pointer; }
 #metis-figure-dialog .figure-canvas { overflow: auto; max-height: 76vh; }
 #metis-figure-dialog img { width: 100%; min-width: min(800px, 170vw); height: auto; display: block; }
 #metis-figure-dialog > a { color: #087f78; display: block; margin-top: .8rem; }
