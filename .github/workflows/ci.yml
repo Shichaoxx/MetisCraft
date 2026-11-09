@@ -10,34 +10,6 @@ env:
   MKL_NUM_THREADS: "2"
 
 jobs:
-  cpu-ddp-diagnostics:
-    # Investigation only: capture native failures on the same CPU wheel as the
-    # original runner. This job does not build a release or deploy documentation.
-    if: github.ref == 'refs/heads/fix/cpu-ddp-lifecycle'
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-    permissions:
-      contents: read
-    steps:
-      - uses: actions/checkout@v7
-        with:
-          persist-credentials: false
-      - uses: actions/setup-python@v7
-        with:
-          python-version: "3.11.18"
-      - name: Install the original CPU PyTorch build
-        run: python -m pip install torch==2.15.0+cpu --index-url https://download.pytorch.org/whl/cpu
-      - name: Install diagnostic dependencies
-        run: python -m pip install -e ".[dev,serve,reproduce]"
-      - name: Repeat the fixed CPU DDP fixture without phase logging
-        run: python .github/diagnostics/run_cpu_ddp_untouched.py --output "$RUNNER_TEMP/cpu-ddp-diagnostics" --variants current --repeats 20
-      - uses: actions/upload-artifact@v7
-        if: always()
-        with:
-          name: cpu-ddp-diagnostics
-          path: ${{ runner.temp }}/cpu-ddp-diagnostics
-          if-no-files-found: error
-
   test:
     runs-on: ubuntu-latest
     steps:
