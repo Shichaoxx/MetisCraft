@@ -4,7 +4,7 @@ From a recorded response to a decision model of your own.
 
 <div class="cookbook-guide" markdown="1">
 
-<figure class="cookbook-avatar"><img src="../../visuals/figures/metis-guide.png" alt="Metis holding a star-chart book, your Cookbook guide" width="160" height="240"></figure>
+<figure class="cookbook-avatar"><img src="../../visuals/figures/metis-guide-chibi.png" alt="Metis holding a star-chart book, your Cookbook guide" width="160" height="240"></figure>
 
 <div class="cookbook-guide-copy" markdown="1">
 
@@ -60,6 +60,6 @@ For customer routing, this might mean sending a message to the security queue an
 - [Record JSONL and dataset manifests](../data.md).
 - [Base preparation and recipe settings](../training.md).
 - [Prediction, HTTP and task routing](../serving.md).
-- [Recipe field reference](../../cookbook/recipe-reference.md) and [readout diagrams](../../readouts/README.md) (Chinese).
+- [Recipe field reference](../recipe-reference.md) and [Concepts & Tensors](../tensor-analysis/index.md).
 
 [中文](../../zh/cookbook/index.md)

@@ -1,0 +1,119 @@
+% Shared vector grammar. Generated figure TeX files inline this source.
+\documentclass[tikz,border=4mm,12pt]{standalone}
+\usepackage[UTF8,fontset=fandol]{ctex}
+\usepackage{amsmath,amssymb,bm}
+\renewcommand{\familydefault}{\sfdefault}
+\hyphenpenalty=10000
+\exhyphenpenalty=10000
+\usetikzlibrary{arrows.meta,backgrounds,calc}
+\definecolor{Ink}{HTML}{273648}
+\definecolor{Muted}{HTML}{607086}
+\definecolor{Ctx}{HTML}{85898F}
+\definecolor{Qst}{HTML}{4F8FA5}
+\definecolor{Opt}{HTML}{5A9A6E}
+\definecolor{Gen}{HTML}{B89A5E}
+\definecolor{Hid}{HTML}{8A74B5}
+\definecolor{Wgt}{HTML}{E0904F}
+\definecolor{Lgt}{HTML}{C95B5B}
+\definecolor{Idx}{HTML}{7E8B9B}
+\definecolor{Msk}{HTML}{3F5A78}
+\newcommand{\Unit}{0.30}
+\newcommand{\Offset}{0.12}
+\newcommand{\BinarySupport}{0}
+\newcounter{texture}
+\tikzset{
+ flow/.style={-{Latex[length=2mm,width=1.5mm]},draw=Ink!75,line width=.65pt},
+ tensorlabel/.style={font=\small,text=Ink,align=center,inner sep=0pt},
+ tenshape/.style={font=\scriptsize,text=Muted,align=center,inner sep=0pt},
+ stage/.style={font=\small\bfseries,text=Muted,align=left,anchor=west},
+ operation/.style={draw=Ink!25,fill=white,rounded corners=2pt,align=center,
+  font=\small,text=Ink,inner sep=5pt,line width=.5pt},
+}
+% The last two axes define a matrix face. Leading axes use offset sheets.
+% Every symbolic dimension maps to the same cell count throughout the set.
+\newcommand{\Tensor}[9]{%
+ \stepcounter{texture}
+ \pgfmathsetmacro{\ww}{#5*\Unit}
+ \pgfmathsetmacro{\hh}{#4*\Unit}
+ \pgfmathsetmacro{\xx}{#2-\ww/2}
+ \pgfmathsetmacro{\yy}{#3-\hh/2}
+ \ifnum#7>0
+  \foreach \s in {#7,...,1}{
+   \path[draw=#6!40,fill=white,line width=.45pt,rounded corners=.7pt]
+    ({\xx+\s*\Offset},{\yy+\s*\Offset}) rectangle ++(\ww,\hh);}
+ \fi
+ \foreach \r in {1,...,#4}{\foreach \c in {1,...,#5}{
+  \ifnum\BinarySupport>0
+   \pgfmathtruncatemacro{\level}{\BinarySupport==1?(\c>3-\r?75:0):(\BinarySupport==2?(\c<=4-\r?75:0):(\c<=\r?75:0))}
+  \else
+   \pgfmathtruncatemacro{\tone}{mod(\r*13+\c*7+\arabic{texture}*11,7)}
+   \pgfmathtruncatemacro{\level}{\tone<3?30:(\tone<6?55:80)}
+  \fi
+  \path[fill=#6!\level,rounded corners=.5pt]
+   ({\xx+(\c-1)*\Unit+.021},{\yy+\hh-\r*\Unit+.021})
+    rectangle ++({\Unit-.042},{\Unit-.042});}}
+ \ifnum\BinarySupport>0
+  \path[draw=Msk!35,line width=.4pt] (\xx,\yy) rectangle ++(\ww,\hh);
+ \fi
+ \coordinate (#1-w) at (\xx,#3);
+ \coordinate (#1-e) at ({\xx+\ww+#7*\Offset},#3);
+ \node[tensorlabel] at (#2,{\yy-.28}) {$#8$};
+ \node[tenshape] at (#2,{\yy-.63}) {$#9$};
+}
+% Exact binary support; row i is a query and column j a key.
+\newcommand{\Support}[5]{%
+ \foreach \i in {1,...,#4}{\foreach \j in {1,...,#4}{
+  \pgfmathtruncatemacro{\on}{#5}
+  \ifnum\on>0
+   \path[fill=Msk!65,rounded corners=.4pt]
+    ({#2+(\j-1)*\Unit+.021},{#3-\i*\Unit+.021})
+     rectangle ++({\Unit-.042},{\Unit-.042});
+  \fi}}
+ \path[draw=Ink!35,line width=.4pt] (#2,#3) rectangle ++({#4*\Unit},{-#4*\Unit});
+}
+\newcommand{\Meaning}[7]{%
+ \node[anchor=north west,fill=Ink!4,rounded corners=3pt,inner sep=9pt,
+  text width=#3cm-18pt,align=left,font=\small] (meaning) at (#1,#2) {
+  \begin{tabular}{@{}p{1.8cm}@{\hspace{7pt}}p{\dimexpr #3cm-2.8cm\relax}@{}}
+   \textbf{#4} & \raggedright #5\tabularnewline[6pt]
+   \textbf{#6} & \raggedright #7\tabularnewline
+  \end{tabular}};
+}
+
+\begin{document}
+\begin{tikzpicture}[x=1cm,y=1cm,text=Ink]
+\node[font=\normalsize,align=center] at (10.500,4.0) {$\displaystyle q=W_qh^{dec},\quad k_j=W_kh^{opt}_j,\quad S_{b,j}=\frac{q_b^{\mathsf T}k_{b,j}}{\sqrt{d_p}},\quad p=\operatorname{softmax}_j(S/\tau)$};
+\node[stage] at (0,2.800) {Gather one decision representation for each question in packed inputs};
+\renewcommand{\BinarySupport}{0}
+\Tensor{r0n0}{4.250}{-0.000}{12}{5}{Hid}{0}{H}{[C,T,d]}
+\node[operation,minimum width=4.000cm,minimum height=1.250cm,text width=3.650cm] (r0n1) at (7.650,-0.000) {Gather markers\\decision / option ends};
+\coordinate (r0n1-w) at (5.650,-0.000);\coordinate (r0n1-e) at (9.650,-0.000);
+\draw[flow] (r0n0-e) -- (r0n1-w);
+\renewcommand{\BinarySupport}{0}
+\Tensor{r0n2}{11.050}{-0.000}{2}{5}{Hid}{0}{h^{dec}}{[B,d]}
+\draw[flow] (r0n1-e) -- (r0n2-w);
+\node[operation,minimum width=3.200cm,minimum height=1.250cm,text width=2.850cm] (r0n3) at (14.050,-0.000) {Query projection\\$W_q:d\to d_p$};
+\coordinate (r0n3-w) at (12.450,-0.000);\coordinate (r0n3-e) at (15.650,-0.000);
+\draw[flow] (r0n2-e) -- (r0n3-w);
+\renewcommand{\BinarySupport}{0}
+\Tensor{r0n4}{16.900}{-0.000}{2}{4}{Hid}{0}{q}{[B,d_p]}
+\draw[flow] (r0n3-e) -- (r0n4-w);
+\node[stage] at (0,-3.500) {Project candidate representations and score them against the decision query};
+\renewcommand{\BinarySupport}{0}
+\Tensor{r1n0}{4.430}{-6.300}{3}{5}{Hid}{1}{h^{opt}}{[B,K,d]}
+\node[operation,minimum width=3.200cm,minimum height=1.250cm,text width=2.850cm] (r1n1) at (7.550,-6.300) {Key projection\\$W_k:d\to d_p$};
+\coordinate (r1n1-w) at (5.950,-6.300);\coordinate (r1n1-e) at (9.150,-6.300);
+\draw[flow] (r1n0-e) -- (r1n1-w);
+\renewcommand{\BinarySupport}{0}
+\Tensor{r1n2}{10.400}{-6.300}{3}{4}{Hid}{1}{k}{[B,K,d_p]}
+\draw[flow] (r1n1-e) -- (r1n2-w);
+\node[operation,minimum width=4.000cm,minimum height=1.250cm,text width=3.650cm] (r1n3) at (13.770,-6.300) {Batched dot product\\$q^\mathsf T k/\sqrt{d_p}$};
+\coordinate (r1n3-w) at (11.770,-6.300);\coordinate (r1n3-e) at (15.770,-6.300);
+\draw[flow] (r1n2-e) -- (r1n3-w);
+\renewcommand{\BinarySupport}{0}
+\Tensor{r1n4}{16.870}{-6.300}{2}{3}{Lgt}{0}{S}{[B,K]}
+\draw[flow] (r1n3-e) -- (r1n4-w);
+\Meaning{0}{-8.400}{21.000}{Axes}{$C$: input sequences; $Q$: questions per sequence; $B=CQ$ in the fixed-size example. $h^{dec}:[B,d]$; $h^{opt}:[B,K,d]$; $d_p$: pointer width.}{Meaning}{This is a comparison architecture, not a MetisCraft readout. Branch visibility, option isolation and position IDs belong to its packing contract. Multiple questions per sequence do not imply a universal latency improvement; hybrid backbones may need separate rows.}
+\node[font=\scriptsize,text=Muted,anchor=north,align=center] at ($(meaning.south)+(0,-.2)$) {Cell counts illustrate axes, not model sizes; tint identifies roles, not numeric values.\\[3pt]MetisCraft: readout 4 pointer $\cdot$ shichao};
+\end{tikzpicture}
+\end{document}

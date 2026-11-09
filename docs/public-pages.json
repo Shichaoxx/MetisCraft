@@ -1,47 +1,77 @@
 {
   "pages": [
     "docs/en/index.md",
-    "docs/en/installation.md",
-    "docs/en/quickstart.md",
-    "docs/en/data.md",
-    "docs/en/training.md",
-    "docs/en/serving.md",
-    "docs/en/limitations.md",
-    "docs/en/cookbook/index.md",
-    "docs/en/cookbook/decision.md",
-    "docs/en/cookbook/first-model.md",
-    "docs/en/cookbook/own-task.md",
     "docs/zh/index.md",
+    "docs/en/installation.md",
     "docs/zh/installation.md",
+    "docs/en/quickstart.md",
     "docs/zh/quickstart.md",
+    "docs/en/data.md",
     "docs/zh/data.md",
+    "docs/en/training.md",
     "docs/zh/training.md",
+    "docs/en/serving.md",
     "docs/zh/serving.md",
+    "docs/en/limitations.md",
     "docs/zh/limitations.md",
+    "docs/en/cookbook/index.md",
     "docs/zh/cookbook/index.md",
+    "docs/en/cookbook/decision.md",
     "docs/zh/cookbook/decision.md",
+    "docs/en/cookbook/first-model.md",
     "docs/zh/cookbook/first-model.md",
+    "docs/en/cookbook/own-task.md",
     "docs/zh/cookbook/own-task.md",
+    "docs/en/tensor-analysis/index.md",
+    "docs/zh/tensor-analysis/index.md",
+    "docs/en/tensor-analysis/notation.md",
+    "docs/zh/tensor-analysis/notation.md",
+    "docs/en/tensor-analysis/answer-token.md",
+    "docs/zh/tensor-analysis/answer-token.md",
+    "docs/en/tensor-analysis/scalar-heads.md",
+    "docs/zh/tensor-analysis/scalar-heads.md",
+    "docs/en/tensor-analysis/training-calibration.md",
+    "docs/zh/tensor-analysis/training-calibration.md",
+    "docs/en/tensor-analysis/readout-comparison.md",
+    "docs/zh/tensor-analysis/readout-comparison.md",
+    "docs/en/tensor-analysis/walkthrough.md",
+    "docs/zh/tensor-analysis/walkthrough.md",
+    "docs/en/principles.md",
     "docs/cookbook/principles.md",
+    "docs/en/best-practices.md",
     "docs/cookbook/best-practices.md",
+    "docs/en/recipe-reference.md",
     "docs/cookbook/recipe-reference.md",
-    "docs/readouts/README.md",
+    "docs/en/reproductions/tev1.md",
     "docs/reproductions/tev1.md",
+    "docs/en/support-matrix.md",
     "docs/support-matrix.md",
-    "docs/reference.md",
+    "docs/en/interfaces.md",
+    "docs/zh/interfaces.md",
     "CONTRIBUTING.md",
+    "CONTRIBUTING_zh.md",
     "CHANGELOG.md",
+    "CHANGELOG_zh.md",
+    "recipes/banking77/README_en.md",
     "recipes/banking77/README.md",
+    "recipes/banking77_support/README_en.md",
     "recipes/banking77_support/README.md",
+    "recipes/boolq/README_en.md",
     "recipes/boolq/README.md",
+    "recipes/clinc150/README_en.md",
     "recipes/clinc150/README.md",
+    "recipes/go_emotions/README_en.md",
     "recipes/go_emotions/README.md",
+    "recipes/sst5/README_en.md",
     "recipes/sst5/README.md",
+    "recipes/tev1/README_en.md",
     "recipes/tev1/README.md"
   ],
   "aliases": {
     "docs/cookbook/README.md": "docs/zh/cookbook/index.md",
-    "docs/cookbook/your-own-jev.md": "docs/zh/cookbook/own-task.md"
+    "docs/cookbook/your-own-jev.md": "docs/zh/cookbook/own-task.md",
+    "docs/reference.md": "docs/zh/interfaces.md",
+    "docs/readouts/README.md": "docs/zh/tensor-analysis/readout-comparison.md"
   },
   "development_only": [
     "docs/status.md",
@@ -49,5 +79,139 @@
     "docs/publishing.md",
     "docs/research"
   ],
-  "version": "0.1.0rc1"
+  "version": "0.1.0rc1",
+  "language_pairs": {
+    "index": {
+      "en": "docs/en/index.md",
+      "zh": "docs/zh/index.md"
+    },
+    "installation": {
+      "en": "docs/en/installation.md",
+      "zh": "docs/zh/installation.md"
+    },
+    "quickstart": {
+      "en": "docs/en/quickstart.md",
+      "zh": "docs/zh/quickstart.md"
+    },
+    "data": {
+      "en": "docs/en/data.md",
+      "zh": "docs/zh/data.md"
+    },
+    "training": {
+      "en": "docs/en/training.md",
+      "zh": "docs/zh/training.md"
+    },
+    "serving": {
+      "en": "docs/en/serving.md",
+      "zh": "docs/zh/serving.md"
+    },
+    "limitations": {
+      "en": "docs/en/limitations.md",
+      "zh": "docs/zh/limitations.md"
+    },
+    "cookbook/index": {
+      "en": "docs/en/cookbook/index.md",
+      "zh": "docs/zh/cookbook/index.md"
+    },
+    "cookbook/decision": {
+      "en": "docs/en/cookbook/decision.md",
+      "zh": "docs/zh/cookbook/decision.md"
+    },
+    "cookbook/first-model": {
+      "en": "docs/en/cookbook/first-model.md",
+      "zh": "docs/zh/cookbook/first-model.md"
+    },
+    "cookbook/own-task": {
+      "en": "docs/en/cookbook/own-task.md",
+      "zh": "docs/zh/cookbook/own-task.md"
+    },
+    "tensor-analysis/index": {
+      "en": "docs/en/tensor-analysis/index.md",
+      "zh": "docs/zh/tensor-analysis/index.md"
+    },
+    "tensor-analysis/notation": {
+      "en": "docs/en/tensor-analysis/notation.md",
+      "zh": "docs/zh/tensor-analysis/notation.md"
+    },
+    "tensor-analysis/answer-token": {
+      "en": "docs/en/tensor-analysis/answer-token.md",
+      "zh": "docs/zh/tensor-analysis/answer-token.md"
+    },
+    "tensor-analysis/scalar-heads": {
+      "en": "docs/en/tensor-analysis/scalar-heads.md",
+      "zh": "docs/zh/tensor-analysis/scalar-heads.md"
+    },
+    "tensor-analysis/training-calibration": {
+      "en": "docs/en/tensor-analysis/training-calibration.md",
+      "zh": "docs/zh/tensor-analysis/training-calibration.md"
+    },
+    "tensor-analysis/readout-comparison": {
+      "en": "docs/en/tensor-analysis/readout-comparison.md",
+      "zh": "docs/zh/tensor-analysis/readout-comparison.md"
+    },
+    "tensor-analysis/walkthrough": {
+      "en": "docs/en/tensor-analysis/walkthrough.md",
+      "zh": "docs/zh/tensor-analysis/walkthrough.md"
+    },
+    "principles": {
+      "en": "docs/en/principles.md",
+      "zh": "docs/cookbook/principles.md"
+    },
+    "best-practices": {
+      "en": "docs/en/best-practices.md",
+      "zh": "docs/cookbook/best-practices.md"
+    },
+    "recipe-reference": {
+      "en": "docs/en/recipe-reference.md",
+      "zh": "docs/cookbook/recipe-reference.md"
+    },
+    "tev1": {
+      "en": "docs/en/reproductions/tev1.md",
+      "zh": "docs/reproductions/tev1.md"
+    },
+    "support-matrix": {
+      "en": "docs/en/support-matrix.md",
+      "zh": "docs/support-matrix.md"
+    },
+    "interfaces": {
+      "en": "docs/en/interfaces.md",
+      "zh": "docs/zh/interfaces.md"
+    },
+    "contributing": {
+      "en": "CONTRIBUTING.md",
+      "zh": "CONTRIBUTING_zh.md"
+    },
+    "changelog": {
+      "en": "CHANGELOG.md",
+      "zh": "CHANGELOG_zh.md"
+    },
+    "recipes/banking77": {
+      "en": "recipes/banking77/README_en.md",
+      "zh": "recipes/banking77/README.md"
+    },
+    "recipes/banking77_support": {
+      "en": "recipes/banking77_support/README_en.md",
+      "zh": "recipes/banking77_support/README.md"
+    },
+    "recipes/boolq": {
+      "en": "recipes/boolq/README_en.md",
+      "zh": "recipes/boolq/README.md"
+    },
+    "recipes/clinc150": {
+      "en": "recipes/clinc150/README_en.md",
+      "zh": "recipes/clinc150/README.md"
+    },
+    "recipes/go_emotions": {
+      "en": "recipes/go_emotions/README_en.md",
+      "zh": "recipes/go_emotions/README.md"
+    },
+    "recipes/sst5": {
+      "en": "recipes/sst5/README_en.md",
+      "zh": "recipes/sst5/README.md"
+    },
+    "recipes/tev1": {
+      "en": "recipes/tev1/README_en.md",
+      "zh": "recipes/tev1/README.md"
+    }
+  }
 }

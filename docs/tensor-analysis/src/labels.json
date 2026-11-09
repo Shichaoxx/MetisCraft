@@ -1,0 +1,466 @@
+{
+  "axes": {
+    "en": "Axes",
+    "zh": "轴"
+  },
+  "meaning": {
+    "en": "Meaning",
+    "zh": "机制"
+  },
+  "illustration": {
+    "en": "Cell counts illustrate axes, not model sizes; tint identifies roles, not numeric values.",
+    "zh": "格子数示意轴结构，而非模型规模；色阶区分语义角色，不表示数值。"
+  },
+  "flow.title": {
+    "en": "MetisCraft: from a question to a typed probability",
+    "zh": "MetisCraft：从问题到类型化概率"
+  },
+  "flow.input": {
+    "en": "Record batch\\\\state, question, choices",
+    "zh": "Record 批次\\\\材料、问题、候选"
+  },
+  "flow.pack": {
+    "en": "Collator\\\\left padding + positions",
+    "zh": "Collator\\\\左填充与位置索引"
+  },
+  "flow.decoder": {
+    "en": "Backbone decoder\\\\causal attention",
+    "zh": "主干 decoder\\\\因果注意力"
+  },
+  "flow.token": {
+    "en": "Answer tokens\\\\last position + IDs",
+    "zh": "答案 token\\\\末位置与答案 ID"
+  },
+  "flow.scalar": {
+    "en": "Scalar head\\\\list slots / pairs rows",
+    "zh": "标量头\\\\list 槽位／pairs 行"
+  },
+  "flow.probs": {
+    "en": "Prior correction + $\\tau$\\\\softmax / sigmoid",
+    "zh": "先验修正与 $\\tau$\\\\softmax／sigmoid"
+  },
+  "flow.output": {
+    "en": "Typed output\\\\Record / HTTP",
+    "zh": "类型化输出\\\\Record／HTTP"
+  },
+  "flow.axes": {
+    "en": "$B$: questions; $T$: tokens; $d$: hidden channels; $K$: padded candidate columns. $A$ masks padding; $M^{cand}$ marks valid candidates.",
+    "zh": "$B$：问题数；$T$：token 数；$d$：隐藏维度；$K$：补齐的候选列数。$A$ 标记填充；$M^{cand}$ 标记有效候选。"
+  },
+  "flow.meaning": {
+    "en": "Both implemented readouts produce real scores $S$. Temperature routing is shared by offline and HTTP paths; HTTP supports noul, choice and score, while Record prediction also supports multi\\_label.",
+    "zh": "两类已实现读出都产生实数分数 $S$。离线与 HTTP 共享温度路由；HTTP 支持 noul、choice、score，Record 预测另支持 multi\\_label。"
+  },
+  "token.stage1": {
+    "en": "Causal encoding and last-position selection",
+    "zh": "因果编码与末位置选择"
+  },
+  "token.stage2": {
+    "en": "Vocabulary projection, then ordered answer-token selection",
+    "zh": "词表投影，再按顺序选择答案 token"
+  },
+  "decoder": {
+    "en": "Decoder\\\\causal attention",
+    "zh": "Decoder\\\\因果注意力"
+  },
+  "last": {
+    "en": "Gather\\\\last valid token",
+    "zh": "Gather\\\\末个有效 token"
+  },
+  "vocabgather": {
+    "en": "Gather columns\\\\answer IDs $\\ell$",
+    "zh": "选择词表列\\\\答案 ID $\\ell$"
+  },
+  "softmax": {
+    "en": "softmax\\\\valid candidates",
+    "zh": "softmax\\\\有效候选"
+  },
+  "token.axes": {
+    "en": "$B$: questions; $T$: tokens; $d$: hidden channels; $V$: vocabulary; $L$: answer-token IDs. $W_{\\mathrm{lm}}$ is stored as $[V,d]$.",
+    "zh": "$B$：问题数；$T$：token 数；$d$：隐藏维度；$V$：词表；$L$：答案 token 数。$W_{\\mathrm{lm}}$ 按 $[V,d]$ 存储。"
+  },
+  "token.meaning": {
+    "en": "The readout position sees all preceding options. Choice and score normalize over selected answer tokens, not the full vocabulary. For noul, the implementation uses $z_{yes}-z_{no}$ followed by sigmoid.",
+    "zh": "读出位置能看见前面的全部候选。choice 与 score 在所选答案 token 上归一化，而非整个词表；noul 使用 $z_{yes}-z_{no}$ 再做 sigmoid。"
+  },
+  "list.stage1": {
+    "en": "Default scalar layout: all candidates share one causal sequence",
+    "zh": "默认标量布局：候选共享同一条因果序列"
+  },
+  "list.stage2": {
+    "en": "Gather candidate slots; apply the same scalar head at every slot",
+    "zh": "选取候选槽位；各槽位使用同一个标量头"
+  },
+  "slots": {
+    "en": "Gather slots\\\\positions $[B,K]$",
+    "zh": "选取槽位\\\\positions $[B,K]$"
+  },
+  "scalarhead": {
+    "en": "Shared scalar head\\\\$d\\to d_h\\to1$",
+    "zh": "共享标量头\\\\$d\\to d_h\\to1$"
+  },
+  "squeeze": {
+    "en": "squeeze(-1)\\\\preserve $B,K$",
+    "zh": "squeeze(-1)\\\\保留 $B,K$"
+  },
+  "list.axes": {
+    "en": "$P_{b,k}\\in\\{0,\\ldots,T-1\\}$ selects a candidate's slot after left padding. $h_{b,k}=H_{b,P_{b,k},:}$ has shape $[d]$.",
+    "zh": "$P_{b,k}\\in\\{0,\\ldots,T-1\\}$ 是左填充后的候选槽位索引。$h_{b,k}=H_{b,P_{b,k},:}$ 的形状为 $[d]$。"
+  },
+  "list.meaning": {
+    "en": "Later candidates can attend to earlier candidates under the causal mask. An independent sigmoid output does not make their hidden representations independent. List is the current default; tree packing is not implemented.",
+    "zh": "因果 mask 允许后面的候选关注前面的候选。输出使用独立 sigmoid，并不意味着隐藏表示互相独立。list 是当前默认布局；未实现 tree 打包。"
+  },
+  "pairs.stage1": {
+    "en": "One independent sequence per valid question--candidate pair",
+    "zh": "每个有效问题—候选对独立成行"
+  },
+  "pairs.stage2": {
+    "en": "Score each row, then scatter back to question and candidate indices",
+    "zh": "逐行打分，再按问题与候选索引回填"
+  },
+  "scatter": {
+    "en": "Scatter\\\\pair\\_row, pair\\_col",
+    "zh": "Scatter 回填\\\\pair\\_row、pair\\_col"
+  },
+  "pairs.axes": {
+    "en": "$R=\\sum_b K_b$ counts valid pairs; $R=BK$ only when all questions have the same $K$. Rows are batchable, rather than $K$ obligatory serial model calls.",
+    "zh": "$R=\\sum_b K_b$ 是有效候选对数；所有问题的候选数相同时才有 $R=BK$。这些行可以组成批次，不要求串行调用模型 $K$ 次。"
+  },
+  "pairs.meaning": {
+    "en": "A row contains the shared state/question and one candidate. Rows do not exchange hidden states. Softmax still couples the final probabilities within a question; runtime depends on batching, lengths and hardware.",
+    "zh": "每行包含同一材料／问题与一个候选，不同行不交换隐藏状态。softmax 仍会在问题内耦合最终概率；耗时取决于批量、长度和硬件。"
+  },
+  "notation.stage1": {
+    "en": "Discrete inputs: token IDs, padding support and candidate indexing",
+    "zh": "离散输入：token ID、填充有效性与候选索引"
+  },
+  "notation.masks": {
+    "en": "Attention support is distinct from padding and candidate support",
+    "zh": "注意力可见性、填充有效性与候选有效性分别定义"
+  },
+  "notation.stage2": {
+    "en": "Tensor geometry follows the final two axes; transposition exchanges their edges",
+    "zh": "矩阵正面对应末两轴；转置交换两条边"
+  },
+  "notation.support": {
+    "en": "$M^{attn}_{ij}=1\\iff j\\leq i$\\\\row = query, column = key\\\\filled = visible; blank = masked",
+    "zh": "$M^{attn}_{ij}=1\\iff j\\leq i$\\\\行是 query，列是 key\\\\实色表示可见；留白表示屏蔽"
+  },
+  "notation.axes": {
+    "en": "$B$: questions; $T$: tokens; $d$: hidden channels; $V$: vocabulary; $K$: candidate columns; $L$: answer IDs; $R=\\sum_b K_b$: pair rows. $C$: packed sequences; $Q$: questions per packed sequence.",
+    "zh": "$B$：问题；$T$：token；$d$：隐藏维度；$V$：词表；$K$：候选列；$L$：答案 ID；$R=\\sum_b K_b$：pairs 行。$C$：打包序列；$Q$：每条打包序列的问题数。"
+  },
+  "notation.meaning": {
+    "en": "A matrix face shows its last two axes; offset sheets indicate leading batch axes. Vectors are drawn as columns. Binary support diagrams show exact illustrative support. $\\tau$ is temperature; $T$ remains sequence length.",
+    "zh": "矩阵正面表示末两轴；错位薄片表示前导批次轴；向量画成列。二值 mask 展示精确的示意可见性。$\\tau$ 表示温度；$T$ 始终表示序列长度。"
+  },
+  "slot.stage1": {
+    "en": "Initialize a separate slot head from selected language-model head rows",
+    "zh": "从语言模型头的指定行初始化独立槽位头"
+  },
+  "slot.stage2": {
+    "en": "Project into a fixed set of output slots",
+    "zh": "投影到固定数量的输出槽位"
+  },
+  "slot.select": {
+    "en": "Select token rows\\\\ordered IDs $\\ell$",
+    "zh": "选取 token 行\\\\有序 ID $\\ell$"
+  },
+  "slot.train": {
+    "en": "Separate parameters\\\\training may update them",
+    "zh": "独立参数\\\\训练中可以更新"
+  },
+  "slot.axes": {
+    "en": "$W_{lm}:[V,d]$; $W_{slot}:[K,d]$; $h:[B,d]$. $K$ is the configured slot capacity. Initialization copies content, not a live link to the original rows.",
+    "zh": "$W_{lm}:[V,d]$；$W_{slot}:[K,d]$；$h:[B,d]$。$K$ 是配置的槽位容量；初始化复制参数值，不保留与原始行的动态绑定。"
+  },
+  "slot.meaning": {
+    "en": "This comparison family changes the output parameterization. Attention visibility is a separate design choice: causal or bidirectional variants must be checked per implementation. A standard causal decoder is not automatically equivalent to a modified mask.",
+    "zh": "此对照类别改变输出参数化方式。因果或双向注意力是另一项设计选择，需按具体实现核查；普通因果 decoder 不自动等价于修改了注意力 mask 的模型。"
+  },
+  "pointer.stage1": {
+    "en": "Gather one decision representation for each question in packed inputs",
+    "zh": "从打包输入中选取各问题的 decision 表示"
+  },
+  "pointer.stage2": {
+    "en": "Project candidate representations and score them against the decision query",
+    "zh": "投影候选表示，与 decision query 计算分数"
+  },
+  "pointer.gather": {
+    "en": "Gather markers\\\\decision / option ends",
+    "zh": "选取标记位置\\\\decision／选项末端"
+  },
+  "pointer.q": {
+    "en": "Query projection\\\\$W_q:d\\to d_p$",
+    "zh": "Query 投影\\\\$W_q:d\\to d_p$"
+  },
+  "pointer.k": {
+    "en": "Key projection\\\\$W_k:d\\to d_p$",
+    "zh": "Key 投影\\\\$W_k:d\\to d_p$"
+  },
+  "pointer.dot": {
+    "en": "Batched dot product\\\\$q^\\mathsf T k/\\sqrt{d_p}$",
+    "zh": "批量点积\\\\$q^\\mathsf T k/\\sqrt{d_p}$"
+  },
+  "pointer.axes": {
+    "en": "$C$: input sequences; $Q$: questions per sequence; $B=CQ$ in the fixed-size example. $h^{dec}:[B,d]$; $h^{opt}:[B,K,d]$; $d_p$: pointer width.",
+    "zh": "$C$：输入序列数；$Q$：每序列问题数；等长示例中 $B=CQ$。$h^{dec}:[B,d]$；$h^{opt}:[B,K,d]$；$d_p$：pointer 维度。"
+  },
+  "pointer.meaning": {
+    "en": "This is a comparison architecture, not a MetisCraft readout. Branch visibility, option isolation and position IDs belong to its packing contract. Multiple questions per sequence do not imply a universal latency improvement; hybrid backbones may need separate rows.",
+    "zh": "这是对照架构，并非 MetisCraft 已实现读出。分支可见性、候选隔离与 position ID 属于打包协议；单序列多问题不意味着普遍提速，混合主干可能需要改用独立行。"
+  },
+  "joint.stage1": {
+    "en": "Build token memory and route evidence into candidate representations",
+    "zh": "构造 token memory，并将证据路由到候选表示"
+  },
+  "joint.stage2": {
+    "en": "Aggregate each field, allow field interaction, then score field--candidate pairs",
+    "zh": "汇总字段、建模字段交互，再对字段—候选对打分"
+  },
+  "joint.project": {
+    "en": "Normalize + project\\\\token memory",
+    "zh": "归一化与投影\\\\token memory"
+  },
+  "joint.route": {
+    "en": "Evidence routing\\\\candidate cross-attention",
+    "zh": "证据路由\\\\候选 cross-attention"
+  },
+  "joint.fields": {
+    "en": "Field aggregation\\\\field self-attention",
+    "zh": "字段汇总\\\\字段 self-attention"
+  },
+  "joint.score": {
+    "en": "Prior + gated scorer\\\\cosine / pairwise MLP",
+    "zh": "先验与门控打分\\\\余弦／成对 MLP"
+  },
+  "joint.axes": {
+    "en": "$H:[C,T,d]$; $Mem:[C,T,w]$; $O:[C,Q,K,w]$; $F:[C,Q,w]$; $B=CQ$ in the fixed-size example. Leading $C,Q$ axes flatten before reporting $S:[B,K]$.",
+    "zh": "$H:[C,T,d]$；$Mem:[C,T,w]$；$O:[C,Q,K,w]$；$F:[C,Q,w]$。等长示例中 $B=CQ$；输出前将前导 $C,Q$ 轴展平，得到 $S:[B,K]$。"
+  },
+  "joint.meaning": {
+    "en": "This comparison family adds structured interactions in the head. Candidates may affect each other through field aggregation even without candidate self-attention. Causal visibility in the backbone and visibility in the head must be analyzed separately.",
+    "zh": "此对照类别在读出头中加入结构化交互。即使候选之间没有 self-attention，也可能通过字段汇总相互影响；主干的因果可见性与头部的信息可见性需分别分析。"
+  },
+  "encoder.stage1": {
+    "en": "Uni-encoder: encode labels and text together, then compare representations",
+    "zh": "同编码：联合编码标签与文本，再比较表示"
+  },
+  "encoder.stage2": {
+    "en": "Bi-encoder: independent encoders produce a matrix of pairwise scores",
+    "zh": "双塔编码：独立编码后得到成对分数矩阵"
+  },
+  "encoder.stage3": {
+    "en": "Cross-encoder: jointly encode each independent text--candidate pair",
+    "zh": "交叉编码：逐个联合编码独立的文本—候选对"
+  },
+  "encoder.pool": {
+    "en": "Gather label vectors\\\\pool text vectors",
+    "zh": "选取标签向量\\\\池化文本向量"
+  },
+  "encoder.compare": {
+    "en": "Label--text scorer\\\\one score per label",
+    "zh": "标签—文本打分\\\\每标签一个分数"
+  },
+  "encoder.cache": {
+    "en": "Label vectors cacheable\\\\when label encoding is fixed",
+    "zh": "标签编码固定时\\\\可缓存标签向量"
+  },
+  "encoder.cross": {
+    "en": "Bidirectional encoder\\\\pair interaction",
+    "zh": "双向 encoder\\\\成对交互"
+  },
+  "encoder.axes": {
+    "en": "$U:[B,d]$ holds text vectors; label vectors have shape $E:[B,K,d]$ (uni) or $[K,d]$ (bi). $R=\\sum_b K_b$ counts cross-encoder rows; $\\tau$ is score temperature.",
+    "zh": "$U:[B,d]$ 为文本向量；标签向量 $E$ 在同编码中为 $[B,K,d]$，双塔中为 $[K,d]$。$R=\\sum_b K_b$ 为交叉编码行数；$\\tau$ 是打分温度。"
+  },
+  "encoder.meaning": {
+    "en": "Visibility depends on the layout. Uni-encoders permit label interaction; bi-encoders separate label encoding; cross-encoders expose text and one candidate to each other. There is no hardware-independent latency or accuracy ordering.",
+    "zh": "信息可见性取决于布局：同编码允许标签交互；双塔独立编码标签；交叉编码让文本与单个候选相互可见。三者没有脱离硬件和任务的固定延迟或准确率排序。"
+  },
+  "generated.stage1": {
+    "en": "Generate rationale tokens with autoregressive dependencies",
+    "zh": "以自回归方式生成理由 token"
+  },
+  "generated.stage2": {
+    "en": "Read answer-token probabilities after the generated rationale",
+    "zh": "在生成的理由之后读出答案 token 概率"
+  },
+  "generated.input": {
+    "en": "Prompt\\\\state + question + choices",
+    "zh": "提示\\\\材料、问题与候选"
+  },
+  "generated.decode": {
+    "en": "Autoregressive decode\\\\$G$ rationale tokens",
+    "zh": "自回归解码\\\\$G$ 个理由 token"
+  },
+  "generated.concat": {
+    "en": "Append answer cue\\\\$[x;r;\\mathrm{cue}]$",
+    "zh": "追加答案提示\\\\$[x;r;\\mathrm{cue}]$"
+  },
+  "generated.token": {
+    "en": "Last hidden projection\\\\select answer IDs",
+    "zh": "末位置隐藏表示投影\\\\选择答案 ID"
+  },
+  "generated.axes": {
+    "en": "$G$: generated rationale length; $T$: total length after concatenation; $K$: answer choices. The final vocabulary selection has the same shape as answer-token readout.",
+    "zh": "$G$：生成理由的长度；$T$：拼接后的总长度；$K$：答案候选数。最终词表选择的形状与答案 token 读出相同。"
+  },
+  "generated.meaning": {
+    "en": "This is a comparison, not an implemented MetisCraft fallback. Rationale tokens add serial decoding dependencies; cache reuse, batching and the final readout determine actual model invocations. Sampling can change the resulting distribution.",
+    "zh": "这是对照方法，并非 MetisCraft 已实现的兜底路径。理由 token 引入串行解码依赖；实际调用次数取决于缓存复用、批量与最终读出方式，采样也会改变最终分布。"
+  },
+  "contract.stage1": {
+    "en": "System One public interface: an observable request--response contract",
+    "zh": "System One 公共接口：可观察的请求—响应协议"
+  },
+  "contract.stage2": {
+    "en": "MetisCraft realization: explicit scores and task-aware probability transforms",
+    "zh": "MetisCraft 实现：显式分数与按任务选择的概率变换"
+  },
+  "contract.state": {
+    "en": "Request\\\\state + typed questions",
+    "zh": "请求\\\\材料与类型化问题"
+  },
+  "contract.questions": {
+    "en": "Judgment interface\\\\noul / choice / score",
+    "zh": "判断接口\\\\noul／choice／score"
+  },
+  "contract.atomic": {
+    "en": "Response\\\\decisions + probabilities",
+    "zh": "响应\\\\判断结果与概率"
+  },
+  "contract.normalize": {
+    "en": "Prior correction + temperature\\\\valid support + normalization",
+    "zh": "先验修正与温度\\\\有效候选与归一化"
+  },
+  "contract.output": {
+    "en": "Record score: argmax level\\\\HTTP score: expected level\\\\score confidence: max probability",
+    "zh": "Record score：argmax 等级\\\\HTTP score：期望等级\\\\score confidence：最大概率"
+  },
+  "contract.axes": {
+    "en": "$B$ counts atomic questions, not requests. $K$ is padded candidate capacity; noul has a single positive logit. $p:[B,K]$ is an internal unifying view, not a claim about private System One tensors.",
+    "zh": "$B$ 计数原子问题，而非 HTTP 请求；$K$ 是补齐后的候选容量，noul 使用单个正类 logit。$p:[B,K]$ 是统一的内部表示，不描述 System One 私有张量。"
+  },
+  "contract.meaning": {
+    "en": "Public outputs specify behavior, not proprietary architecture. MetisCraft implements four Record types, including multi\\_label; its current HTTP protocol exposes three types. A probability is confidence assigned by the model, not a correctness guarantee.",
+    "zh": "公共输出约束行为，不披露私有架构。MetisCraft 的 Record 支持含 multi\\_label 在内的四类判断；当前 HTTP 协议支持三类。概率表示模型赋予的置信程度，不是正确性保证。"
+  },
+  "training.stage1": {
+    "en": "Train only on the training split; aggregate per-question losses",
+    "zh": "训练仅使用训练集；按问题汇总损失"
+  },
+  "training.stage2": {
+    "en": "Completion training: two target positions retain the full vocabulary axis",
+    "zh": "Completion 训练：两个目标位置保留完整词表轴"
+  },
+  "training.stage3": {
+    "en": "Fit temperature on independent calibration data; apply the same transform in serving",
+    "zh": "独立校准集拟合温度；推理时复用同一变换"
+  },
+  "training.loss": {
+    "en": "Typed loss\\\\CE / BCE / soft targets",
+    "zh": "类型化损失\\\\CE／BCE／软标签"
+  },
+  "training.update": {
+    "en": "Accumulate gradients\\\\normalize by question count",
+    "zh": "梯度累积\\\\按问题数归一化"
+  },
+  "training.split": {
+    "en": "Update trainable weights\\\\seal model artifact",
+    "zh": "更新可训练参数\\\\封存模型产物"
+  },
+  "training.completion": {
+    "en": "Full-vocabulary CE\\\\mean code + EOS loss",
+    "zh": "完整词表 CE\\\\code 与 EOS 损失取均值"
+  },
+  "training.shift": {
+    "en": "Subtract prior offset\\\\$S-\\Delta$",
+    "zh": "减去先验偏移\\\\$S-\\Delta$"
+  },
+  "training.temperature": {
+    "en": "Calibration temperature\\\\$\\tau>0$ by task / kind",
+    "zh": "校准温度\\\\按任务／类型选择 $\\tau>0$"
+  },
+  "training.normalize": {
+    "en": "Mask + normalize\\\\softmax / sigmoid",
+    "zh": "屏蔽与归一化\\\\softmax／sigmoid"
+  },
+  "training.axes": {
+    "en": "$Z_{completion}:[B,2,V]$; targets $y:[B,2]$ contain answer code and EOS. $N$ is the number of questions contributing to an optimizer update. $\\Delta$ is the configured prior offset; $\\tau$ is temperature.",
+    "zh": "$Z_{completion}:[B,2,V]$；目标 $y:[B,2]$ 包含答案 code 与 EOS。$N$ 是一次优化器更新累计的问题数；$\\Delta$ 为配置的先验偏移；$\\tau$ 为温度。"
+  },
+  "training.meaning": {
+    "en": "Training, calibration and evaluation splits have separate purposes. Calibration optimizes a probability objective, not necessarily accuracy, and can worsen held-out NLL. Offline and HTTP use the same task/kind routing and recorded fallback decisions.",
+    "zh": "训练、校准与评测划分各有用途。校准优化概率目标，不保证准确率提高，也可能使独立评测 NLL 变差。离线与 HTTP 复用任务／类型路由，并记录回退决策。"
+  },
+  "overview.stage1": {
+    "en": "Output parameterization: vocabulary tokens, fixed slots or candidate scalar scores",
+    "zh": "输出参数化：词表 token、固定槽位或候选标量"
+  },
+  "overview.stage2": {
+    "en": "Structured or encoder alternatives: score operators and information flow differ",
+    "zh": "结构化与 encoder 对照：打分算子和信息流不同"
+  },
+  "overview.stage3": {
+    "en": "Execution and scope: distinguish a comparison family from a shipped implementation",
+    "zh": "执行与边界：区分对照类别与已经交付的实现"
+  },
+  "overview.token": {
+    "en": "1. Answer-token logits\\\\$[B,V]\\to[B,L]$\\\\gather selected vocabulary IDs",
+    "zh": "1. 答案 token logits\\\\$[B,V]\\to[B,L]$\\\\选取指定词表 ID"
+  },
+  "overview.slot": {
+    "en": "2. Fixed slot head\\\\$[B,d]\\,[d,K]\\to[B,K]$\\\\copy token rows at initialization",
+    "zh": "2. 固定槽位头\\\\$[B,d]\\,[d,K]\\to[B,K]$\\\\初始化时复制 token 行"
+  },
+  "overview.scalar": {
+    "en": "3. Candidate scalar head\\\\$[R,d]\\to[R]\\to[B,K]$\\\\independent pair rows",
+    "zh": "3. 候选标量头\\\\$[R,d]\\to[R]\\to[B,K]$\\\\独立 pairs 行"
+  },
+  "overview.pointer": {
+    "en": "4. Pointer head\\\\$q:[B,d_p],\\ k:[B,K,d_p]$\\\\decision--option dot products",
+    "zh": "4. Pointer 头\\\\$q:[B,d_p],\\ k:[B,K,d_p]$\\\\decision 与候选点积"
+  },
+  "overview.joint": {
+    "en": "5. Joint schema head\\\\$O:[C,Q,K,w],\\ F:[C,Q,w]$\\\\evidence routing + field interaction",
+    "zh": "5. 联合 schema 头\\\\$O:[C,Q,K,w],\\ F:[C,Q,w]$\\\\证据路由与字段交互"
+  },
+  "overview.encoder": {
+    "en": "6. Encoder scoring\\\\uni / bi / cross layouts\\\\visibility depends on the layout",
+    "zh": "6. Encoder 打分\\\\同编码／双塔／交叉编码\\\\可见性取决于布局"
+  },
+  "overview.generated": {
+    "en": "7. Generate then read\\\\rationale + answer-token readout\\\\serial decoding dependencies",
+    "zh": "7. 生成后读出\\\\理由生成与答案 token 读出\\\\引入串行解码依赖"
+  },
+  "overview.list": {
+    "en": "MetisCraft scalar default: list\\\\$[B,K,d]\\to[B,K]$\\\\shared causal sequence",
+    "zh": "MetisCraft 标量默认：list\\\\$[B,K,d]\\to[B,K]$\\\\共享同一因果序列"
+  },
+  "overview.scope": {
+    "en": "Implemented: answer tokens + scalar\\\\tree packing: not implemented\\\\no universal speed ranking",
+    "zh": "已实现：答案 token 与标量头\\\\tree 打包：尚未实现\\\\不存在普遍的速度排序"
+  },
+  "overview.axes": {
+    "en": "$B$: questions; $R=\\sum_b K_b$: independent candidate rows; $C$: packed sequences; $Q$: questions per sequence; $K$: candidate capacity; $L$: answer-token count. Dots indicate operations, not benchmark results.",
+    "zh": "$B$：问题数；$R=\\sum_b K_b$：独立候选行；$C$：打包序列；$Q$：每序列问题数；$K$：候选容量；$L$：答案 token 数。算子关系不表示性能测试结果。"
+  },
+  "overview.meaning": {
+    "en": "The seven families compare mechanisms; they are not seven supported MetisCraft backends. The shipped toolkit implements answer-token and candidate-scalar readouts, with list and pairs layouts for the latter. Accuracy and latency require matched measurements.",
+    "zh": "七类用于比较机制，并非 MetisCraft 支持七个后端。当前工具包实现答案 token 与候选标量两类读出，后者包含 list 和 pairs 布局。准确率与延迟需在一致协议下实测。"
+  },
+  "flow.candidatehidden": {
+    "en": "Candidate hidden states\\\\list: $[B,K,d]$\\\\pairs: $[R,d]$",
+    "zh": "按布局取得候选表示\\\\list：$[B,K,d]$\\\\pairs：$[R,d]$"
+  },
+  "flow.token.title": {
+    "en": "Answer-token branch: noul, choice and score",
+    "zh": "答案 token 分支：noul、choice 与 score"
+  },
+  "flow.scalar.title": {
+    "en": "Candidate-scalar branch: all four Record judgment types",
+    "zh": "候选标量分支：全部四种 Record 判断类型"
+  }
+}

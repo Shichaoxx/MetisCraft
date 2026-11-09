@@ -8,13 +8,13 @@
 
 | 字段 | 类型 | 默认 | 说明 |
 |---|---|---|---|
-| `task` | str | 必填 | 任务名，写进每条记录的 `task_id`、产物和报告；温度按“任务\|类型”拟合。 |
+| `task` | str | 必填 | 运行与模型的名称标签，写入配方元数据；不覆盖 `Record.task_id`。产物的 `task_ids` 取训练记录的任务集合，温度按记录的任务与判断类型分组。 |
 
 ## 数据
 
 | 字段 | 类型 | 默认 | 说明 |
 |---|---|---|---|
-| `data.dataset` | str | 必填 | 注册表里的数据集名。 |
+| `data.dataset` | str | 必填 | 已准备的数据集名称，包括通过本地 manifest 导入的数据集。 |
 | `data.version` | str \| `null` | `null` | 数据集版本目录名；只有一个版本时可以不写。 |
 | `data.train_split` | str | `train` | 训练用的划分。 |
 | `data.calib_split` | str | `calib` | 拟合温度用的划分。 |
@@ -30,7 +30,7 @@
 | `model.base` | str | 必填 | 基座在 `models_root` 下的相对路径；目录里要有 `SOURCE.json` 和 `SHA256SUMS`。 |
 | `model.dtype` | `bf16` \| `fp16` \| `fp32` | `bf16` | 加载权重的精度。 |
 | `model.max_length` | int | `1024` | 模型输入的最大 token 数；completion 训练为追加的答案码预留 1 个 token（EOS 仅作目标）。超出时截短材料，问题和选项保留；`chat_json` 不截短，超出就报错。 |
-| `model.finetune.kind` | `lora` \| `full` \| `frozen` | `lora` | `lora` 只训 LoRA；`full` 全参；`frozen` 冻结主干，只训读出头。 |
+| `model.finetune.kind` | `lora` \| `full` \| `frozen` | `lora` | `lora` 训练 LoRA 适配器；`full` 微调基座；`frozen` 冻结主干。冻结时只有标量读出的新 MLP 头可训练，答案 token 读出没有新头，会跳过训练。 |
 | `model.finetune.r` | int | `16` | LoRA 秩。 |
 | `model.finetune.alpha` | int | `32` | LoRA 缩放系数。 |
 | `model.finetune.dropout` | float | `0.0` | LoRA dropout。 |
@@ -41,13 +41,13 @@
 
 | 字段 | 类型 | 默认 | 说明 |
 |---|---|---|---|
-| `readout.kind` | `answer_token` \| `candidate_scalar` | 必填 | `answer_token` 是 ① 答案 token；`candidate_scalar` 是 ③ 逐候选标量头。 |
-| `readout.layout` | `list` \| `pairs` | `list` | ③ 的布局：`list` 把候选写在同一条序列；`pairs` 每个候选单独一条，用作对照。 |
+| `readout.kind` | `answer_token` \| `candidate_scalar` | 必填 | `answer_token` 选取答案码 logits；`candidate_scalar` 对候选表示应用标量 MLP。 |
+| `readout.layout` | `list` \| `pairs` | `list` | 标量布局：`list`（默认）将候选放在同一条因果序列；`pairs` 将每个候选放在独立序列。 |
 | `readout.head.hidden` | int | `256` | ③ 的 MLP 头隐藏层宽度。 |
 | `readout.head.dropout` | float | `0.0` | ③ 的 MLP 头 dropout。 |
 | `readout.prompt.style` | `plain` \| `chat_json` | `plain` | ① 的提示写法：`plain` 是 MetisCraft 的文本布局；`chat_json` 把题目写成 JSON 载荷放进分词器的对话模板（关闭思考），选项和等级都用字母，即 Tev1 的格式，只接受选择和等级题。 |
 | `readout.prompt.system` | str \| `null` | `null` | `chat_json` 的系统提示；不写就没有系统回合。 |
-| `readout.shuffle_train` | bool | `True` | 训练时打乱候选顺序（③），避免记住位置。 |
+| `readout.shuffle_train` | bool | `True` | 仅在标量 `list` 训练时打乱候选的提示排列，减少位置偏差；不作用于 `pairs`。 |
 | `readout.infer_permutations` | `1` | `1` | 当前只接受 1；多次排列推理尚未实现，其他值会被拒绝。 |
 
 ## 目标

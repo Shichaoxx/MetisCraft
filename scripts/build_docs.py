@@ -14,7 +14,45 @@ ROOT = Path(__file__).resolve().parents[1]
 BUILD = ROOT / "build" / "documentation"
 SITE = BUILD / "site"
 PREFIX = "/MetisCraft/"
-REPO = "https://github.com/Shichaoxx/MetisCraft/blob/main/"
+SOURCE_REF = "6b9701da7814111b13d8882f48288f4df46dc983"
+REPO = f"https://github.com/Shichaoxx/MetisCraft/blob/{SOURCE_REF}/"
+
+
+def legacy_destination(name):
+    """Resolve a repository source to its established public URL."""
+    path = Path(name)
+    if path.parts[0] == "docs":
+        path = Path(*path.parts[1:])
+        if path.parts[0] not in {"en", "zh"}:
+            path = Path("zh") / path
+    elif path.parts[0] == "recipes":
+        path = Path("zh") / path
+    else:
+        lang = "zh" if path.stem.endswith("_zh") else "en"
+        path = Path(lang) / (
+            "contributing.md" if name.startswith("CONTRIBUTING") else "changelog.md"
+        )
+    if path.name in {"README.md", "README_en.md", "README_zh.md"}:
+        path = path.with_name("index.md")
+    return path
+
+
+def public_destinations(policy):
+    """A language pair has one logical URL, independent of source file placement."""
+    destinations = {name: legacy_destination(name) for name in policy["pages"]}
+    pairs = policy.get("language_pairs", {})
+    for pair in pairs.values():
+        if set(pair) != {"en", "zh"}:
+            raise ValueError(f"A public language pair must contain en and zh: {pair}")
+        canonical = legacy_destination(pair["zh"])
+        for lang in ("en", "zh"):
+            name = pair[lang]
+            if name not in destinations:
+                raise ValueError(f"Language pair references a non-public source: {name}")
+            destinations[name] = Path(lang) / Path(*canonical.parts[1:])
+    if len(set(destinations.values())) != len(destinations):
+        raise ValueError("Public page routes collide")
+    return destinations
 
 
 def toml(value):
@@ -37,26 +75,20 @@ def main():
         shutil.rmtree(BUILD)  # Only this script's ignored, reproducible build output.
     SITE.mkdir(parents=True)
     policy = json.loads((ROOT / "docs/public-pages.json").read_text())
+    destinations = public_destinations(policy)
     mapping = {}
     sources = [ROOT / name for name in policy["pages"]]
     for source in sources:
         if not source.is_file():
             raise ValueError(f"Missing public page: {source.relative_to(ROOT)}")
-        relative = source.relative_to(ROOT)
-        if relative.parts[0] == "docs":
-            relative = source.relative_to(ROOT / "docs")
-            dest = relative if relative.parts[0] in {"en", "zh"} else Path("zh") / relative
-        elif relative.parts[0] == "recipes":
-            dest = Path("zh") / relative
-        else:
-            dest = Path("en") / (
-                "contributing.md" if source.name == "CONTRIBUTING.md" else "changelog.md"
-            )
-        if dest.name == "README.md":
-            dest = dest.with_name("index.md")
-        mapping[source.resolve()] = dest
+        mapping[source.resolve()] = destinations[source.relative_to(ROOT).as_posix()]
     for alias, target in policy["aliases"].items():
         mapping[(ROOT / alias).resolve()] = mapping[(ROOT / target).resolve()]
+    partners = {}
+    for pair in policy.get("language_pairs", {}).values():
+        for name in pair.values():
+            partners[(ROOT / name).resolve()] = pair
+    source_snapshots = {}
 
     def rewrite(value, source):
         url = urlsplit(value)
@@ -72,6 +104,19 @@ def main():
                     target = target / name
                     break
         if target in mapping:
+            # Legacy shared sources resolve to the reader's language. Explicit en/zh
+            # links remain explicit, including the language selector in Markdown.
+            resolved = target
+            canonical_name = policy["aliases"].get(target.relative_to(ROOT).as_posix())
+            if canonical_name:
+                resolved = (ROOT / canonical_name).resolve()
+            rel = target.relative_to(ROOT)
+            explicit = (
+                rel.parts[0] == "docs" and len(rel.parts) > 1 and rel.parts[1] in {"en", "zh"}
+            ) or rel.stem.endswith(("_en", "_zh"))
+            if resolved in partners and not explicit:
+                source_lang = mapping.get(source.resolve(), Path("zh/index.md")).parts[0]
+                target = (ROOT / partners[resolved][source_lang]).resolve()
             return page_url(mapping[target]) + suffix
         if not target.is_relative_to(ROOT) or not target.exists():
             raise ValueError(f"Broken local link in {source.relative_to(ROOT)}: {value}")
@@ -88,6 +133,8 @@ def main():
             ".html",
             ".json",
             ".yaml",
+            ".tex",
+            ".zip",
         }:
             output = SITE / "assets" / relative
             output.parent.mkdir(parents=True, exist_ok=True)
@@ -106,6 +153,22 @@ def main():
                             target.parent / folder, output.parent / folder, dirs_exist_ok=True
                         )
             return PREFIX + "assets/" + quote(relative.as_posix()) + suffix
+        if target.is_file():
+            if relative not in source_snapshots:
+                try:
+                    original = subprocess.check_output(
+                        ["git", "show", f"{SOURCE_REF}:{relative.as_posix()}"],
+                        cwd=ROOT,
+                        stderr=subprocess.DEVNULL,
+                    )
+                except subprocess.CalledProcessError:
+                    original = None
+                source_snapshots[relative] = original == target.read_bytes()
+            if not source_snapshots[relative]:
+                output = SITE / "assets" / relative
+                output.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copyfile(target, output)
+                return PREFIX + "assets/" + quote(relative.as_posix()) + suffix
         return REPO + quote(relative.as_posix()) + suffix
 
     for source in sources:
@@ -148,28 +211,67 @@ def main():
                     {"接入自己的任务" if zh else "Your own task": "cookbook/own-task.md"},
                 ]
             },
+            {
+                "原理与张量解析" if zh else "Concepts & Tensors": [
+                    {
+                        "从 System One 到 MetisCraft"
+                        if zh
+                        else "System One to MetisCraft": "tensor-analysis/index.md"
+                    },
+                    {
+                        "张量、轴与索引"
+                        if zh
+                        else "Tensors, axes & indices": "tensor-analysis/notation.md"
+                    },
+                    {
+                        "答案 token 读出"
+                        if zh
+                        else "Answer-token readout": "tensor-analysis/answer-token.md"
+                    },
+                    {
+                        "标量头读出"
+                        if zh
+                        else "Scalar-head readouts": "tensor-analysis/scalar-heads.md"
+                    },
+                    {
+                        "训练、校准与输出" if zh else "Training, calibration & output": (
+                            "tensor-analysis/training-calibration.md"
+                        )
+                    },
+                    {
+                        "七类读出对照"
+                        if zh
+                        else "Seven readout mechanisms": "tensor-analysis/readout-comparison.md"
+                    },
+                    {
+                        "五分钟技术导览"
+                        if zh
+                        else "Five-minute walkthrough": "tensor-analysis/walkthrough.md"
+                    },
+                ]
+            },
             {"数据与配方" if zh else "Data & recipes": "data.md"},
             {"训练与校准" if zh else "Train & calibrate": "training.md"},
             {"预测与服务" if zh else "Predict & serve": "serving.md"},
             {
                 "结果与复现" if zh else "Results & reproductions": [
                     {"验证范围" if zh else "Evidence & limitations": "limitations.md"},
-                    {"Tev1（中文）": PREFIX + "zh/reproductions/tev1/"},
-                    {"支持矩阵（中文）": PREFIX + "zh/support-matrix/"},
+                    {"Tev1": "reproductions/tev1.md"},
+                    {"支持矩阵" if zh else "Ecosystem support": "support-matrix.md"},
                 ]
             },
             {
                 "参考" if zh else "Reference": [
-                    {"原理与最佳实践（中文）": PREFIX + "zh/cookbook/principles/"},
-                    {"接口约定（中文）": PREFIX + "zh/reference/"},
-                    {"配方字段（中文）": PREFIX + "zh/cookbook/recipe-reference/"},
-                    {"读出与张量图（中文）": PREFIX + "zh/readouts/"},
+                    {"原理" if zh else "Principles": "cookbook/principles.md"},
+                    {"最佳实践" if zh else "Best practices": "cookbook/best-practices.md"},
+                    {"接口约定" if zh else "Interface contracts": "interfaces.md"},
+                    {"配方字段" if zh else "Recipe fields": "cookbook/recipe-reference.md"},
                 ]
             },
             {
                 "参与贡献" if zh else "Contribute": [
-                    {"Contribution guide": PREFIX + "en/contributing/"},
-                    {"Changelog": PREFIX + "en/changelog/"},
+                    {"贡献指南" if zh else "Contribution guide": "contributing.md"},
+                    {"版本说明" if zh else "Changelog": "changelog.md"},
                 ]
             },
         ]
@@ -182,7 +284,17 @@ def main():
             "repo_url": "https://github.com/Shichaoxx/MetisCraft",
             "repo_name": "MetisCraft",
             "nav": nav,
-            "extra_css": [PREFIX + "assets/site.css"],
+            "extra_css": [
+                PREFIX + "assets/site.css",
+                PREFIX + "assets/documentation.css",
+                PREFIX + "assets/katex/katex.min.css",
+            ],
+            "extra_javascript": [
+                PREFIX + "assets/katex/katex.min.js",
+                PREFIX + "assets/math.js",
+                PREFIX + "assets/language-map.js",
+                PREFIX + "assets/documentation.js",
+            ],
         }
         config = "[project]\n" + "\n".join(f"{k} = {toml(v)}" for k, v in project.items())
         config += """
@@ -221,6 +333,7 @@ pymdownx.highlight = {}
 pymdownx.superfences = {}
 pymdownx.details = {}
 pymdownx.tasklist.custom_checkbox = true
+pymdownx.arithmatex.generic = true
 """.replace('language = "LANG"', f'language = "{lang}"')
         path = BUILD / f"zensical-{lang}.toml"
         path.write_text(config, encoding="utf-8")
@@ -231,26 +344,69 @@ pymdownx.tasklist.custom_checkbox = true
         )
     # Old tutorial URLs are redirects, not a second maintained tutorial or search page.
     for alias, target in policy["aliases"].items():
-        old = Path(alias).relative_to("docs")
-        if old.parts[0] not in {"en", "zh"}:
-            old = Path("zh") / old
-        if old.name == "README.md":
-            old = old.with_name("index.md")
+        old = legacy_destination(alias)
         destination = page_url(mapping[(ROOT / target).resolve()])
         if page_url(old) == destination:
             continue
-        output = SITE / old.with_suffix("") / "index.html"
+        output = (
+            SITE / old.parent / "index.html"
+            if old.stem == "index"
+            else SITE / old.with_suffix("") / "index.html"
+        )
         output.parent.mkdir(parents=True, exist_ok=True)
         output.write_text(
             f'<!doctype html><html lang="zh"><meta charset="utf-8">'
             f'<meta http-equiv="refresh" content="0;url={destination}">'
-            f'<link rel="canonical" href="{destination}"><title>Cookbook</title>'
-            f'<a href="{destination}">Continue to the Cookbook</a></html>',
+            f'<link rel="canonical" href="{destination}"><title>MetisCraft</title>'
+            f"<script>location.replace({json.dumps(destination)}+location.search+location.hash)</script>"
+            f'<a href="{destination}">Continue to the documentation</a></html>',
             encoding="utf-8",
         )
     assets = SITE / "assets" / "docs" / "visuals" / "figures"
-    shutil.copytree(ROOT / "docs/visuals/figures", assets, dirs_exist_ok=True)
+    assets.mkdir(parents=True, exist_ok=True)
+    # Page-linked figures were already copied by rewrite(); the header and favicon
+    # additionally need these canonical theme variants, never the design candidates.
+    for name in ("mark.svg", "mark-light.svg", "mark-dark.svg"):
+        shutil.copyfile(ROOT / "docs/visuals/figures" / name, assets / name)
     shutil.copyfile(ROOT / "docs/site.css", SITE / "assets/site.css")
+    shutil.copytree(ROOT / "docs/assets", SITE / "assets", dirs_exist_ok=True)
+    language_map = {}
+    for pair in policy.get("language_pairs", {}).values():
+        links = {lang: page_url(destinations[name]) for lang, name in pair.items()}
+        for link in links.values():
+            language_map[link] = links
+    for destination in destinations.values():
+        url = page_url(destination)
+        links = language_map.get(url)
+        if not links:
+            continue
+        output = (
+            SITE / destination.parent / "index.html"
+            if destination.stem == "index"
+            else SITE / destination.with_suffix("") / "index.html"
+        )
+        if output.is_file():
+
+            def alternate(match, links=links):
+                tag = match[0]
+                lang = re.search(r'hreflang="(en|zh)"', tag)[1]
+                tag = re.sub(r'href="[^"]*"', f'href="{links[lang]}"', tag)
+                return tag[:-1] + ' target="_self">'
+
+            text = re.sub(
+                # Zensical treats head alternates as roots for sitemap discovery;
+                # pair only the visible links, with explicit native navigation.
+                r'<a\b[^>]*hreflang="(?:en|zh)"[^>]*>',
+                alternate,
+                output.read_text(encoding="utf-8"),
+            )
+            output.write_text(text, encoding="utf-8")
+    (SITE / "assets/language-map.js").write_text(
+        "window.METIS_DOCUMENTATION_LANGUAGES="
+        + json.dumps(language_map, ensure_ascii=False)
+        + ";\n",
+        encoding="utf-8",
+    )
     (SITE / "index.html").write_text(
         '<!doctype html><html lang="en"><meta charset="utf-8">'
         '<meta http-equiv="refresh" content="0; url=en/"><title>MetisCraft</title>'

@@ -96,3 +96,7 @@
   <source media="(max-width: 600px)" srcset="../visuals/figures/pipeline-mobile.svg">
   <img src="../visuals/figures/pipeline.svg" alt="Data, train, calibrate, evaluate, serve">
 </picture>
+
+## 理解计算机制
+
+[原理与张量解析](tensor-analysis/index.md)从 System One 契约展开答案 token 和标量头计算；[五分钟技术导览](tensor-analysis/walkthrough.md)串联矢量图、数值例与源码依据。

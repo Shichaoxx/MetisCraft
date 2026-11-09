@@ -241,6 +241,6 @@ For batch Record prediction or Python loading, use the [serving guide](../servin
 
 ## Next step
 
-Read [best practices](../../cookbook/best-practices.md) (Chinese) to plan comparisons and calibration checks. The [recorded customer-routing example](decision.md) shows how to present a task result with its baseline and evidence boundary.
+Read [best practices](../best-practices.md) to plan comparisons and calibration checks. The [recorded customer-routing example](decision.md) shows how to present a task result with its baseline and evidence boundary.
 
 [中文](../../zh/cookbook/own-task.md)

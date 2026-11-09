@@ -15,11 +15,12 @@ def text(x, y, value, size=20, color=INK, weight=400, **attrs):
     )
 
 
-def monogram():
+def monogram(color=TEAL):
     return (
-        f'<rect x="4" y="4" width="92" height="92" rx="22" fill="{TEAL}"/>'
-        '<path d="M27 72 V28 L50 51 L73 28 V72" fill="none" '
-        'stroke="#ffffff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>'
+        f'<g transform="translate(13 28) skewY(-14)" fill="{color}">'
+        '<rect x="0" y="14" width="19" height="54" rx="3"/>'
+        '<rect x="27" y="30" width="19" height="38" rx="3" opacity=".6"/>'
+        '<rect x="54" y="0" width="19" height="68" rx="3" opacity=".85"/></g>'
     )
 
 
@@ -36,17 +37,30 @@ def save(name, width, height, title, body, bg="none"):
 
 
 def main():
-    save("mark", 100, 100, "MetisCraft M monogram", monogram())
+    save("mark-light", 100, 100, "MetisCraft three-plane mark, light theme", monogram())
+    save("mark-dark", 100, 100, "MetisCraft three-plane mark, dark theme", monogram("#cbd5df"))
+    save("mark-ink", 100, 100, "MetisCraft three-plane mark, monochrome", monogram(INK))
+    adaptive = monogram().replace('fill="#087f78"', 'class="brand-fill"')
+    save(
+        "mark",
+        100,
+        100,
+        "MetisCraft three-plane mark",
+        "<style>.brand-fill { fill:#087f78 } "
+        "@media(prefers-color-scheme:dark) { .brand-fill { fill:#cbd5df } }</style>" + adaptive,
+    )
     for mode, bg, ink, muted, accent in (
         ("light", "#f6faf9", INK, "#546b6d", TEAL),
         ("dark", "#132527", "#edf5f3", "#b0c9c4", "#63d1bc"),
     ):
+        mark_color = accent if mode == "light" else "#cbd5df"
         save(
             f"wordmark-{mode}",
-            490,
+            610,
             112,
             "MetisCraft",
-            text(12, 82, "MetisCraft", 80, ink, 700, letter_spacing="-2"),
+            f'<g transform="translate(0 0) scale(1.05)">{monogram(mark_color)}</g>'
+            + text(117, 82, "MetisCraft", 80, ink, 700, letter_spacing="-2"),
         )
         body = text(64, 68, "A TOOLKIT FOR JEVLIKE MODELS", 16, accent, 650, letter_spacing="2")
         body += text(58, 186, "MetisCraft", 104, ink, 700, letter_spacing="-4")
@@ -54,7 +68,8 @@ def main():
         body += f'<path d="M64 294 H1136" stroke="{accent}" stroke-opacity=".2"/>'
         body += text(64, 348, "Reproduce open recipes. Build your own models.", 23, muted)
         save(f"hero-{mode}", 1200, 400, "MetisCraft — Train. Calibrate. Decide.", body, bg)
-    body = text(88, 158, "MetisCraft", 96, INK, 700, letter_spacing="-3")
+    body = f'<g transform="translate(80 64) scale(1.15)">{monogram()}</g>'
+    body += text(214, 158, "MetisCraft", 88, INK, 700, letter_spacing="-3")
     body += text(92, 240, "Train. Calibrate. Decide.", 42, INK, 600)
     body += text(94, 310, "A toolkit for JevLike decision models", 28, "#546b6d")
     body += '<path d="M94 378 H1106" stroke="#c5dbd6"/>'

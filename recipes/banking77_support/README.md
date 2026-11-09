@@ -21,12 +21,12 @@
   - `security`：6 个原始意图，如 `compromised_card`、`lost_or_stolen_card`
 - `urgent`（noul）：Could the customer lose money or access to their account if this message waits until tomorrow? 有 10 个原始意图答“是”，如 `compromised_card`、`lost_or_stolen_card`
 
-映射表在 [`registry.yaml`](../../src/metiscraft/data/registry.yaml) 的 `banking77_support` 条目里。每个原始意图必须恰好落到一个答案上，漏写或重复都会在 `metiscraft data prepare` 时报错。换成自己的业务，只要改这张表和题目说明。
+映射表在 [`registry.yaml`](../../src/metiscraft/data/registry.yaml) 的 `banking77_support` 条目里。每个原始意图必须恰好落到一个答案上，漏写或重复都会在 `metiscraft data prepare` 时报错。接入自己的任务使用[本地 manifest](../../docs/zh/cookbook/own-task.md)，无需修改注册表。
 
 ## 部署
 
 ```bash
-metiscraft serve <运行目录>/artifact
+metiscraft serve <run-directory>/artifact
 ```
 
 请求（`POST /v1/systemone`）：

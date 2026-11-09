@@ -1,3 +1,4 @@
 zensical==0.1.0
+pymdown-extensions>=10.16,<13
 
 pydantic>=2.6

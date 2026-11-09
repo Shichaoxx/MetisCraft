@@ -10,7 +10,7 @@ build and hardware that support the chosen model.
 Install the current preview from the main branch. Check [GitHub releases](https://github.com/Shichaoxx/MetisCraft/releases) for published distributions:
 
 ```bash
-git clone --branch main https://github.com/Shichaoxx/MetisCraft.git
+git clone --branch release/0.1.0rc1 https://github.com/Shichaoxx/MetisCraft.git
 cd MetisCraft
 python3.11 -m venv .venv
 . .venv/bin/activate

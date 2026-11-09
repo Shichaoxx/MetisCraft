@@ -30,7 +30,8 @@ its APIs and artifact formats may change.
 - `metiscraft data import` accepts local supervised Record JSONL through a manifest,
   without editing the registry. Identical imports verify the existing version;
   changed inputs require a new version.
-- Paired English and Chinese core documentation and documentation-site sources.
+- Paired English and Chinese public documentation, Cookbook and Concepts & Tensors.
+- Editable bilingual tensor diagrams, vector SVG/PDF downloads, local mathematics rendering and same-page language switching.
 
 ### Changed
 

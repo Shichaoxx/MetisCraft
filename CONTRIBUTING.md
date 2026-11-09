@@ -5,7 +5,8 @@ judgment semantics or artifact formats before implementing them.
 
 ## Development setup
 
-Work on a feature branch from `dev`. In an isolated Python environment:
+Create a feature branch from the target pull request branch. For the current preview,
+use the available `release/0.1.0rc1` branch. In an isolated Python environment:
 
 ```bash
 python -m pip install -e '.[dev,serve,reproduce]'
@@ -41,7 +42,7 @@ TypeSafe API outputs.
 
 ## Documentation and review
 
-Maintain paired core pages in `docs/en/` and `docs/zh/`; English is the default.
+Maintain the language pairs declared in `docs/public-pages.json`; English is the default.
 Use `src/metiscraft/templates/quickstart/README.md` as the command source for the
 exported quickstart. Keep documented commands aligned with the actual CLI, and
 distinguish software checks from evidence about model quality. Keep development plans and progress on `dev`, in separate commits from public code and documentation. Keep machine-specific information out of public files.

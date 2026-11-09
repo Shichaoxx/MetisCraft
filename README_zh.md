@@ -10,15 +10,16 @@
   <a href="https://github.com/Shichaoxx/MetisCraft/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/Shichaoxx/MetisCraft/actions/workflows/ci.yml/badge.svg?branch=main"></a>
   <a href="LICENSE"><img alt="Apache 2.0" src="https://img.shields.io/badge/license-Apache--2.0-087f78"></a>
   <a href="docs/zh/installation.md"><img alt="Python 3.10 and 3.11" src="https://img.shields.io/badge/python-3.10%20%7C%203.11-243438"></a>
-  <a href="CHANGELOG.md"><img alt="0.1.0rc1 public preview" src="https://img.shields.io/badge/preview-0.1.0rc1-bd8c36"></a>
+  <a href="CHANGELOG_zh.md"><img alt="0.1.0rc1 public preview" src="https://img.shields.io/badge/preview-0.1.0rc1-bd8c36"></a>
 </p>
 
 <p align="center">
   <a href="README.md">English</a> · <b>简体中文</b><br>
   <a href="docs/zh/cookbook/first-model.md">开始使用</a> ·
   <a href="docs/zh/cookbook/index.md">Cookbook</a> ·
+  <a href="docs/zh/tensor-analysis/index.md">原理与张量解析</a> ·
   <a href="https://shichaoxx.github.io/MetisCraft/zh/">文档</a> ·
-  <a href="CONTRIBUTING.md">参与贡献</a>
+  <a href="CONTRIBUTING_zh.md">参与贡献</a>
 </p>
 
 **训练、复现与部署 JevLike 模型。** 同一工具包连接训练、校准、评测和服务；既能复现公开配方，也能接入自己的标注任务。
@@ -68,7 +69,7 @@
 使用 Python 3.10 或 3.11，并先为硬件安装合适的 PyTorch。当前可从源码安装：
 
 ```bash
-git clone --branch main https://github.com/Shichaoxx/MetisCraft.git
+git clone --branch release/0.1.0rc1 https://github.com/Shichaoxx/MetisCraft.git
 cd MetisCraft
 python -m pip install '.[serve]'
 ```
@@ -98,9 +99,9 @@ CUDA_VISIBLE_DEVICES='' OMP_NUM_THREADS=1 metiscraft train recipe.yaml
 
 ## 文档与社区
 
-[Cookbook](docs/zh/cookbook/index.md) · [数据格式](docs/zh/data.md) · [训练与校准](docs/zh/training.md) · [预测与服务](docs/zh/serving.md) · [版本说明](CHANGELOG.md)
+[Cookbook](docs/zh/cookbook/index.md) · [原理与张量解析](docs/zh/tensor-analysis/index.md) · [五分钟技术导览](docs/zh/tensor-analysis/walkthrough.md) · [数据格式](docs/zh/data.md) · [训练与校准](docs/zh/training.md) · [预测与服务](docs/zh/serving.md) · [版本说明](CHANGELOG_zh.md)
 
-欢迎[贡献](CONTRIBUTING.md)、[报告问题](https://github.com/Shichaoxx/MetisCraft/issues/new?template=bug_report.yml)与[提出建议](https://github.com/Shichaoxx/MetisCraft/issues/new?template=feature_request.yml)。
+欢迎[贡献](CONTRIBUTING_zh.md)、[报告问题](https://github.com/Shichaoxx/MetisCraft/issues/new?template=bug_report.yml)与[提出建议](https://github.com/Shichaoxx/MetisCraft/issues/new?template=feature_request.yml)。
 
 ## 许可证
 

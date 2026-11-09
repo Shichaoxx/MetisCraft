@@ -17,6 +17,7 @@
   <b>English</b> · <a href="README_zh.md">简体中文</a><br>
   <a href="docs/en/cookbook/first-model.md">Get started</a> ·
   <a href="docs/en/cookbook/index.md">Cookbook</a> ·
+  <a href="docs/en/tensor-analysis/index.md">Concepts & Tensors</a> ·
   <a href="https://shichaoxx.github.io/MetisCraft/en/">Documentation</a> ·
   <a href="CONTRIBUTING.md">Contribute</a>
 </p>
@@ -30,7 +31,7 @@
 | Main decisions · 1,000 questions | **87.3% · 873/1,000** | 88.0% | −0.70 pp |
 | Policy transfer · 300 questions | **99.33% · 298/300** | 100% | −0.67 pp |
 
-**Both predeclared accuracy checks passed.** Single seed, the same public development questions; the original training history was not recovered, and calibration can worsen NLL. [Reproduction record and limits](docs/reproductions/tev1.md) · [Training recipe](recipes/tev1/README.md).
+**Both predeclared accuracy checks passed.** Single seed, the same public development questions; the original training history was not recovered, and calibration can worsen NLL. [Reproduction record and limits](docs/en/reproductions/tev1.md) · [Training recipe](recipes/tev1/README_en.md).
 
 ## One message. Two decisions.
 
@@ -45,7 +46,7 @@ An existing customer-routing model selects **security** and answers whether the 
 }
 ```
 
-[Full request and response](docs/en/cookbook/decision.md) · [Recipe and test results](recipes/banking77_support/README.md). On the same run, queue accuracy is **97.8%**, versus a **24.7%** prior baseline (n=3,080). This is a teaching scenario, not a production deployment.
+[Full request and response](docs/en/cookbook/decision.md) · [Recipe and test results](recipes/banking77_support/README_en.md). On the same run, queue accuracy is **97.8%**, versus a **24.7%** prior baseline (n=3,080). This is a teaching scenario, not a production deployment.
 
 ## Four kinds of judgment. One workflow.
 
@@ -68,7 +69,7 @@ Choose answer-token logits or a candidate scalar head in your recipe. Train with
 Use Python 3.10 or 3.11 and install a suitable PyTorch build for your hardware. Source installation is available now:
 
 ```bash
-git clone --branch main https://github.com/Shichaoxx/MetisCraft.git
+git clone --branch release/0.1.0rc1 https://github.com/Shichaoxx/MetisCraft.git
 cd MetisCraft
 python -m pip install '.[serve]'
 ```
@@ -89,16 +90,16 @@ CUDA_VISIBLE_DEVICES='' OMP_NUM_THREADS=1 metiscraft train recipe.yaml
 
 | Recipe | Recorded evidence | Boundary |
 |---|---|---|
-| [Customer routing](recipes/banking77_support/README.md) | One model answers choice and yes/no questions | A teaching scenario derived from Banking77 |
-| [Banking77](recipes/banking77/README.md) | Two readouts under one protocol | No matched encoder comparison yet |
-| [Tev1 4B](docs/reproductions/tev1.md) | 87.3% vs original 88.0%; transfer 99.33% vs 100% | Accuracy targets met; training-history and calibration limits remain |
-| [BoolQ](recipes/boolq/README.md) · [SST-5](recipes/sst5/README.md) · [GoEmotions](recipes/go_emotions/README.md) | Recipes across judgment types | GoEmotions results predate the prior-shift fix; see the recipe |
+| [Customer routing](recipes/banking77_support/README_en.md) | One model answers choice and yes/no questions | A teaching scenario derived from Banking77 |
+| [Banking77](recipes/banking77/README_en.md) | Two readouts under one protocol | No matched encoder comparison yet |
+| [Tev1 4B](docs/en/reproductions/tev1.md) | 87.3% vs original 88.0%; transfer 99.33% vs 100% | Accuracy targets met; training-history and calibration limits remain |
+| [BoolQ](recipes/boolq/README_en.md) · [SST-5](recipes/sst5/README_en.md) · [GoEmotions](recipes/go_emotions/README_en.md) | Recipes across judgment types | GoEmotions results predate the prior-shift fix; see the recipe |
 
-Every number links to a recipe or reproduction record. The [ecosystem matrix](docs/support-matrix.md) covers JevAny, ms-swift and other projects; [limitations](docs/en/limitations.md) distinguish software checks from model-quality evidence.
+Every number links to a recipe or reproduction record. The [ecosystem matrix](docs/en/support-matrix.md) covers JevAny, ms-swift and other projects; [limitations](docs/en/limitations.md) distinguish software checks from model-quality evidence.
 
 ## Documentation and community
 
-[Cookbook](docs/en/cookbook/index.md) · [Data format](docs/en/data.md) · [Training](docs/en/training.md) · [Serving](docs/en/serving.md) · [Changelog](CHANGELOG.md)
+[Cookbook](docs/en/cookbook/index.md) · [Concepts & Tensors](docs/en/tensor-analysis/index.md) · [Five-minute walkthrough](docs/en/tensor-analysis/walkthrough.md) · [Data format](docs/en/data.md) · [Training](docs/en/training.md) · [Serving](docs/en/serving.md) · [Changelog](CHANGELOG.md)
 
 [Contribute](CONTRIBUTING.md), [report a bug](https://github.com/Shichaoxx/MetisCraft/issues/new?template=bug_report.yml) or [suggest a feature](https://github.com/Shichaoxx/MetisCraft/issues/new?template=feature_request.yml).
 

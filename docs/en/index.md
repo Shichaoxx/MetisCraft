@@ -35,7 +35,7 @@ Train, reproduce and deploy JevLike decision models. One recipe connects trainin
 
 Both predeclared accuracy checks passed. Single seed, the same public development questions; original training history is unavailable and calibration can worsen NLL.
 
-[Reproduction record and limits](../reproductions/tev1.md) · [Training recipe](../../recipes/tev1/README.md)
+[Reproduction record and limits](reproductions/tev1.md) · [Training recipe](../../recipes/tev1/README_en.md)
 
 ## Start with a recorded decision
 
@@ -96,3 +96,7 @@ Use yes/no, choice, ordered score and multiple labels through Python or batch pr
   <source media="(max-width: 600px)" srcset="../visuals/figures/pipeline-mobile.svg">
   <img src="../visuals/figures/pipeline.svg" alt="Data, train, calibrate, evaluate, serve">
 </picture>
+
+## Understand the computation
+
+Follow [Concepts & Tensors](tensor-analysis/index.md) from the System One contract to answer-token and scalar-head readouts. The [five-minute technical walkthrough](tensor-analysis/walkthrough.md) connects editable vector figures, numerical examples and source references.

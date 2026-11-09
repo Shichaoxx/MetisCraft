@@ -1,0 +1,341 @@
+{
+  "tectonic": "Tectonic 0.17.0",
+  "tectonic_executable_sha256": "a98aa59ad5c1df39a6c9e56cbfc5088f2b11d6c179c0130b97998e4bd46a46da",
+  "tectonic_release_archive_sha256": "8533d07f9ccbd7a65824b9e0459041bca34af1eb33daba48f59215593753a3b7",
+  "tectonic_release_url": "https://github.com/tectonic-typesetting/tectonic/releases/tag/tectonic%400.17.0",
+  "tectonic_bundle_url": "https://relay.fullyjustified.net/default_bundle_v33.tar",
+  "tectonic_bundle_digest": "6ffe055852f8faf66c0acbe1a7fb27f87b869a90bad1204f3bf4d9683f597c7c",
+  "poppler": "pdftocairo version 0.86.1",
+  "source_date_epoch": 1794182400,
+  "source_sha256": {
+    "docs/tensor-analysis/src/figures.py": "4e8a5c702f7beaa35394ae26d9d53f890898a1d1d1b31b7a0706b882d1375d02",
+    "docs/tensor-analysis/src/geometry.json": "4cb3d1dbf2bb4a723bde9b4823acb3c702524e65cd97746a36bac306bf90164b",
+    "docs/tensor-analysis/src/labels.json": "84277ed0a90349e906e0a2984e8971fcee2d234378dc0dc9370a1379dc67b843",
+    "docs/tensor-analysis/src/tensor-style.tex": "da19f4e6314cf89c8cf7175b0621f63dd3c17f528bbb749d022b88eac96a0f27"
+  },
+  "builder_sha256": "39d6259fd4649c289f8fedfa4651cb5d3a9e6b4da64a14430de4de83c8360e14",
+  "figures": [
+    {
+      "slug": "readout-0-notation",
+      "language": "en",
+      "files": {
+        "readout-0-notation.en.tex": "0d0428629b87c7772d05b9492f15009757cf679f87d3c7d8a2e6d9cc50aa5c6e",
+        "readout-0-notation.en.pdf": "99d08ecb14c393a672cc3708d233fb0e690c110354d3b5d9c2ab5984ff37145e",
+        "readout-0-notation.en.svg": "f3d6ba2680824eb642674d7700f89d83b0e03648f34d9ec2bb4f34ad764c507b"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "readout-0-notation",
+      "language": "zh",
+      "files": {
+        "readout-0-notation.zh.tex": "7a407a64f54a6db4a7d530814e7e4c11b3ee4316dee804bd013c89386776ecf2",
+        "readout-0-notation.zh.pdf": "0cc334d63e90d2f8813123798cd250610dbe54dcd5cae3187b542b524830c7f7",
+        "readout-0-notation.zh.svg": "52b516a26e21d9d1cb883d7ee45a85234d1ffa6525f6830cd07d5731f588fcf9"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "readout-1-lm-token",
+      "language": "en",
+      "files": {
+        "readout-1-lm-token.en.tex": "5753be4bd0552190d5f56676e39f808b5ab5131d31e20ff994100fd2625f10db",
+        "readout-1-lm-token.en.pdf": "7d3c5b67034ecde5d05eb08def52b019f977d345d5a93ae408caf00bac47616e",
+        "readout-1-lm-token.en.svg": "5c5a99f93d84780154df8b8f55fbbf1fcb1263949160aa5c229149fecf9471e0"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "readout-1-lm-token",
+      "language": "zh",
+      "files": {
+        "readout-1-lm-token.zh.tex": "0321dcee4a9bc916ae3ac4f6af9dd0fd5932ddea409f429d63158c5f02fb88eb",
+        "readout-1-lm-token.zh.pdf": "8635dfbac149db05fe344989c99f59aaa71c65b7ff0de3c6354f4e311c9e3cb7",
+        "readout-1-lm-token.zh.svg": "0f89566a6092465baf61ba2b4227e66fe2549aa0f5b349495c02c56d79351d6b"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "readout-2-slot-head",
+      "language": "en",
+      "files": {
+        "readout-2-slot-head.en.tex": "8c0c10b3a1cea82aca5373742f6af01b9bfbd1d80821d19b155580427103bd32",
+        "readout-2-slot-head.en.pdf": "a718aa2c7cc22af9aeb3d597cb07b7dd1a71e5ff4514990d8ccc2f9af5725f00",
+        "readout-2-slot-head.en.svg": "60f9f8473236e3b3bf98a7b9bbb13277e35335e60400e366d2890aa53de07e75"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "readout-2-slot-head",
+      "language": "zh",
+      "files": {
+        "readout-2-slot-head.zh.tex": "6fb7e93f1d35a25558806c181fb17879491b45f791f23c46932cab0cd01e3d83",
+        "readout-2-slot-head.zh.pdf": "a1d6b91ee30d87bcc25db26f3fe3e354eeca2e17db2b74270f715a27a0c69f33",
+        "readout-2-slot-head.zh.svg": "eaff4bc4333def20286074090695de07b2ad56476745c89d91ae7ccb361ab85b"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "readout-3-candidate-scalar",
+      "language": "en",
+      "files": {
+        "readout-3-candidate-scalar.en.tex": "e6e7a067c04ead55f31777f163982e7a0d1f561bbaaf3f2cfbe28f81f0af2380",
+        "readout-3-candidate-scalar.en.pdf": "55dcea85bdef89a560dc5228f2488fd9c863e55fc7b215d6beffabe6bb3f88ae",
+        "readout-3-candidate-scalar.en.svg": "8e1ed3b64f05264a853c37b8f6cccd514f24d4ea727c533cc9c9e7f5a067ec9a"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "readout-3-candidate-scalar",
+      "language": "zh",
+      "files": {
+        "readout-3-candidate-scalar.zh.tex": "3ebdc987ac27fb0625d4c6753b83695ad9956b67572072bd4cbfcbaf75f14931",
+        "readout-3-candidate-scalar.zh.pdf": "e93fda055645772cddadfc2737884b811a19a777423ed843a032997c6b43d18a",
+        "readout-3-candidate-scalar.zh.svg": "a06b208a369f1d70e525fa0ae863f689a5cca948fc01f7d2f5e81451ea3b69a0"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "readout-4-pointer",
+      "language": "en",
+      "files": {
+        "readout-4-pointer.en.tex": "56a5f1f1927b292c2c1daf5fa456faf6cae8d568e18f7ddaeae34ee24e58b007",
+        "readout-4-pointer.en.pdf": "8ffdd15dbe2c693923ebaced4b405d8d49840924b13d343a0ac8bfa5fb726cc4",
+        "readout-4-pointer.en.svg": "3eb3b25ace1d3e74f3cade0f23d2b3e8534512ec3214746c55fbc9704936ae99"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "readout-4-pointer",
+      "language": "zh",
+      "files": {
+        "readout-4-pointer.zh.tex": "94345422a2c674144a7138ca52cc563603af89d1933d04afed652b07a2c4c72b",
+        "readout-4-pointer.zh.pdf": "70b36343eda1eb789d3f26d25b5e9ac62ca270eeed8b3a53796745686da51c97",
+        "readout-4-pointer.zh.svg": "bab76dcbee5d9b479bfae1bb1e4fd7863bd1c6420ef9831933af89f07ba87b18"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "readout-5-joint-schema",
+      "language": "en",
+      "files": {
+        "readout-5-joint-schema.en.tex": "39d8e956afbe70300c790c1f7ad3dfbf500af7a6c7bee53381f553d8c54e6505",
+        "readout-5-joint-schema.en.pdf": "900f1834f37709fe767e2c48c07642400e0e5001f957ba783f6f0f2fced5820e",
+        "readout-5-joint-schema.en.svg": "30129610d021bc5e86d63ec7db75dfd166b2650cc440aa98b0b1bfd7d09ccc05"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "readout-5-joint-schema",
+      "language": "zh",
+      "files": {
+        "readout-5-joint-schema.zh.tex": "2cc5e9856b6da247c13ded4bebfd4a150696fc1e360a51dc5d2e7afbcf1f9958",
+        "readout-5-joint-schema.zh.pdf": "5a96bd364ce8dc11ae84d9b0174d48c063a1b70333afd4de2a0f11ac2c3149f5",
+        "readout-5-joint-schema.zh.svg": "278aae6888b6380afc13c2c1172874c1d8191a41e6b5100e630375acf504a005"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "readout-6-encoder",
+      "language": "en",
+      "files": {
+        "readout-6-encoder.en.tex": "14739a3d77afff589441bc790a5273560c83aadd086cf0bd4cb8a0551ef780a2",
+        "readout-6-encoder.en.pdf": "eaf13ed18d8d011add7b520ae85dea9e30c16d82191e4b58bd113fc87ea2835a",
+        "readout-6-encoder.en.svg": "d0a6d928b8c29def2f875bf593c7db0179b19b0fbdb7fc4236873e2ebf789bc1"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "readout-6-encoder",
+      "language": "zh",
+      "files": {
+        "readout-6-encoder.zh.tex": "789a7f8385d2744c639a2da51724a59ae90fd92bcaf9a7d0d78c6652dbbcfae8",
+        "readout-6-encoder.zh.pdf": "9cd693b3619b900ae8a745541b3e22b4b7e3c47cb126a3b8661da5075c2e3d56",
+        "readout-6-encoder.zh.svg": "c785e0a0043a30201722943d1569705c74d52fb2387141b41387dd1835a01aa5"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "readout-7-generate-then-read",
+      "language": "en",
+      "files": {
+        "readout-7-generate-then-read.en.tex": "a5c3a0169ed0b77140402e1a2a54bc8dbeb87d7f01db7b8d0b7d4dba8e0b3fdf",
+        "readout-7-generate-then-read.en.pdf": "2f71f3ac08f1ac1918bf0b43ac0d74b20a4b670fe3cf0045c72857ab45f03b3b",
+        "readout-7-generate-then-read.en.svg": "0a4b5caa4ae10451721b28803c6212d465e6096f2fa7cc00e12c73ea8a7b28b3"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "readout-7-generate-then-read",
+      "language": "zh",
+      "files": {
+        "readout-7-generate-then-read.zh.tex": "af4c10467f15001660b2be82e8aacc0f0a279d3ea5e1da8152b3428fbd9a78cc",
+        "readout-7-generate-then-read.zh.pdf": "ec246d7a03ef91c690c1f6855796edfb2c6d61519f475ead24ef7056870fd432",
+        "readout-7-generate-then-read.zh.svg": "b1715d36153c949f52c3ee39029b5df611e3f736d414226bcf730f6666ffca21"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "readout-overview",
+      "language": "en",
+      "files": {
+        "readout-overview.en.tex": "8e2a1d04efed3fa0138ee688fa64683cdd4a3e23523863708daa9be3ef828a08",
+        "readout-overview.en.pdf": "e36fa020fa65507d86ab11c33b3d66e0e6614a3b81b6dcc04c7101392bca57d1",
+        "readout-overview.en.svg": "8f5e07e6dd471957274c8c3b7190518a94beffeae2c1e88de82625e5c3e5da9a"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "readout-overview",
+      "language": "zh",
+      "files": {
+        "readout-overview.zh.tex": "ae793c7cf87a93ea7f3cabbec0a9f0c80b0960d9c1637bdba2760fc88685c76a",
+        "readout-overview.zh.pdf": "1e6c2e35d9f1c0eafeeb3c0d1119114c6d6166a223c21efba29c72156dfa17ca",
+        "readout-overview.zh.svg": "33916596e7c60551a69ef4f08b2e8663ae6c793680a89811452a289ce4c60d04"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "system-one-contract",
+      "language": "en",
+      "files": {
+        "system-one-contract.en.tex": "b4d69124f787ed2b26709137e80dc9311d115c96049030bd1e319998a2d6b16a",
+        "system-one-contract.en.pdf": "ddb751559ca1e97ddd7a44f9fcf589d46d27bc070a342c898706433240d6cd40",
+        "system-one-contract.en.svg": "2e2cc8cdff1f887447c865b029f820526084de85a43c402ce52be92e7a52c975"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "system-one-contract",
+      "language": "zh",
+      "files": {
+        "system-one-contract.zh.tex": "881cafb37e1c3c2f32b4bf87e6d9cbb4e97cad887857f8311ae7d929f74be5b7",
+        "system-one-contract.zh.pdf": "16b66d3dba7840aec455da551c993c9c67d7ce44e48c3f6d8ef2ea216c654f10",
+        "system-one-contract.zh.svg": "4fb0be59ed6ee04522fd8fd36db083ddbee16d0570a9ae5b1bf54124066c16f5"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "metiscraft-tensor-flow",
+      "language": "en",
+      "files": {
+        "metiscraft-tensor-flow.en.tex": "8439c69039894ce9b91b4636510bb9d22d45a62833a7197ce05a57b077d6b98c",
+        "metiscraft-tensor-flow.en.pdf": "8da257bf3537c08c13980f48a649d85f3d617a77d0fc2d08d78f031ff984a4f3",
+        "metiscraft-tensor-flow.en.svg": "9b9ac973857ef35fa78ebee4e21b2f942a8cd9d37c03e2470474d8590c54c891"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "metiscraft-tensor-flow",
+      "language": "zh",
+      "files": {
+        "metiscraft-tensor-flow.zh.tex": "5bf32bf0a2f8b5476350ebd74ec50cee7cb39245bc50f1e0c3c6e472f10b9626",
+        "metiscraft-tensor-flow.zh.pdf": "d9b0c22e4165d8877d6b510d3132de25250c13ec2c5733fbd973350ba3ea7843",
+        "metiscraft-tensor-flow.zh.svg": "50450bb1c040b356e8ff067c6a3a08b57e652024ac4ccedf21ec4b6c6700c8e5"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "scalar-list",
+      "language": "en",
+      "files": {
+        "scalar-list.en.tex": "fd6b8eb55897077543ce81753acf05b9f11d0e916eca95bdcc1b2b9f4767307e",
+        "scalar-list.en.pdf": "89e277d0c98eecf033f9978472b4147352f15fafb69ab068483d124486602083",
+        "scalar-list.en.svg": "c5686d7a164d98d421221ddb07e87330837e8c69090d0fe687c8032543b786f1"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "scalar-list",
+      "language": "zh",
+      "files": {
+        "scalar-list.zh.tex": "57acdd48741babc582fd3ac5040e6938672c1115363ffef364b5964dcd899a01",
+        "scalar-list.zh.pdf": "d63834aedcab90ebb47052b587c421054ac3dfe49a08db7a54a4a424f812dfa9",
+        "scalar-list.zh.svg": "901c05690d79070618fbf2f305dd4ce4ec968339d0d0fad94dfd15d778f7fcfd"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "training-calibration",
+      "language": "en",
+      "files": {
+        "training-calibration.en.tex": "dd277fd4ea122a8ed098b2d040664870bbf2ea6af41d31b1869667da168a4283",
+        "training-calibration.en.pdf": "e301d12ec393812e99a3a1f876b6e6e3cbc065f2857511f86e4b38247a9f3f85",
+        "training-calibration.en.svg": "b61121c9b28b461fe3408c5fa31cfb415812a8522d850d5bb21500bcd1f8c7d2"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "training-calibration",
+      "language": "zh",
+      "files": {
+        "training-calibration.zh.tex": "02383bad2760dcae81c43fb13bf86416203bcc165cfecf8fd86330152c6f1047",
+        "training-calibration.zh.pdf": "490de088ce569b6d0454890c5f09c918e36ffe0ee0cddd94c347c6b8a32364c1",
+        "training-calibration.zh.svg": "b6405ef627294de3fbda312fc772bb05fd5f231781de3416551b75dc0cfac98b"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    }
+  ],
+  "geometry": {
+    "cell_cm": 0.3,
+    "sheet_offset_cm": 0.12,
+    "gutter_cm": 0.65,
+    "axes": {
+      "B": 2,
+      "T": 12,
+      "d": 5,
+      "V": 12,
+      "K": 3,
+      "L": 3,
+      "R": 6,
+      "d_h": 4,
+      "d_p": 4,
+      "w": 4,
+      "C": 1,
+      "Q": 2,
+      "G": 3
+    },
+    "semantics": {
+      "B": "atomic questions",
+      "T": "tokens per padded sequence",
+      "d": "backbone hidden channels",
+      "V": "vocabulary",
+      "K": "padded candidates",
+      "L": "selected answer-token IDs",
+      "R": "pairs rows, sum of valid candidate counts",
+      "d_h": "scalar-head hidden channels",
+      "d_p": "pointer channels",
+      "w": "schema-head channels",
+      "C": "packed input sequences",
+      "Q": "questions per packed sequence in the fixed-size illustration",
+      "G": "rationale decode steps"
+    },
+    "note": "Counts illustrate axes, not trained model sizes. Equal axes keep equal edge lengths; masks show exact support."
+  }
+}

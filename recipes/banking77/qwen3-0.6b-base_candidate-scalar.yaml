@@ -1,5 +1,5 @@
 # Banking77 (77 intents, choice) with the candidate-scalar readout (③, list layout).
-# Pairs with banking77/qwen3-0.6b-base_answer-token.yaml: only `readout` differs.
+# Pairs with banking77/qwen3-0.6b-base_answer-token.yaml: same data/evaluation settings; readout and max_length differ (768 vs 1024).
 task: banking77
 data: {dataset: banking77}
 model:

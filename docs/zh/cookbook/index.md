@@ -4,7 +4,7 @@
 
 <div class="cookbook-guide" markdown="1">
 
-<figure class="cookbook-avatar"><img src="../../visuals/figures/metis-guide.png" alt="抱着星图书的 Metis，Cookbook 阅读向导" width="160" height="240"></figure>
+<figure class="cookbook-avatar"><img src="../../visuals/figures/metis-guide-chibi.png" alt="抱着星图书的 Metis，Cookbook 阅读向导" width="160" height="240"></figure>
 
 <div class="cookbook-guide-copy" markdown="1">
 
@@ -60,6 +60,6 @@
 - [Record JSONL 与数据清单](../data.md)。
 - [基座准备与配方设置](../training.md)。
 - [预测、HTTP 与任务映射](../serving.md)。
-- [配方字段参考](../../cookbook/recipe-reference.md)与[读出图解](../../readouts/README.md)。
+- [配方字段参考](../../cookbook/recipe-reference.md)与[原理与张量解析](../tensor-analysis/index.md)。
 
 [English](../../en/cookbook/index.md)

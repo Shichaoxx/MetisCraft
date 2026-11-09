@@ -93,7 +93,7 @@ The same recorded run was evaluated on **3,080 held-out messages**, with one que
 
 The prior baseline uses training-label frequencies and does not read the message. Its 87.0% urgency accuracy shows why model accuracy needs context. Temperature fitting used a separate calibration split; the NLL values above were measured on test data.
 
-These results demonstrate a labeled public-data scenario, not a production deployment. Full criteria, recipe settings, metrics and run provenance are in the [customer-routing evidence](../../../recipes/banking77_support/README.md) (Chinese).
+These results demonstrate a labeled public-data scenario, not a production deployment. Full criteria, recipe settings, metrics and run provenance are in the [customer-routing evidence](../../../recipes/banking77_support/README_en.md).
 
 ## 4. Choose the type your application needs
 

@@ -11,17 +11,11 @@ from html import unescape
 from pathlib import Path
 from urllib.parse import unquote, urljoin, urlsplit
 
+from build_docs import legacy_destination, public_destinations
 
-def route(name):
-    path = Path(name)
-    if path.parts[0] == "docs":
-        path = Path(*path.parts[1:])
-        if path.parts[0] not in {"en", "zh"}:
-            path = Path("zh") / path
-    elif path.parts[0] == "recipes":
-        path = Path("zh") / path
-    else:
-        path = Path("en") / ("contributing.md" if name == "CONTRIBUTING.md" else "changelog.md")
+
+def route(name, destinations=None):
+    path = (destinations or {}).get(name, legacy_destination(name))
     return (
         path.parent / "index.html"
         if path.stem in {"README", "index"}
@@ -63,14 +57,66 @@ def main():
         )
 
     pages = policy["pages"]
+    destinations = public_destinations(policy)
+    pairs = policy.get("language_pairs", {})
+    paired = [name for pair in pairs.values() for name in pair.values()]
+    check(set(paired) == set(pages), "Every public page must have a language partner")
+    check(len(paired) == len(set(paired)), "A public source appears in multiple language pairs")
     check(len(pages) == len(set(pages)), "public page policy has duplicate sources")
     check(not [p for p in pages if blocked(p)], "public policy includes developer material")
-    expected = {route(p) for p in pages} | {"index.html", "en/404.html", "zh/404.html"}
+    expected = {route(p, destinations) for p in pages} | {
+        "index.html",
+        "en/404.html",
+        "zh/404.html",
+    }
     redirects = {
-        route(alias) for alias, target in policy["aliases"].items() if route(alias) != route(target)
+        route(alias)
+        for alias, target in policy["aliases"].items()
+        if route(alias) != route(target, destinations)
     }
     expected |= redirects
-    check(len({route(p) for p in pages}) == len(pages), "public page routes collide")
+    check(len({route(p, destinations) for p in pages}) == len(pages), "public page routes collide")
+    for lang in ("en", "zh"):
+        for stem in (
+            "index",
+            "notation",
+            "answer-token",
+            "scalar-heads",
+            "training-calibration",
+            "readout-comparison",
+            "walkthrough",
+        ):
+            name = f"docs/{lang}/tensor-analysis/{stem}.md"
+            check(name in pages, f"Missing public tensor chapter: {name}")
+    figure_names = (
+        "readout-0-notation",
+        "readout-1-lm-token",
+        "readout-2-slot-head",
+        "readout-3-candidate-scalar",
+        "readout-4-pointer",
+        "readout-5-joint-schema",
+        "readout-6-encoder",
+        "readout-7-generate-then-read",
+        "readout-overview",
+        "system-one-contract",
+        "metiscraft-tensor-flow",
+        "scalar-list",
+        "training-calibration",
+    )
+    for stem in figure_names:
+        for lang in ("en", "zh"):
+            for suffix in ("svg", "pdf", "tex"):
+                figure = root / f"docs/tensor-analysis/figures/{stem}.{lang}.{suffix}"
+                check(
+                    figure.is_file(),
+                    f"Missing vector or editable source: {figure.relative_to(root)}",
+                )
+                if suffix == "svg" and figure.is_file():
+                    text = figure.read_text(encoding="utf-8")
+                    check(
+                        not re.search(r"<(?:\w+:)?image\b|data:image|<foreignObject", text, re.I),
+                        f"Non-vector content in {figure.name}",
+                    )
     template_root = root / "src/metiscraft/templates/quickstart"
     templates = {
         lang: template_root / ("README_zh.md" if lang == "zh" else "README.md")
@@ -111,6 +157,26 @@ def main():
         for name in actual:
             body = unescape(re.sub("<[^>]+>", "", (site / name).read_text(encoding="utf-8")))
             check(not internal_fields.search(body), f"developer publishing fields in HTML: {name}")
+            check(
+                not re.search(r"（中文）|\(中文\)", body), f"Language suffix in formal page: {name}"
+            )
+        math_script = site / "assets/math.js"
+        check(math_script.is_file(), "Local formula renderer missing")
+        language_map = site / "assets/language-map.js"
+        check(language_map.is_file(), "Same-page language map missing")
+        for pair in pairs.values():
+            for name in pair.values():
+                page = site / route(name, destinations)
+                if page.is_file():
+                    text = page.read_text(encoding="utf-8")
+                    check(
+                        "assets/math.js" in text and "katex.min.js" in text,
+                        f"Local math assets absent: {name}",
+                    )
+                    check(
+                        "assets/documentation.js" in text,
+                        f"Same-page language and figure controls absent: {name}",
+                    )
         prefix = "/MetisCraft/"
         for lang in ("en", "zh"):
             choices = [site / lang / "search.json", site / lang / "search/search_index.json"]
@@ -175,6 +241,8 @@ def main():
             "docs/examples/*.json",
             "docs/visuals/src/*",
             "docs/cookbook/src/*",
+            "docs/assets/**/*",
+            "docs/tensor-analysis/**/*",
             "docs/reports/*/src/**/*",
             "docs/reports/*/index.html",
             "docs/reports/*/figures/*",
