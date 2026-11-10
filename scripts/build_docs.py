@@ -209,47 +209,67 @@ def main():
         zh = lang == "zh"
         nav = [
             {
-                "开始使用" if zh else "Get started": [
+                "0. Intro": [
+                    {
+                        "什么是 JevLike" if zh else "What is JevLike?": (
+                            "tensor-analysis/introduction.md"
+                        )
+                    },
+                    {
+                        "架构导览" if zh else "Architecture guide": (
+                            "tensor-analysis/architectures.md"
+                        )
+                    },
+                    {
+                        "开源实现" if zh else "Open implementations": [
+                            {
+                                "答案 token 与固定槽位" if zh else "Answer tokens & fixed slots": (
+                                    "tensor-analysis/architectures-token.md"
+                                )
+                            },
+                            {
+                                "标量、指针与联合头" if zh else "Scalar, pointer & joint heads": (
+                                    "tensor-analysis/architectures-structured.md"
+                                )
+                            },
+                            {
+                                "编码器与逐对重排" if zh else "Encoders & pair rerankers": (
+                                    "tensor-analysis/architectures-encoders.md"
+                                )
+                            },
+                        ]
+                    },
+                    {
+                        "五分钟技术导览" if zh else "Five-minute walkthrough": (
+                            "tensor-analysis/walkthrough.md"
+                        )
+                    },
+                ]
+            },
+            {
+                "1. 开始使用" if zh else "1. Get started": [
                     {"概览" if zh else "Overview": "index.md"},
                     {"安装" if zh else "Installation": "installation.md"},
                     {"快速上手" if zh else "Quickstart": "quickstart.md"},
                 ]
             },
-            {"引言" if zh else "Intro": "tensor-analysis/introduction.md"},
             {
-                "Cookbook": [
+                "2. Cookbook": [
                     {"阅读路线" if zh else "Choose a path": "cookbook/index.md"},
                     {"认识一次判断" if zh else "Understand a decision": "cookbook/decision.md"},
                     {"跑通第一个模型" if zh else "Your first model": "cookbook/first-model.md"},
                     {"接入自己的任务" if zh else "Your own task": "cookbook/own-task.md"},
+                    {"数据与配方" if zh else "Data & recipes": "data.md"},
+                    {"训练与校准" if zh else "Train & calibrate": "training.md"},
+                    {"预测与服务" if zh else "Predict & serve": "serving.md"},
                 ]
             },
             {
-                "原理与张量解析" if zh else "Concepts & Tensors": [
+                "3. 原理与张量解析" if zh else "3. Concepts & Tensors": [
                     {
                         "从 System One 到 MetisCraft"
                         if zh
                         else "System One to MetisCraft": "tensor-analysis/index.md"
-                    },
-                    {
-                        "模型架构图谱"
-                        if zh
-                        else "Model architecture atlas": "tensor-analysis/architectures.md"
-                    },
-                    {
-                        "答案 token 与固定槽位"
-                        if zh
-                        else "Answer tokens & fixed slots": "tensor-analysis/architectures-token.md"
-                    },
-                    {
-                        "标量、指针与联合头" if zh else "Scalar, pointer & joint heads": (
-                            "tensor-analysis/architectures-structured.md"
-                        )
-                    },
-                    {
-                        "编码器与逐对重排" if zh else "Encoders & pair rerankers": (
-                            "tensor-analysis/architectures-encoders.md"
-                        )
                     },
                     {
                         "张量、轴与索引"
@@ -276,25 +296,32 @@ def main():
                         if zh
                         else "Seven readout mechanisms": "tensor-analysis/readout-comparison.md"
                     },
-                    {
-                        "五分钟技术导览"
-                        if zh
-                        else "Five-minute walkthrough": "tensor-analysis/walkthrough.md"
-                    },
                 ]
             },
-            {"数据与配方" if zh else "Data & recipes": "data.md"},
-            {"训练与校准" if zh else "Train & calibrate": "training.md"},
-            {"预测与服务" if zh else "Predict & serve": "serving.md"},
             {
-                "结果与复现" if zh else "Results & reproductions": [
+                "4. 结果与复现" if zh else "4. Results & reproductions": [
                     {"验证范围" if zh else "Evidence & limitations": "limitations.md"},
                     {"Tev1": "reproductions/tev1.md"},
                     {"支持矩阵" if zh else "Ecosystem support": "support-matrix.md"},
+                    {
+                        "配方结果" if zh else "Recipe results": [
+                            {"Banking77": "recipes/banking77/index.md"},
+                            {
+                                "客服分流" if zh else "Customer routing": (
+                                    "recipes/banking77_support/index.md"
+                                )
+                            },
+                            {"BoolQ": "recipes/boolq/index.md"},
+                            {"CLINC150": "recipes/clinc150/index.md"},
+                            {"GoEmotions": "recipes/go_emotions/index.md"},
+                            {"SST-5": "recipes/sst5/index.md"},
+                            {"Tev1": "recipes/tev1/index.md"},
+                        ]
+                    },
                 ]
             },
             {
-                "参考" if zh else "Reference": [
+                "5. 参考" if zh else "5. Reference": [
                     {"原理" if zh else "Principles": "cookbook/principles.md"},
                     {"最佳实践" if zh else "Best practices": "cookbook/best-practices.md"},
                     {"接口约定" if zh else "Interface contracts": "interfaces.md"},
@@ -302,7 +329,7 @@ def main():
                 ]
             },
             {
-                "参与贡献" if zh else "Contribute": [
+                "6. 参与贡献" if zh else "6. Contribute": [
                     {"贡献指南" if zh else "Contribution guide": "contributing.md"},
                     {"版本说明" if zh else "Changelog": "changelog.md"},
                 ]
@@ -341,7 +368,7 @@ language = "LANG"
 font = false
 logo = "/MetisCraft/assets/docs/visuals/figures/mark.svg"
 favicon = "/MetisCraft/assets/docs/visuals/figures/mark.svg"
-features = ["content.code.copy", "navigation.sections", "navigation.top", "search.highlight"]
+features = ["content.code.copy", "navigation.top", "search.highlight"]
 [[project.theme.palette]]
 media = "(prefers-color-scheme: light)"
 scheme = "default"

@@ -29,8 +29,39 @@
     });
   }
   function syncAppearance() { syncBrand(); syncPortraits(); window.MetisFigures?.sync(document, isDarkTheme()); }
+  function syncNavigation() {
+    const nav = document.querySelector('.md-sidebar--primary .md-nav--primary');
+    if (!nav) return;
+    const current = nav.querySelector('a.md-nav__link--active[href]');
+    nav.querySelectorAll('a[aria-current="page"]').forEach(function (link) {
+      if (link !== current) link.removeAttribute('aria-current');
+    });
+    if (current) current.setAttribute('aria-current', 'page');
+    nav.querySelectorAll(':scope > .md-nav__list > .md-nav__item').forEach(function (section) {
+      const heading = section.querySelector(':scope > label.md-nav__link');
+      const text = heading?.querySelector('.md-ellipsis');
+      if (!text) return;
+      if (!text.querySelector('.metis-nav-number')) {
+        const parts = text.textContent.trim().replace(/\s+/g, ' ').match(/^(\d+)\.\s+(.+)$/);
+        if (!parts) return;
+        const number = document.createElement('span');
+        number.className = 'metis-nav-number';
+        number.textContent = parts[1] + '.';
+        const title = document.createElement('span');
+        title.className = 'metis-nav-title';
+        title.textContent = parts[2];
+        text.replaceChildren(number, title);
+        section.dataset.metisSection = parts[1];
+      }
+      section.classList.add('metis-nav-section');
+      heading.classList.add('metis-nav-heading');
+      section.classList.toggle('metis-nav-current', Boolean(current && section.contains(current)));
+    });
+    nav.dataset.metisNavigation = 'ready';
+  }
   function hydrate() {
     syncAppearance();
+    syncNavigation();
     const links = (window.METIS_DOCUMENTATION_LANGUAGES || {})[location.pathname];
     if (links) {
       document.querySelectorAll(".md-select a, a[hreflang]").forEach(function (anchor) {
