@@ -1,5 +1,7 @@
 # System One and MetisCraft: from inputs to typed decisions
 
+[Model architecture atlas: MetisCraft, Tev1 and 14 inspected open implementations](architectures.md). The atlas separates concrete checkpoint paths from generic mechanism families.
+
 This chapter follows a decision from a named question to a probability distribution and a program-facing answer. The System One interface supplies the public contract; MetisCraft supplies inspectable implementations of answer-token and candidate-scalar readouts. A matching interface does not establish an identical model architecture.
 
 New to the model family? Start with [0. Introduction: task, data and architecture](introduction.md).

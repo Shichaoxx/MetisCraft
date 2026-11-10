@@ -67,7 +67,15 @@
     "recipes/sst5/README_en.md",
     "recipes/sst5/README.md",
     "recipes/tev1/README_en.md",
-    "recipes/tev1/README.md"
+    "recipes/tev1/README.md",
+    "docs/en/tensor-analysis/architectures.md",
+    "docs/zh/tensor-analysis/architectures.md",
+    "docs/en/tensor-analysis/architectures-token.md",
+    "docs/zh/tensor-analysis/architectures-token.md",
+    "docs/en/tensor-analysis/architectures-structured.md",
+    "docs/zh/tensor-analysis/architectures-structured.md",
+    "docs/en/tensor-analysis/architectures-encoders.md",
+    "docs/zh/tensor-analysis/architectures-encoders.md"
   ],
   "aliases": {
     "docs/cookbook/README.md": "docs/zh/cookbook/index.md",
@@ -218,6 +226,22 @@
     "tensor-analysis/introduction": {
       "en": "docs/en/tensor-analysis/introduction.md",
       "zh": "docs/zh/tensor-analysis/introduction.md"
+    },
+    "tensor-analysis/architectures": {
+      "en": "docs/en/tensor-analysis/architectures.md",
+      "zh": "docs/zh/tensor-analysis/architectures.md"
+    },
+    "tensor-analysis/architectures-token": {
+      "en": "docs/en/tensor-analysis/architectures-token.md",
+      "zh": "docs/zh/tensor-analysis/architectures-token.md"
+    },
+    "tensor-analysis/architectures-structured": {
+      "en": "docs/en/tensor-analysis/architectures-structured.md",
+      "zh": "docs/zh/tensor-analysis/architectures-structured.md"
+    },
+    "tensor-analysis/architectures-encoders": {
+      "en": "docs/en/tensor-analysis/architectures-encoders.md",
+      "zh": "docs/zh/tensor-analysis/architectures-encoders.md"
     }
   }
 }

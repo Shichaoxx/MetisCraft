@@ -77,7 +77,7 @@ function ensure(ok, detail) { if (!ok) report.failures.push(detail); }
       report.pages.push({route,...facts});
     }
     const slugs=['','cookbook/','tensor-analysis/introduction/','tensor-analysis/','tensor-analysis/answer-token/','tensor-analysis/scalar-heads/','tensor-analysis/training-calibration/','tensor-analysis/readout-comparison/','tensor-analysis/notation/','tensor-analysis/walkthrough/'];
-    if(args.mode==='candidate') slugs.splice(0,slugs.length,'','cookbook/','cookbook/first-model/','tensor-analysis/introduction/','tensor-analysis/answer-token/','tensor-analysis/scalar-heads/');
+    if(args.mode==='candidate') slugs.splice(0,slugs.length,'','cookbook/','cookbook/first-model/','tensor-analysis/introduction/','tensor-analysis/architectures/','tensor-analysis/architectures-token/','tensor-analysis/architectures-structured/','tensor-analysis/architectures-encoders/','reproductions/tev1/');
     if(!['interactions','themes'].includes(args.mode)) {
     for (const lang of ['en','zh']) for (const width of [1440,390]) for (const mode of ['default','slate']) {
       await page.setViewportSize({width,height:1080});

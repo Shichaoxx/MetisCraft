@@ -79,6 +79,10 @@ def main():
     for lang in ("en", "zh"):
         for stem in (
             "introduction",
+            "architectures",
+            "architectures-token",
+            "architectures-structured",
+            "architectures-encoders",
             "index",
             "notation",
             "answer-token",
@@ -91,6 +95,9 @@ def main():
             check(name in pages, f"Missing public tensor chapter: {name}")
     figure_names = (
         "metiscraft-architecture",
+        "metiscraft-workflow",
+        "tev1-architecture",
+        "architecture-clef-scorer",
         "jevlike-architecture",
         "readout-0-notation",
         "readout-1-lm-token",
@@ -106,6 +113,8 @@ def main():
         "scalar-list",
         "training-calibration",
     )
+    catalogue = json.loads((root / "docs/tensor-analysis/src/model-atlas.json").read_text())
+    figure_names += tuple("architecture-" + m["id"] for m in catalogue["models"])
     for stem in figure_names:
         for lang in ("en", "zh"):
             for suffix in ("svg", "pdf", "tex", "dark.svg", "dark.pdf", "dark.tex"):

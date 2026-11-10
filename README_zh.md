@@ -33,6 +33,8 @@
 
 **两项预定准确率验收均达标。** 单种子、同一批公开开发题；原始训练历史未恢复，校准可能恶化 NLL。[复现记录与限制](docs/reproductions/tev1.md) · [训练配方](recipes/tev1/README.md)。
 
+[模型架构图谱](docs/zh/tensor-analysis/architectures.md)：对照 MetisCraft、Tev1 与开源实现的 token、主干、读出和训练依据。
+
 ## 一条消息，两个判断
 
 > “My card was stolen this morning and there are two payments on it that I did not make.”

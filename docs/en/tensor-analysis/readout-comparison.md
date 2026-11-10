@@ -1,5 +1,7 @@
 # Seven readout families: representations, interaction and normalization
 
+[Model architecture atlas: MetisCraft, Tev1 and 14 inspected open implementations](architectures.md). The atlas separates concrete checkpoint paths from generic mechanism families.
+
 ## Question
 
 Where does each candidate score come from, and which inputs can influence it? Readout families differ in the representations they select, the interactions they permit and the axis they normalize. The taxonomy describes mechanisms, not a ranking or a checkpoint compatibility promise.

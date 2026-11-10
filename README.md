@@ -31,7 +31,7 @@
 | Main decisions · 1,000 questions | **87.3% · 873/1,000** | 88.0% | −0.70 pp |
 | Policy transfer · 300 questions | **99.33% · 298/300** | 100% | −0.67 pp |
 
-**Both predeclared accuracy checks passed.** Single seed, the same public development questions; the original training history was not recovered, and calibration can worsen NLL. [Reproduction record and limits](docs/en/reproductions/tev1.md) · [Training recipe](recipes/tev1/README_en.md).
+**Both predeclared accuracy checks passed.** Single seed, the same public development questions; the original training history was not recovered, and calibration can worsen NLL. [Reproduction record and limits](docs/en/reproductions/tev1.md) · [Training recipe](recipes/tev1/README_en.md) · [Model architecture atlas](docs/en/tensor-analysis/architectures.md).
 
 ## One message. Two decisions.
 

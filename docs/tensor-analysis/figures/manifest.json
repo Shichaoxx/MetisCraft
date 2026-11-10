@@ -12,19 +12,21 @@
     "docs/tensor-analysis/src/figures.py": "c7fbc00d91e012a81e3af392465acbd5f4585f47bd2f99942ca538c8074a401e",
     "docs/tensor-analysis/src/geometry.json": "4cb3d1dbf2bb4a723bde9b4823acb3c702524e65cd97746a36bac306bf90164b",
     "docs/tensor-analysis/src/labels.json": "52c4422e79fb33262f7227d3310d687c6f552539a28c19057eba1305268478da",
+    "docs/tensor-analysis/src/model-atlas.json": "67f6da7050bc6c2e3732e9abcdd97f35566207ee2a92e28cf33e0a9768b09895",
+    "docs/tensor-analysis/src/model_plates.py": "8ddae6744fcb74ed845d9bebb07175d88308b54977335a5e8202ffeedc758091",
     "docs/tensor-analysis/src/tensor-style.tex": "da19f4e6314cf89c8cf7175b0621f63dd3c17f528bbb749d022b88eac96a0f27",
     "docs/tensor-analysis/src/themes.json": "a1ff7bb6a462f132ecfa2cb4d96e0831ed6880a7f999b1e78598fb3c1fb9f0ba"
   },
-  "builder_sha256": "5d7e6fed30b2bd14a5c3038f76fc03c24824adbd5f03cfa89791e898f087f9e0",
+  "builder_sha256": "542a5b757337525cd65e95edac32c93e0c45dda8c88db5d7adc4280b7ed0e770",
   "figures": [
     {
       "slug": "metiscraft-architecture",
       "language": "en",
       "theme": "light",
       "files": {
-        "metiscraft-architecture.en.tex": "f1a52a1d48bd9676cf4a3e7dcb5bfe5f8626dc7a430a3f563acd1d5a46d2d658",
-        "metiscraft-architecture.en.pdf": "be514f2e845b109ff374485f79e6a83a19fa17f4adc69f6e55bf25170733a8ea",
-        "metiscraft-architecture.en.svg": "0ca3429d11aa732c7082df7b2c92890723484ec7926f46d6888356567301b2d3"
+        "metiscraft-architecture.en.tex": "2b3e284e03605c7df7fc7f39b74662a12f34a06d0107e7e10ea570b4ed3cfea1",
+        "metiscraft-architecture.en.pdf": "b4f3a2e70edd4b13be904725bc61721b1fb9628075883df78826be52ca9869fe",
+        "metiscraft-architecture.en.svg": "af02236b7ee4b9fe6e9a271c3022df871e8f257e2c21558a9b4f26c6d860156e"
       },
       "pdf_raster_images": 0,
       "svg_embedded_images": 0
@@ -34,9 +36,9 @@
       "language": "en",
       "theme": "dark",
       "files": {
-        "metiscraft-architecture.en.dark.tex": "739bc0be54c340f05be83a814aa1e87945bd7b08836f81cdaf7e74add0396c61",
-        "metiscraft-architecture.en.dark.pdf": "bb613af60019ca3956ec4b16f9ea84d78e06b15aafdb8ebb5fec69ed1be6be41",
-        "metiscraft-architecture.en.dark.svg": "7009195ba9f5ae376e6f961f4cdcdb980f07097fbad5613cd8f9679cc767431c"
+        "metiscraft-architecture.en.dark.tex": "bd41f61ef5f5a376e1acb3d73ba3b339c2effce30f2e0f0b7aee30e6e5a3e647",
+        "metiscraft-architecture.en.dark.pdf": "63d90998950f8d57bae7100719114844730a0f31e3ab6fa7a026cbad491ac10a",
+        "metiscraft-architecture.en.dark.svg": "330cd18c33ccf747fc17700caf741805d5e28334715fa9565a1c987484bae24e"
       },
       "pdf_raster_images": 0,
       "svg_embedded_images": 0
@@ -46,9 +48,9 @@
       "language": "zh",
       "theme": "light",
       "files": {
-        "metiscraft-architecture.zh.tex": "3b6a6f2627f4911eacf2d705f1d1e21a4cc2ea4aebb7359606231a83a8c30bf8",
-        "metiscraft-architecture.zh.pdf": "05794fbef95bd2e3ed461adc7bd842c9622f737b9695fe397c97f9d84f4fe382",
-        "metiscraft-architecture.zh.svg": "8cd849c7799943bac04dde12465d229d2850eede147b22ce6fded73812fc839c"
+        "metiscraft-architecture.zh.tex": "360a9d27f73ff14d8ae749957293f7386294eca2c85bfd243e103013d8fd6e88",
+        "metiscraft-architecture.zh.pdf": "6e77cc8f8768fc65e672a8799f91ee2f30cea89a251617115a1fd7c0e25bb2ed",
+        "metiscraft-architecture.zh.svg": "6d7ab392a29bec57e87982bb78b5e523a2d107cd2fcc82fa583dff48cfb3cea3"
       },
       "pdf_raster_images": 0,
       "svg_embedded_images": 0
@@ -58,9 +60,9 @@
       "language": "zh",
       "theme": "dark",
       "files": {
-        "metiscraft-architecture.zh.dark.tex": "ce5703fffce8d6da47aa41a13b569bd6d5e38fa9a60f4f8bf72c421a0a98d33b",
-        "metiscraft-architecture.zh.dark.pdf": "489457f0097d55312ab0c719b2db5ef846a8607350970b2d30f5c477edc49641",
-        "metiscraft-architecture.zh.dark.svg": "69b2761bd965d4c5ac94aa163d4fc10145e159338daaa0df41a59cb0247ef4e7"
+        "metiscraft-architecture.zh.dark.tex": "a05a4f33c41bd0f0bd3f70c7abd73332fd23046449a8398d25871e2e194ef667",
+        "metiscraft-architecture.zh.dark.pdf": "97cbd3d541c6f013cc344a6279a7364ac07646442f89e388e2fd235581f667c1",
+        "metiscraft-architecture.zh.dark.svg": "7be970c3158204dc274cac6c34d537ca5d35c18b39d49578bb8130bf77005197"
       },
       "pdf_raster_images": 0,
       "svg_embedded_images": 0
@@ -733,6 +735,870 @@
         "training-calibration.zh.dark.tex": "93337ebefc3f5105bbab92b7bb79b984c3e810e901632ac48b5be4182516b9aa",
         "training-calibration.zh.dark.pdf": "d5784c5194935b34337a2f6f26105b5f50e1e692ea9e2ebf88699a05b157550e",
         "training-calibration.zh.dark.svg": "ee63fe2181419b8aec10a47958067675add89340d7522f35689a4fbfa32930ab"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "tev1-architecture",
+      "language": "en",
+      "theme": "light",
+      "files": {
+        "tev1-architecture.en.tex": "aaad9d6665a6109414e3c4224b816bba2fec635422203a5011e95e8cfa4b592b",
+        "tev1-architecture.en.pdf": "4cb2bf239ac1f9f9e23761683659ee9d1205647fe5322953c3aac514c20a5b72",
+        "tev1-architecture.en.svg": "e6888af6d59b289d49d3c2d78089ba0f577305083c9cb2717b8556568802047d"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "tev1-architecture",
+      "language": "en",
+      "theme": "dark",
+      "files": {
+        "tev1-architecture.en.dark.tex": "62d7e80867bd7220f0c6881eb1c1c6574819ec820e1aeabe9c9e6b5d42ea1725",
+        "tev1-architecture.en.dark.pdf": "595e81f107d791cc76d00ff5ffef09dadb92451d497e78e3718b444ceb2e6779",
+        "tev1-architecture.en.dark.svg": "fab08664cd631fcd3a768372188916e372d695aa6c10d8de1672f42afdcb97bf"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "tev1-architecture",
+      "language": "zh",
+      "theme": "light",
+      "files": {
+        "tev1-architecture.zh.tex": "d1d46613dfe1ab158d6480d032d500a39ef9f71a0e38fabfaa81c63a72a02a9b",
+        "tev1-architecture.zh.pdf": "ff8cc0103672089b52f0acc377a25f2f5616d5029aaaa7d66d9f48b314d66adb",
+        "tev1-architecture.zh.svg": "f251d4df85f5b2a1acca55f8b18923f64412a2f961d2502cc75c412b5d45bff3"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "tev1-architecture",
+      "language": "zh",
+      "theme": "dark",
+      "files": {
+        "tev1-architecture.zh.dark.tex": "7011932bb8d686287077e79acca2521710cd5d51fbb5af113961385b86c4fd87",
+        "tev1-architecture.zh.dark.pdf": "b14e2371f08a702630e4a1921205f967c9ddfb985d4a35dd9fdec5cac2af57e9",
+        "tev1-architecture.zh.dark.svg": "ba82824e013fb69b2aee51496a4c6bec102c09e965754e3a4a8501501e5b44b2"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "architecture-clef-scorer",
+      "language": "en",
+      "theme": "light",
+      "files": {
+        "architecture-clef-scorer.en.tex": "2b72f63ad3f5af2f1c751c7a12900bdf48233388cc4119ffe422a64d5cc4deae",
+        "architecture-clef-scorer.en.pdf": "256fb68c51bc624b9c4e72ae58ceb3b32f675aec64b0f248335ae61db291a177",
+        "architecture-clef-scorer.en.svg": "a89c576ec0febf372e56e66680943ee07df82ebff33f5a7e214c7d5bac030002"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "architecture-clef-scorer",
+      "language": "en",
+      "theme": "dark",
+      "files": {
+        "architecture-clef-scorer.en.dark.tex": "4067d284d6321d0322e01fcf8a9ea6fa23e3db319896767f7575564bcff0a6b1",
+        "architecture-clef-scorer.en.dark.pdf": "97cd1065923e73313d444001becdf6a6a9ace859178d9fae0d8ef248c7578075",
+        "architecture-clef-scorer.en.dark.svg": "b4670f2e62d0a5725a7d8b31b48cf8ce53049e498336ce7b73a00d4820be883f"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "architecture-clef-scorer",
+      "language": "zh",
+      "theme": "light",
+      "files": {
+        "architecture-clef-scorer.zh.tex": "612dd25dad92fa40d4db8a2e356128c1ec73b62922f6102c7f90e38e038722f2",
+        "architecture-clef-scorer.zh.pdf": "ebeea98926b62aeea37f3035ca5796feec2d549b82cba22c8828ead966683dd6",
+        "architecture-clef-scorer.zh.svg": "b08935db8c7b180662a96e95de4c80c4dcda1873fa49b1913914e928965d9e2d"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "architecture-clef-scorer",
+      "language": "zh",
+      "theme": "dark",
+      "files": {
+        "architecture-clef-scorer.zh.dark.tex": "bf2c47c64b20d75e40904192df82137e171e043014e607e81f30ec096892c192",
+        "architecture-clef-scorer.zh.dark.pdf": "8f784536db1261a00e599304ab1218448c63be0e082587a2b8ad89db7d1f0df1",
+        "architecture-clef-scorer.zh.dark.svg": "b3c317944bf6ca5baa6e9c8db2c9618fb827375835eb44b24ce6ff44910c378c"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "architecture-jebadiah",
+      "language": "en",
+      "theme": "light",
+      "files": {
+        "architecture-jebadiah.en.tex": "b4920a32944dfceb55343a413446bff159723f6db7a996f3a75eb8c0373e0a04",
+        "architecture-jebadiah.en.pdf": "9a4a0e0d62330a1df276383612d225cc2632ee1d904aeb5615432b4f90ab8395",
+        "architecture-jebadiah.en.svg": "40aebdf51ea6c90446f12ec926016359a6019b5ebc1f1b97f37f5b936707407d"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "architecture-jebadiah",
+      "language": "en",
+      "theme": "dark",
+      "files": {
+        "architecture-jebadiah.en.dark.tex": "143498b6ec0e83d33357d8d9e70b0af607e2a0d1d1aaab719d99631a6f856af1",
+        "architecture-jebadiah.en.dark.pdf": "07360acdd1a8b83f5fc4cf1580f220d6d0c34af1d5471302268f79afe50c0128",
+        "architecture-jebadiah.en.dark.svg": "83ad8c9b2aafd680d106372c19fab0be88edb41a0b6458819af9d30eb7d65b2c"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "architecture-jebadiah",
+      "language": "zh",
+      "theme": "light",
+      "files": {
+        "architecture-jebadiah.zh.tex": "f7a3a77c577d6592a1c4b800cab77277ea882f2806e67bf116112fb6d7d7c99f",
+        "architecture-jebadiah.zh.pdf": "fb9f1d45f524c0ea8fac63dec2227df53dc3b064daf09fbb39f0523f88f2bb8d",
+        "architecture-jebadiah.zh.svg": "228059675a6def89b84c17791d74b639b05db2b423468cd1d766610dba6dec7b"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "architecture-jebadiah",
+      "language": "zh",
+      "theme": "dark",
+      "files": {
+        "architecture-jebadiah.zh.dark.tex": "7bd97a1c9aec4773eeb2ea912fb5c7dce92297f19c345ff5edf319b445c824aa",
+        "architecture-jebadiah.zh.dark.pdf": "cd669eecf12f347bbb25eef4669af76bd8eb9d43fe32facc63ae8c978940350a",
+        "architecture-jebadiah.zh.dark.svg": "8693b21f3118c09781c648e663be3d5410de3506c33ea899bd21a48cb5a8171b"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "architecture-hmm",
+      "language": "en",
+      "theme": "light",
+      "files": {
+        "architecture-hmm.en.tex": "57521ffd7e46535b840f3f3da4a9a8fe2f97d1e86abd319c1dc5b56327d0fc23",
+        "architecture-hmm.en.pdf": "9c4aa56d236eafdebde23a3d2dd2818e7411192725938eb45afa7574e10d3e53",
+        "architecture-hmm.en.svg": "38a6e89323ba55b456519955d3c45ef6d3a2c1d7dcba15b208ebb9f94b5b7074"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "architecture-hmm",
+      "language": "en",
+      "theme": "dark",
+      "files": {
+        "architecture-hmm.en.dark.tex": "5a4dbe44409cf8c4a11520d2161a7b3ca5fde1e1fc002f70c5987662535598b8",
+        "architecture-hmm.en.dark.pdf": "f59264d728f972fe171af238fdb28e528ebdb0da0a3ae93fed4ef0dab238967b",
+        "architecture-hmm.en.dark.svg": "96bb631e7b3741266f9a822a4e1c6655fa2fa86f24bf1ed6813f431a253492c8"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "architecture-hmm",
+      "language": "zh",
+      "theme": "light",
+      "files": {
+        "architecture-hmm.zh.tex": "49b91d5ea9dca000f4180871629ee0db7cfa20a9b104578cfa57d411c81cb479",
+        "architecture-hmm.zh.pdf": "ce30261ea2adf8774840b8d6d49c314e660b25def3e71f4a480212fb4703ad70",
+        "architecture-hmm.zh.svg": "31c2677984b738bcee1f1ff33b5415046fb34aa67cafa4d1cf718bfc3eaa5e1b"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "architecture-hmm",
+      "language": "zh",
+      "theme": "dark",
+      "files": {
+        "architecture-hmm.zh.dark.tex": "1c74b0e3bdc9b9f1182fcc3e1d004dfd80c7e2337ac98f8d86552f997613b860",
+        "architecture-hmm.zh.dark.pdf": "51e73f7bfa1c7877a1d7bf3496501c105e35b5cbfe13e963f02dc02e6544faad",
+        "architecture-hmm.zh.dark.svg": "d52089c1d1e9e6f3850d4d67b1c5c5c00dabae83dc84e412752f4b67638bfcb8"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "architecture-d3",
+      "language": "en",
+      "theme": "light",
+      "files": {
+        "architecture-d3.en.tex": "787f33227ab02a34d7205d5d5069b68af7db30541df8a4861987c0252d83923e",
+        "architecture-d3.en.pdf": "88a53f6eb45ca2e842aeac381ece1cf9d95dabcd57deec32cb2505298f4bbe34",
+        "architecture-d3.en.svg": "ec27ddad5a3287889b89c962817d92d0ee115df618fbc8ee2371392f37cbcaa8"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "architecture-d3",
+      "language": "en",
+      "theme": "dark",
+      "files": {
+        "architecture-d3.en.dark.tex": "3e401f67e3dae56517361696bd32933940680efcb78fb3d56754341bb11be301",
+        "architecture-d3.en.dark.pdf": "d1001d29a08659148775c58d39ba6a32f27866552270da7cd527e159e3049bc1",
+        "architecture-d3.en.dark.svg": "a7d4b245299bb741e9b5a10745a98b131141648152244a1a3a9cb3f8fc03e12d"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "architecture-d3",
+      "language": "zh",
+      "theme": "light",
+      "files": {
+        "architecture-d3.zh.tex": "4821a8b06f5cbc6242417b626b4a06aef91613607a89d514bac72a501107e440",
+        "architecture-d3.zh.pdf": "d6962f2b088d67216bcd1ebdc3bda75a951229928936fae43287cf52c0c75afd",
+        "architecture-d3.zh.svg": "31002c45c946b6c77224b54524c0e1b6f5410884918b0003878be1c29740d810"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "architecture-d3",
+      "language": "zh",
+      "theme": "dark",
+      "files": {
+        "architecture-d3.zh.dark.tex": "c730a1b876bc82f44cf2ac8f70651e8c79ae041ebc0b546995a18cb243cacd76",
+        "architecture-d3.zh.dark.pdf": "6f8d31f0b33b61eca0aa6aa88a651c404e956ec0f771041c900f8801016bac22",
+        "architecture-d3.zh.dark.svg": "1de85c71bdea747317f69ab9c82be8f750acc9ae29b044e8856cbe1db04835ef"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "architecture-d3-ultra",
+      "language": "en",
+      "theme": "light",
+      "files": {
+        "architecture-d3-ultra.en.tex": "2054a1d5388438548ca0f81e4379c5864848c572db2771b9efb7f63ed4d579ba",
+        "architecture-d3-ultra.en.pdf": "4a791061478e5d2bec2fd2c440f92f8a1990144a36f64100705a291076377b40",
+        "architecture-d3-ultra.en.svg": "03fee0dcdb1f45930be7c425fcee7a9fdc26562726fbe88df719a8af27952e08"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "architecture-d3-ultra",
+      "language": "en",
+      "theme": "dark",
+      "files": {
+        "architecture-d3-ultra.en.dark.tex": "53008583ca9fc636c826936766bde85b17d1747c38f92f8e74c46ee4b62a138b",
+        "architecture-d3-ultra.en.dark.pdf": "c25324e65cf46fdcfdf4a1ef2f2511f35135c4e63715c1783163dfd276b0f6cb",
+        "architecture-d3-ultra.en.dark.svg": "e118f818deaa8105c80355a640f0696ec0aa149a8344164ba3cc9db0d2dc2510"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "architecture-d3-ultra",
+      "language": "zh",
+      "theme": "light",
+      "files": {
+        "architecture-d3-ultra.zh.tex": "8d291a1c24d6b943a1941df3450c80bc071bcdb926b0e88d50a27e4428b496a4",
+        "architecture-d3-ultra.zh.pdf": "7c5f0da9c210e358073f9f4647e7e7de92d5fe5f2ef693bcc46d42c71dde420a",
+        "architecture-d3-ultra.zh.svg": "4b12131d89803a18bba86b0113d7aeaf1938aa9a824133894779554123fe8723"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "architecture-d3-ultra",
+      "language": "zh",
+      "theme": "dark",
+      "files": {
+        "architecture-d3-ultra.zh.dark.tex": "5eb2194f44f71daefdaeb9aeb265943b3118840016e8a4fbc81a3b18409cc098",
+        "architecture-d3-ultra.zh.dark.pdf": "6462cc966c77fd103aa21483b81de2ad0b9b049bd9a1fae55c62b6199ce76123",
+        "architecture-d3-ultra.zh.dark.svg": "190c8a44580f39db5eeaa2dff35d0cc8da4ad19b3503dbdf92f16863b10b41c1"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "architecture-mammoth-1",
+      "language": "en",
+      "theme": "light",
+      "files": {
+        "architecture-mammoth-1.en.tex": "5ecb11fbd5cb70019394dd6133ae052dec8fc8890d29b316396c1d97059231a9",
+        "architecture-mammoth-1.en.pdf": "611b062c2ac561f3292ca3431576d4bdbbf626021a9b40559057ff3b16d78a22",
+        "architecture-mammoth-1.en.svg": "3e7bfe13cce987bb0a9244c3c7f5253fdf5960719080945b6ffaab59037f9207"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "architecture-mammoth-1",
+      "language": "en",
+      "theme": "dark",
+      "files": {
+        "architecture-mammoth-1.en.dark.tex": "378d77dc78caa72d0533cc5a15997256fd8402b563e9226b005da31cae7988ca",
+        "architecture-mammoth-1.en.dark.pdf": "220187a102be25b37819692ba293748f9743de6737d5091518e0625dc31df148",
+        "architecture-mammoth-1.en.dark.svg": "7fb8c0b54ab32bf1bdbcee12b295a622d9213ba24b5ddaba39004a060d9afba6"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "architecture-mammoth-1",
+      "language": "zh",
+      "theme": "light",
+      "files": {
+        "architecture-mammoth-1.zh.tex": "801317bbf59f1da907ca5039a59808c415f9190a65689c9bf46a94551b808d39",
+        "architecture-mammoth-1.zh.pdf": "b158445e858f2877b7f919977c783a8adc83afc6b19502e409e6fab778d49c09",
+        "architecture-mammoth-1.zh.svg": "3f1951124802531933ac84b3be7386c9f6f4a81ed26ca485309a1020767c7760"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "architecture-mammoth-1",
+      "language": "zh",
+      "theme": "dark",
+      "files": {
+        "architecture-mammoth-1.zh.dark.tex": "277b154a3019feb6fa408d368e0f984c6baf452afb1bf5ec4163d27d25d60e60",
+        "architecture-mammoth-1.zh.dark.pdf": "9df74fdba17b4128632d77fc8bd24fe4329b1869d38abc763de2eaee67a62925",
+        "architecture-mammoth-1.zh.dark.svg": "e6330ce99c304730d3a164092d729f51e7983f4c5c449c76ca4b9342aa7bfb14"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "architecture-jevforge",
+      "language": "en",
+      "theme": "light",
+      "files": {
+        "architecture-jevforge.en.tex": "683fbd69b2b63dac348d8f3bf186aa47c1d41d21f03e71aaa8f9b30e109882f3",
+        "architecture-jevforge.en.pdf": "31f444e0f696763ecb94285f73b90bf26f574276411c017775cade61bc84105e",
+        "architecture-jevforge.en.svg": "415ba5951807e649ee1a4618bf8734b7b1f1132f68d9c371db5a4d8814d7ac99"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "architecture-jevforge",
+      "language": "en",
+      "theme": "dark",
+      "files": {
+        "architecture-jevforge.en.dark.tex": "0f4e909cee8e4ae3992a6a4ed96a5997722971e4b0d7c36489a356ceede3067c",
+        "architecture-jevforge.en.dark.pdf": "39abd78cea09c3e149b3832e2abbdd7d55fd51d673dad8be3bd58694abfa1d92",
+        "architecture-jevforge.en.dark.svg": "7db4f8d5fb6ce9776811f94c53f33a5ed934103ac11d315e792831155284861a"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "architecture-jevforge",
+      "language": "zh",
+      "theme": "light",
+      "files": {
+        "architecture-jevforge.zh.tex": "a36ee5f51c55594ed8f78be63c88ea47ba9c93e63f138c7925779f2d09097f0e",
+        "architecture-jevforge.zh.pdf": "02d61bc83258d6cd18a848e7e726c3e93e1d027cefba573cd72a2fa3d8aed3cf",
+        "architecture-jevforge.zh.svg": "e234401e013710631f08d6ff376bf13a48449d2abb030898b7bf313e3d60a031"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "architecture-jevforge",
+      "language": "zh",
+      "theme": "dark",
+      "files": {
+        "architecture-jevforge.zh.dark.tex": "cdc3efd866af5f9d5d546b6ad74c8029d8c1785985d2691794217bb37ed24655",
+        "architecture-jevforge.zh.dark.pdf": "484f4a5d198ff5dba6c18f99c99588f20727cf15f74d3273c626ca19f3a579ac",
+        "architecture-jevforge.zh.dark.svg": "afdea56724f88ed4ca7222db859c39225c826bf7ce64617268fd3d3bb118a121"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "architecture-kev",
+      "language": "en",
+      "theme": "light",
+      "files": {
+        "architecture-kev.en.tex": "fae2da36a2bd8fc145d2dc483667afff902e7b464e9821520623406ff94fd14d",
+        "architecture-kev.en.pdf": "364a3f39c364e3720f4fbd6645dbea42e475dc9dc27fb6366d864b1d9fa54756",
+        "architecture-kev.en.svg": "7dfed3a88543b5be05c78e3deba49a3c35a9d01062d4dfd5d3454c320d89530c"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "architecture-kev",
+      "language": "en",
+      "theme": "dark",
+      "files": {
+        "architecture-kev.en.dark.tex": "b8f9cb47129de80501cb1d0b019a5e913e7641c74a8877a33fb159bda28bb0f9",
+        "architecture-kev.en.dark.pdf": "27c528fe2364cd7400d3a06d4419088234abc166e2e50d8f007c27b0d4871fba",
+        "architecture-kev.en.dark.svg": "118cfc66ef30e4e45731a71e82c31b30318cfdfa992cba18b86967b804ed5ed5"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "architecture-kev",
+      "language": "zh",
+      "theme": "light",
+      "files": {
+        "architecture-kev.zh.tex": "d81f929311814ef6c93a6fee9f30ab90146b9a2eb43e77d583f69615a0d0bbc0",
+        "architecture-kev.zh.pdf": "7f306b94d74ce9b64a4d2280b2d8059207536508425eab31adf21c98bb5990d4",
+        "architecture-kev.zh.svg": "3b9082f150bd3615077c04145abb1b7b2215eeed27f1489ca86bc520e349acf6"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "architecture-kev",
+      "language": "zh",
+      "theme": "dark",
+      "files": {
+        "architecture-kev.zh.dark.tex": "d60fad4e760cded91399a0ecd27102e60f27fa91fd82c6e12505bbc22f6ca329",
+        "architecture-kev.zh.dark.pdf": "823c0b35e300cf51e94230f56c43b92a3945dc6828403470816c791551fe27dd",
+        "architecture-kev.zh.dark.svg": "aac739f6eb43e1b5982dec85d42a3dceb699d8e08e1277880b57b9451816f177"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "architecture-clef",
+      "language": "en",
+      "theme": "light",
+      "files": {
+        "architecture-clef.en.tex": "a00081f26090a57157eb5ed29c5e6361fc09f04689956bfe8b0f79fbc3a834d0",
+        "architecture-clef.en.pdf": "fe2bdb984ba13bc3754fd74857088579e5d499d647b8f75400261edc394fecf3",
+        "architecture-clef.en.svg": "f648a10c38a20d9cb6bbb8ee9d6d8993163f00f08786199b0db4bd74c76cfce1"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "architecture-clef",
+      "language": "en",
+      "theme": "dark",
+      "files": {
+        "architecture-clef.en.dark.tex": "7658ab1441b7880c556dbcac2272c381aa640d844ac4ca9a5f9ee28e7713e2aa",
+        "architecture-clef.en.dark.pdf": "2a1814630d3eefa6f353bd64de46891bbeef748fe84c1f30f750733dd35d938b",
+        "architecture-clef.en.dark.svg": "e91273ab61f19528c0c34462f91ebbbcd17fd7fbeae1c1678b6796b43462d9d0"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "architecture-clef",
+      "language": "zh",
+      "theme": "light",
+      "files": {
+        "architecture-clef.zh.tex": "6a54c76006b6ccd78f75b8a73de75ac891d8ffb933164c2480cccb6aa1f50375",
+        "architecture-clef.zh.pdf": "6422ef270297371e040d01b22101970d5ad4f563d7f417525895522f76218990",
+        "architecture-clef.zh.svg": "d184452d18023f92e67b467a6f38a1b1156de91db32435577cee7fa6cb555f8e"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "architecture-clef",
+      "language": "zh",
+      "theme": "dark",
+      "files": {
+        "architecture-clef.zh.dark.tex": "2d0bc7a5efd9243ba75aadb26f4fde6fdc8d7526224cdc3b991586fd9347b5c5",
+        "architecture-clef.zh.dark.pdf": "40105a0839001bab997d53ca74c111ec85b59a05e998f37efbbe75965fc37e09",
+        "architecture-clef.zh.dark.svg": "3e53eb6b7c54bb034dd6317435f07c874afeb3aee36e61372e6dcf7cde0117b3"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "architecture-jevany",
+      "language": "en",
+      "theme": "light",
+      "files": {
+        "architecture-jevany.en.tex": "d3672989f5046146f455ec46634d92c4f7de30327e12560d0011284f6269b326",
+        "architecture-jevany.en.pdf": "60bc9b6cf031c51ae8b11fa608398305d7da99d727a3f385512624868f19d3fc",
+        "architecture-jevany.en.svg": "01ca1010a6bfd50b80cf51c64ffb84074ba82b2403e1961630df98486571f3ef"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "architecture-jevany",
+      "language": "en",
+      "theme": "dark",
+      "files": {
+        "architecture-jevany.en.dark.tex": "14e2c0457a5db0d838f9051536019ccffea39ebbec3f232656987d1c22180af1",
+        "architecture-jevany.en.dark.pdf": "bc3259fac42968804eb23780847029e33c1213dd38a3bdf897384916dbbc4b46",
+        "architecture-jevany.en.dark.svg": "1f36488058085b12449380c99e345e1423f31cfa72c75a3c30e0de645027fe1f"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "architecture-jevany",
+      "language": "zh",
+      "theme": "light",
+      "files": {
+        "architecture-jevany.zh.tex": "2a3bef214c6a8c2c47203145a96b422dc24c630be206302dacc2cb277e2281dd",
+        "architecture-jevany.zh.pdf": "c6588b99791c7b732ad5acdd0ead652642d70cabad4257c7bf525cf790289976",
+        "architecture-jevany.zh.svg": "fd7cbd3f26eafe8834806139aaace370ba0f7f5e08ed51c40bbb1b5b2fc31aaf"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "architecture-jevany",
+      "language": "zh",
+      "theme": "dark",
+      "files": {
+        "architecture-jevany.zh.dark.tex": "ed3fc21c74187079beeca72c8679976a441c11e055b48994df5c71f2ff49add2",
+        "architecture-jevany.zh.dark.pdf": "12375b709e11a7a0809fdfada1ec1febc76e13362d78fab44e41faaebf64a08a",
+        "architecture-jevany.zh.dark.svg": "2a2898281ea3acdfdb8a3153d1cf30061388d43b67db494bf3689ef65fd2aad4"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "architecture-jevany-lm",
+      "language": "en",
+      "theme": "light",
+      "files": {
+        "architecture-jevany-lm.en.tex": "460fdefe087c9d96e3dab21f0ceaec9a20360b3da61ae2062c98725180a7f700",
+        "architecture-jevany-lm.en.pdf": "1d8ccb7047a1c4ad80a2d82ad6755f55f7813b58a8fb77e93d16fa4640ca6f92",
+        "architecture-jevany-lm.en.svg": "1ea83526886729d6fbce4bd9863a20d9e8bb4de228c0124a6ae331090bbe15d7"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "architecture-jevany-lm",
+      "language": "en",
+      "theme": "dark",
+      "files": {
+        "architecture-jevany-lm.en.dark.tex": "08123e12917bb79fd863d9cbff9dfb4f359a89e816f2c360fa0c9aca2de312b9",
+        "architecture-jevany-lm.en.dark.pdf": "a787574d6f4d0ffe494fb8a1fba5e6a8e8a9d1e181f50d93c79b8e1e215786f1",
+        "architecture-jevany-lm.en.dark.svg": "66c9b3ec336c65027eb93a48cbb6ef0ffaf0461b0578ee8e4967fc763be74c25"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "architecture-jevany-lm",
+      "language": "zh",
+      "theme": "light",
+      "files": {
+        "architecture-jevany-lm.zh.tex": "759efc0a4c8aa13f6cc06b060f552629a7a29cb0bcc56bda1f948196b695af02",
+        "architecture-jevany-lm.zh.pdf": "ccfc0e25da1a6b5f3c288b7704ba83933ccf74b9c1334a9b682e48b4c526015f",
+        "architecture-jevany-lm.zh.svg": "b75aa2a03f12a552d16d92eeb1fefda99fa58d7c96492ad2d0e83134dfb637df"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "architecture-jevany-lm",
+      "language": "zh",
+      "theme": "dark",
+      "files": {
+        "architecture-jevany-lm.zh.dark.tex": "57a93757dfeedcb71cf551466a1015e2ec702a2170cb80457e459a7e38f743ce",
+        "architecture-jevany-lm.zh.dark.pdf": "8e888e3160c6da61593d7b33329f8141d306a4f5463f36c713b441fa50589587",
+        "architecture-jevany-lm.zh.dark.svg": "10e1d9bbbff6a85e73a9993db002ebe995349d78373f7834827583efcbc6ce63"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "architecture-gliclass",
+      "language": "en",
+      "theme": "light",
+      "files": {
+        "architecture-gliclass.en.tex": "c5a7591308d0956ff101298719816fd6a9e1b74dea04e2f4f7e2a6344bd4f74d",
+        "architecture-gliclass.en.pdf": "3cc3b1f6631ff65cae6a0da0e1d36420a65ca7157263af9a76d06b725912c61d",
+        "architecture-gliclass.en.svg": "ace93c5b25ddc9378b1225fdf548f2ad55540b2469b0fab7f55d5d7e6669640b"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "architecture-gliclass",
+      "language": "en",
+      "theme": "dark",
+      "files": {
+        "architecture-gliclass.en.dark.tex": "4e56d4ba53a4a737658d7034e41a9dfce8cf002ab5f22010f438f3c72d8a6422",
+        "architecture-gliclass.en.dark.pdf": "903405ae5df6a8f4d8a05b55c3588f8ca6004d2151b3eec918bdca38173165f1",
+        "architecture-gliclass.en.dark.svg": "762ff7e33aa3763ac5a946309fb42b07e88b7f7c13a1d990dea70266fc115be2"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "architecture-gliclass",
+      "language": "zh",
+      "theme": "light",
+      "files": {
+        "architecture-gliclass.zh.tex": "f445ad701ffbd1e7cd728d7c560f3ce818f80acecd02c2feca89cbe59969cbb2",
+        "architecture-gliclass.zh.pdf": "43397a8f63ad28989d903387f91b3e9941c818186ab41b4f26996ba54df8987f",
+        "architecture-gliclass.zh.svg": "1dec1cb14f937f8adf71cdef7b554a1a67524f3c060f20b6861f89929788624c"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "architecture-gliclass",
+      "language": "zh",
+      "theme": "dark",
+      "files": {
+        "architecture-gliclass.zh.dark.tex": "a6ab3002ae7615412cfa06ae41e5a1ce28e1c36ba712a745f3e7b11c4fd4c2bd",
+        "architecture-gliclass.zh.dark.pdf": "3624e5946153fe323773c392e385efe03bbd80653d53ebb11a1a1236665e04ec",
+        "architecture-gliclass.zh.dark.svg": "5a099c2d2e8265d5caeb934ba2591d4db8ff7bdd307fca89970ece77ae12e7c0"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "architecture-gliner2",
+      "language": "en",
+      "theme": "light",
+      "files": {
+        "architecture-gliner2.en.tex": "d505c882d67fbc1c34a76220805728a2f375a2058b1562649eebdf0b6c9a29d5",
+        "architecture-gliner2.en.pdf": "cf451cc931c528142ed31e38dbfca481216788338eb0ddb8de4b7a665c57d6ba",
+        "architecture-gliner2.en.svg": "ff37c3978be877a500ce84e6f3bc21c6c695bf9e69750840710ba7b23c4e274e"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "architecture-gliner2",
+      "language": "en",
+      "theme": "dark",
+      "files": {
+        "architecture-gliner2.en.dark.tex": "222b0e1c8f4fb077def74bb11076635cadc71fd979d10f87c694e066fb147def",
+        "architecture-gliner2.en.dark.pdf": "58d11dae4d24b1c0266e2fc6bfbd5c719f676a3c7767e8645a5332fe1daf7a35",
+        "architecture-gliner2.en.dark.svg": "3b79a93514388638ba377bfa146b79553351b5086273bfc32cf3fdfa5f169a7e"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "architecture-gliner2",
+      "language": "zh",
+      "theme": "light",
+      "files": {
+        "architecture-gliner2.zh.tex": "79d8293b5fd57a3d78f363852975ef96597278b326f1c2619bd252d8f752dd64",
+        "architecture-gliner2.zh.pdf": "15048d3060889a130e4e46e399491ce8bbed2a897d8f673aedcd181f70c0e8a2",
+        "architecture-gliner2.zh.svg": "c51b8b3b356125803d8c352eb6b59a3e32b987c4eafe54412920232c02a7bdc3"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "architecture-gliner2",
+      "language": "zh",
+      "theme": "dark",
+      "files": {
+        "architecture-gliner2.zh.dark.tex": "c38149090710df390dd57e56b4f8e683d1ced7b1a37a40893f0424bf984f6f3f",
+        "architecture-gliner2.zh.dark.pdf": "f5cee1e7fe0af6e9083dda5f106069371486ac754bdcc3b847e71bb111c4410f",
+        "architecture-gliner2.zh.dark.svg": "e8c60edff07b28b8f57706bd0d939a61a59b0104c876f9171d19cb2882b7288e"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "architecture-open-jev",
+      "language": "en",
+      "theme": "light",
+      "files": {
+        "architecture-open-jev.en.tex": "997accb2ab57e41fed3ec4caa3c66cf9046ad4b29f1943ebc2dd60d283344820",
+        "architecture-open-jev.en.pdf": "2da7967f4ec542fd8ff7757186b507ed2b1090d997a14d5c55c76f800e9e0280",
+        "architecture-open-jev.en.svg": "a733fc688e14a2451a010e659f4dc64f890267d23cbe8f03af90c622272e9c5d"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "architecture-open-jev",
+      "language": "en",
+      "theme": "dark",
+      "files": {
+        "architecture-open-jev.en.dark.tex": "49901dc4c06f78766a0f9d31d307f740a4ab4a8cee7369965a6326e74ade0155",
+        "architecture-open-jev.en.dark.pdf": "df717ab044612474e59135530b99cf8097d46c254fe8d91447fe295216a897d8",
+        "architecture-open-jev.en.dark.svg": "cac689877c95f9d611512b94e66f3f164d906bdc56130dce08ee5ad28ffc0e33"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "architecture-open-jev",
+      "language": "zh",
+      "theme": "light",
+      "files": {
+        "architecture-open-jev.zh.tex": "8f308a20639bab970e9a949b2316286b99a491929cdc694ebf7a77bbf847928c",
+        "architecture-open-jev.zh.pdf": "45a61096bce32bd8857a7603352dc6be0d0107bbc7dde6218edc686973aa45bc",
+        "architecture-open-jev.zh.svg": "f932460af76dead7daaa4973db95706a95795d389b9b6249b6aa28030cab7a13"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "architecture-open-jev",
+      "language": "zh",
+      "theme": "dark",
+      "files": {
+        "architecture-open-jev.zh.dark.tex": "4238c83a3f3646a5796a87d66c6431724ccde4056267c189679b65408c48ca37",
+        "architecture-open-jev.zh.dark.pdf": "6b9387185ffa65277350b37e98703e6e369ee33e25b8274d4fc590ce2ccae1db",
+        "architecture-open-jev.zh.dark.svg": "97efa1012fbc4fe6bb3946f75df828b028764be5d708d9298c3b1ab8637915d0"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "architecture-setfit",
+      "language": "en",
+      "theme": "light",
+      "files": {
+        "architecture-setfit.en.tex": "27b6e7acb2705742f57572eaa1a4115bcc72aea0d7c6350a05e10decf72f0760",
+        "architecture-setfit.en.pdf": "7f545ca1019dfa841b17911061a489edc909837ff4c4127124b702d1a059a5e1",
+        "architecture-setfit.en.svg": "fcf9d6196506bfd0ad710fef7ba915e66fde0e6e9d402bd022f706098bf7f6aa"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "architecture-setfit",
+      "language": "en",
+      "theme": "dark",
+      "files": {
+        "architecture-setfit.en.dark.tex": "90347b077883a1cadaa24cf5377dc048f63e1c3f435feaa5fd523b0c7dc2a6df",
+        "architecture-setfit.en.dark.pdf": "e2b244ffcec3a0199ee2531960fd85c2aa1fca1f9202ddd2807fece008c04c8b",
+        "architecture-setfit.en.dark.svg": "d3595dc086209ac64852a6bdb1eac23da3bdd07f8f63d437b69d41f801cf1004"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "architecture-setfit",
+      "language": "zh",
+      "theme": "light",
+      "files": {
+        "architecture-setfit.zh.tex": "68677fa07e59b85f84575f3459d9d6720fb3158244dd31d49840dcdef887b9b0",
+        "architecture-setfit.zh.pdf": "8ca24df93ccf1c6c9dd062f35dbb9702d3c19d73561661f3704aca1acd1da274",
+        "architecture-setfit.zh.svg": "7981d15b11c889c5170731db2c1ab033eda277178927fdc2ee14027b69c30da4"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "architecture-setfit",
+      "language": "zh",
+      "theme": "dark",
+      "files": {
+        "architecture-setfit.zh.dark.tex": "ad0857d3d5b38a711fe212022eb0668187eff1e9b44efed541e329275ee3ac35",
+        "architecture-setfit.zh.dark.pdf": "134ae6594f2ebd67e595956814ddebb97945703e9e236651f4207360bfd79670",
+        "architecture-setfit.zh.dark.svg": "3b26bc012ce45c361f2ae47ef5a5bfcd3483e2274895c05a132856cccb25c4b9"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "architecture-qwen3-reranker",
+      "language": "en",
+      "theme": "light",
+      "files": {
+        "architecture-qwen3-reranker.en.tex": "30c68948a225ed13f0e1c00d9bceb488446e30b57b5c6a575b9eec664f3d95f6",
+        "architecture-qwen3-reranker.en.pdf": "9666bfdeabacb5ea5f6d3c3a9e9f13919a3df07f5b7a175c59454732d8f69af7",
+        "architecture-qwen3-reranker.en.svg": "a8280fd01983f66aa6d6403e20a52af10f81ddbb6fa056d2692150879bbc0c2a"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "architecture-qwen3-reranker",
+      "language": "en",
+      "theme": "dark",
+      "files": {
+        "architecture-qwen3-reranker.en.dark.tex": "49799d44827a5bfbbc0669508261957a8f2fe3b34739c3b2b252d30a2429997b",
+        "architecture-qwen3-reranker.en.dark.pdf": "8afbca57cdb5307a2d69dd509e77b10e0809006e55da3ba06a16776fdb617696",
+        "architecture-qwen3-reranker.en.dark.svg": "386650f12831458ac1cac30665337b485dd705cf4a04e3edb109c4f64a85bdee"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "architecture-qwen3-reranker",
+      "language": "zh",
+      "theme": "light",
+      "files": {
+        "architecture-qwen3-reranker.zh.tex": "165e245ef765c7e08ce7bbcd656fd68b1949153b6589fb1cb5099d4fb3f17fd8",
+        "architecture-qwen3-reranker.zh.pdf": "f4e6fb620b535ad37b8fca2a43d407768a3a8dfecedffc5de81220ef68a127d1",
+        "architecture-qwen3-reranker.zh.svg": "dd639d07b170a9c93a1c5bed6793ebcb0d0b019f5b161c5017e0566440177e22"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "architecture-qwen3-reranker",
+      "language": "zh",
+      "theme": "dark",
+      "files": {
+        "architecture-qwen3-reranker.zh.dark.tex": "0677112a62c08b734acc4be1c84f9c7f895236a7686877d1fbb150259aa85ccf",
+        "architecture-qwen3-reranker.zh.dark.pdf": "000680791ebadabe0e9b2f30fe1377644049208bcc3a3c7890c9f277fe1c71a3",
+        "architecture-qwen3-reranker.zh.dark.svg": "097aec00ceb582824ac319ab5dddc432289d0d702312b93c9334ed9e2cd15311"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "metiscraft-workflow",
+      "language": "en",
+      "theme": "light",
+      "files": {
+        "metiscraft-workflow.en.tex": "f1a52a1d48bd9676cf4a3e7dcb5bfe5f8626dc7a430a3f563acd1d5a46d2d658",
+        "metiscraft-workflow.en.pdf": "ec213ecdd5a45322997bcfb52df7de7f81b27312ff8e4cf7342c9c5f8a468b26",
+        "metiscraft-workflow.en.svg": "0ca3429d11aa732c7082df7b2c92890723484ec7926f46d6888356567301b2d3"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "metiscraft-workflow",
+      "language": "en",
+      "theme": "dark",
+      "files": {
+        "metiscraft-workflow.en.dark.tex": "739bc0be54c340f05be83a814aa1e87945bd7b08836f81cdaf7e74add0396c61",
+        "metiscraft-workflow.en.dark.pdf": "7373460347c3770d6e02bc1e9901fce47575dfb1d4007c4a98eb5ccb1b1a1bcc",
+        "metiscraft-workflow.en.dark.svg": "7009195ba9f5ae376e6f961f4cdcdb980f07097fbad5613cd8f9679cc767431c"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "metiscraft-workflow",
+      "language": "zh",
+      "theme": "light",
+      "files": {
+        "metiscraft-workflow.zh.tex": "3b6a6f2627f4911eacf2d705f1d1e21a4cc2ea4aebb7359606231a83a8c30bf8",
+        "metiscraft-workflow.zh.pdf": "d2f0c747e20781ba5165e7c489bae3652820389f9dc5ac016ca874908d32fcd3",
+        "metiscraft-workflow.zh.svg": "8cd849c7799943bac04dde12465d229d2850eede147b22ce6fded73812fc839c"
+      },
+      "pdf_raster_images": 0,
+      "svg_embedded_images": 0
+    },
+    {
+      "slug": "metiscraft-workflow",
+      "language": "zh",
+      "theme": "dark",
+      "files": {
+        "metiscraft-workflow.zh.dark.tex": "ce5703fffce8d6da47aa41a13b569bd6d5e38fa9a60f4f8bf72c421a0a98d33b",
+        "metiscraft-workflow.zh.dark.pdf": "9a7c5f52ab658467400cf4a41661c8e30bb001706ee1204ef180138c32b1d8d6",
+        "metiscraft-workflow.zh.dark.svg": "69b2761bd965d4c5ac94aa163d4fc10145e159338daaa0df41a59cb0247ef4e7"
       },
       "pdf_raster_images": 0,
       "svg_embedded_images": 0

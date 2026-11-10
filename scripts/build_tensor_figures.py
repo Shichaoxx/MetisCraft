@@ -58,7 +58,16 @@ def load_specs():
 
     sys.modules[spec.name] = module
     spec.loader.exec_module(module)
-    return module, module.figures()
+    plate_spec = importlib.util.spec_from_file_location("model_plates", SOURCE / "model_plates.py")
+    plates = importlib.util.module_from_spec(plate_spec)
+    sys.modules[plate_spec.name] = plates
+    plate_spec.loader.exec_module(plates)
+    module.model_plates = plates
+    figures = module.figures()
+    for slug in plates.available():
+        figures[slug] = module.Figure(slug, "", "", "")
+    figures["metiscraft-workflow"] = module.Figure("metiscraft-workflow", "", "", "")
+    return module, figures
 
 
 def document(figure, lang, module, labels, geometry, theme="light"):
@@ -91,7 +100,11 @@ def document(figure, lang, module, labels, geometry, theme="light"):
         r"\begin{document}",
         r"\begin{tikzpicture}[x=1cm,y=1cm,text=Ink]",
     ]
-    if figure.slug == "metiscraft-architecture":
+    if figure.slug in module.model_plates.available():
+        body, bounds = module.model_plates.render(figure.slug, lang)
+        module.model_plates.validate_ledger(bounds)
+        return preamble + "\n" + r"\providecolor{Canvas}{HTML}{FFFFFF}" + "\n" + body, bounds
+    if figure.slug == "metiscraft-workflow":
         body = (SOURCE / "architecture.tex").read_text()
         body = re.sub(r"@@([\w.]+)@@", lambda m: label(m[1]), body)
         return (

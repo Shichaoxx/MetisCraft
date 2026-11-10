@@ -1,5 +1,7 @@
 # Ecosystem and support matrix
 
+[Per-project model architecture atlas](tensor-analysis/architectures.md): token layouts, backbone configurations, readout matrices and evidence at pinned revisions.
+
 This page separates external capabilities, MetisCraft implementation scope and actual reproduction evidence. Most pinned materials were reviewed 2026-11-03 through 05; JevAny and framework positioning were additionally checked 2026-11-07. This is a dated research snapshot, not a statement of every project's current features. Third-party toolkits were not run; reading documentation is not reproduction.
 
 Unified decision-model toolkits already exist, including JevAny and ms-swift's decision functionality. MetisCraft is a JevLike toolkit connecting custom data, training, calibration, evaluation and serving. Its value is demonstrated through inspectable recipes and usable workflows, without claiming to be first or unique.
@@ -34,7 +36,7 @@ This table records external sources and package adaptation status. Apart from th
 | [Kev][gh-kev] / [weights][hf-kev] | Pointer; code/weights Apache-2.0 | Mechanism comparison; head and third-party checkpoint loading not implemented |
 | [Clef][hf-clef] | Joint schema; weights Apache-2.0 | Mechanism comparison; not implemented, training data/history unverified |
 | [d3][hf-d3] / [d3-ultra][hf-d3ultra] | Fixed slots; Apache-2.0, with non-causal attention requirements | Not directly supported by the two current readouts; weights cannot be loaded directly |
-| [mammoth-1][hf-mammoth] | readout.json declares slot_lm, 256 slots; MIT | Initialization/mask unverified; 27B full tuning, 6.21M records and 72×GB300 are author-reported conditions, not reproduced |
+| [mammoth-1][hf-mammoth] | readout.json declares slot_lm, 256 slots; MIT | Pinned source verifies slot_lm and block-bidirectional full-attention; actual training history, 6.21M records and 72×GB300 remain author reports, not reproduced |
 | [ms-swift][gh-msswift] | Decision training/inference/temperature calibration; Apache-2.0 | Existing framework capabilities; MetisCraft has no head-format/backend integration |
 | [Unsloth][gh-unsloth] | Decision-model interface; repository Apache-2.0, reviewed decision.py AGPL-3.0-only | Source comparison only; decision implementation neither run nor copied |
 | [tasksource-jev][ds-tasksource] | Data; per-row license_use, 440 of 754 sources marked commercial | Registered as tasksource_jev; training filters license_use=commercial, without assuming one license for all sources |

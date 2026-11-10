@@ -1,5 +1,7 @@
 # A five-minute tour of System One and MetisCraft
 
+[Model architecture atlas: MetisCraft, Tev1 and 14 inspected open implementations](architectures.md). The atlas separates concrete checkpoint paths from generic mechanism families.
+
 ## Question
 
 How can you explain a typed decision model coherently, from its interface to its tensors and evidence? This route follows one question through the implemented toolkit, then places it in the broader readout landscape. It reuses the chapter's figures and source links rather than introducing a separate demonstration system.
@@ -48,15 +50,21 @@ The result is a distribution over these two IDs, not free-form prose. This reque
 
 The request adapter creates one Record per named question. The collator tokenizes, left-pads and retains candidate identities. A causal backbone returns \(H:[B,T,d]\). Padding validity, token visibility and candidate validity are separate relations; the [notation page](notation.md) gives their exact meanings.
 
-![Question-to-response tensor flow](../../tensor-analysis/figures/metiscraft-tensor-flow.en.svg)
+![MetisCraft candidate-list model, hidden-row selection and scalar MLP](../../tensor-analysis/figures/metiscraft-architecture.en.svg)
 
-[SVG](../../tensor-analysis/figures/metiscraft-tensor-flow.en.svg) · [PDF](../../tensor-analysis/figures/metiscraft-tensor-flow.en.pdf) · [TikZ](../../tensor-analysis/figures/metiscraft-tensor-flow.en.tex)
+[SVG](../../tensor-analysis/figures/metiscraft-architecture.en.svg) · [PDF](../../tensor-analysis/figures/metiscraft-architecture.en.pdf) · [TikZ](../../tensor-analysis/figures/metiscraft-architecture.en.tex)
 
 ### 3. Contrast the implemented readouts
 
 **Answer token:** select the final prompt representation, project to vocabulary logits and gather the valid answer-code columns. `noul` subtracts no from yes before sigmoid. **Scalar list:** gather one end-of-candidate representation from a shared causal sequence, then apply a shared MLP. **Scalar pairs:** score each question/candidate input row with the same MLP and scatter scores back by ownership.
 
 The central distinction is information flow. Later candidates can affect earlier candidates' final probabilities through softmax even when their raw pairs scores remain independent. In list layout, earlier candidates can additionally affect later candidates' contextual representations. See [answer token](answer-token.md) and [scalar heads](scalar-heads.md) for the corresponding diagrams and downloadable sources.
+
+**Concrete contrast: Tev1-4B.** Its 32-layer hybrid Qwen3.5 backbone feeds the original LM vocabulary head. The MetisCraft replica uses full-vocabulary projection followed by answer-code gather, with letter/EOS completion training; it does not use the customer-routing scalar MLP.
+
+![Tev1-4B model architecture](../../tensor-analysis/figures/tev1-architecture.en.svg)
+
+[SVG](../../tensor-analysis/figures/tev1-architecture.en.svg) · [PDF](../../tensor-analysis/figures/tev1-architecture.en.pdf) · [TikZ](../../tensor-analysis/figures/tev1-architecture.en.tex)
 
 ### 4. Explain training separately from probability calibration
 

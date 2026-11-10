@@ -110,7 +110,7 @@ The request contains `model`, `state` and named `questions`; it contains no `sup
 
 MetisCraft organizes a typed decision model around **shared contracts and a configurable model core**. The architecture connects data, tensor construction, readouts, objectives and artifact loading, so that training and applications agree on what each score means.
 
-![MetisCraft architecture: shared tensor construction and model core, supervised training, sealed artifacts and typed serving](../../tensor-analysis/figures/metiscraft-architecture.en.svg)
+![MetisCraft customer-routing model: candidate-end hidden rows and shared scalar MLP](../../tensor-analysis/figures/metiscraft-architecture.en.svg)
 
 [Light SVG](../../tensor-analysis/figures/metiscraft-architecture.en.svg) · [Dark SVG](../../tensor-analysis/figures/metiscraft-architecture.en.dark.svg) · [PDF](../../tensor-analysis/figures/metiscraft-architecture.en.pdf) · [Editable TikZ](../../tensor-analysis/figures/metiscraft-architecture.en.tex)
 
@@ -139,6 +139,8 @@ Training seals model/adapter parameters, an optional scalar head, configuration,
 
 This is the toolkit's architectural contribution: task contracts and interchangeable readouts stay connected to a traceable train-to-service path. Qwen3 is one concrete backbone choice within that core. The [implementation boundaries](../limitations.md) distinguish these implemented components from researched mechanisms.
 
+The separate [engineering workflow diagram](../../tensor-analysis/figures/metiscraft-workflow.en.svg) connects Records, collation, losses, sealed artifacts and serving. It complements the neural model plate; it does not specify a new backbone.
+
 | Architectural boundary | Source |
 |---|---|
 | Data and configuration | [`Record`](../../../src/metiscraft/data/contract.py), [`Recipe`](../../../src/metiscraft/config.py) |
@@ -150,9 +152,9 @@ This is the toolkit's architectural contribution: task contracts and interchange
 
 The customer-routing recipe uses **Qwen3-0.6B-Base + LoRA + a scalar readout in `list` layout**. The [pinned base configuration](https://huggingface.co/Qwen/Qwen3-0.6B-Base/blob/da87bfb608c14b7cf20ba1ce41287e8de496c0cd/config.json) specifies 28 causal decoder layers and hidden width \(d=1024\). The [Qwen3 implementation](https://github.com/huggingface/transformers/blob/v4.51.3/src/transformers/models/qwen3/modeling_qwen3.py) exposes RMSNorm, grouped-query attention, a gated MLP and residual connections. The recipe adapts linear modules with LoRA \(r=16\), \(\alpha=32\), and adds one shared `1024 → 256 → 1` head. The vocabulary output head is bypassed on this path.
 
-![Customer-routing architecture: input sequence, Qwen3 backbone, candidate slots and scalar head](../../tensor-analysis/figures/jevlike-architecture.en.svg)
+The model plate above instantiates this recipe. The [model architecture atlas](architectures.md) compares it with Tev1 and the inspected open implementations.
 
-[Light SVG](../../tensor-analysis/figures/jevlike-architecture.en.svg) · [Dark SVG](../../tensor-analysis/figures/jevlike-architecture.en.dark.svg) · [PDF](../../tensor-analysis/figures/jevlike-architecture.en.pdf) · [Editable TikZ](../../tensor-analysis/figures/jevlike-architecture.en.tex)
+
 
 ### Objects and axes
 
@@ -199,5 +201,14 @@ On the recorded 3,080-message test set, queue accuracy is **97.8%** versus a **2
 **Tev1 is different:** its reproduced 4B model uses Qwen3.5's hybrid backbone and the existing LM vocabulary head to read answer-token logits. It does not use the scalar head shown above. Its [architecture and tensor walkthrough](../reproductions/tev1.md#model-architecture) separates the 87.3% / 99.33% accuracy results from training and calibration limits.
 
 Continue with [System One and MetisCraft](index.md) → [tensors and indexing](notation.md) → [scalar layouts](scalar-heads.md) / [answer-token readout](answer-token.md). For a runnable application, open the [Cookbook](../cookbook/index.md).
+
+
+### Tev1 reproduction: a different model path
+
+![Tev1 model architecture](../../tensor-analysis/figures/tev1-architecture.en.svg)
+
+[SVG](../../tensor-analysis/figures/tev1-architecture.en.svg) · [PDF](../../tensor-analysis/figures/tev1-architecture.en.pdf) · [TikZ](../../tensor-analysis/figures/tev1-architecture.en.tex)
+
+The reproduction uses the 32-layer Qwen3.5-4B hybrid backbone and its original LM head, with LoRA r=8 and letter/EOS completion training. It does not use the scalar MLP above. The [Tev1 record](../reproductions/tev1.md) documents the upstream protocol, reproduction differences and 87.3% / 99.33% results. Continue to the [per-project model atlas](architectures.md).
 
 [中文](../../zh/tensor-analysis/introduction.md)

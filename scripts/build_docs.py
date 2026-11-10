@@ -236,6 +236,26 @@ def main():
                         else "System One to MetisCraft": "tensor-analysis/index.md"
                     },
                     {
+                        "模型架构图谱"
+                        if zh
+                        else "Model architecture atlas": "tensor-analysis/architectures.md"
+                    },
+                    {
+                        "答案 token 与固定槽位"
+                        if zh
+                        else "Answer tokens & fixed slots": "tensor-analysis/architectures-token.md"
+                    },
+                    {
+                        "标量、指针与联合头" if zh else "Scalar, pointer & joint heads": (
+                            "tensor-analysis/architectures-structured.md"
+                        )
+                    },
+                    {
+                        "编码器与逐对重排" if zh else "Encoders & pair rerankers": (
+                            "tensor-analysis/architectures-encoders.md"
+                        )
+                    },
+                    {
                         "张量、轴与索引"
                         if zh
                         else "Tensors, axes & indices": "tensor-analysis/notation.md"

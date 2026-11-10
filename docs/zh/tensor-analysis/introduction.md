@@ -110,7 +110,7 @@ curl -fsS http://127.0.0.1:8000/v1/systemone \
 
 MetisCraft 以**统一契约和可配置的模型核心**组织类型化决策模型。架构将数据、张量构造、读出、训练目标与产物加载连接起来，使训练过程和应用端对每个分数的含义保持一致。
 
-![MetisCraft 架构：共享张量构造与模型核心、监督训练、产物封存及类型化服务](../../tensor-analysis/figures/metiscraft-architecture.zh.svg)
+![MetisCraft 客服模型：候选末位置 hidden 与共享标量 MLP](../../tensor-analysis/figures/metiscraft-architecture.zh.svg)
 
 [浅色 SVG](../../tensor-analysis/figures/metiscraft-architecture.zh.svg) · [深色 SVG](../../tensor-analysis/figures/metiscraft-architecture.zh.dark.svg) · [PDF](../../tensor-analysis/figures/metiscraft-architecture.zh.pdf) · [可编辑 TikZ](../../tensor-analysis/figures/metiscraft-architecture.zh.tex)
 
@@ -139,6 +139,8 @@ S\in\mathbb{R}^{B\times K_{\max}}.
 
 工具包的架构设计落在这条连接上：统一任务契约、可替换读出，以及可追溯的训练到服务路径。Qwen3 是模型核心中的一个具体基座选择。[实现边界](../limitations.md)区分这些已实现组件和仅作研究对照的机制。
 
+独立的[工程工作流图](../../tensor-analysis/figures/metiscraft-workflow.zh.svg)连接 Record、collation、损失、封存产物与服务，作为模型结构图的补充，不代表新增主干架构。
+
 | 架构边界 | 源码 |
 |---|---|
 | 数据与配置 | [`Record`](../../../src/metiscraft/data/contract.py)、[`Recipe`](../../../src/metiscraft/config.py) |
@@ -150,9 +152,9 @@ S\in\mathbb{R}^{B\times K_{\max}}.
 
 客服配方采用 **Qwen3-0.6B-Base + LoRA + `list` 标量读出**。[固定基座配置](https://huggingface.co/Qwen/Qwen3-0.6B-Base/blob/da87bfb608c14b7cf20ba1ce41287e8de496c0cd/config.json)包含 28 层因果 decoder，隐藏维度 \(d=1024\)。[Qwen3 实现](https://github.com/huggingface/transformers/blob/v4.51.3/src/transformers/models/qwen3/modeling_qwen3.py)给出 RMSNorm、分组查询注意力、门控 MLP 和残差连接。配方对线性模块采用 LoRA \(r=16\)、\(\alpha=32\)，另加一个共享的 `1024 → 256 → 1` 读出头；这条路径不经过词表输出头。
 
-![客服分流架构：输入序列、Qwen3 主干、候选槽位与标量头](../../tensor-analysis/figures/jevlike-architecture.zh.svg)
+上方模型图具体对应这份配方；[模型架构图谱](architectures.md)进一步对照 Tev1 与已核查的开源实现。
 
-[浅色 SVG](../../tensor-analysis/figures/jevlike-architecture.zh.svg) · [深色 SVG](../../tensor-analysis/figures/jevlike-architecture.zh.dark.svg) · [PDF](../../tensor-analysis/figures/jevlike-architecture.zh.pdf) · [可编辑 TikZ](../../tensor-analysis/figures/jevlike-architecture.zh.tex)
+
 
 ### 对象与轴
 
@@ -199,5 +201,14 @@ S=\operatorname{squeeze}_{-1}(uW_2^{\mathsf T}+b_2).
 **Tev1 使用不同架构**：复现的 4B 模型采用 Qwen3.5 混合主干，通过原有 LM 词表头读取答案 token logits，不使用上图的标量头。[Tev1 架构与张量解析](../../reproductions/tev1.md#模型架构)将 87.3%／99.33% 的准确率结果与训练、校准限制分别列出。
 
 继续阅读：[System One 与 MetisCraft](index.md) → [张量与索引](notation.md) → [标量布局](scalar-heads.md)／[答案 token 读出](answer-token.md)。需要运行应用时，进入 [Cookbook](../cookbook/index.md)。
+
+
+### Tev1 复现：另一条模型路径
+
+![Tev1 model architecture](../../tensor-analysis/figures/tev1-architecture.zh.svg)
+
+[SVG](../../tensor-analysis/figures/tev1-architecture.zh.svg) · [PDF](../../tensor-analysis/figures/tev1-architecture.zh.pdf) · [TikZ](../../tensor-analysis/figures/tev1-architecture.zh.tex)
+
+复现采用 32 层 Qwen3.5-4B 混合主干及其原始 LM 头，配合 LoRA r=8、字母／EOS completion 训练，不使用上方标量 MLP。[Tev1 记录](../../reproductions/tev1.md)列出上游协议、复现差异及 87.3%／99.33% 结果；进一步阅读[逐项目模型架构图谱](architectures.md)。
 
 [English](../../en/tensor-analysis/introduction.md)
