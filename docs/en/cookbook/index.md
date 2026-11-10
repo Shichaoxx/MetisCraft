@@ -57,6 +57,7 @@ For customer routing, this might mean sending a message to the security queue an
 ## Reference when you need it
 
 - [Installation](../installation.md) and [supported scope](../limitations.md).
+- [Runtime, interface and artifact compatibility](../compatibility.md).
 - [Record JSONL and dataset manifests](../data.md).
 - [Base preparation and recipe settings](../training.md).
 - [Prediction, HTTP and task routing](../serving.md).

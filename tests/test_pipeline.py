@@ -221,3 +221,96 @@ def test_raw_and_resolved_configuration_identities_are_recomputable(roots, monke
     assert meta["recipe_sha256"] == raw.sha256()
     assert meta["resolved_config_sha256"] == resolved.sha256()
     assert main(["config", "show", str(run / "config.raw.yaml")]) == 0
+
+
+def _failing_recipe_worker(rank, config, phase, rendezvous, output):
+    """Exercise the actual recipe path and let a failed rank disconnect its peer."""
+    import gc
+    import weakref
+    from datetime import timedelta
+    from pathlib import Path
+
+    import torch
+    import torch.distributed as dist
+
+    import metiscraft.pipeline as pipeline
+    from metiscraft.train.distributed import init_process_group
+    from tests.test_distributed_lifecycle import _gloo_thread_names
+
+    torch.set_num_threads(1)
+
+    def exercise():
+        group_refs = []
+
+        def initialize():
+            init_process_group(
+                "gloo",
+                init_method=f"file://{rendezvous}",
+                rank=rank,
+                world_size=2,
+                timeout=timedelta(seconds=20),
+            )
+            group_refs.append(weakref.ref(dist.group.WORLD))
+            return rank, 2, torch.device("cpu")
+
+        original_train = pipeline.train_loop
+
+        def train(*args, **kwargs):
+            result = original_train(*args, **kwargs)
+            if rank == 0 and phase == "train":
+                raise RuntimeError("injected train failure after backward")
+            return result
+
+        def model_factory(*args):
+            if rank == 0 and phase == "model":
+                raise RuntimeError("injected model failure")
+            return pipeline.build_model(*args)
+
+        def evaluate(*args):
+            raise RuntimeError("injected evaluate failure")
+
+        with pytest.MonkeyPatch.context() as patch:
+            patch.setattr(pipeline, "init_distributed", initialize)
+            patch.setattr(pipeline, "env_info", lambda: {})
+            patch.setattr(pipeline, "git_info", lambda: ({"test": True}, ""))
+            patch.setattr(pipeline, "train_loop", train)
+            if phase == "evaluate":
+                patch.setattr(pipeline, "evaluate_run", evaluate)
+            try:
+                pipeline.run_recipe(Recipe.model_validate(config), model_factory=model_factory)
+            except Exception as error:
+                message = str(error)
+            else:
+                pytest.fail("a failed rank must not return a successful recipe")
+        return group_refs[0], message
+
+    group_ref, message = exercise()
+    # Tracebacks may form cycles. Check after the caller has handled the error,
+    # without retaining the exception or training frames in the assertion scope.
+    gc.collect()
+    assert not dist.is_initialized()
+    assert group_ref() is None, "failed recipe retained its process group"
+    assert not _gloo_thread_names(), "failed recipe retained Gloo threads"
+    if rank == 0:
+        assert f"injected {phase} failure" in message
+    Path(output, f"failure-rank-{rank}.json").write_text(
+        json.dumps({"rank": rank, "error": message, "group_released": True})
+    )
+
+
+@pytest.mark.parametrize("phase", ["model", "train", "evaluate"])
+def test_failed_distributed_recipe_releases_owned_group_and_peer(roots, tmp_path, phase):
+    import torch.distributed as dist
+    import torch.multiprocessing as mp
+
+    if not dist.is_available() or not dist.is_gloo_available():
+        pytest.skip("CPU gloo is unavailable")
+    config = recipe(roots, "banking77", {"kind": "candidate_scalar"}, max_steps=1)
+    mp.spawn(
+        _failing_recipe_worker,
+        args=(config.to_dict(), phase, str(tmp_path / "failure-rendezvous"), str(tmp_path)),
+        nprocs=2,
+    )
+    for rank in range(2):
+        result = json.loads((tmp_path / f"failure-rank-{rank}.json").read_text())
+        assert result["group_released"] and result["error"]

@@ -322,6 +322,7 @@ def main():
             },
             {
                 "5. 参考" if zh else "5. Reference": [
+                    {"兼容范围" if zh else "Compatibility": "compatibility.md"},
                     {"原理" if zh else "Principles": "cookbook/principles.md"},
                     {"最佳实践" if zh else "Best practices": "cookbook/best-practices.md"},
                     {"接口约定" if zh else "Interface contracts": "interfaces.md"},

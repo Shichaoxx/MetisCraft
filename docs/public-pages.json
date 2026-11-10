@@ -3,7 +3,9 @@
     "docs/en/index.md",
     "docs/zh/index.md",
     "docs/en/installation.md",
+    "docs/en/compatibility.md",
     "docs/zh/installation.md",
+    "docs/zh/compatibility.md",
     "docs/en/quickstart.md",
     "docs/zh/quickstart.md",
     "docs/en/data.md",
@@ -242,6 +244,10 @@
     "tensor-analysis/architectures-encoders": {
       "en": "docs/en/tensor-analysis/architectures-encoders.md",
       "zh": "docs/zh/tensor-analysis/architectures-encoders.md"
+    },
+    "compatibility": {
+      "en": "docs/en/compatibility.md",
+      "zh": "docs/zh/compatibility.md"
     }
   }
 }

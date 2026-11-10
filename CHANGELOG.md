@@ -38,6 +38,13 @@ its APIs and artifact formats may change.
 
 ### Changed
 
+- Recipe execution releases its own distributed process group on success or
+  failure, preserves caller-owned groups and keeps the original exception if
+  teardown also fails. Two-rank CPU regressions cover model, training and
+  evaluation failures.
+- Source installation consistently selects `release/0.1.0rc1`. The bilingual
+  compatibility reference defines tested Python/dependency environments, public
+  interfaces, artifact loading and distributed lifecycle ownership.
 - Training validates split purposes and rejects shared fitting/evaluation inputs
   or groups before loading the model. Local imports preserve explicit assignments.
 - New `metiscraft-artifact/2` artifacts bind the verified content of the local

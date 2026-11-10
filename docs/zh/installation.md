@@ -6,7 +6,7 @@ MetisCraft 要求 Python **3.10 或更高版本**。建议从 Python 3.11 的独
 
 ## 从源码安装
 
-从主分支安装当前预览版；已发布的发行包见 [GitHub 发行记录](https://github.com/Shichaoxx/MetisCraft/releases)：
+从 `release/0.1.0rc1` 分支安装 `0.1.0rc1` 预览版；`main` 分支持续承载后续开发。已发布的发行包见 [GitHub 发行记录](https://github.com/Shichaoxx/MetisCraft/releases)：
 
 ```bash
 git clone --branch release/0.1.0rc1 https://github.com/Shichaoxx/MetisCraft.git
@@ -19,6 +19,10 @@ metiscraft --version
 
 如果需要特定的 CPU 或 CUDA 版本，先在这个环境中安装对应的 PyTorch，再安装
 MetisCraft。工具包使用当前环境里的 PyTorch。
+
+本预览版已验证的 Python 支持范围为 3.10 和 3.11。安装元数据中的最低版本要求不代表
+已验证更高版本 Python 或全部依赖组合。已验证环境、接口边界与产物加载策略见
+[兼容范围与支持约定](compatibility.md)。
 
 ## 从发行候选 wheel 安装
 
