@@ -177,7 +177,7 @@ p_b=\operatorname{softmax}(s_b).
 
 <a id="来源与致谢待确认"></a>
 
-- MetisCraft 源码基线：`6b9701da7814111b13d8882f48288f4df46dc983`；[`DecisionModel`](../../../src/metiscraft/modeling/model.py#L55)、[`PromptBuilder`](../../../src/metiscraft/modeling/prompts.py#L136) 与 [`judgments`](../../../src/metiscraft/judgments/__init__.py#L74)。
+- MetisCraft 源码基线：`91259c6d07ece19248a02a4b56b43dd3a77d81e5`；[`DecisionModel`](../../../src/metiscraft/modeling/model.py#L55)、[`PromptBuilder`](../../../src/metiscraft/modeling/prompts.py#L136) 与 [`judgments`](../../../src/metiscraft/judgments/__init__.py#L74)。
 - [支持矩阵](../../support-matrix.md)记录生态项目的固定版本、许可，以及源码核查与复现的差别。这里的外部示例不是运行时依赖。
 - Pointer 源码：[Kev `2074cc4` 的 `kev/model.py`](https://github.com/jaredpalmer/kev/blob/2074cc44256200bb37540103fa4572901faa10f3/kev/model.py)。联合 schema 依据：[Clef `cfddda0`](https://huggingface.co/Cloudflare/clef/tree/cfddda043dd190ef3b01cff449d5ee8cff1e8ec6)。Encoder 背景：[GLiClass 源码](https://github.com/Knowledgator/GLiClass)，核对日期 2026-11-09；该链接是项目参考，不是固定基准结果。
 - 早期共享前缀讲解思路参考独立作者的 [wdkns 架构课件 `6b8729b`](https://github.com/wdkns/modern_genai_bilibili/blob/6b8729b923d17863014ac6e0ff7715fc84473300/slides/jev_architecture-v2.pdf)。本章图件均独立绘制；这项致谢不表示 tree attention 由课件作者首创。

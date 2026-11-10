@@ -14,7 +14,7 @@ ROOT = Path(__file__).resolve().parents[1]
 BUILD = ROOT / "build" / "documentation"
 SITE = BUILD / "site"
 PREFIX = "/MetisCraft/"
-SOURCE_REF = "021204a43f8d2a5cdf19b293920962522789b5d3"
+SOURCE_REF = "91259c6d07ece19248a02a4b56b43dd3a77d81e5"
 REPO = f"https://github.com/Shichaoxx/MetisCraft/blob/{SOURCE_REF}/"
 
 
