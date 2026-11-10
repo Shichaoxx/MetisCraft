@@ -109,7 +109,7 @@ CUDA_VISIBLE_DEVICES='' OMP_NUM_THREADS=1 python scripts/verify_tensor_examples.
 
 ## 源码与实测依据
 
-本章实现对应提交 `6b9701da7814111b13d8882f48288f4df46dc983`。源码路线为 [`request_to_records`](../../../src/metiscraft/data/jev.py#L146) → [`Collator`](../../../src/metiscraft/train/collate.py#L39) → [`DecisionModel.forward`](../../../src/metiscraft/modeling/model.py#L55) → [`probabilities`](../../../src/metiscraft/judgments/__init__.py#L112) → [`Predictor`](../../../src/metiscraft/serve/predictor.py#L126)。
+本章实现对应提交 `91259c6d07ece19248a02a4b56b43dd3a77d81e5`。源码路线为 [`request_to_records`](../../../src/metiscraft/data/jev.py#L146) → [`Collator`](../../../src/metiscraft/train/collate.py#L39) → [`DecisionModel.forward`](../../../src/metiscraft/modeling/model.py#L55) → [`probabilities`](../../../src/metiscraft/judgments/__init__.py#L112) → [`Predictor`](../../../src/metiscraft/serve/predictor.py#L126)。
 
 **已训练模型的证据**见 [Tev1 复现记录](../../reproductions/tev1.md)：4B 在主集达到 **873/1,000（87.3%）**，政策迁移达到 **298/300（99.33%）**，原版分别为 88.0% 和 100%，均达到观察结果之前设定的准确率容差。记录链接配方、固定输入与逐题对照，并保留单种子、公开开发集和 NLL 恶化等限制。这不表示恢复历史托管训练作业，也不表示训练权重相同。
 

@@ -95,6 +95,8 @@ Tev1 使用 **Qwen3.5-4B 原有词表头**。MetisCraft 复现通过 LoRA 学习
 
 ## 开始使用
 
+[兼容范围与支持约定](https://shichaoxx.github.io/MetisCraft/zh/compatibility/)明确 `0.1.0rc1` 已验证的依赖环境、接口与产物加载规则。
+
 使用 Python 3.10 或 3.11，并先为硬件安装合适的 PyTorch。当前可从源码安装：
 
 ```bash

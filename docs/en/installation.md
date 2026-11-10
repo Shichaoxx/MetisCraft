@@ -7,7 +7,7 @@ build and hardware that support the chosen model.
 
 ## From source
 
-Install the current preview from the main branch. Check [GitHub releases](https://github.com/Shichaoxx/MetisCraft/releases) for published distributions:
+Install the `0.1.0rc1` preview from `release/0.1.0rc1`. The `main` branch tracks ongoing development. Check [GitHub releases](https://github.com/Shichaoxx/MetisCraft/releases) for published distributions:
 
 ```bash
 git clone --branch release/0.1.0rc1 https://github.com/Shichaoxx/MetisCraft.git
@@ -20,6 +20,11 @@ metiscraft --version
 
 Install an appropriate PyTorch build in this environment first if you need a
 particular CPU or CUDA configuration. MetisCraft uses that environment's PyTorch.
+
+Python 3.10 and 3.11 are the tested support range for this preview. The package's
+minimum requirement does not establish support for later Python versions or every
+dependency combination. See [compatibility and support](compatibility.md) for the
+validated environments, interface boundaries and artifact-loading policy.
 
 ## From a release-candidate wheel
 

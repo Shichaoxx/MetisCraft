@@ -14,7 +14,7 @@ ROOT = Path(__file__).resolve().parents[1]
 BUILD = ROOT / "build" / "documentation"
 SITE = BUILD / "site"
 PREFIX = "/MetisCraft/"
-SOURCE_REF = "021204a43f8d2a5cdf19b293920962522789b5d3"
+SOURCE_REF = "91259c6d07ece19248a02a4b56b43dd3a77d81e5"
 REPO = f"https://github.com/Shichaoxx/MetisCraft/blob/{SOURCE_REF}/"
 
 
@@ -322,6 +322,7 @@ def main():
             },
             {
                 "5. 参考" if zh else "5. Reference": [
+                    {"兼容范围" if zh else "Compatibility": "compatibility.md"},
                     {"原理" if zh else "Principles": "cookbook/principles.md"},
                     {"最佳实践" if zh else "Best practices": "cookbook/best-practices.md"},
                     {"接口约定" if zh else "Interface contracts": "interfaces.md"},

@@ -88,7 +88,7 @@ position_ids   [ 0   0   0  1  2]   [ 0  1  2  3  4]
 
 ## 源码与依据
 
-源码基线为提交 `6b9701da7814111b13d8882f48288f4df46dc983`。
+源码基线为提交 `91259c6d07ece19248a02a4b56b43dd3a77d81e5`。
 
 - [`Record.target_size`](../../../src/metiscraft/data/contract.py#L130)：有效答案空间的宽度。
 - [`Encoded`](../../../src/metiscraft/modeling/prompts.py#L126)：代码 ID、读出位置与 pair 序列。

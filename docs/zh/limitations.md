@@ -27,6 +27,8 @@ regex 约束生成，MetisCraft 采用候选字母内最大值。无约束全词
 
 ## 软件范围
 
+[兼容范围](compatibility.md)明确本候选版的已验证环境、公开接口、产物格式和通信组所有权。
+
 - 实现了两种读出；排序不在本版范围内。
 - HTTP 端点支持三种判断，多标签预测通过 Record API 使用。
 - 服务使用 Transformers 和 Predictor，尚未实现 vLLM、SGLang 或 llama.cpp 导出。

@@ -36,6 +36,9 @@ encoder from these results.
 
 ## Software scope
 
+The [compatibility reference](compatibility.md) defines tested environments,
+public interfaces, artifact formats and process-group ownership for this candidate.
+
 - Two readouts are implemented; ranking is outside this release.
 - The HTTP endpoint supports three judgment types. Multi-label prediction uses
   the Record API.

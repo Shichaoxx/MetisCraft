@@ -109,7 +109,7 @@ Success means every check prints `PASS` and the process exits with code 0. `--la
 
 ## Source map and measured evidence
 
-The implementation described here is anchored to commit `6b9701da7814111b13d8882f48288f4df46dc983`. Follow [`request_to_records`](../../../src/metiscraft/data/jev.py#L146) → [`Collator`](../../../src/metiscraft/train/collate.py#L39) → [`DecisionModel.forward`](../../../src/metiscraft/modeling/model.py#L55) → [`probabilities`](../../../src/metiscraft/judgments/__init__.py#L112) → [`Predictor`](../../../src/metiscraft/serve/predictor.py#L126).
+The implementation described here is anchored to commit `91259c6d07ece19248a02a4b56b43dd3a77d81e5`. Follow [`request_to_records`](../../../src/metiscraft/data/jev.py#L146) → [`Collator`](../../../src/metiscraft/train/collate.py#L39) → [`DecisionModel.forward`](../../../src/metiscraft/modeling/model.py#L55) → [`probabilities`](../../../src/metiscraft/judgments/__init__.py#L112) → [`Predictor`](../../../src/metiscraft/serve/predictor.py#L126).
 
 For **trained-model evidence**, use the [Tev1 reproduction record](../reproductions/tev1.md): the 4B run reaches **873/1,000 (87.3%)** on the main set and **298/300 (99.33%)** on policy transfer, versus the upstream 88.0% and 100%. Both satisfy the accuracy tolerances set before inspection. The record links the recipe, pinned inputs and per-question comparisons, and retains the single-seed, public-development-set and worsened-NLL limitations. This is neither recovery of the historical hosted training run nor equality of learned weights.
 

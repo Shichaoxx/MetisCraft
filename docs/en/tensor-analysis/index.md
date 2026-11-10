@@ -78,7 +78,7 @@ MetisCraft `0.1.0rc1` returns maximum option/level probability as HTTP `confiden
 
 ## Source map
 
-These explanations follow the toolkit implementation at commit `6b9701da7814111b13d8882f48288f4df46dc983`.
+These explanations follow the toolkit implementation at commit `91259c6d07ece19248a02a4b56b43dd3a77d81e5`.
 
 | Stage | Inspectable implementation |
 |---|---|

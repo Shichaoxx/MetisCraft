@@ -102,7 +102,7 @@ For constructed choice probabilities \([0.6,0.3,0.1]\), MetisCraft reports `conf
 
 ## Source map
 
-The source baseline is commit `6b9701da7814111b13d8882f48288f4df46dc983`.
+The source baseline is commit `91259c6d07ece19248a02a4b56b43dd3a77d81e5`.
 
 | Mechanism | Source |
 |---|---|

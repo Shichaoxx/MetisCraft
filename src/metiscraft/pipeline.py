@@ -42,7 +42,7 @@ from metiscraft.trace import (
     write_json,
 )
 from metiscraft.train.collate import Collator
-from metiscraft.train.distributed import init_process_group
+from metiscraft.train.distributed import init_process_group, process_group_scope
 from metiscraft.train.loop import train_loop
 
 
@@ -106,109 +106,111 @@ def run_recipe(recipe: Recipe, *, model_factory=build_model) -> Path:
     dv = resolve_version(data_root, recipe.data.dataset, recipe.data.version)
     dv.verify()
     validate_usage(recipe, dv)
-    rank, world, device = init_distributed()
-    data_meta = dv.meta()
-    run = _shared_run_dir(
-        rank, world, lambda: new_run_dir(runs_root, recipe.task, raw_recipe.sha256())
-    )
-    if rank == 0:
-        (run / "config.yaml").write_text(
-            yaml.safe_dump(recipe.to_dict(), sort_keys=False, allow_unicode=True),
-            encoding="utf-8",
+    with process_group_scope():
+        rank, world, device = init_distributed()
+        data_meta = dv.meta()
+        run = _shared_run_dir(
+            rank, world, lambda: new_run_dir(runs_root, recipe.task, raw_recipe.sha256())
         )
-        (run / "config.sha256").write_text(recipe.sha256() + "\n", encoding="utf-8")
-        (run / "config.raw.yaml").write_text(
-            yaml.safe_dump(raw_recipe.to_dict(), sort_keys=False, allow_unicode=True),
-            encoding="utf-8",
-        )
-        (run / "config.raw.sha256").write_text(raw_recipe.sha256() + "\n", encoding="utf-8")
-        git, diff = git_info()
-        write_json(run / "git.json", git)
-        if diff:
-            (run / "git.diff").write_text(diff, encoding="utf-8")
-        write_json(run / "env.json", env_info())
-        write_json(
-            run / "data.json",
-            {
-                "name": dv.name,
-                "version": dv.version,
-                "root": str(dv.root),
-                "manifests": _manifest_hashes(dv),
-            },
-        )
-
-    seed_everything(recipe.train.seed)
-    model, tokenizer, base = model_factory(recipe, paths)
-    model.to(device)
-    if rank == 0:
-        write_json(run / "model.json", base)
-
-    ordinal = recipe.objective.ordinal_sigma if recipe.objective.kind == "ordinal_soft" else None
-    train_rows = (
-        dv.load(recipe.data.train_split, recipe.data.max_train)
-        if dv.has_split(recipe.data.train_split)
-        else []
-    )
-    trainable = any(p.requires_grad for p in model.parameters())
-    summary: dict[str, Any] = {"steps": 0}
-    if train_rows and trainable:
-        collator = Collator(
-            tokenizer,
-            recipe.readout,
-            recipe.model.max_length,
-            train=True,
-            seed=recipe.train.seed,
-            ordinal_sigma=ordinal,
-            completion=recipe.objective.kind == "completion",
-        )
-        net = None
-        if world > 1:
-            net = torch.nn.parallel.DistributedDataParallel(
-                model, device_ids=[device.index] if device.type == "cuda" else None
+        if rank == 0:
+            (run / "config.yaml").write_text(
+                yaml.safe_dump(recipe.to_dict(), sort_keys=False, allow_unicode=True),
+                encoding="utf-8",
             )
-        summary = train_loop(
-            model,
-            train_rows,
-            collator,
-            recipe.train,
-            recipe.objective,
-            device=device,
-            net=net,
-            log_path=run / "train_log.jsonl",
-        )
+            (run / "config.sha256").write_text(recipe.sha256() + "\n", encoding="utf-8")
+            (run / "config.raw.yaml").write_text(
+                yaml.safe_dump(raw_recipe.to_dict(), sort_keys=False, allow_unicode=True),
+                encoding="utf-8",
+            )
+            (run / "config.raw.sha256").write_text(raw_recipe.sha256() + "\n", encoding="utf-8")
+            git, diff = git_info()
+            write_json(run / "git.json", git)
+            if diff:
+                (run / "git.diff").write_text(diff, encoding="utf-8")
+            write_json(run / "env.json", env_info())
+            write_json(
+                run / "data.json",
+                {
+                    "name": dv.name,
+                    "version": dv.version,
+                    "root": str(dv.root),
+                    "manifests": _manifest_hashes(dv),
+                },
+            )
 
-    if rank == 0:
-        terms = list(data_meta.get("terms") or [])
-        meta = {
-            "metiscraft_version": __version__,
-            "task": recipe.task,
-            "task_ids": sorted({r["task_id"] for r in train_rows}) or [recipe.task],
-            "serve": recipe.serve.model_dump(mode="json"),
-            "readout": recipe.readout.model_dump(mode="json"),
-            "finetune": recipe.model.finetune.model_dump(mode="json"),
-            "model": {
-                "base": recipe.model.base,
-                "dtype": recipe.model.dtype,
-                "max_length": recipe.model.max_length,
-            },
-            "base": base,
-            "dataset": {
-                "name": dv.name,
-                "version": dv.version,
-                "license": data_meta.get("license"),
-                "terms": terms,
-            },
-            "recipe_sha256": raw_recipe.sha256(),
-            "resolved_config_sha256": recipe.sha256(),
-            "train": summary,
-            "commercial_use": commercial_use(terms),
-        }
-        artifact = save_artifact(model, run / "artifact", meta)
-        evaluate_run(recipe, dv, model, tokenizer, run, artifact, device, train_rows)
-    if world > 1:
-        dist.barrier()
-        dist.destroy_process_group()
-    return run
+        seed_everything(recipe.train.seed)
+        model, tokenizer, base = model_factory(recipe, paths)
+        model.to(device)
+        if rank == 0:
+            write_json(run / "model.json", base)
+
+        ordinal = (
+            recipe.objective.ordinal_sigma if recipe.objective.kind == "ordinal_soft" else None
+        )
+        train_rows = (
+            dv.load(recipe.data.train_split, recipe.data.max_train)
+            if dv.has_split(recipe.data.train_split)
+            else []
+        )
+        trainable = any(p.requires_grad for p in model.parameters())
+        summary: dict[str, Any] = {"steps": 0}
+        if train_rows and trainable:
+            collator = Collator(
+                tokenizer,
+                recipe.readout,
+                recipe.model.max_length,
+                train=True,
+                seed=recipe.train.seed,
+                ordinal_sigma=ordinal,
+                completion=recipe.objective.kind == "completion",
+            )
+            net = None
+            if world > 1:
+                net = torch.nn.parallel.DistributedDataParallel(
+                    model, device_ids=[device.index] if device.type == "cuda" else None
+                )
+            summary = train_loop(
+                model,
+                train_rows,
+                collator,
+                recipe.train,
+                recipe.objective,
+                device=device,
+                net=net,
+                log_path=run / "train_log.jsonl",
+            )
+
+        if rank == 0:
+            terms = list(data_meta.get("terms") or [])
+            meta = {
+                "metiscraft_version": __version__,
+                "task": recipe.task,
+                "task_ids": sorted({r["task_id"] for r in train_rows}) or [recipe.task],
+                "serve": recipe.serve.model_dump(mode="json"),
+                "readout": recipe.readout.model_dump(mode="json"),
+                "finetune": recipe.model.finetune.model_dump(mode="json"),
+                "model": {
+                    "base": recipe.model.base,
+                    "dtype": recipe.model.dtype,
+                    "max_length": recipe.model.max_length,
+                },
+                "base": base,
+                "dataset": {
+                    "name": dv.name,
+                    "version": dv.version,
+                    "license": data_meta.get("license"),
+                    "terms": terms,
+                },
+                "recipe_sha256": raw_recipe.sha256(),
+                "resolved_config_sha256": recipe.sha256(),
+                "train": summary,
+                "commercial_use": commercial_use(terms),
+            }
+            artifact = save_artifact(model, run / "artifact", meta)
+            evaluate_run(recipe, dv, model, tokenizer, run, artifact, device, train_rows)
+        if world > 1:
+            dist.barrier()
+        return run
 
 
 def evaluate_run(

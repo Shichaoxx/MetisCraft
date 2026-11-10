@@ -57,6 +57,7 @@
 ## 需要时查阅
 
 - [安装](../installation.md)与[支持范围](../limitations.md)。
+- [运行环境、接口与产物兼容范围](../compatibility.md)。
 - [Record JSONL 与数据清单](../data.md)。
 - [基座准备与配方设置](../training.md)。
 - [预测、HTTP 与任务映射](../serving.md)。

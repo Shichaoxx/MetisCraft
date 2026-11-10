@@ -93,6 +93,8 @@ Tev1 uses the existing **Qwen3.5-4B vocabulary head**. The MetisCraft reproducti
 
 ## Get started
 
+[Compatibility and support](https://shichaoxx.github.io/MetisCraft/en/compatibility/) defines the tested dependency environments, interfaces and artifact-loading rules for `0.1.0rc1`.
+
 Use Python 3.10 or 3.11 and install a suitable PyTorch build for your hardware. Source installation is available now:
 
 ```bash
