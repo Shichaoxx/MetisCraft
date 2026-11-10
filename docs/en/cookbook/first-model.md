@@ -68,9 +68,9 @@ and Record requests select the same calibration group.
 
 <!-- metiscraft:quickstart:end -->
 
-<aside class="metis-reading-note" data-metis-theme="light" data-metis-light-src="../../visuals/figures/metis-guide-chibi.png" data-metis-dark-src="../../visuals/figures/metis-guide-night.png" data-metis-light-alt="Metis in her academy outfit, holding a star-chart book" data-metis-dark-alt="Metis in her night outfit, holding a star-chart book" aria-label="Metis's reading tip" markdown="1">
+<aside class="metis-reading-note" data-metis-theme="light" data-metis-light-src="../../visuals/figures/metis-guide-chibi.webp" data-metis-light-full-src="../../visuals/figures/metis-guide-chibi.png" data-metis-dark-src="../../visuals/figures/metis-guide-night.webp" data-metis-dark-full-src="../../visuals/figures/metis-guide-night.png" data-metis-light-alt="Metis in her academy outfit, holding a star-chart book" data-metis-dark-alt="Metis in her night outfit, holding a star-chart book" aria-label="Metis's reading tip" markdown="1">
 
-<figure class="metis-reading-avatar"><a data-metis-full href="../../visuals/figures/metis-guide-chibi.png" target="_blank" rel="noopener" aria-label="View Metis's illustration in a new tab"><img data-metis-portrait src="../../visuals/figures/metis-guide-chibi.png" alt="Metis in her academy outfit, holding a star-chart book" width="120" height="120"></a></figure>
+<figure class="metis-reading-avatar"><a data-metis-full href="../../visuals/figures/metis-guide-chibi.png" target="_blank" rel="noopener" aria-label="View Metis's illustration in a new tab"><img data-metis-portrait loading="lazy" decoding="async" src="../../visuals/figures/metis-guide-chibi.webp" alt="Metis in her academy outfit, holding a star-chart book" width="120" height="120"></a></figure>
 
 <div class="metis-reading-copy" markdown="1">
 

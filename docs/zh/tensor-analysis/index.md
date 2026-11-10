@@ -1,6 +1,10 @@
 # System One 与 MetisCraft：从输入到类型化判断
 
+[模型架构图谱：MetisCraft、Tev1 与 14 个已核查开源实现](architectures.md)，将具体模型路径与通用机制分类分开。
+
 本章沿着一个问题，解释概率分布与程序可消费的答案如何产生。System One 提供公开的接口契约；MetisCraft 提供可检查的答案 token 与逐候选标量读出实现。接口相近，不代表内部模型架构相同。
+
+首次阅读这一类模型，可从[0. 引言：任务、数据与架构](introduction.md)开始。
 
 ## 本页问题
 

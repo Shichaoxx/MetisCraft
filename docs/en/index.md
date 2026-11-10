@@ -7,6 +7,8 @@ Train, reproduce and deploy JevLike decision models. One recipe connects trainin
 [Get started](cookbook/first-model.md){ .md-button .md-button--primary }
 [Explore the Cookbook](cookbook/index.md){ .md-button }
 
+[Intro: JevLike, tasks, data and model architecture](tensor-analysis/introduction.md)
+
 </div>
 
 ## Tev1 4B reproduction
@@ -100,3 +102,5 @@ Use yes/no, choice, ordered score and multiple labels through Python or batch pr
 ## Understand the computation
 
 Follow [Concepts & Tensors](tensor-analysis/index.md) from the System One contract to answer-token and scalar-head readouts. The [five-minute technical walkthrough](tensor-analysis/walkthrough.md) connects editable vector figures, numerical examples and source references.
+
+[What is JevLike? Task, data and architecture](tensor-analysis/introduction.md)

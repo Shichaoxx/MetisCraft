@@ -1,0 +1,62 @@
+{
+  "group": {
+    "id": "banking77_support:train:0",
+    "split_key": "banking77_support:train:0"
+  },
+  "id": "banking77_support:train:0:queue",
+  "input": {
+    "context": {
+      "state": "I am still waiting on my card?"
+    },
+    "query": "Which support queue should handle this customer message?"
+  },
+  "provenance": {
+    "converter": "label_mapping",
+    "converter_version": "1",
+    "dataset": "banking77_support",
+    "extra": {
+      "question_name": "queue",
+      "source_label": "card_arrival"
+    },
+    "index": 0,
+    "input_hash": "7d46f1aa7c0a83b4fe386b6c72b132fd3650942a23d0110451cf3c3f6b85b8aa",
+    "label_form": "hard",
+    "source": "PolyAI/banking77@1846984189f2bc0ac51c6fc3a600fa9e1714e0c6",
+    "split": "train"
+  },
+  "question": {
+    "allow_null": false,
+    "options": [
+      {
+        "id": "cards",
+        "text": "Ordering, delivering, activating, linking or replacing cards; PINs, card limits and card support."
+      },
+      {
+        "id": "payments",
+        "text": "Card payments, cash withdrawals, refunds, fees, exchange rates and currencies."
+      },
+      {
+        "id": "transfers",
+        "text": "Sending and receiving money, transfer status, cancellations and beneficiaries."
+      },
+      {
+        "id": "top_up",
+        "text": "Topping up the account and problems with top-ups or deposits."
+      },
+      {
+        "id": "account",
+        "text": "Identity verification, personal details, passcodes, age limits and closing the account."
+      },
+      {
+        "id": "security",
+        "text": "Lost, stolen or compromised cards or phones, and transactions the customer does not recognise."
+      }
+    ],
+    "type": "choice"
+  },
+  "supervision": {
+    "kind": "choice",
+    "labels": "cards"
+  },
+  "task_id": "banking77_support"
+}

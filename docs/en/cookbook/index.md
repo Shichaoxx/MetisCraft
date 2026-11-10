@@ -2,9 +2,9 @@
 
 From a recorded response to a decision model of your own.
 
-<div class="cookbook-guide" data-metis-theme="light" data-metis-light-src="../../visuals/figures/metis-guide-chibi.png" data-metis-dark-src="../../visuals/figures/metis-guide-night.png" data-metis-light-alt="Metis in her academy outfit, holding a star-chart book" data-metis-dark-alt="Metis in her night outfit, holding a star-chart book" markdown="1">
+<div class="cookbook-guide" data-metis-theme="light" data-metis-light-src="../../visuals/figures/metis-guide-chibi.webp" data-metis-light-full-src="../../visuals/figures/metis-guide-chibi.png" data-metis-dark-src="../../visuals/figures/metis-guide-night.webp" data-metis-dark-full-src="../../visuals/figures/metis-guide-night.png" data-metis-light-alt="Metis in her academy outfit, holding a star-chart book" data-metis-dark-alt="Metis in her night outfit, holding a star-chart book" markdown="1">
 
-<figure class="cookbook-avatar"><a data-metis-full href="../../visuals/figures/metis-guide-chibi.png" target="_blank" rel="noopener" aria-label="View Metis's illustration in a new tab"><img data-metis-portrait src="../../visuals/figures/metis-guide-chibi.png" alt="Metis in her academy outfit, holding a star-chart book" width="160" height="160"></a></figure>
+<figure class="cookbook-avatar"><a data-metis-full href="../../visuals/figures/metis-guide-chibi.png" target="_blank" rel="noopener" aria-label="View Metis's illustration in a new tab"><img data-metis-portrait loading="lazy" decoding="async" src="../../visuals/figures/metis-guide-chibi.webp" alt="Metis in her academy outfit, holding a star-chart book" width="160" height="160"></a></figure>
 
 <div class="cookbook-guide-copy" markdown="1">
 

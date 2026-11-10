@@ -6,6 +6,10 @@ MetisCraft 使用公开数据构建器与建议配方重训 Tev1 类模型，核
 
 ## 模型架构
 
+![Tev1-4B model architecture](../tensor-analysis/figures/tev1-architecture.zh.svg)
+
+[SVG](../tensor-analysis/figures/tev1-architecture.zh.svg) · [PDF](../tensor-analysis/figures/tev1-architecture.zh.pdf) · [TikZ](../tensor-analysis/figures/tev1-architecture.zh.tex)
+
 **Tev1 是 Qwen3.5-4B 的决策任务微调模型，使用原有 LM head 预测答案字母。** [上游说明](https://github.com/togethercomputer/tev1/blob/1dde7782382c9f49d627153759b8d1deab426ce0/README.md)公开了 LoRA 监督微调方法；[固定版本模型卡](https://huggingface.co/togethercomputer/Tev1-4B-experimental/blob/0b7becf017daa0e5eb222f8ce7483c8c8259c52f/README.md)说明它保留标准 next-token 输出头。MetisCraft 的 4B 复现采用相同读出家族。
 
 | 部分 | 公开架构与本次复现 |

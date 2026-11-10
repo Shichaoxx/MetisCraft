@@ -1,0 +1,62 @@
+{
+  "group": {
+    "id": "banking77_support:test:0",
+    "split_key": "banking77_support:test:0"
+  },
+  "id": "banking77_support:test:0:queue",
+  "input": {
+    "context": {
+      "state": "How do I locate my card?"
+    },
+    "query": "Which support queue should handle this customer message?"
+  },
+  "provenance": {
+    "converter": "label_mapping",
+    "converter_version": "1",
+    "dataset": "banking77_support",
+    "extra": {
+      "question_name": "queue",
+      "source_label": "card_arrival"
+    },
+    "index": 0,
+    "input_hash": "1f21633d90fe7165bfc51235c625a23967e82a25dbb0eb89cc158c5ca0df7929",
+    "label_form": "hard",
+    "source": "PolyAI/banking77@1846984189f2bc0ac51c6fc3a600fa9e1714e0c6",
+    "split": "test"
+  },
+  "question": {
+    "allow_null": false,
+    "options": [
+      {
+        "id": "cards",
+        "text": "Ordering, delivering, activating, linking or replacing cards; PINs, card limits and card support."
+      },
+      {
+        "id": "payments",
+        "text": "Card payments, cash withdrawals, refunds, fees, exchange rates and currencies."
+      },
+      {
+        "id": "transfers",
+        "text": "Sending and receiving money, transfer status, cancellations and beneficiaries."
+      },
+      {
+        "id": "top_up",
+        "text": "Topping up the account and problems with top-ups or deposits."
+      },
+      {
+        "id": "account",
+        "text": "Identity verification, personal details, passcodes, age limits and closing the account."
+      },
+      {
+        "id": "security",
+        "text": "Lost, stolen or compromised cards or phones, and transactions the customer does not recognise."
+      }
+    ],
+    "type": "choice"
+  },
+  "supervision": {
+    "kind": "choice",
+    "labels": "cards"
+  },
+  "task_id": "banking77_support"
+}

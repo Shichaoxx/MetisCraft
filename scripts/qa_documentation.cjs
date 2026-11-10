@@ -13,7 +13,7 @@ if (!args.module || !args.browser || !args.site || !args.output) {
 const { chromium } = require(path.resolve(args.module));
 const site = path.resolve(args.site), output = path.resolve(args.output);
 fs.mkdirSync(output, { recursive: true });
-const types = {'.html':'text/html', '.js':'application/javascript', '.css':'text/css', '.svg':'image/svg+xml', '.png':'image/png', '.woff2':'font/woff2', '.woff':'font/woff', '.ttf':'font/ttf', '.json':'application/json', '.pdf':'application/pdf', '.tex':'text/plain'};
+const types = {'.html':'text/html', '.js':'application/javascript', '.css':'text/css', '.svg':'image/svg+xml', '.png':'image/png', '.webp':'image/webp', '.woff2':'font/woff2', '.woff':'font/woff', '.ttf':'font/ttf', '.json':'application/json', '.pdf':'application/pdf', '.tex':'text/plain'};
 const server = http.createServer((req, res) => {
   const url = new URL(req.url, 'http://127.0.0.1');
   if (!url.pathname.startsWith('/MetisCraft/')) { res.writeHead(404).end(); return; }
@@ -60,7 +60,7 @@ function ensure(ok, detail) { if (!ok) report.failures.push(detail); }
       await page.waitForFunction(m=>document.querySelector('link[rel="icon"]').href.includes(m==='slate'?'mark-dark.svg':'mark-light.svg'),mode);
     }
     for (const route of Object.keys(mapping)) {
-      if(args.mode==='themes') continue;
+      if(['themes','candidate'].includes(args.mode)) continue;
       if(args.mode==='interactions' && !route.includes('/recipes/tev1/')) continue;
       await go(route);
       const facts=await page.evaluate(()=>({
@@ -76,13 +76,15 @@ function ensure(ok, detail) { if (!ok) report.failures.push(detail); }
       for (const [lang, partner] of Object.entries(mapping[route])) ensure(facts.language.some(n=>n.lang===lang&&n.path===partner),route+' missing static language partner '+lang);
       report.pages.push({route,...facts});
     }
-    const slugs=['','cookbook/','tensor-analysis/','tensor-analysis/answer-token/','tensor-analysis/scalar-heads/','tensor-analysis/training-calibration/','tensor-analysis/readout-comparison/','tensor-analysis/notation/','tensor-analysis/walkthrough/'];
+    const slugs=['','cookbook/','tensor-analysis/introduction/','tensor-analysis/','tensor-analysis/answer-token/','tensor-analysis/scalar-heads/','tensor-analysis/training-calibration/','tensor-analysis/readout-comparison/','tensor-analysis/notation/','tensor-analysis/walkthrough/'];
+    if(args.mode==='candidate') slugs.splice(0,slugs.length,'','cookbook/','cookbook/first-model/','tensor-analysis/introduction/','tensor-analysis/architectures/','tensor-analysis/architectures-token/','tensor-analysis/architectures-structured/','tensor-analysis/architectures-encoders/','reproductions/tev1/');
     if(!['interactions','themes'].includes(args.mode)) {
     for (const lang of ['en','zh']) for (const width of [1440,390]) for (const mode of ['default','slate']) {
       await page.setViewportSize({width,height:1080});
       for (const slug of slugs) {
         const route='/MetisCraft/'+lang+'/'+slug;
         await go(route);await theme(mode);
+        await page.evaluate(async()=>{await Promise.all([...document.querySelectorAll('.md-content img')].map(i=>{i.loading='eager';return i.decode();}));});
         const facts=await page.evaluate(()=>({width:innerWidth,scroll:document.documentElement.scrollWidth,images:[...document.querySelectorAll('.md-content img')].every(n=>n.complete&&n.naturalWidth),mathErrors:document.querySelectorAll('.math-render-error').length,logo:document.querySelector('.md-logo img')?.src,favicon:document.querySelector('link[rel="icon"]').href}));
         ensure(facts.scroll<=width+1,route+' horizontal overflow '+width+' '+mode+': '+facts.scroll);
         ensure(facts.images&&!facts.mathErrors,route+' layout image/math failure');
@@ -97,7 +99,7 @@ function ensure(ok, detail) { if (!ok) report.failures.push(detail); }
     await page.evaluate(()=>localStorage.setItem('metiscraft.metis-outfit','gown'));
     for(const lang of ['en','zh']) for(const width of [1440,390]) {
       await page.setViewportSize({width,height:1080});
-      for(const slug of ['','decision/','first-model/','own-task/']) {
+      for(const slug of (args.mode==='candidate'?['','first-model/']:['','decision/','first-model/','own-task/'])) {
         const route='/MetisCraft/'+lang+'/cookbook/'+slug;
         let lightGeometry;
         for(const mode of ['default','slate']) {
@@ -118,10 +120,10 @@ function ensure(ok, detail) { if (!ok) report.failures.push(detail); }
           ensure(facts.guides.length===1,route+' expected one reading guide');
           const expectedSize=slug?(width<=600?100:120):160;
           for(const guide of facts.guides) {
-            ensure(guide.src.endsWith(expected==='dark'?'metis-guide-night.png':'metis-guide-chibi.png'),route+' wrong themed portrait');
+            ensure(guide.src.endsWith(expected==='dark'?'metis-guide-night.webp':'metis-guide-chibi.webp'),route+' wrong themed portrait');
             ensure(guide.width===expectedSize&&guide.height===expectedSize,route+' unexpected portrait size '+guide.width+'x'+guide.height);
             ensure(guide.fit==='contain'&&guide.transform==='none',route+' portrait crop or scale');
-            ensure(guide.full===guide.src&&Boolean(guide.alt),route+' original link or alt missing');
+            ensure(guide.full===guide.src.replace(/\.webp$/,'.png')&&Boolean(guide.alt),route+' original link or alt missing');
           }
           const geometry=facts.guides.map(g=>[g.width,g.height]);
           if(mode==='default')lightGeometry=geometry;
@@ -134,7 +136,7 @@ function ensure(ok, detail) { if (!ok) report.failures.push(detail); }
     }
     await page.reload({waitUntil:'load'});
     await page.waitForFunction(()=>document.querySelector('[data-metis-theme]')?.dataset.metisTheme==='dark');
-    ensure((await page.locator('img[data-metis-portrait]').getAttribute('src')).endsWith('metis-guide-night.png'),'Theme-only portrait after reload');
+    ensure((await page.locator('img[data-metis-portrait]').getAttribute('src')).endsWith('metis-guide-night.webp'),'Theme-only portrait after reload');
     report.interactions.push('Theme-only portraits ignore old manual preference and preserve size across 32 layouts');
     await page.setViewportSize({width:1440,height:1080});
     await go('/MetisCraft/en/tensor-analysis/scalar-heads/');await theme('default');
@@ -155,6 +157,15 @@ function ensure(ok, detail) { if (!ok) report.failures.push(detail); }
       });
       ensure(contrast>=4.5,'Figure close text contrast '+mode+': '+contrast);
     }
+    await page.evaluate(()=>document.body.setAttribute('data-md-color-scheme','default'));
+    await page.waitForFunction(()=>!document.querySelector('#metis-figure-dialog img').src.includes('.dark.svg'));
+    ensure(!(await page.locator('#metis-figure-dialog img').getAttribute('src')).includes('.dark.svg'),'Open figure follows light theme');
+    await page.evaluate(()=>document.body.setAttribute('data-md-color-scheme','slate'));
+    await page.waitForFunction(()=>document.querySelector('#metis-figure-dialog img').src.includes('.dark.svg'));
+    ensure((await page.locator('#metis-figure-dialog img').getAttribute('src')).includes('.dark.svg'),'Open figure follows dark theme');
+    const aligned=await figure.evaluate(img=>{const a=img.getBoundingClientRect(),b=img.closest('.md-content__inner').getBoundingClientRect();return Math.abs((a.left+a.width/2)-(b.left+b.width/2))<2;});
+    ensure(aligned,'Vector centered in the reading column');
+    report.interactions.push('Vector centering and open-modal live theme switch');
     report.interactions.push('Figure close button text is readable in light and dark themes');
     const figUrl=await page.locator('#metis-figure-dialog > a').getAttribute('href');
     ensure((await context.request.get(figUrl)).status()===200,'Figure original resource');

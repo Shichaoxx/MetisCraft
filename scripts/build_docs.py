@@ -14,7 +14,7 @@ ROOT = Path(__file__).resolve().parents[1]
 BUILD = ROOT / "build" / "documentation"
 SITE = BUILD / "site"
 PREFIX = "/MetisCraft/"
-SOURCE_REF = "6b9701da7814111b13d8882f48288f4df46dc983"
+SOURCE_REF = "021204a43f8d2a5cdf19b293920962522789b5d3"
 REPO = f"https://github.com/Shichaoxx/MetisCraft/blob/{SOURCE_REF}/"
 
 
@@ -139,6 +139,10 @@ def main():
             output = SITE / "assets" / relative
             output.parent.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(target, output)
+            if target.suffix == ".svg":
+                companion = target.with_name(target.stem + ".dark.svg")
+                if companion.is_file():
+                    shutil.copyfile(companion, output.with_name(companion.name))
             # Standalone report HTML has its own local figures and styles.
             if target.suffix == ".html":
                 rendered = re.sub(
@@ -211,6 +215,7 @@ def main():
                     {"快速上手" if zh else "Quickstart": "quickstart.md"},
                 ]
             },
+            {"引言" if zh else "Intro": "tensor-analysis/introduction.md"},
             {
                 "Cookbook": [
                     {"阅读路线" if zh else "Choose a path": "cookbook/index.md"},
@@ -225,6 +230,26 @@ def main():
                         "从 System One 到 MetisCraft"
                         if zh
                         else "System One to MetisCraft": "tensor-analysis/index.md"
+                    },
+                    {
+                        "模型架构图谱"
+                        if zh
+                        else "Model architecture atlas": "tensor-analysis/architectures.md"
+                    },
+                    {
+                        "答案 token 与固定槽位"
+                        if zh
+                        else "Answer tokens & fixed slots": "tensor-analysis/architectures-token.md"
+                    },
+                    {
+                        "标量、指针与联合头" if zh else "Scalar, pointer & joint heads": (
+                            "tensor-analysis/architectures-structured.md"
+                        )
+                    },
+                    {
+                        "编码器与逐对重排" if zh else "Encoders & pair rerankers": (
+                            "tensor-analysis/architectures-encoders.md"
+                        )
                     },
                     {
                         "张量、轴与索引"
@@ -304,6 +329,7 @@ def main():
             "extra_javascript": [
                 PREFIX + "assets/katex/katex.min.js",
                 PREFIX + "assets/math.js",
+                PREFIX + "assets/figures.js",
                 PREFIX + "assets/language-map.js",
                 PREFIX + "assets/documentation.js",
             ],
@@ -363,6 +389,21 @@ pymdownx.arithmatex.generic = true
             cwd=ROOT,
             check=True,
         )
+        # Full page navigation is used here. Pages without equations do not need
+        # the math runtime or fonts; math.js remains a harmless shared entry.
+        for page in (SITE / lang).rglob("*.html"):
+            html = page.read_text()
+            html = re.sub(
+                r'<img\b(?![^>]*\bloading=)([^>]*\bsrc="[^"]*/(?:tensor-analysis/figures|visuals/figures)/(?:pipeline|judgments|[^"]+\.(?:en|zh))[^"]*\.svg"[^>]*)>',
+                r'<img loading="lazy" decoding="async"\1>',
+                html,
+            )
+            if 'class="arithmatex"' not in html:
+                html = re.sub(
+                    r'<script\b[^>]*src="[^"]*/katex/katex\.min\.js"[^>]*></script>', "", html
+                )
+                html = re.sub(r'<link\b[^>]*href="[^"]*/katex/katex\.min\.css"[^>]*>', "", html)
+            page.write_text(html)
     # Old tutorial URLs are redirects, not a second maintained tutorial or search page.
     for alias, target in policy["aliases"].items():
         old = legacy_destination(alias)

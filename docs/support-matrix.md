@@ -1,5 +1,7 @@
 # 生态与支持矩阵
 
+[逐项目模型架构图谱](zh/tensor-analysis/architectures.md)：按固定版本核对 token 组织、主干配置、读出矩阵与证据范围。
+
 本页区分外部项目能力、MetisCraft 实现范围和实际复现证据。固定版本材料主要核对于 2026-11-03 至 05；JevAny 与框架定位补充核对于 2026-11-07。它是有日期的研究快照，不代表外部项目当前全部能力。未运行第三方工具包，不把文档阅读视为复现。
 
 统一决策工具包已经存在，包括 JevAny 和 ms-swift 的决策能力。MetisCraft 定位是连接自有数据、训练、校准、评测与服务的 JevLike 工具包；价值通过可核查配方与实际使用路径体现，不宣称首个或唯一。
@@ -34,7 +36,7 @@
 | [Kev][gh-kev] / [weights][hf-kev] | pointer；代码／权重 Apache-2.0 | 机制对照，未实现该头或第三方检查点加载 |
 | [Clef][hf-clef] | 联合 schema；权重 Apache-2.0 | 机制对照；未实现，训练数据／历史配置未核实 |
 | [d3][hf-d3] / [d3-ultra][hf-d3ultra] | 固定槽位；Apache-2.0，含非因果注意力要求 | 不由当前两个读出直接支持；不能直接加载其权重 |
-| [mammoth-1][hf-mammoth] | readout.json 声明 slot_lm、256 槽；MIT | 初始化／mask 未核实；27B 全参、6.21M 数据、72×GB300 为作者自报条件，未复现 |
+| [mammoth-1][hf-mammoth] | readout.json 声明 slot_lm、256 槽；MIT | 固定源码核对 slot_lm 与块内双向 full-attention；实际训练历史、6.21M 数据、72×GB300 为作者报告，未复现 |
 | [ms-swift][gh-msswift] | 决策训练／推理／温度校准；Apache-2.0 | 已有框架能力；MetisCraft 未接入其头格式或后端 |
 | [Unsloth][gh-unsloth] | 决策模型接口；仓库 Apache-2.0，所核 decision.py 为 AGPL-3.0-only | 只作来源对照，未运行或复制决策实现 |
 | [tasksource-jev][ds-tasksource] | 数据；逐行 license_use，754 源中 440 标记可商用 | 注册名 tasksource_jev；训练筛选 license_use=commercial，不把数据集整体视为统一授权 |

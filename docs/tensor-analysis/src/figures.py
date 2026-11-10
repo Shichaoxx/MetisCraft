@@ -45,6 +45,45 @@ class Figure:
 
 
 def figures():
+    toolkit = Figure("metiscraft-architecture", "", "", "")
+    architecture = Figure(
+        "jevlike-architecture",
+        r"X\;\xrightarrow{\mathrm{Qwen3\ decoder}}\;H\;"
+        r"\xrightarrow{P\;\mathrm{gather}}\;h\;"
+        r"\xrightarrow{1024\to256\to1}\;S\;"
+        r"\xrightarrow{\tau,\;\mathrm{normalize}}\;p",
+        "architecture.axes",
+        "architecture.meaning",
+    )
+    architecture.row(
+        "architecture.input",
+        Operation("architecture.prompt", 4.6),
+        Tensor("X", "[B,T]", 2, 12, "Ctx"),
+        Operation("architecture.embedding", 3.5),
+        Tensor("E", "[B,T,d]", 12, 5, "Hid", 1),
+    )
+    architecture.row(
+        "architecture.backbone",
+        Tensor("E", "[B,T,d]", 12, 5, "Hid", 1),
+        Operation("architecture.block", 7.3, 2.25),
+        Operation("architecture.norm", 2.6),
+        Tensor("H", "[B,T,d]", 12, 5, "Hid", 1),
+    )
+    architecture.row(
+        "architecture.readout",
+        Tensor("H", "[B,T,d]", 12, 5, "Hid", 1),
+        Operation("slots", 2.9),
+        Tensor("h", "[B,K,d]", 3, 5, "Hid", 1),
+        Operation("scalarhead", 3.3),
+        Tensor("S", "[B,K]", 2, 3, "Lgt"),
+    )
+    architecture.row(
+        "architecture.output",
+        Tensor("S", "[B,K]", 2, 3, "Lgt"),
+        Operation("architecture.probabilities", 5.2),
+        Tensor("p", "[B,K]", 2, 3, "Lgt"),
+        Operation("flow.output", 3.3),
+    )
     token = Figure(
         "readout-1-lm-token",
         (
@@ -418,6 +457,8 @@ def figures():
     return {
         f.slug: f
         for f in (
+            toolkit,
+            architecture,
             notation,
             token,
             slot,

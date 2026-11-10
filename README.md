@@ -15,6 +15,7 @@
 
 <p align="center">
   <b>English</b> · <a href="README_zh.md">简体中文</a><br>
+  <a href="docs/en/tensor-analysis/introduction.md">Intro</a> ·
   <a href="docs/en/cookbook/first-model.md">Get started</a> ·
   <a href="docs/en/cookbook/index.md">Cookbook</a> ·
   <a href="docs/en/tensor-analysis/index.md">Concepts & Tensors</a> ·
@@ -31,7 +32,7 @@
 | Main decisions · 1,000 questions | **87.3% · 873/1,000** | 88.0% | −0.70 pp |
 | Policy transfer · 300 questions | **99.33% · 298/300** | 100% | −0.67 pp |
 
-**Both predeclared accuracy checks passed.** Single seed, the same public development questions; the original training history was not recovered, and calibration can worsen NLL. [Reproduction record and limits](docs/en/reproductions/tev1.md) · [Training recipe](recipes/tev1/README_en.md).
+**Both predeclared accuracy checks passed.** Single seed, the same public development questions; the original training history was not recovered, and calibration can worsen NLL. [Reproduction record and limits](docs/en/reproductions/tev1.md) · [Training recipe](recipes/tev1/README_en.md) · [Model architecture atlas](docs/en/tensor-analysis/architectures.md).
 
 ## One message. Two decisions.
 
@@ -102,6 +103,8 @@ Every number links to a recipe or reproduction record. The [ecosystem matrix](do
 [Cookbook](docs/en/cookbook/index.md) · [Concepts & Tensors](docs/en/tensor-analysis/index.md) · [Five-minute walkthrough](docs/en/tensor-analysis/walkthrough.md) · [Data format](docs/en/data.md) · [Training](docs/en/training.md) · [Serving](docs/en/serving.md) · [Changelog](CHANGELOG.md)
 
 [Contribute](CONTRIBUTING.md), [report a bug](https://github.com/Shichaoxx/MetisCraft/issues/new?template=bug_report.yml) or [suggest a feature](https://github.com/Shichaoxx/MetisCraft/issues/new?template=feature_request.yml).
+
+[JevLike introduction: task, data and tensor architecture](docs/en/tensor-analysis/introduction.md)
 
 ## License
 

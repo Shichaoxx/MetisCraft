@@ -1,0 +1,1403 @@
+{
+  "reviewed_at": "2026-11-10",
+  "scope": {
+    "en": "Pinned-source inspection, not execution or reproduction. MetisCraft and Tev1 have separate recorded-run evidence.",
+    "zh": "固定源码核查，不等于运行或复现；MetisCraft 与 Tev1 另有原运行证据。"
+  },
+  "models": [
+    {
+      "id": "jebadiah",
+      "kind": "selected_lm",
+      "backbone": {
+        "en": [
+          "32 causal hybrid blocks",
+          "Qwen3.5-4B",
+          "LoRA r=16; final RMSNorm"
+        ],
+        "zh": [
+          "32 层因果混合主干",
+          "Qwen3.5-4B",
+          "LoRA r=16；末层 RMSNorm"
+        ]
+      },
+      "dimensions": "d=2560,\\;V=248320",
+      "training": {
+        "en": "Candidate-only hard/soft CE; no EOS completion target. The inspected scorer gathers existing LM rows before FP32 multiplication.",
+        "zh": "候选空间硬／软目标 CE，无 EOS completion 目标。所查评分器先选原始 LM 行，再做 FP32 乘法。"
+      },
+      "mechanism": {
+        "en": "All choices share one causal prompt; one next-answer position. Endpoint caps and temperature application are separate serving contracts.",
+        "zh": "所有选项共享一条因果提示，在下一个答案位置读出。端点候选上限及是否应用温度属于另一层服务契约。"
+      }
+    },
+    {
+      "id": "hmm",
+      "kind": "full_lm",
+      "backbone": {
+        "en": [
+          "Declared Qwen3.5-4B",
+          "frozen dimensions not verified",
+          "LoRA r=32; causal LM"
+        ],
+        "zh": [
+          "声明基座 Qwen3.5-4B",
+          "发布物精确维度未核实",
+          "LoRA r=32；因果 LM"
+        ]
+      },
+      "dimensions": "d=d_{\\rm Hmm},\\;V=V_{\\rm Hmm}",
+      "training": {
+        "en": "The training path gathers A--Z from full vocabulary logits, masks invalid letters and mixes hard/soft CE. No new scalar head.",
+        "zh": "训练路径从完整词表 logits 取 A--Z、屏蔽无效字母，使用硬／软 CE 混合目标；不新增标量头。"
+      },
+      "mechanism": {
+        "en": "Shown: exact training-forward chain. Serving renormalizes a returned top-logprob subset; more than 26 options use chunks, not a single 255-slot head.",
+        "zh": "图示精确训练前向链。服务另对返回的 top-logprob 子集重归一化；超过 26 选项分块处理，并非单个 255 槽头。"
+      }
+    },
+    {
+      "id": "d3",
+      "kind": "fixed_slots",
+      "backbone": {
+        "en": [
+          "64 hybrid blocks; d=5120",
+          "full-attention: bidirectional",
+          "DeltaNet: causal"
+        ],
+        "zh": [
+          "64 层混合主干",
+          "d=5120",
+          "full-attention：双向",
+          "DeltaNet：因果"
+        ]
+      },
+      "dimensions": "d=5120,\\;J=255",
+      "training": {
+        "en": "Independent readout matrix R has shape 255 x 5120. The published inference source does not disclose its training initialization or loss.",
+        "zh": "独立读出矩阵 R 为 255×5120；发布推理源码未披露训练初始化或目标。"
+      },
+      "mechanism": {
+        "en": "Full-attention layers see the entire real prompt. This is not standard causal-LM serving; invalid slots are masked before candidate normalization.",
+        "zh": "full-attention 层可见整个有效提示，不等同普通因果 LM 服务；候选归一化前屏蔽无效槽。"
+      }
+    },
+    {
+      "id": "d3-ultra",
+      "kind": "fixed_slots",
+      "backbone": {
+        "en": [
+          "64 hybrid blocks; d=5120",
+          "prefix-bidirectional attention",
+          "causal DeltaNet; StateOnce"
+        ],
+        "zh": [
+          "64 层混合主干",
+          "d=5120",
+          "前缀双向 full-attention",
+          "因果 DeltaNet；StateOnce"
+        ]
+      },
+      "dimensions": "d=5120,\\;J=255",
+      "training": {
+        "en": "Independent 255 x 5120 readout; initial head and training objective undisclosed. The suffix-end hidden state is read after final normalization.",
+        "zh": "独立 255×5120 读出；头初始化及训练目标未披露。读出末层归一化后的问题后缀末状态。"
+      },
+      "mechanism": {
+        "en": "Prefix prefill saves KV, recurrent and convolution state; each suffix forks that state. A suffix sees the prefix and its own text, never another suffix.",
+        "zh": "前缀预填充保存 KV、循环及卷积状态，各后缀分叉复用；后缀可见前缀及自身，不读取另一题后缀。"
+      },
+      "cache": true
+    },
+    {
+      "id": "mammoth-1",
+      "kind": "full_lm",
+      "backbone": {
+        "en": [
+          "64 hybrid blocks; d=5120",
+          "block-bidirectional full-attn",
+          "causal DeltaNet; slot LM"
+        ],
+        "zh": [
+          "64 层混合主干",
+          "d=5120",
+          "块内双向 full-attention",
+          "因果 DeltaNet；slot LM"
+        ]
+      },
+      "dimensions": "d=5120,\\;V=248320",
+      "training": {
+        "en": "Existing LM head, then slot-ID gather; 256 declared slots. Source loss is candidate CE plus sum-slot Brier, batch mean; released-run settings are author reports.",
+        "zh": "沿用 LM 头后按槽 ID gather，声明 256 槽；源码目标为候选 CE 加槽内求和 Brier，再取 batch 均值。实际训练设置为作者报告。"
+      },
+      "mechanism": {
+        "en": "One shared prefix, separate suffix rows and cache forks. The optional pointer head_dim=256 is not a 5120-to-256 MLP in the released slot_lm model.",
+        "zh": "共享前缀、独立后缀行与缓存分叉；可选 pointer 的 head_dim=256 不是发布 slot_lm 模型中的 5120→256 MLP。"
+      },
+      "cache": true
+    },
+    {
+      "id": "jevforge",
+      "kind": "scalar_pairs",
+      "backbone": {
+        "en": [
+          "24 hybrid causal blocks",
+          "Qwen3.5-0.8B; d=1024",
+          "one row per candidate"
+        ],
+        "zh": [
+          "24 层因果混合主干",
+          "Qwen3.5-0.8B",
+          "d=1024",
+          "每个候选单独一行"
+        ]
+      },
+      "dimensions": "d=1024,\\;m=1024",
+      "training": {
+        "en": "Pinned release: candidate CE + 0.5 Brier; 12 head-only steps, then full-model tuning. The separate RLCD implementation is not this checkpoint history.",
+        "zh": "固定发布版：候选 CE＋0.5 Brier；先仅训练头 12 步，再全参训练。另一 RLCD 实现不等于此权重的训练历史。"
+      },
+      "mechanism": {
+        "en": "Raw pair scores are independent of other candidate texts. Owner grouping and candidate softmax couple probabilities; no shared-prefix tree kernel is implemented.",
+        "zh": "每对原始分数不依赖其他候选文本；owner 分组后的 softmax 会耦合概率。源码没有共享前缀树 kernel。"
+      }
+    },
+    {
+      "id": "kev",
+      "kind": "pointer",
+      "backbone": {
+        "en": [
+          "32 hybrid causal blocks",
+          "Qwen3.5-4B-Base; LoRA r=16",
+          "one row per question"
+        ],
+        "zh": [
+          "32 层因果混合主干",
+          "Qwen3.5-4B-Base；LoRA r=16",
+          "每道题单独一行"
+        ]
+      },
+      "dimensions": "d=2560,\\;d_p=256",
+      "training": {
+        "en": "Pinned checkpoint configuration selects candidate CE. Two biased projections d-to-256; pointer scaling by sqrt(256) is distinct from fitted temperature.",
+        "zh": "固定权重配置采用候选 CE；两个带偏置的 d→256 投影。pointer 的 sqrt(256) 缩放与拟合温度是不同运算。"
+      },
+      "mechanism": {
+        "en": "Hybrid Kev-4B uses question rows, not the packed mask path. Option ends are causal; the decision query sees all options. Actual head temperature was not read.",
+        "zh": "混合 Kev-4B 采用逐题行，不执行 packed mask 路径。候选闭合位置因果可见，decision query 读取全部选项；未读取头文件内实际温度。"
+      }
+    },
+    {
+      "id": "clef",
+      "kind": "joint",
+      "backbone": {
+        "en": [
+          "64 causal hybrid blocks",
+          "d=5120; joint width w=1024",
+          "all fields in one sequence"
+        ],
+        "zh": [
+          "64 层因果混合主干",
+          "d=5120；联合头 w=1024",
+          "所有字段置于同一序列"
+        ]
+      },
+      "dimensions": "d=5120,\\;w=1024",
+      "training": {
+        "en": "Released source exposes inference and head configuration, not the training loss or historical optimization. Model-card base name and config class are recorded separately.",
+        "zh": "发布源码提供推理与头配置，未给出训练目标和历史优化记录；模型卡基座名称与配置类分别记录。"
+      },
+      "mechanism": {
+        "en": "Two option-to-memory cross-attention layers, then four field decoder layers. Fields communicate globally; lexical prior plus a gated cosine/MLP term gives scores.",
+        "zh": "两层候选→memory cross-attention 后接四层字段 decoder；字段全局交互，词面先验加门控 cosine／MLP 项得到分数。"
+      }
+    },
+    {
+      "id": "jevany",
+      "kind": "pointer",
+      "backbone": {
+        "en": [
+          "Configurable native adapter",
+          "d depends on checkpoint",
+          "default pointer dp=256"
+        ],
+        "zh": [
+          "可配置的 native adapter",
+          "d 取决于具体 checkpoint",
+          "默认 pointer dp=256"
+        ]
+      },
+      "dimensions": "d\\;\\mathrm{configurable},\\;d_p=256",
+      "training": {
+        "en": "Native pointer: hard/soft candidate CE. The figure selects residual_dim=0 (default); the optional residual MLP is not silently assumed present.",
+        "zh": "native pointer 使用硬／软候选 CE；图示默认 residual_dim=0，不默认为所有权重添加可选残差 MLP。"
+      },
+      "mechanism": {
+        "en": "Native source mode, not a pinned HF checkpoint. Rows/packed dispatch depends on the backbone; hybrid Qwen3.5 falls back to question rows.",
+        "zh": "图示固定工具源码模式，未钉 HF 权重。rows／packed 分派依赖主干；混合 Qwen3.5 回退为逐题行。"
+      }
+    },
+    {
+      "id": "jevany-lm",
+      "kind": "selected_lm",
+      "backbone": {
+        "en": [
+          "Configurable native adapter",
+          "d and V depend on checkpoint",
+          "native lm_token mode"
+        ],
+        "zh": [
+          "可配置的 native adapter",
+          "d、V 取决于 checkpoint",
+          "native lm_token 模式"
+        ]
+      },
+      "dimensions": "d,V\\;\\mathrm{configurable}",
+      "training": {
+        "en": "Native training uses full-vocabulary CE at the decision position with no EOS target. Inference selects existing frozen LM rows before projection.",
+        "zh": "native 训练在 decision 位置使用全词表 CE，无 EOS 目标；推理先选原始冻结 LM 行，再投影。"
+      },
+      "mechanism": {
+        "en": "One distinct single-token verbalizer per choice. Training-free choice with alias-logsumexp is another path; it is not mixed into this graph.",
+        "zh": "每个选项使用不同的单 token verbalizer。含 alias-logsumexp 的 training-free choice 属另一条路径，不混入此图。"
+      }
+    },
+    {
+      "id": "gliclass",
+      "kind": "encoder_dot",
+      "backbone": {
+        "en": [
+          "DeBERTa-v3-small",
+          "6 bidirectional blocks; d=768",
+          "uni-encoder / simple scorer"
+        ],
+        "zh": [
+          "DeBERTa-v3-small",
+          "6 层双向主干",
+          "d=768",
+          "uni-encoder／simple 读出"
+        ]
+      },
+      "dimensions": "d=768",
+      "training": {
+        "en": "Named multi-label loss branch is BCE; the old checkpoint training history is not recovered. The selected config has no feature L2 or temperature scale.",
+        "zh": "命名多标签损失分支为 BCE，未恢复旧 checkpoint 训练历史。所选配置不做特征 L2，也不使用温度缩放。"
+      },
+      "mechanism": {
+        "en": "CLS and label markers see the joint input. Independent d-to-d-to-d projectors give a text/label dot product; per-label sigmoid does not imply independent pairs.",
+        "zh": "CLS 与标签标记可见联合输入；两套 d→d→d 投影后取文本／标签点积。逐标签 sigmoid 不代表独立 pairs。"
+      }
+    },
+    {
+      "id": "gliner2",
+      "kind": "encoder_scalar",
+      "backbone": {
+        "en": [
+          "DeBERTa-v3-base",
+          "12 bidirectional blocks; d=768",
+          "legacy span classification"
+        ],
+        "zh": [
+          "DeBERTa-v3-base",
+          "12 层双向主干",
+          "d=768",
+          "legacy span 分类分支"
+        ]
+      },
+      "dimensions": "d=768,\\;m=1536",
+      "training": {
+        "en": "Classification uses sum-reduced BCE even when single-label inference selects softmax. The span/count heads are not on this classification path.",
+        "zh": "分类训练使用求和 BCE，即使单标签推理选择 softmax；span／count 头不在此分类路径上。"
+      },
+      "mechanism": {
+        "en": "Gather actual [L] markers, skipping [P]; shared d-to-2d ReLU-to-1 MLP. The processor does not insert a CLS readout for this path.",
+        "zh": "gather 实际 [L] 标记并跳过 [P]，共享 d→2d、ReLU、→1 MLP；该处理器不额外插入 CLS 读出。"
+      }
+    },
+    {
+      "id": "open-jev",
+      "kind": "fixed_class",
+      "backbone": {
+        "en": [
+          "mmBERT-small / ModernBERT",
+          "22 bidirectional blocks; d=384",
+          "local/global attention schedule"
+        ],
+        "zh": [
+          "mmBERT-small／ModernBERT",
+          "22 层双向主干",
+          "d=384",
+          "局部／全局注意力层交替"
+        ]
+      },
+      "dimensions": "d=384,\\;K\\;\\mathrm{fixed}",
+      "training": {
+        "en": "Default student minimizes KL from teacher probabilities; optional gold CE has weight zero by default. Internal classifier is a pinned Transformers structural reference.",
+        "zh": "默认学生拟合教师分布 KL，可选 gold CE 默认权重为零；内部分类头以固定 Transformers 版本作结构参考。"
+      },
+      "mechanism": {
+        "en": "Masked mean, Linear-GELU-LayerNorm and a fixed K-class head. Runtime option text is absent; new class names require a new task mapping/head, not just a prompt edit.",
+        "zh": "mask mean 后经 Linear／GELU／LayerNorm 及固定 K 类头。推理不输入候选文本；新类别需要任务映射／头，不能仅改提示。"
+      }
+    },
+    {
+      "id": "setfit",
+      "kind": "fixed_class",
+      "backbone": {
+        "en": [
+          "MPNet sentence encoder",
+          "12 bidirectional blocks",
+          "d=768"
+        ],
+        "zh": [
+          "MPNet 句向量编码器",
+          "12 层双向主干",
+          "d=768"
+        ]
+      },
+      "dimensions": "d=768,\\;K\\;\\mathrm{fixed}",
+      "training": {
+        "en": "Phase 1: independent shared encodings and cosine MSE on same/different-class text pairs. Phase 2: fit multiclass logistic regression on sentence embeddings.",
+        "zh": "阶段一：共享编码器分别编码同／异类文本对，以 cosine MSE 训练；阶段二：句向量上拟合多类逻辑回归。"
+      },
+      "mechanism": {
+        "en": "The selected MPNet + sklearn multiclass path has fixed labels and no forced L2 at inference. Body variants and Torch heads are separate supported modes.",
+        "zh": "图示 MPNet＋sklearn 多类路径，标签固定、推理不强制 L2。其他 body 与 Torch 头是另行选择的模式。"
+      }
+    },
+    {
+      "id": "qwen3-reranker",
+      "kind": "full_lm",
+      "backbone": {
+        "en": [
+          "Qwen3-Reranker",
+          "0.6B; 28 causal blocks",
+          "query-document rows"
+        ],
+        "zh": [
+          "Qwen3-Reranker",
+          "0.6B；28 因果层",
+          "query-document 行"
+        ]
+      },
+      "dimensions": "d=1024,\\;V=151669",
+      "training": {
+        "en": "Official Transformers inference: full vocabulary logits, gather no/yes, normalize those two values. This does not identify the exact training token mask or EOS objective.",
+        "zh": "官方 Transformers 推理先算词表 logits、取 no／yes 后二列归一化；不能据此推断训练 token mask 或 EOS 目标。"
+      },
+      "mechanism": {
+        "en": "P(yes) is a pointwise relevance score; no softmax over documents. Q has width 16x128=2048, K/V width 8x128=1024; hidden width is not the head concatenation width. In the index cells, n=no and y=yes.",
+        "zh": "P(yes) 是逐对相关分，不在 document 轴 softmax。Q 宽 16×128=2048，K／V 各宽 8×128=1024；hidden 宽不等于拼头宽。 索引格中 n=no、y=yes。"
+      },
+      "binary": true
+    }
+  ],
+  "primary_sources": {
+    "token-slot": {
+      "j-config": {
+        "url": "https://huggingface.co/frontier-infra/jebadiah-4b-v2/blob/872ae9509607761d4484ab49270311d9308bba18/config.json",
+        "revision": "872ae9509607761d4484ab49270311d9308bba18",
+        "file": "config.json",
+        "lines": "L8–79 text; L85–104 vision"
+      },
+      "j-provenance": {
+        "url": "https://huggingface.co/frontier-infra/jebadiah-4b-v2/blob/872ae9509607761d4484ab49270311d9308bba18/jebadiah.json",
+        "revision": "872ae9509607761d4484ab49270311d9308bba18",
+        "file": "jebadiah.json",
+        "lines": "whole file; base, adapter, prompt_contract, temperatures"
+      },
+      "j-prompt": {
+        "url": "https://huggingface.co/frontier-infra/jebadiah-4b-v2/blob/872ae9509607761d4484ab49270311d9308bba18/scripts/jebadiah_prompt.py",
+        "revision": "872ae9509607761d4484ab49270311d9308bba18",
+        "file": "scripts/jebadiah_prompt.py",
+        "lines": "L38; L95–141; L143–189"
+      },
+      "j-render": {
+        "url": "https://huggingface.co/frontier-infra/jebadiah-4b-v2/blob/872ae9509607761d4484ab49270311d9308bba18/scripts/ainode_prompt_verbatim.py",
+        "revision": "872ae9509607761d4484ab49270311d9308bba18",
+        "file": "scripts/ainode_prompt_verbatim.py",
+        "lines": "L21–34; L80–99; L114; L257–279"
+      },
+      "j-model": {
+        "url": "https://huggingface.co/frontier-infra/jebadiah-4b-v2/blob/872ae9509607761d4484ab49270311d9308bba18/scripts/jebadiah_model.py",
+        "revision": "872ae9509607761d4484ab49270311d9308bba18",
+        "file": "scripts/jebadiah_model.py",
+        "lines": "L17–41; L54–79; L103–128"
+      },
+      "j-training": {
+        "url": "https://github.com/getainode/jebadiah/blob/a7e8108fbedaa08faa016bf4aeaa7c281b068639/train/train_jebadiah.py",
+        "revision": "a7e8108fbedaa08faa016bf4aeaa7c281b068639",
+        "file": "train/train_jebadiah.py",
+        "lines": "L90–117 targets; L142–164 collator; L195–210 loss; L323–337 LoRA"
+      },
+      "j-run": {
+        "url": "https://github.com/getainode/jebadiah/blob/a7e8108fbedaa08faa016bf4aeaa7c281b068639/results/runs/4b-chat-v1/config.json",
+        "revision": "a7e8108fbedaa08faa016bf4aeaa7c281b068639",
+        "file": "results/runs/4b-chat-v1/config.json",
+        "lines": "whole file; source-authored run config"
+      },
+      "j-card": {
+        "url": "https://huggingface.co/frontier-infra/jebadiah-4b-v2/blob/872ae9509607761d4484ab49270311d9308bba18/README.md",
+        "revision": "872ae9509607761d4484ab49270311d9308bba18",
+        "file": "README.md",
+        "lines": "L76–80; L179–201"
+      },
+      "h-training": {
+        "url": "https://github.com/n4ze3m/hmm/blob/78d8d4a62a41857ce67d903aadf504580feea832/training/train.py",
+        "revision": "78d8d4a62a41857ce67d903aadf504580feea832",
+        "file": "training/train.py",
+        "lines": "L24–35 defaults; L56–95 examples; L98–121 prompt; L143–162 forward/mask; L186–190 LoRA; L217–222 mixed hard/soft loss"
+      },
+      "h-prompt": {
+        "url": "https://github.com/n4ze3m/hmm/blob/78d8d4a62a41857ce67d903aadf504580feea832/server/src/prompt.ts",
+        "revision": "78d8d4a62a41857ce67d903aadf504580feea832",
+        "file": "server/src/prompt.ts",
+        "lines": "L1–2; L17–47; L52–62"
+      },
+      "h-backends": {
+        "url": "https://github.com/n4ze3m/hmm/blob/78d8d4a62a41857ce67d903aadf504580feea832/server/src/backends.ts",
+        "revision": "78d8d4a62a41857ce67d903aadf504580feea832",
+        "file": "server/src/backends.ts",
+        "lines": "L17–25 collect; L29–44 llama.cpp; L49–63 Ollama"
+      },
+      "h-server": {
+        "url": "https://github.com/n4ze3m/hmm/blob/78d8d4a62a41857ce67d903aadf504580feea832/server/src/index.ts",
+        "revision": "78d8d4a62a41857ce67d903aadf504580feea832",
+        "file": "server/src/index.ts",
+        "lines": "L15–38; L40–61; L64–79"
+      },
+      "h-adapter": {
+        "url": "https://huggingface.co/n4ze3m/Qwen3.5-4B-Hmm/blob/adcef8b4701704a37c33053a8a262a7bd076a511/lora/adapter_config.json",
+        "revision": "adcef8b4701704a37c33053a8a262a7bd076a511",
+        "file": "lora/adapter_config.json",
+        "lines": "whole file; base, r=32, alpha=64, target_modules, revision=null"
+      },
+      "h-card": {
+        "url": "https://huggingface.co/n4ze3m/Qwen3.5-4B-Hmm/blob/adcef8b4701704a37c33053a8a262a7bd076a511/README.md",
+        "revision": "adcef8b4701704a37c33053a8a262a7bd076a511",
+        "file": "README.md",
+        "lines": "L127–132 training author report"
+      },
+      "h-metadata": {
+        "url": "https://huggingface.co/api/models/n4ze3m/Qwen3.5-4B-Hmm/revision/adcef8b4701704a37c33053a8a262a7bd076a511",
+        "revision": "adcef8b4701704a37c33053a8a262a7bd076a511",
+        "file": "Hub model metadata",
+        "lines": "config={}, gguf.architecture=qwen35; total=4205751296; context_length=262144"
+      },
+      "d-config": {
+        "url": "https://huggingface.co/vllm-sr/d3/blob/62f07e54c6c3a5ff5f695107377edc43e1a86ea8/config.json",
+        "revision": "62f07e54c6c3a5ff5f695107377edc43e1a86ea8",
+        "file": "config.json",
+        "lines": "L1–24; L22–119 hybrid text; L123–146 vision"
+      },
+      "d-decision": {
+        "url": "https://huggingface.co/vllm-sr/d3/blob/62f07e54c6c3a5ff5f695107377edc43e1a86ea8/decision_config.json",
+        "revision": "62f07e54c6c3a5ff5f695107377edc43e1a86ea8",
+        "file": "decision_config.json",
+        "lines": "L1–7 base; L8–520 codes/ids; L521–525 runtime settings"
+      },
+      "d-runtime": {
+        "url": "https://huggingface.co/vllm-sr/d3/blob/62f07e54c6c3a5ff5f695107377edc43e1a86ea8/d3_runtime.py",
+        "revision": "62f07e54c6c3a5ff5f695107377edc43e1a86ea8",
+        "file": "d3_runtime.py",
+        "lines": "L949–957 class; L1015–1074 encoder/mask/norm; L1181–1188 labels; L1216–1235 load; L1675–1713 readout; L1715–1742 visual features; L2161–2163 cost policy"
+      },
+      "d-format": {
+        "url": "https://huggingface.co/vllm-sr/d3/blob/62f07e54c6c3a5ff5f695107377edc43e1a86ea8/d3_format.py",
+        "revision": "62f07e54c6c3a5ff5f695107377edc43e1a86ea8",
+        "file": "d3_format.py",
+        "lines": "L22–36; L89–115 label ids; L119–155 prompt"
+      },
+      "d-wrapper": {
+        "url": "https://huggingface.co/vllm-sr/d3/blob/62f07e54c6c3a5ff5f695107377edc43e1a86ea8/modeling_d3.py",
+        "revision": "62f07e54c6c3a5ff5f695107377edc43e1a86ea8",
+        "file": "modeling_d3.py",
+        "lines": "L119–125 no initialization; L288–291 no training"
+      },
+      "d-manifest": {
+        "url": "https://huggingface.co/vllm-sr/d3/blob/62f07e54c6c3a5ff5f695107377edc43e1a86ea8/MODEL_MANIFEST.json",
+        "revision": "62f07e54c6c3a5ff5f695107377edc43e1a86ea8",
+        "file": "MODEL_MANIFEST.json",
+        "lines": "parameters.readout=1305600; base_model revision; runtime hashes"
+      },
+      "d-card": {
+        "url": "https://huggingface.co/vllm-sr/d3/blob/62f07e54c6c3a5ff5f695107377edc43e1a86ea8/README.md",
+        "revision": "62f07e54c6c3a5ff5f695107377edc43e1a86ea8",
+        "file": "README.md",
+        "lines": "L36–40; L373–386; no training loss or initialization supplied"
+      },
+      "u-config": {
+        "url": "https://huggingface.co/vllm-sr/d3-ultra/blob/ccdcfa611649a59e095e0b5e1732a15cedafadd6/config.json",
+        "revision": "ccdcfa611649a59e095e0b5e1732a15cedafadd6",
+        "file": "config.json",
+        "lines": "L1–35; L34–131 hybrid text; L135–158 vision"
+      },
+      "u-decision": {
+        "url": "https://huggingface.co/vllm-sr/d3-ultra/blob/ccdcfa611649a59e095e0b5e1732a15cedafadd6/decision_config.json",
+        "revision": "ccdcfa611649a59e095e0b5e1732a15cedafadd6",
+        "file": "decision_config.json",
+        "lines": "temperature_by_questions; attention_mode=prefix_bidir; prompt_layout=header-v1; no base_model"
+      },
+      "u-runtime": {
+        "url": "https://huggingface.co/vllm-sr/d3-ultra/blob/ccdcfa611649a59e095e0b5e1732a15cedafadd6/d3_runtime.py",
+        "revision": "ccdcfa611649a59e095e0b5e1732a15cedafadd6",
+        "file": "d3_runtime.py",
+        "lines": "L38–55 modes; L1174–1211 block attention; L1325–1374 StateOnce; L1813–1819 independent readout shape; L2818–2895 readout/temperature; L3123–3181 Box"
+      },
+      "u-format": {
+        "url": "https://huggingface.co/vllm-sr/d3-ultra/blob/ccdcfa611649a59e095e0b5e1732a15cedafadd6/d3_format.py",
+        "revision": "ccdcfa611649a59e095e0b5e1732a15cedafadd6",
+        "file": "d3_format.py",
+        "lines": "L121–177 header-v1; L214–245 state boundary"
+      },
+      "u-compose": {
+        "url": "https://huggingface.co/vllm-sr/d3-ultra/blob/ccdcfa611649a59e095e0b5e1732a15cedafadd6/d3_compose.py",
+        "revision": "ccdcfa611649a59e095e0b5e1732a15cedafadd6",
+        "file": "d3_compose.py",
+        "lines": "L5–14 scope; L34–36 bins/markers; L248–287 offsets/decode"
+      },
+      "u-manifest": {
+        "url": "https://huggingface.co/vllm-sr/d3-ultra/blob/ccdcfa611649a59e095e0b5e1732a15cedafadd6/MODEL_MANIFEST.json",
+        "revision": "ccdcfa611649a59e095e0b5e1732a15cedafadd6",
+        "file": "MODEL_MANIFEST.json",
+        "lines": "parameters and hashes; no base_model"
+      },
+      "u-card": {
+        "url": "https://huggingface.co/vllm-sr/d3-ultra/blob/ccdcfa611649a59e095e0b5e1732a15cedafadd6/README.md",
+        "revision": "ccdcfa611649a59e095e0b5e1732a15cedafadd6",
+        "file": "README.md",
+        "lines": "L21–40 functionality; no training objective or head initialization supplied"
+      },
+      "m-config": {
+        "url": "https://huggingface.co/baselabs/mammoth-1/blob/61cec44c281c693992e3d6ebeb44dd3402dfa186/config.json",
+        "revision": "61cec44c281c693992e3d6ebeb44dd3402dfa186",
+        "file": "config.json",
+        "lines": "L8–117 text; L123–143 vision; L146–153 overrides"
+      },
+      "m-readout": {
+        "url": "https://huggingface.co/baselabs/mammoth-1/blob/61cec44c281c693992e3d6ebeb44dd3402dfa186/readout.json",
+        "revision": "61cec44c281c693992e3d6ebeb44dd3402dfa186",
+        "file": "readout.json",
+        "lines": "L1–5 readout=slot_lm, head_dim=256, n_slots=256"
+      },
+      "m-patch": {
+        "url": "https://huggingface.co/baselabs/mammoth-1/blob/61cec44c281c693992e3d6ebeb44dd3402dfa186/serve.patch",
+        "revision": "61cec44c281c693992e3d6ebeb44dd3402dfa186",
+        "file": "serve.patch",
+        "lines": "L47–82 split/scores; L100–178 prefix/suffix forwards; L248–268 semantics; L351–389 block ids; L491–507 no extra head for slot_lm; L560–616 training scoring"
+      },
+      "m-setup": {
+        "url": "https://huggingface.co/baselabs/mammoth-1/blob/61cec44c281c693992e3d6ebeb44dd3402dfa186/setup.sh",
+        "revision": "61cec44c281c693992e3d6ebeb44dd3402dfa186",
+        "file": "setup.sh",
+        "lines": "L5–9 immutable OneJev source and supplied patch"
+      },
+      "m-card": {
+        "url": "https://huggingface.co/baselabs/mammoth-1/blob/61cec44c281c693992e3d6ebeb44dd3402dfa186/README.md",
+        "revision": "61cec44c281c693992e3d6ebeb44dd3402dfa186",
+        "file": "README.md",
+        "lines": "L34; L51–54; L63–103 selfhost text example; L127–132 author training"
+      },
+      "m-constraints": {
+        "url": "https://huggingface.co/baselabs/mammoth-1/blob/61cec44c281c693992e3d6ebeb44dd3402dfa186/constraints.txt",
+        "revision": "61cec44c281c693992e3d6ebeb44dd3402dfa186",
+        "file": "constraints.txt",
+        "lines": "transformers==5.19.0"
+      },
+      "one-engine": {
+        "url": "https://github.com/OmniJev/OneJev/blob/81ce62f1597c91e46767d4d02d6ac2e18534fe94/qev/engine.py",
+        "revision": "81ce62f1597c91e46767d4d02d6ac2e18534fe94",
+        "file": "qev/engine.py",
+        "lines": "L87–104 text class/FP32 head; L116–130 head upcast; L132–156 labels; L194–216 gather; L379–383 softmax"
+      },
+      "one-prompt": {
+        "url": "https://github.com/OmniJev/OneJev/blob/81ce62f1597c91e46767d4d02d6ac2e18534fe94/qev/prompt.py",
+        "revision": "81ce62f1597c91e46767d4d02d6ac2e18534fe94",
+        "file": "qev/prompt.py",
+        "lines": "L16–41 system/256 slot names; L96–157 layout; patch adjusts span bookkeeping"
+      },
+      "one-calibration": {
+        "url": "https://github.com/OmniJev/OneJev/blob/81ce62f1597c91e46767d4d02d6ac2e18534fe94/qev/calibrate.py",
+        "revision": "81ce62f1597c91e46767d4d02d6ac2e18534fe94",
+        "file": "qev/calibrate.py",
+        "lines": "L12–21 default T=1; L35–40 softmax"
+      },
+      "one-common": {
+        "url": "https://github.com/OmniJev/OneJev/blob/81ce62f1597c91e46767d4d02d6ac2e18534fe94/train/common.py",
+        "revision": "81ce62f1597c91e46767d4d02d6ac2e18534fe94",
+        "file": "train/common.py",
+        "lines": "L291–334 class loading; L371–418 readout/gather/mask"
+      },
+      "one-sft": {
+        "url": "https://github.com/OmniJev/OneJev/blob/81ce62f1597c91e46767d4d02d6ac2e18534fe94/train/sft.py",
+        "revision": "81ce62f1597c91e46767d4d02d6ac2e18534fe94",
+        "file": "train/sft.py",
+        "lines": "L368–379 slot_loss; unchanged by serve.patch"
+      },
+      "one-mm": {
+        "url": "https://github.com/OmniJev/OneJev/blob/81ce62f1597c91e46767d4d02d6ac2e18534fe94/train/mm.py",
+        "revision": "81ce62f1597c91e46767d4d02d6ac2e18534fe94",
+        "file": "train/mm.py",
+        "lines": "L33–58 media token layout; L127–160 processor/right-padding/last-real-token logits"
+      },
+      "tf17": {
+        "url": "https://github.com/huggingface/transformers/blob/856157a2f3e9594954310df18fdccc31ffddebe9/src/transformers/models/qwen3_5/modeling_qwen3_5.py",
+        "revision": "856157a2f3e9594954310df18fdccc31ffddebe9",
+        "file": "src/transformers/models/qwen3_5/modeling_qwen3_5.py",
+        "lines": "L1222–1235 embeddings/norm; L1273–1306 masks/final norm; L1664–1679 CausalLM head"
+      },
+      "tf19": {
+        "url": "https://github.com/huggingface/transformers/blob/c4c4605f961877852b89b97478536bb3a26b6fd1/src/transformers/models/qwen3_5/modeling_qwen3_5.py",
+        "revision": "c4c4605f961877852b89b97478536bb3a26b6fd1",
+        "file": "src/transformers/models/qwen3_5/modeling_qwen3_5.py",
+        "lines": "L1212–1225 embeddings/norm; L1292 final norm; L1664–1676 LM head; L1756–1764 multimodal head"
+      },
+      "tf19-mask": {
+        "url": "https://github.com/huggingface/transformers/blob/c4c4605f961877852b89b97478536bb3a26b6fd1/src/transformers/masking_utils.py",
+        "revision": "c4c4605f961877852b89b97478536bb3a26b6fd1",
+        "file": "src/transformers/masking_utils.py",
+        "lines": "L117–130 same block overlay; L903–906 contract; L977–980 causal OR same-block mask"
+      }
+    },
+    "structured": {
+      "kev_model": {
+        "url": "https://github.com/jaredpalmer/kev/blob/2074cc44256200bb37540103fa4572901faa10f3/kev/model.py",
+        "ranges": {
+          "encoding": [
+            87,
+            127
+          ],
+          "mask": [
+            159,
+            185
+          ],
+          "rows_split": [
+            188,
+            202
+          ],
+          "pointer": [
+            205,
+            223
+          ],
+          "backbone_and_lora": [
+            243,
+            278
+          ],
+          "gather": [
+            326,
+            327
+          ],
+          "row_dispatch": [
+            329,
+            394
+          ],
+          "probs": [
+            397,
+            402
+          ],
+          "flattened_readout": [
+            494,
+            505
+          ]
+        },
+        "snapshot_sha256": "927967d12cef0609baa1f5f4fad1e9153c530ba2987759a40b032856a24b7000"
+      },
+      "kev_train": {
+        "url": "https://github.com/jaredpalmer/kev/blob/2074cc44256200bb37540103fa4572901faa10f3/kev/train.py",
+        "ranges": {
+          "loss": [
+            41,
+            61
+          ],
+          "batch_reduction": [
+            342,
+            365
+          ]
+        },
+        "snapshot_sha256": "380045e478c709773eb34bb512f912ee5ab25ca8bf83b219d8e9b1a9dc3f2f8d"
+      },
+      "kev_config": {
+        "url": "https://huggingface.co/jaredpalmer/kev-4b/blob/6cfce5c2fa4b4bd64026336ab649c5ca78857d52/training_config.json",
+        "snapshot_sha256": "005f939bef00274f49f15282dfa60543f5f82e781268f3c12d8ceeacb9f61f30"
+      },
+      "kev_adapter": {
+        "url": "https://huggingface.co/jaredpalmer/kev-4b/blob/6cfce5c2fa4b4bd64026336ab649c5ca78857d52/adapter_config.json",
+        "snapshot_sha256": "8a05dfd6c5e7f61a62e6db5d8de8093a8dbbd105aa7ee7b5e7b73f6249f45617"
+      },
+      "kev_card": {
+        "url": "https://huggingface.co/jaredpalmer/kev-4b/blob/6cfce5c2fa4b4bd64026336ab649c5ca78857d52/README.md",
+        "snapshot_sha256": "e423ce0e3caf0a1e6ff996a58522946a97711e0439c5fea332a8861b02498435"
+      },
+      "kev_result": {
+        "url": "https://huggingface.co/jaredpalmer/kev-4b/blob/6cfce5c2fa4b4bd64026336ab649c5ca78857d52/result.json",
+        "note": "这里只用于区别报告温度与真实权重温度；未据此断定head.pt内值。",
+        "snapshot_sha256": "c28c365684ebc739d93c51d7ee881e3c589e2633deb3b42f4818b149b4c43ab2"
+      },
+      "kev_base": {
+        "url": "https://huggingface.co/Qwen/Qwen3.5-4B-Base/blob/1001bb4d826a52d1f399e183466143f4da7b741b/config.json",
+        "snapshot_sha256": "ddc63e1c717afa86c865bb5e01313d89d72bb53b97ad4a8a03ba8510c0621670"
+      },
+      "clef_model": {
+        "url": "https://huggingface.co/Cloudflare/clef/blob/cfddda043dd190ef3b01cff449d5ee8cff1e8ec6/joint_schema_model.py",
+        "ranges": {
+          "option_order": [
+            46,
+            57
+          ],
+          "encoding": [
+            103,
+            196
+          ],
+          "collation": [
+            199,
+            239
+          ],
+          "routing": [
+            242,
+            278
+          ],
+          "head_init": [
+            281,
+            337
+          ],
+          "pool_and_query": [
+            344,
+            399
+          ],
+          "evidence_and_field": [
+            400,
+            424
+          ],
+          "scorer": [
+            426,
+            459
+          ],
+          "backbone_call": [
+            468,
+            491
+          ],
+          "softmax": [
+            547,
+            576
+          ]
+        },
+        "snapshot_sha256": "0e304cf7c6500e8bb59bef7e2afd2c6373f82596dfb3b57d1aa93c175e2dc3a3"
+      },
+      "clef_head_config": {
+        "url": "https://huggingface.co/Cloudflare/clef/blob/cfddda043dd190ef3b01cff449d5ee8cff1e8ec6/joint_head_config.json",
+        "snapshot_sha256": "890be585d75b981201eb96a35f98a9967afe37bc8d220cfdea2e72d56507534f"
+      },
+      "clef_base_config": {
+        "url": "https://huggingface.co/Cloudflare/clef/blob/cfddda043dd190ef3b01cff449d5ee8cff1e8ec6/config.json",
+        "snapshot_sha256": "c42e88892bd3fd84e8276b2ad90df58c1c3b797676ea161035006a72ad468c58"
+      },
+      "clef_card": {
+        "url": "https://huggingface.co/Cloudflare/clef/blob/cfddda043dd190ef3b01cff449d5ee8cff1e8ec6/README.md",
+        "snapshot_sha256": "16ee04d296b1ef5edcdb3c4d3d3cd369acdc627fb5d255b34264a73e224d821a"
+      },
+      "jevforge_model": {
+        "url": "https://github.com/zwliJay/jev-forge/blob/039badbafc242b4f8105a59e27f789320efe6e9c/jevforge/model.py",
+        "ranges": {
+          "head": [
+            28,
+            33
+          ],
+          "forward": [
+            35,
+            40
+          ]
+        },
+        "snapshot_sha256": "a2483cbb495712a4f4006bc9b4c22f5d716ffae97b90a6ae94c9ff8d2d25af9d"
+      },
+      "jevforge_encode": {
+        "url": "https://github.com/zwliJay/jev-forge/blob/039badbafc242b4f8105a59e27f789320efe6e9c/jevforge/encode.py",
+        "ranges": {
+          "candidate_rendering": [
+            24,
+            31
+          ],
+          "prompt": [
+            34,
+            52
+          ],
+          "length_rejection": [
+            55,
+            66
+          ]
+        },
+        "snapshot_sha256": "81c47853edcc84152a759f3c9c2420112f2fbdb6108539425de374c380ec6a09"
+      },
+      "jevforge_train": {
+        "url": "https://github.com/zwliJay/jev-forge/blob/039badbafc242b4f8105a59e27f789320efe6e9c/jevforge/train.py",
+        "ranges": {
+          "batch_rows_and_owner": [
+            93,
+            111
+          ],
+          "loss": [
+            114,
+            119
+          ],
+          "temperature": [
+            147,
+            182
+          ]
+        },
+        "snapshot_sha256": "45a9669c3ea1d4536659fb5f83b27e5e087695bf3937cbb8e013724a78050ba3"
+      },
+      "jevforge_predict": {
+        "url": "https://github.com/zwliJay/jev-forge/blob/039badbafc242b4f8105a59e27f789320efe6e9c/jevforge/predict.py",
+        "ranges": {
+          "rows": [
+            83,
+            104
+          ],
+          "temperature": [
+            106,
+            109
+          ],
+          "probabilities": [
+            111,
+            148
+          ]
+        },
+        "snapshot_sha256": "ad3ea0dd0ae4fe7d9af6c839bc04e002c8abf27367b026bf750d91446d93a10f"
+      },
+      "jevforge_rlcd": {
+        "url": "https://github.com/zwliJay/jev-forge/blob/039badbafc242b4f8105a59e27f789320efe6e9c/jevforge/rlcd.py",
+        "ranges": {
+          "rlcd": [
+            33,
+            94
+          ]
+        },
+        "snapshot_sha256": "16d30028a6ef785d92c2c8326748d73352a88b46d340bf85d99628ba72b197e7"
+      },
+      "jevforge_config": {
+        "url": "https://huggingface.co/AndeyTait/JevForge-0.8B/blob/5ca7c0861a0d9b72629a7bc40130a8f154c4840f/config.json",
+        "snapshot_sha256": "1a256e17c3b9465d4ed10b8fc1f16f9651406ff0649a162a4a9ef17b2b19ec3f"
+      },
+      "jevforge_base": {
+        "url": "https://huggingface.co/AndeyTait/JevForge-0.8B/blob/5ca7c0861a0d9b72629a7bc40130a8f154c4840f/backbone/config.json",
+        "snapshot_sha256": "b90b86f35c8e6925ef74ee04d0e758f0a845c83a42089ad82bbaa948de9b4204"
+      },
+      "jevforge_release_train": {
+        "url": "https://huggingface.co/AndeyTait/JevForge-0.8B/blob/5ca7c0861a0d9b72629a7bc40130a8f154c4840f/training-code/train_curated_v3.py",
+        "ranges": {
+          "trainable": [
+            40,
+            43
+          ],
+          "recipe": [
+            47,
+            47
+          ],
+          "objective": [
+            70,
+            80
+          ],
+          "calibration": [
+            104,
+            106
+          ]
+        },
+        "snapshot_sha256": "2b6bfec89a096ce7a39f772ae338c09f287486fe05e9a7bc43d0fa617ff56a68"
+      },
+      "jevforge_card": {
+        "url": "https://huggingface.co/AndeyTait/JevForge-0.8B/blob/5ca7c0861a0d9b72629a7bc40130a8f154c4840f/README.md",
+        "snapshot_sha256": "229370b2ac3cbb91cb67494b717cf0197bc99a46ed663242a2327d167f840792"
+      },
+      "jevany_model": {
+        "url": "https://github.com/SimpleJev/JevAny/blob/7832fd7ba3b0ba4205bf9f6d3457a7256e11e24e/jevany/model.py",
+        "ranges": {
+          "verbalizers": [
+            39,
+            75
+          ],
+          "encoding": [
+            97,
+            135
+          ],
+          "mask": [
+            217,
+            243
+          ],
+          "pointer": [
+            263,
+            286
+          ],
+          "layout_dispatch": [
+            290,
+            330
+          ],
+          "lora_and_heads": [
+            331,
+            374
+          ],
+          "labelled_options": [
+            418,
+            436
+          ],
+          "readout": [
+            481,
+            493
+          ],
+          "rows": [
+            499,
+            518
+          ],
+          "forward_dispatch": [
+            533,
+            543
+          ]
+        },
+        "snapshot_sha256": "55b9dc76a6236ba9ca86de7ea6017ec2a9a831c22a318ff8b0479d0b8835e7f3"
+      },
+      "jevany_backbones": {
+        "url": "https://github.com/SimpleJev/JevAny/blob/7832fd7ba3b0ba4205bf9f6d3457a7256e11e24e/jevany/backbones.py",
+        "ranges": {
+          "tokens": [
+            22,
+            101
+          ],
+          "packed_whitelist": [
+            228,
+            234
+          ]
+        },
+        "snapshot_sha256": "07aec8117f015d573acc79cd2accc48ce604ca4470037eb4eafbb5798bc2cc89"
+      },
+      "jevany_train": {
+        "url": "https://github.com/SimpleJev/JevAny/blob/7832fd7ba3b0ba4205bf9f6d3457a7256e11e24e/jevany/train.py",
+        "ranges": {
+          "pointer_ce": [
+            28,
+            34
+          ],
+          "full_vocab_ce": [
+            37,
+            51
+          ],
+          "rlcr": [
+            54,
+            85
+          ],
+          "loss_dispatch": [
+            277,
+            310
+          ],
+          "rlcr_lm_token_exclusion": [
+            409,
+            416
+          ]
+        },
+        "snapshot_sha256": "13be442fc539af36567a20de9a428315a534b14b6f29174d0c0d4e35bf463ec9"
+      },
+      "jevany_card": {
+        "url": "https://github.com/SimpleJev/JevAny/blob/7832fd7ba3b0ba4205bf9f6d3457a7256e11e24e/README.md",
+        "ranges": {
+          "released_models_and_sft_claim": [
+            218,
+            241
+          ],
+          "training_free": [
+            244,
+            255
+          ]
+        },
+        "snapshot_sha256": "e249fdab53fcf7c535dc1cbe6a0e3da68edc006cf79d55795e885265ad20c29c"
+      },
+      "jevany_choice": {
+        "url": "https://github.com/SimpleJev/JevAny/blob/7832fd7ba3b0ba4205bf9f6d3457a7256e11e24e/jevany/letter_predictor.py",
+        "ranges": {
+          "types": [
+            86,
+            132
+          ],
+          "blend": [
+            135,
+            159
+          ],
+          "alias_projection": [
+            401,
+            428
+          ],
+          "chat_prompt_and_readout": [
+            494,
+            543
+          ],
+          "per_question_execution": [
+            570,
+            632
+          ]
+        },
+        "snapshot_sha256": "63a92d6278dbda4bcdede24f5aa32d414fcd8ac464f133a7f9aa8240e7f6d599"
+      },
+      "jevany_choice_mass": {
+        "url": "https://github.com/SimpleJev/JevAny/blob/7832fd7ba3b0ba4205bf9f6d3457a7256e11e24e/jevany/letter_readout.py",
+        "ranges": {
+          "prompt": [
+            72,
+            89
+          ],
+          "aliases": [
+            122,
+            178
+          ],
+          "mass": [
+            202,
+            244
+          ],
+          "tempering": [
+            318,
+            349
+          ]
+        },
+        "snapshot_sha256": "752d4817ef21fe3b4d2e5dce339e80f059e9eee71d6f8bd14d86d629f8b768f6"
+      }
+    },
+    "encoders": {
+      "gc_config": {
+        "url": "https://huggingface.co/knowledgator/gliclass-small-v1.0/commit/66a80146c51756e463e93b142919d5862fd0038d",
+        "location": "config.json added diff; special_tokens_map.json",
+        "note": "uni/simple; prompt_first=false; first pooling; no feature normalization; DeBERTa-small 6/768/12/3072"
+      },
+      "gc_input": {
+        "url": "https://github.com/Knowledgator/GLiClass/blob/af82d425c0259a6f46f240bb0633fcdab821eaea/gliclass/pipeline.py#L598-L659",
+        "lines": [
+          598,
+          659
+        ],
+        "note": "prepare_input actual return order; tokenizer call",
+        "snapshot_sha256": "b7a4496e4dd87e2d3ebc9b9ea6b82f8cb62d6d302978e158722d3cad0eca3313"
+      },
+      "gc_readout": {
+        "url": "https://github.com/Knowledgator/GLiClass/blob/af82d425c0259a6f46f240bb0633fcdab821eaea/gliclass/model.py#L184-L274",
+        "lines": [
+          184,
+          274
+        ],
+        "note": "marker extraction and text pooling scope",
+        "snapshot_sha256": "273e0b18bd2c67622fd15a9131c9af5fbd863ff6d8acea3ac1e4c22a3a6b992b"
+      },
+      "gc_head": {
+        "url": "https://github.com/Knowledgator/GLiClass/blob/af82d425c0259a6f46f240bb0633fcdab821eaea/gliclass/model.py#L475-L499",
+        "lines": [
+          475,
+          499
+        ],
+        "note": "pool/project/normalization/scorer",
+        "snapshot_sha256": "273e0b18bd2c67622fd15a9131c9af5fbd863ff6d8acea3ac1e4c22a3a6b992b"
+      },
+      "gc_projector": {
+        "url": "https://github.com/Knowledgator/GLiClass/blob/af82d425c0259a6f46f240bb0633fcdab821eaea/gliclass/layers.py#L49-L63",
+        "lines": [
+          49,
+          63
+        ],
+        "note": "two-layer GELU projector",
+        "snapshot_sha256": "ae00e69489e6f7b3ddee781034bab0ae285b07cc28da72c2c97f4ff1a9f6c48d"
+      },
+      "gc_scorer": {
+        "url": "https://github.com/Knowledgator/GLiClass/blob/af82d425c0259a6f46f240bb0633fcdab821eaea/gliclass/scorers.py#L60-L70",
+        "lines": [
+          60,
+          70
+        ],
+        "note": "BD,BCD->BC dot product",
+        "snapshot_sha256": "736823ffda20d67e13693f417663427cb5113da16f51b20f4b4780c5c3286cdb"
+      },
+      "gc_loss": {
+        "url": "https://github.com/Knowledgator/GLiClass/blob/af82d425c0259a6f46f240bb0633fcdab821eaea/gliclass/model.py#L320-L385",
+        "lines": [
+          320,
+          385
+        ],
+        "note": "loss dispatch",
+        "snapshot_sha256": "273e0b18bd2c67622fd15a9131c9af5fbd863ff6d8acea3ac1e4c22a3a6b992b"
+      },
+      "gc_focal": {
+        "url": "https://github.com/Knowledgator/GLiClass/blob/af82d425c0259a6f46f240bb0633fcdab821eaea/gliclass/loss_functions.py#L31-L98",
+        "lines": [
+          31,
+          98
+        ],
+        "note": "BCE and optional focal modulation",
+        "snapshot_sha256": "0435924c6efc1d2b2905badc9e6e1512b636fbd8d566675e80b89364ec9a0d33"
+      },
+      "gc_defaults": {
+        "url": "https://github.com/Knowledgator/GLiClass/blob/af82d425c0259a6f46f240bb0633fcdab821eaea/gliclass/config.py#L19-L99",
+        "lines": [
+          19,
+          99
+        ],
+        "note": "loader defaults",
+        "snapshot_sha256": "c84fc9f17d2d24e1722b446b0edffdd46f20ce4de0c6d9ccb382f05ea6dce407"
+      },
+      "gc_activation": {
+        "url": "https://github.com/Knowledgator/GLiClass/blob/af82d425c0259a6f46f240bb0633fcdab821eaea/gliclass/pipeline.py#L289-L317",
+        "lines": [
+          289,
+          317
+        ],
+        "note": "softmax or sigmoid",
+        "snapshot_sha256": "b7a4496e4dd87e2d3ebc9b9ea6b82f8cb62d6d302978e158722d3cad0eca3313"
+      },
+      "gc_paper": {
+        "url": "https://arxiv.org/html/2508.07662v1",
+        "location": "§2.1.8; §2.3",
+        "note": "variants; supervised/RL pipelines"
+      },
+      "gn_config": {
+        "url": "https://huggingface.co/fastino/gliner2-base-v1/blob/784e0b98a34f167e3fe20a4d217e039aa29c408e/config.json",
+        "location": "config.json; first-party search index contents read",
+        "note": "DeBERTa-v3-base; token_pooling=first; max_width=8; count_lstm_v2"
+      },
+      "gn_input": {
+        "url": "https://github.com/fastino-ai/GLiNER2/blob/ca4f68235b50fe4c3ecf3876851d748fe4b15c6c/gliner2/processor.py#L1293-L1332",
+        "lines": [
+          1293,
+          1332
+        ],
+        "note": "schema token construction",
+        "snapshot_sha256": "fdeb0814c29a0d1fec4e66358e936058af224d011a37b5c7f1e800cb2cd9c521"
+      },
+      "gn_layout": {
+        "url": "https://github.com/fastino-ai/GLiNER2/blob/ca4f68235b50fe4c3ecf3876851d748fe4b15c6c/gliner2/processor.py#L1542-L1639",
+        "lines": [
+          1542,
+          1639
+        ],
+        "note": "schema then SEP_TEXT then text; marker routes; direct token IDs",
+        "snapshot_sha256": "fdeb0814c29a0d1fec4e66358e936058af224d011a37b5c7f1e800cb2cd9c521"
+      },
+      "gn_head": {
+        "url": "https://github.com/fastino-ai/GLiNER2/blob/ca4f68235b50fe4c3ecf3876851d748fe4b15c6c/gliner2/models/span/model.py#L103-L128",
+        "lines": [
+          103,
+          128
+        ],
+        "note": "shared H->2H->1 ReLU MLP",
+        "snapshot_sha256": "4bfddfefe59fa2af91a848fd7c9c7115bc7b0882f59dc51c19ad3f581dd4cea4"
+      },
+      "gn_loss": {
+        "url": "https://github.com/fastino-ai/GLiNER2/blob/ca4f68235b50fe4c3ecf3876851d748fe4b15c6c/gliner2/models/span/model.py#L303-L389",
+        "lines": [
+          303,
+          389
+        ],
+        "note": "encoder forward and BCE sum",
+        "snapshot_sha256": "4bfddfefe59fa2af91a848fd7c9c7115bc7b0882f59dc51c19ad3f581dd4cea4"
+      },
+      "gn_activation": {
+        "url": "https://github.com/fastino-ai/GLiNER2/blob/ca4f68235b50fe4c3ecf3876851d748fe4b15c6c/gliner2/inference/runtime.py#L880-L915",
+        "lines": [
+          880,
+          915
+        ],
+        "note": "temperature; auto/sigmoid/softmax",
+        "snapshot_sha256": "acc500efe68209df7620c5810b5ff38a4d6151e8799063e0139ec60220183a60"
+      },
+      "gn_versions": {
+        "url": "https://github.com/fastino-ai/GLiNER2/blob/ca4f68235b50fe4c3ecf3876851d748fe4b15c6c/README.md#L155-L190",
+        "lines": [
+          155,
+          190
+        ],
+        "note": "span/boundary and Decide distinctions",
+        "snapshot_sha256": "78f50ae3c773afe07941adea199311d6527a6001111b660f4110223f938feeae"
+      },
+      "gn_paper": {
+        "url": "https://aclanthology.org/2025.emnlp-demos.10/",
+        "location": "2025 published version"
+      },
+      "oj_train": {
+        "url": "https://github.com/Shalimov04/open-jev/blob/6126df4b8d9163af835048476a7eee0858b81dbb/openjev/train.py#L27-L118",
+        "lines": [
+          27,
+          118
+        ],
+        "note": "text-only student; KL; optional gold CE; calib selection",
+        "snapshot_sha256": "aa171982be4a79c3da428d90371bccc234b6dc2055028e50d9c13bedb88ee960"
+      },
+      "oj_spec": {
+        "url": "https://github.com/Shalimov04/open-jev/blob/6126df4b8d9163af835048476a7eee0858b81dbb/openjev/spec.py#L43-L57",
+        "lines": [
+          43,
+          57
+        ],
+        "note": "mmBERT-small; max_len256; gold_weight0",
+        "snapshot_sha256": "5fdd4067ec325e336e3ee8534fb2d543f404c931bc75faec2408a69e5ac6463d"
+      },
+      "oj_teacher": {
+        "url": "https://github.com/Shalimov04/open-jev/blob/6126df4b8d9163af835048476a7eee0858b81dbb/openjev/teacher.py#L38-L94",
+        "lines": [
+          38,
+          94
+        ],
+        "note": "task+candidate letters and letter softmax",
+        "snapshot_sha256": "f178a5b40c7418c33df01cd84afcecdb83eae9958e60319bca4c9364c066538e"
+      },
+      "oj_calibrate": {
+        "url": "https://github.com/Shalimov04/open-jev/blob/6126df4b8d9163af835048476a7eee0858b81dbb/openjev/calibrate.py#L84-L154",
+        "lines": [
+          84,
+          154
+        ],
+        "note": "logits/T+b; held-out selection; prior path",
+        "snapshot_sha256": "9b3d2dac3f3e9d1aff76c82c8cc1951aa566bfb71cac43759a7ba9dd89cc0225"
+      },
+      "oj_alt": {
+        "url": "https://github.com/Shalimov04/open-jev/blob/6126df4b8d9163af835048476a7eee0858b81dbb/openjev/base.py#L1-L101",
+        "lines": [
+          1,
+          101
+        ],
+        "note": "separate pair-scalar open-jev-base",
+        "snapshot_sha256": "93d762a76beac96a29ab85e8f4aea8a6d836ee16d74379c449f0ae86f7dc701f"
+      },
+      "oj_model": {
+        "url": "https://huggingface.co/jhu-clsp/mmBERT-small/blob/ffaae3d46e9b171c3a001dfd4252b71d62a18c78/config.json",
+        "location": "config.json",
+        "note": "22 layers; D384; heads6; F1152; mean pooling"
+      },
+      "sf_paper": {
+        "url": "https://arxiv.org/html/2209.11055v1",
+        "location": "§3.1 and Fig.2",
+        "note": "Siamese text pairs then LR head"
+      },
+      "sf_defaults": {
+        "url": "https://github.com/huggingface/setfit/blob/d70dad84de757d30f03465d120e0d3fad2c725b0/src/setfit/training_args.py#L178-L193",
+        "lines": [
+          178,
+          193
+        ],
+        "note": "default CosineSimilarityLoss",
+        "snapshot_sha256": "1406eb67add9a37cdb54afc974f596a150aee56240146640daa138248d4e7b6a"
+      },
+      "sf_pairs": {
+        "url": "https://github.com/huggingface/setfit/blob/d70dad84de757d30f03465d120e0d3fad2c725b0/src/setfit/sampler.py#L92-L110",
+        "lines": [
+          92,
+          110
+        ],
+        "note": "same/different-class text pairs",
+        "snapshot_sha256": "35af9cc9836f8fa055d66b38939856c0bfbbd6bc3b6dccc6822fb2fe8c133e13"
+      },
+      "sf_head": {
+        "url": "https://github.com/huggingface/setfit/blob/d70dad84de757d30f03465d120e0d3fad2c725b0/src/setfit/modeling.py#L205-L317",
+        "lines": [
+          205,
+          317
+        ],
+        "note": "normalize_embeddings false; encode then sklearn fit",
+        "snapshot_sha256": "39426d85de0f9ca99776fcf2e376b3248a0c785376bed4665c6ef41237826a20"
+      },
+      "sf_options": {
+        "url": "https://github.com/huggingface/setfit/blob/d70dad84de757d30f03465d120e0d3fad2c725b0/src/setfit/modeling.py#L712-L862",
+        "lines": [
+          712,
+          862
+        ],
+        "note": "default LR; optional torch/multilabel heads",
+        "snapshot_sha256": "39426d85de0f9ca99776fcf2e376b3248a0c785376bed4665c6ef41237826a20"
+      },
+      "sf_loss": {
+        "url": "https://github.com/huggingface/sentence-transformers/blob/ba908be1e939b61e961eedeb78ba3a0e409b7af8/sentence_transformers/losses/CosineSimilarityLoss.py#L10-L76",
+        "lines": [
+          10,
+          76
+        ],
+        "note": "MSE cosine loss reference implementation",
+        "snapshot_sha256": "c7709c71c4feba5bc42d5071e840ea5bfe34d8d619d4694d3576374c15a2b727"
+      },
+      "sf_config": {
+        "url": "https://huggingface.co/sentence-transformers/paraphrase-mpnet-base-v2/blob/b2b82f2ed502d476516d22add63f309e8e9ff6bd/config.json",
+        "location": "config.json",
+        "note": "12/768/12/3072"
+      },
+      "sf_pool": {
+        "url": "https://huggingface.co/sentence-transformers/paraphrase-mpnet-base-v2/blob/b2b82f2ed502d476516d22add63f309e8e9ff6bd/README.md",
+        "location": "mean_pooling; Full Model Architecture",
+        "note": "mask mean; no Normalize module; pin max_seq128"
+      },
+      "qr_config": {
+        "url": "https://huggingface.co/Qwen/Qwen3-Reranker-0.6B/blob/e61197ed45024b0ed8a2d74b80b4d909f1255473/config.json",
+        "location": "config.json",
+        "note": "28/1024; 16Q/8KV; head_dim128; F3072; V151669"
+      },
+      "qr_inference": {
+        "url": "https://huggingface.co/Qwen/Qwen3-Reranker-0.6B/blob/e61197ed45024b0ed8a2d74b80b4d909f1255473/README.md",
+        "location": "Using Transformers / Sentence Transformers",
+        "note": "yes/no probability versus raw logit difference"
+      },
+      "qr_paper": {
+        "url": "https://arxiv.org/html/2506.05176v1",
+        "location": "§2 Reranking Models; §3.1 Eq.(2); §3.2"
+      },
+      "mb_config": {
+        "url": "https://huggingface.co/answerdotai/ModernBERT-base/blob/5756c58a31a2478f9e62146021f48295a92c3da5/config.json",
+        "location": "config.json",
+        "note": "22/768/12/1152; local128/global every3"
+      },
+      "db_config": {
+        "url": "https://huggingface.co/microsoft/deberta-v3-base/blob/5f32929a4206c500f4044bf7778298aedc77531a/config.json",
+        "location": "config.json",
+        "note": "12/768/12/3072; c2p/p2c relative attention"
+      },
+      "mb_code": {
+        "url": "https://github.com/huggingface/transformers/blob/5f4ecf2d9f867a1255131d2461d75793c0cf1db2/src/transformers/models/modernbert/modeling_modernbert.py#L202-L566",
+        "lines": [
+          202,
+          566
+        ],
+        "note": "LN; QKV/RoPE; local/global; GEGLU; pre-LN residual",
+        "snapshot_sha256": "6c678ad9b3eb1f37465e973e508898fc0bc578e8070dba3ebf0d83f82290e5ba"
+      },
+      "mb_cls": {
+        "url": "https://github.com/huggingface/transformers/blob/5f4ecf2d9f867a1255131d2461d75793c0cf1db2/src/transformers/models/modernbert/modeling_modernbert.py#L1030-L1253",
+        "lines": [
+          1030,
+          1253
+        ],
+        "note": "mean; Linear-GELU-LN; classifier",
+        "snapshot_sha256": "6c678ad9b3eb1f37465e973e508898fc0bc578e8070dba3ebf0d83f82290e5ba"
+      },
+      "db_code": {
+        "url": "https://github.com/huggingface/transformers/blob/5f4ecf2d9f867a1255131d2461d75793c0cf1db2/src/transformers/models/deberta_v2/modeling_deberta_v2.py#L146-L432",
+        "lines": [
+          146,
+          432
+        ],
+        "note": "disentangled attention; post-LN; FFN",
+        "snapshot_sha256": "1ae68481759cb1f23f4dd77edf4351d63980ef4fcc630a91f2ed36c03dac4dec"
+      },
+      "mpnet_code": {
+        "url": "https://github.com/huggingface/transformers/blob/5f4ecf2d9f867a1255131d2461d75793c0cf1db2/src/transformers/models/mpnet/modeling_mpnet.py#L70-L399",
+        "lines": [
+          70,
+          399
+        ],
+        "note": "absolute embedding + relative attention bias; post-LN",
+        "snapshot_sha256": "f1e205279f592bff52d8adb9c70fd53359619e36da3b4d38bdf839b447e32faa"
+      },
+      "qwen_code": {
+        "url": "https://github.com/huggingface/transformers/blob/5f4ecf2d9f867a1255131d2461d75793c0cf1db2/src/transformers/models/qwen3/modeling_qwen3.py#L62-L313",
+        "lines": [
+          62,
+          313
+        ],
+        "note": "GQA; QK RMSNorm; RoPE; SwiGLU",
+        "snapshot_sha256": "704c914530530a1acb0b443add1f520404e3ac2c28c0ab7e16f80f86cfe8ccb2"
+      },
+      "qwen_lm": {
+        "url": "https://github.com/huggingface/transformers/blob/5f4ecf2d9f867a1255131d2461d75793c0cf1db2/src/transformers/models/qwen3/modeling_qwen3.py#L762-L867",
+        "lines": [
+          762,
+          867
+        ],
+        "note": "existing LM vocab head",
+        "snapshot_sha256": "704c914530530a1acb0b443add1f520404e3ac2c28c0ab7e16f80f86cfe8ccb2"
+      }
+    }
+  }
+}

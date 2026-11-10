@@ -7,6 +7,8 @@
 [开始使用](cookbook/first-model.md){ .md-button .md-button--primary }
 [浏览 Cookbook](cookbook/index.md){ .md-button }
 
+[引言：JevLike、任务、数据与模型架构](tensor-analysis/introduction.md)
+
 </div>
 
 ## Tev1 4B 复现结果
@@ -100,3 +102,5 @@
 ## 理解计算机制
 
 [原理与张量解析](tensor-analysis/index.md)从 System One 契约展开答案 token 和标量头计算；[五分钟技术导览](tensor-analysis/walkthrough.md)串联矢量图、数值例与源码依据。
+
+[什么是 JevLike？任务、数据与架构](tensor-analysis/introduction.md)

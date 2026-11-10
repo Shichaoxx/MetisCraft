@@ -1,0 +1,389 @@
+% Shared vector grammar. Generated figure TeX files inline this source.
+\documentclass[tikz,border=4mm,12pt]{standalone}
+\usepackage[UTF8,fontset=fandol]{ctex}
+\usepackage{amsmath,amssymb,bm}
+\renewcommand{\familydefault}{\sfdefault}
+\hyphenpenalty=10000
+\exhyphenpenalty=10000
+\usetikzlibrary{arrows.meta,backgrounds,calc}
+\definecolor{Ink}{HTML}{273648}
+\definecolor{Muted}{HTML}{607086}
+\definecolor{Ctx}{HTML}{85898F}
+\definecolor{Qst}{HTML}{4F8FA5}
+\definecolor{Opt}{HTML}{5A9A6E}
+\definecolor{Gen}{HTML}{B89A5E}
+\definecolor{Hid}{HTML}{8A74B5}
+\definecolor{Wgt}{HTML}{E0904F}
+\definecolor{Lgt}{HTML}{C95B5B}
+\definecolor{Idx}{HTML}{7E8B9B}
+\definecolor{Msk}{HTML}{3F5A78}
+\newcommand{\Unit}{0.30}
+\newcommand{\Offset}{0.12}
+\newcommand{\BinarySupport}{0}
+\newcounter{texture}
+\tikzset{
+ flow/.style={-{Latex[length=2mm,width=1.5mm]},draw=Ink!75!Canvas,line width=.65pt},
+ tensorlabel/.style={font=\small,text=Ink,align=center,inner sep=0pt},
+ tenshape/.style={font=\scriptsize,text=Muted,align=center,inner sep=0pt},
+ stage/.style={font=\small\bfseries,text=Muted,align=left,anchor=west},
+ operation/.style={draw=Ink!25!Canvas,fill=Canvas,rounded corners=2pt,align=center,
+  font=\small,text=Ink,inner sep=5pt,line width=.5pt},
+}
+% The last two axes define a matrix face. Leading axes use offset sheets.
+% Every symbolic dimension maps to the same cell count throughout the set.
+\newcommand{\Tensor}[9]{%
+ \stepcounter{texture}
+ \pgfmathsetmacro{\ww}{#5*\Unit}
+ \pgfmathsetmacro{\hh}{#4*\Unit}
+ \pgfmathsetmacro{\xx}{#2-\ww/2}
+ \pgfmathsetmacro{\yy}{#3-\hh/2}
+ \ifnum#7>0
+  \foreach \s in {#7,...,1}{
+   \path[draw=#6!40!Canvas,fill=Canvas,line width=.45pt,rounded corners=.7pt]
+    ({\xx+\s*\Offset},{\yy+\s*\Offset}) rectangle ++(\ww,\hh);}
+ \fi
+ \foreach \r in {1,...,#4}{\foreach \c in {1,...,#5}{
+  \ifnum\BinarySupport>0
+   \pgfmathtruncatemacro{\level}{\BinarySupport==1?(\c>3-\r?75:0):(\BinarySupport==2?(\c<=4-\r?75:0):(\c<=\r?75:0))}
+  \else
+   \pgfmathtruncatemacro{\tone}{mod(\r*13+\c*7+\arabic{texture}*11,7)}
+   \pgfmathtruncatemacro{\level}{\tone<3?30:(\tone<6?55:80)}
+  \fi
+  \path[fill=#6!\level!Canvas,rounded corners=.5pt]
+   ({\xx+(\c-1)*\Unit+.021},{\yy+\hh-\r*\Unit+.021})
+    rectangle ++({\Unit-.042},{\Unit-.042});}}
+ \ifnum\BinarySupport>0
+  \path[draw=Msk!35!Canvas,line width=.4pt] (\xx,\yy) rectangle ++(\ww,\hh);
+ \fi
+ \coordinate (#1-w) at (\xx,#3);
+ \coordinate (#1-e) at ({\xx+\ww+#7*\Offset},#3);
+ \node[tensorlabel] at (#2,{\yy-.28}) {$#8$};
+ \node[tenshape] at (#2,{\yy-.63}) {$#9$};
+}
+% Exact binary support; row i is a query and column j a key.
+\newcommand{\Support}[5]{%
+ \foreach \i in {1,...,#4}{\foreach \j in {1,...,#4}{
+  \pgfmathtruncatemacro{\on}{#5}
+  \ifnum\on>0
+   \path[fill=Msk!65!Canvas,rounded corners=.4pt]
+    ({#2+(\j-1)*\Unit+.021},{#3-\i*\Unit+.021})
+     rectangle ++({\Unit-.042},{\Unit-.042});
+  \fi}}
+ \path[draw=Ink!35!Canvas,line width=.4pt] (#2,#3) rectangle ++({#4*\Unit},{-#4*\Unit});
+}
+\newcommand{\Meaning}[7]{%
+ \node[anchor=north west,fill=Ink!4!Canvas,rounded corners=3pt,inner sep=9pt,
+  text width=#3cm-18pt,align=left,font=\small] (meaning) at (#1,#2) {
+  \begin{tabular}{@{}p{1.8cm}@{\hspace{7pt}}p{\dimexpr #3cm-2.8cm\relax}@{}}
+   \textbf{#4} & \raggedright #5\tabularnewline[6pt]
+   \textbf{#6} & \raggedright #7\tabularnewline
+  \end{tabular}};
+}
+
+\definecolor{Canvas}{HTML}{18212C}
+\definecolor{Ink}{HTML}{E2EAF3}
+\definecolor{Muted}{HTML}{AABCD0}
+\definecolor{Ctx}{HTML}{ABB3BE}
+\definecolor{Qst}{HTML}{72B8D0}
+\definecolor{Opt}{HTML}{83C396}
+\definecolor{Gen}{HTML}{D9BC7B}
+\definecolor{Hid}{HTML}{B49BDB}
+\definecolor{Wgt}{HTML}{F0AB71}
+\definecolor{Lgt}{HTML}{ED9191}
+\definecolor{Idx}{HTML}{A9BBD1}
+\definecolor{Msk}{HTML}{91B6DF}
+\pagecolor{Canvas}
+
+\providecolor{Canvas}{HTML}{FFFFFF}
+\begin{document}
+\begin{tikzpicture}[x=1cm,y=1cm,text=Ink]
+\node[font=\large,text=Ink,anchor=center,align=center,inner sep=0pt] at (11.000,4.000) {$\displaystyle \widehat H=H[P,:],\quad U=\operatorname{GELU}(\widehat H W_1^{\mathsf T}+b_1),\quad s=\operatorname{squeeze}(UW_2^{\mathsf T}+b_2)$};
+\node[font=\small,text=Muted,anchor=center,align=center,inner sep=0pt,text width=4.2cm] at (1.900,2.850) {\textbf{1. One causal candidate list}};
+\node[font=\small,text=Muted,anchor=center,align=center,inner sep=0pt,text width=3.8cm] at (6.300,2.850) {\textbf{2. Qwen3-0.6B-Base}};
+\node[font=\small,text=Muted,anchor=center,align=center,inner sep=0pt,text width=5.5cm] at (11.700,2.850) {\textbf{3. Candidate-end gather}};
+\node[font=\small,text=Muted,anchor=center,align=center,inner sep=0pt,text width=4cm] at (18.200,2.850) {\textbf{Candidate visibility}};
+\path[fill=Ctx!68!Canvas,rounded corners=1pt] (0.015,-0.210) rectangle ++(0.390,0.390);
+\node[font=\scriptsize,text=Ink,anchor=center,align=center,inner sep=0pt] at (0.210,0.000) {$s$};
+\node[font=\scriptsize,text=Muted,anchor=center,align=center,inner sep=0pt] at (0.210,0.500) {0};
+\path[fill=Ctx!68!Canvas,rounded corners=1pt] (0.435,-0.210) rectangle ++(0.390,0.390);
+\node[font=\scriptsize,text=Ink,anchor=center,align=center,inner sep=0pt] at (0.630,0.000) {$s$};
+\node[font=\scriptsize,text=Muted,anchor=center,align=center,inner sep=0pt] at (0.630,0.500) {1};
+\path[fill=Qst!68!Canvas,rounded corners=1pt] (0.855,-0.210) rectangle ++(0.390,0.390);
+\node[font=\scriptsize,text=Ink,anchor=center,align=center,inner sep=0pt] at (1.050,0.000) {$q$};
+\node[font=\scriptsize,text=Muted,anchor=center,align=center,inner sep=0pt] at (1.050,0.500) {2};
+\path[fill=Opt!68!Canvas,rounded corners=1pt] (1.275,-0.210) rectangle ++(0.390,0.390);
+\node[font=\scriptsize,text=Ink,anchor=center,align=center,inner sep=0pt] at (1.470,0.000) {$c_1$};
+\node[font=\scriptsize,text=Muted,anchor=center,align=center,inner sep=0pt] at (1.470,0.500) {3};
+\path[fill=Hid!68!Canvas,rounded corners=1pt] (1.695,-0.210) rectangle ++(0.390,0.390);
+\node[font=\scriptsize,text=Ink,anchor=center,align=center,inner sep=0pt] at (1.890,0.000) {$c_1$};
+\node[font=\scriptsize,text=Muted,anchor=center,align=center,inner sep=0pt] at (1.890,0.500) {4};
+\path[fill=Opt!68!Canvas,rounded corners=1pt] (2.115,-0.210) rectangle ++(0.390,0.390);
+\node[font=\scriptsize,text=Ink,anchor=center,align=center,inner sep=0pt] at (2.310,0.000) {$c_2$};
+\node[font=\scriptsize,text=Muted,anchor=center,align=center,inner sep=0pt] at (2.310,0.500) {5};
+\path[fill=Hid!68!Canvas,rounded corners=1pt] (2.535,-0.210) rectangle ++(0.390,0.390);
+\node[font=\scriptsize,text=Ink,anchor=center,align=center,inner sep=0pt] at (2.730,0.000) {$c_2$};
+\node[font=\scriptsize,text=Muted,anchor=center,align=center,inner sep=0pt] at (2.730,0.500) {6};
+\path[fill=Opt!68!Canvas,rounded corners=1pt] (2.955,-0.210) rectangle ++(0.390,0.390);
+\node[font=\scriptsize,text=Ink,anchor=center,align=center,inner sep=0pt] at (3.150,0.000) {$c_3$};
+\node[font=\scriptsize,text=Muted,anchor=center,align=center,inner sep=0pt] at (3.150,0.500) {7};
+\path[fill=Hid!68!Canvas,rounded corners=1pt] (3.375,-0.210) rectangle ++(0.390,0.390);
+\node[font=\scriptsize,text=Ink,anchor=center,align=center,inner sep=0pt] at (3.570,0.000) {$c_3$};
+\node[font=\scriptsize,text=Muted,anchor=center,align=center,inner sep=0pt] at (3.570,0.500) {8};
+\node[font=\small,text=Ink,anchor=center,align=center,inner sep=0pt] at (1.890,-0.700) {$x$};
+\node[font=\scriptsize,text=Muted,anchor=center,align=center,inner sep=0pt] at (1.890,-1.100) {$T$ integer token IDs};
+\node[draw=Ink!28!Canvas,fill=Ink!3!Canvas,rounded corners=2pt,font=\small,text width=3.280cm,align=center,inner sep=3pt,minimum height=2.650cm] at (6.250,0.000) {28 causal decoder blocks\\RMSNorm $\to$ GQA\\RMSNorm $\to$ gated FFN\\residuals; LoRA $r=16$};
+\path[fill=Ctx!30!Canvas,rounded corners=.6pt] (8.815,1.485) rectangle ++(0.210,0.390);
+\path[fill=Ctx!30!Canvas,rounded corners=.6pt] (9.055,1.485) rectangle ++(0.210,0.390);
+\path[fill=Ctx!30!Canvas,rounded corners=.6pt] (9.295,1.485) rectangle ++(0.210,0.390);
+\path[fill=Ctx!30!Canvas,rounded corners=.6pt] (9.535,1.485) rectangle ++(0.210,0.390);
+\path[fill=Ctx!30!Canvas,rounded corners=.6pt] (9.775,1.485) rectangle ++(0.210,0.390);
+\path[fill=Ctx!30!Canvas,rounded corners=.6pt] (10.015,1.485) rectangle ++(0.210,0.390);
+\path[fill=Ctx!30!Canvas,rounded corners=.6pt] (10.255,1.485) rectangle ++(0.210,0.390);
+\path[fill=Ctx!30!Canvas,rounded corners=.6pt] (10.495,1.485) rectangle ++(0.210,0.390);
+\path[fill=Ctx!55!Canvas,rounded corners=.6pt] (8.815,1.065) rectangle ++(0.210,0.390);
+\path[fill=Ctx!55!Canvas,rounded corners=.6pt] (9.055,1.065) rectangle ++(0.210,0.390);
+\path[fill=Ctx!55!Canvas,rounded corners=.6pt] (9.295,1.065) rectangle ++(0.210,0.390);
+\path[fill=Ctx!55!Canvas,rounded corners=.6pt] (9.535,1.065) rectangle ++(0.210,0.390);
+\path[fill=Ctx!80!Canvas,rounded corners=.6pt] (9.775,1.065) rectangle ++(0.210,0.390);
+\path[fill=Ctx!80!Canvas,rounded corners=.6pt] (10.015,1.065) rectangle ++(0.210,0.390);
+\path[fill=Ctx!80!Canvas,rounded corners=.6pt] (10.255,1.065) rectangle ++(0.210,0.390);
+\path[fill=Ctx!30!Canvas,rounded corners=.6pt] (10.495,1.065) rectangle ++(0.210,0.390);
+\path[fill=Ctx!55!Canvas,rounded corners=.6pt] (8.815,0.645) rectangle ++(0.210,0.390);
+\path[fill=Ctx!80!Canvas,rounded corners=.6pt] (9.055,0.645) rectangle ++(0.210,0.390);
+\path[fill=Ctx!80!Canvas,rounded corners=.6pt] (9.295,0.645) rectangle ++(0.210,0.390);
+\path[fill=Ctx!30!Canvas,rounded corners=.6pt] (9.535,0.645) rectangle ++(0.210,0.390);
+\path[fill=Ctx!30!Canvas,rounded corners=.6pt] (9.775,0.645) rectangle ++(0.210,0.390);
+\path[fill=Ctx!55!Canvas,rounded corners=.6pt] (10.015,0.645) rectangle ++(0.210,0.390);
+\path[fill=Ctx!55!Canvas,rounded corners=.6pt] (10.255,0.645) rectangle ++(0.210,0.390);
+\path[fill=Ctx!80!Canvas,rounded corners=.6pt] (10.495,0.645) rectangle ++(0.210,0.390);
+\path[fill=Ctx!80!Canvas,rounded corners=.6pt] (8.815,0.225) rectangle ++(0.210,0.390);
+\path[fill=Ctx!30!Canvas,rounded corners=.6pt] (9.055,0.225) rectangle ++(0.210,0.390);
+\path[fill=Ctx!30!Canvas,rounded corners=.6pt] (9.295,0.225) rectangle ++(0.210,0.390);
+\path[fill=Ctx!55!Canvas,rounded corners=.6pt] (9.535,0.225) rectangle ++(0.210,0.390);
+\path[fill=Ctx!80!Canvas,rounded corners=.6pt] (9.775,0.225) rectangle ++(0.210,0.390);
+\path[fill=Ctx!30!Canvas,rounded corners=.6pt] (10.015,0.225) rectangle ++(0.210,0.390);
+\path[fill=Ctx!55!Canvas,rounded corners=.6pt] (10.255,0.225) rectangle ++(0.210,0.390);
+\path[fill=Ctx!55!Canvas,rounded corners=.6pt] (10.495,0.225) rectangle ++(0.210,0.390);
+\path[fill=Hid!80!Canvas,rounded corners=.6pt] (8.815,-0.195) rectangle ++(0.210,0.390);
+\path[fill=Hid!30!Canvas,rounded corners=.6pt] (9.055,-0.195) rectangle ++(0.210,0.390);
+\path[fill=Hid!55!Canvas,rounded corners=.6pt] (9.295,-0.195) rectangle ++(0.210,0.390);
+\path[fill=Hid!30!Canvas,rounded corners=.6pt] (9.535,-0.195) rectangle ++(0.210,0.390);
+\path[fill=Hid!55!Canvas,rounded corners=.6pt] (9.775,-0.195) rectangle ++(0.210,0.390);
+\path[fill=Hid!80!Canvas,rounded corners=.6pt] (10.015,-0.195) rectangle ++(0.210,0.390);
+\path[fill=Hid!30!Canvas,rounded corners=.6pt] (10.255,-0.195) rectangle ++(0.210,0.390);
+\path[fill=Hid!55!Canvas,rounded corners=.6pt] (10.495,-0.195) rectangle ++(0.210,0.390);
+\path[fill=Ctx!30!Canvas,rounded corners=.6pt] (8.815,-0.615) rectangle ++(0.210,0.390);
+\path[fill=Ctx!55!Canvas,rounded corners=.6pt] (9.055,-0.615) rectangle ++(0.210,0.390);
+\path[fill=Ctx!30!Canvas,rounded corners=.6pt] (9.295,-0.615) rectangle ++(0.210,0.390);
+\path[fill=Ctx!55!Canvas,rounded corners=.6pt] (9.535,-0.615) rectangle ++(0.210,0.390);
+\path[fill=Ctx!80!Canvas,rounded corners=.6pt] (9.775,-0.615) rectangle ++(0.210,0.390);
+\path[fill=Ctx!55!Canvas,rounded corners=.6pt] (10.015,-0.615) rectangle ++(0.210,0.390);
+\path[fill=Ctx!80!Canvas,rounded corners=.6pt] (10.255,-0.615) rectangle ++(0.210,0.390);
+\path[fill=Ctx!30!Canvas,rounded corners=.6pt] (10.495,-0.615) rectangle ++(0.210,0.390);
+\path[fill=Hid!30!Canvas,rounded corners=.6pt] (8.815,-1.035) rectangle ++(0.210,0.390);
+\path[fill=Hid!80!Canvas,rounded corners=.6pt] (9.055,-1.035) rectangle ++(0.210,0.390);
+\path[fill=Hid!55!Canvas,rounded corners=.6pt] (9.295,-1.035) rectangle ++(0.210,0.390);
+\path[fill=Hid!80!Canvas,rounded corners=.6pt] (9.535,-1.035) rectangle ++(0.210,0.390);
+\path[fill=Hid!55!Canvas,rounded corners=.6pt] (9.775,-1.035) rectangle ++(0.210,0.390);
+\path[fill=Hid!30!Canvas,rounded corners=.6pt] (10.015,-1.035) rectangle ++(0.210,0.390);
+\path[fill=Hid!55!Canvas,rounded corners=.6pt] (10.255,-1.035) rectangle ++(0.210,0.390);
+\path[fill=Hid!30!Canvas,rounded corners=.6pt] (10.495,-1.035) rectangle ++(0.210,0.390);
+\path[fill=Ctx!55!Canvas,rounded corners=.6pt] (8.815,-1.455) rectangle ++(0.210,0.390);
+\path[fill=Ctx!30!Canvas,rounded corners=.6pt] (9.055,-1.455) rectangle ++(0.210,0.390);
+\path[fill=Ctx!80!Canvas,rounded corners=.6pt] (9.295,-1.455) rectangle ++(0.210,0.390);
+\path[fill=Ctx!55!Canvas,rounded corners=.6pt] (9.535,-1.455) rectangle ++(0.210,0.390);
+\path[fill=Ctx!30!Canvas,rounded corners=.6pt] (9.775,-1.455) rectangle ++(0.210,0.390);
+\path[fill=Ctx!55!Canvas,rounded corners=.6pt] (10.015,-1.455) rectangle ++(0.210,0.390);
+\path[fill=Ctx!30!Canvas,rounded corners=.6pt] (10.255,-1.455) rectangle ++(0.210,0.390);
+\path[fill=Ctx!80!Canvas,rounded corners=.6pt] (10.495,-1.455) rectangle ++(0.210,0.390);
+\path[fill=Hid!55!Canvas,rounded corners=.6pt] (8.815,-1.875) rectangle ++(0.210,0.390);
+\path[fill=Hid!55!Canvas,rounded corners=.6pt] (9.055,-1.875) rectangle ++(0.210,0.390);
+\path[fill=Hid!30!Canvas,rounded corners=.6pt] (9.295,-1.875) rectangle ++(0.210,0.390);
+\path[fill=Hid!80!Canvas,rounded corners=.6pt] (9.535,-1.875) rectangle ++(0.210,0.390);
+\path[fill=Hid!55!Canvas,rounded corners=.6pt] (9.775,-1.875) rectangle ++(0.210,0.390);
+\path[fill=Hid!30!Canvas,rounded corners=.6pt] (10.015,-1.875) rectangle ++(0.210,0.390);
+\path[fill=Hid!30!Canvas,rounded corners=.6pt] (10.255,-1.875) rectangle ++(0.210,0.390);
+\path[fill=Hid!80!Canvas,rounded corners=.6pt] (10.495,-1.875) rectangle ++(0.210,0.390);
+\draw[draw=Ink!55!Canvas,line width=.45pt] (8.755,1.890) -- ++(-.06,0) -- ++(0,-3.780) -- ++(.06,0);
+\draw[draw=Ink!55!Canvas,line width=.45pt] (10.765,1.890) -- ++(.06,0) -- ++(0,-3.780) -- ++(-.06,0);
+\node[font=\small,text=Ink,anchor=center,align=center,inner sep=0pt] at (9.760,-2.210) {$H$};
+\node[font=\scriptsize,text=Muted,anchor=center,align=center,inner sep=0pt] at (9.760,-2.590) {$T\times d$};
+\path[fill=Hid!80!Canvas,rounded corners=.6pt] (12.315,0.225) rectangle ++(0.210,0.390);
+\path[fill=Hid!80!Canvas,rounded corners=.6pt] (12.555,0.225) rectangle ++(0.210,0.390);
+\path[fill=Hid!80!Canvas,rounded corners=.6pt] (12.795,0.225) rectangle ++(0.210,0.390);
+\path[fill=Hid!80!Canvas,rounded corners=.6pt] (13.035,0.225) rectangle ++(0.210,0.390);
+\path[fill=Hid!80!Canvas,rounded corners=.6pt] (13.275,0.225) rectangle ++(0.210,0.390);
+\path[fill=Hid!80!Canvas,rounded corners=.6pt] (13.515,0.225) rectangle ++(0.210,0.390);
+\path[fill=Hid!80!Canvas,rounded corners=.6pt] (13.755,0.225) rectangle ++(0.210,0.390);
+\path[fill=Hid!80!Canvas,rounded corners=.6pt] (13.995,0.225) rectangle ++(0.210,0.390);
+\path[fill=Hid!30!Canvas,rounded corners=.6pt] (12.315,-0.195) rectangle ++(0.210,0.390);
+\path[fill=Hid!30!Canvas,rounded corners=.6pt] (12.555,-0.195) rectangle ++(0.210,0.390);
+\path[fill=Hid!30!Canvas,rounded corners=.6pt] (12.795,-0.195) rectangle ++(0.210,0.390);
+\path[fill=Hid!55!Canvas,rounded corners=.6pt] (13.035,-0.195) rectangle ++(0.210,0.390);
+\path[fill=Hid!55!Canvas,rounded corners=.6pt] (13.275,-0.195) rectangle ++(0.210,0.390);
+\path[fill=Hid!55!Canvas,rounded corners=.6pt] (13.515,-0.195) rectangle ++(0.210,0.390);
+\path[fill=Hid!55!Canvas,rounded corners=.6pt] (13.755,-0.195) rectangle ++(0.210,0.390);
+\path[fill=Hid!80!Canvas,rounded corners=.6pt] (13.995,-0.195) rectangle ++(0.210,0.390);
+\path[fill=Hid!30!Canvas,rounded corners=.6pt] (12.315,-0.615) rectangle ++(0.210,0.390);
+\path[fill=Hid!55!Canvas,rounded corners=.6pt] (12.555,-0.615) rectangle ++(0.210,0.390);
+\path[fill=Hid!55!Canvas,rounded corners=.6pt] (12.795,-0.615) rectangle ++(0.210,0.390);
+\path[fill=Hid!80!Canvas,rounded corners=.6pt] (13.035,-0.615) rectangle ++(0.210,0.390);
+\path[fill=Hid!30!Canvas,rounded corners=.6pt] (13.275,-0.615) rectangle ++(0.210,0.390);
+\path[fill=Hid!30!Canvas,rounded corners=.6pt] (13.515,-0.615) rectangle ++(0.210,0.390);
+\path[fill=Hid!55!Canvas,rounded corners=.6pt] (13.755,-0.615) rectangle ++(0.210,0.390);
+\path[fill=Hid!55!Canvas,rounded corners=.6pt] (13.995,-0.615) rectangle ++(0.210,0.390);
+\draw[draw=Ink!55!Canvas,line width=.45pt] (12.255,0.630) -- ++(-.06,0) -- ++(0,-1.260) -- ++(.06,0);
+\draw[draw=Ink!55!Canvas,line width=.45pt] (14.265,0.630) -- ++(.06,0) -- ++(0,-1.260) -- ++(-.06,0);
+\node[font=\small,text=Ink,anchor=center,align=center,inner sep=0pt] at (13.260,-0.950) {$\widehat H$};
+\node[font=\scriptsize,text=Muted,anchor=center,align=center,inner sep=0pt] at (13.260,-1.330) {$K\times d$};
+\begin{scope}[on background layer]
+\draw[-{Latex[length=1.8mm]},draw=Ink!80!Canvas,line width=.7pt] (3.930,0.000) -- (4.350,0.000);
+\end{scope}
+\begin{scope}[on background layer]
+\draw[-{Latex[length=1.8mm]},draw=Ink!80!Canvas,line width=.7pt] (8.150,0.000) -- (8.650,0.000);
+\end{scope}
+\begin{scope}[on background layer]
+\draw[-{Latex[length=1.8mm]},draw=Hid!80!Canvas,line width=.7pt] (10.850,0.000) -- (12.170,0.420);
+\end{scope}
+\begin{scope}[on background layer]
+\draw[-{Latex[length=1.8mm]},draw=Hid!80!Canvas,line width=.7pt] (10.850,-0.840) -- (12.170,0.000);
+\end{scope}
+\begin{scope}[on background layer]
+\draw[-{Latex[length=1.8mm]},draw=Hid!80!Canvas,line width=.7pt] (10.850,-1.680) -- (12.170,-0.420);
+\end{scope}
+\path[draw=Idx!70!Canvas,fill=Canvas,rounded corners=1pt] (12.550,1.550) rectangle ++(.39,.42);
+\node[font=\scriptsize,text=Ink,anchor=center,align=center,inner sep=0pt] at (12.745,1.760) {$4$};
+\path[draw=Idx!70!Canvas,fill=Canvas,rounded corners=1pt] (12.970,1.550) rectangle ++(.39,.42);
+\node[font=\scriptsize,text=Ink,anchor=center,align=center,inner sep=0pt] at (13.165,1.760) {$6$};
+\path[draw=Idx!70!Canvas,fill=Canvas,rounded corners=1pt] (13.390,1.550) rectangle ++(.39,.42);
+\node[font=\scriptsize,text=Ink,anchor=center,align=center,inner sep=0pt] at (13.585,1.760) {$8$};
+\node[font=\scriptsize,text=Muted,anchor=center,align=center,inner sep=0pt] at (13.150,2.300) {$P$};
+\begin{scope}[on background layer]
+\draw[-{Latex[length=1.8mm]},draw=Idx!80!Canvas,line width=.7pt,dashed] (13.150,1.450) -- (13.250,0.880);
+\end{scope}
+\path[fill=Msk!30!Canvas,rounded corners=.6pt] (17.415,0.225) rectangle ++(0.390,0.390);
+\path[fill=Msk!55!Canvas,rounded corners=.6pt] (17.415,-0.195) rectangle ++(0.390,0.390);
+\path[fill=Msk!55!Canvas,rounded corners=.6pt] (17.835,-0.195) rectangle ++(0.390,0.390);
+\path[fill=Msk!55!Canvas,rounded corners=.6pt] (17.415,-0.615) rectangle ++(0.390,0.390);
+\path[fill=Msk!80!Canvas,rounded corners=.6pt] (17.835,-0.615) rectangle ++(0.390,0.390);
+\path[fill=Msk!80!Canvas,rounded corners=.6pt] (18.255,-0.615) rectangle ++(0.390,0.390);
+\draw[draw=Ink!55!Canvas,line width=.45pt] (17.355,0.630) -- ++(-.06,0) -- ++(0,-1.260) -- ++(.06,0);
+\draw[draw=Ink!55!Canvas,line width=.45pt] (18.705,0.630) -- ++(.06,0) -- ++(0,-1.260) -- ++(-.06,0);
+\node[font=\small,text=Ink,anchor=center,align=center,inner sep=0pt] at (18.030,-0.950) {$M^{\rm cand\to cand}$};
+\node[font=\scriptsize,text=Muted,anchor=center,align=center,inner sep=0pt] at (18.030,-1.330) {$K\times K$};
+\node[font=\scriptsize,text=Muted,anchor=center,align=center,inner sep=0pt,text width=4.3cm] at (18.000,-1.800) {row = query; column = key\\later candidates see earlier ones};
+\node[font=\small,text=Muted,anchor=center,align=center,inner sep=0pt,text width=8cm] at (3.800,-3.600) {\textbf{4. Shared scalar MLP: $1024 \to 256 \to 1$}};
+\node[font=\small,text=Muted,anchor=center,align=center,inner sep=0pt,text width=7cm] at (17.800,-3.600) {\textbf{5. Normalize over the valid answer space}};
+\path[fill=Hid!30!Canvas,rounded corners=.6pt] (0.365,-4.875) rectangle ++(0.210,0.390);
+\path[fill=Hid!30!Canvas,rounded corners=.6pt] (0.605,-4.875) rectangle ++(0.210,0.390);
+\path[fill=Hid!30!Canvas,rounded corners=.6pt] (0.845,-4.875) rectangle ++(0.210,0.390);
+\path[fill=Hid!30!Canvas,rounded corners=.6pt] (1.085,-4.875) rectangle ++(0.210,0.390);
+\path[fill=Hid!30!Canvas,rounded corners=.6pt] (1.325,-4.875) rectangle ++(0.210,0.390);
+\path[fill=Hid!30!Canvas,rounded corners=.6pt] (1.565,-4.875) rectangle ++(0.210,0.390);
+\path[fill=Hid!30!Canvas,rounded corners=.6pt] (1.805,-4.875) rectangle ++(0.210,0.390);
+\path[fill=Hid!30!Canvas,rounded corners=.6pt] (2.045,-4.875) rectangle ++(0.210,0.390);
+\path[fill=Hid!30!Canvas,rounded corners=.6pt] (0.365,-5.295) rectangle ++(0.210,0.390);
+\path[fill=Hid!55!Canvas,rounded corners=.6pt] (0.605,-5.295) rectangle ++(0.210,0.390);
+\path[fill=Hid!55!Canvas,rounded corners=.6pt] (0.845,-5.295) rectangle ++(0.210,0.390);
+\path[fill=Hid!55!Canvas,rounded corners=.6pt] (1.085,-5.295) rectangle ++(0.210,0.390);
+\path[fill=Hid!55!Canvas,rounded corners=.6pt] (1.325,-5.295) rectangle ++(0.210,0.390);
+\path[fill=Hid!80!Canvas,rounded corners=.6pt] (1.565,-5.295) rectangle ++(0.210,0.390);
+\path[fill=Hid!80!Canvas,rounded corners=.6pt] (1.805,-5.295) rectangle ++(0.210,0.390);
+\path[fill=Hid!80!Canvas,rounded corners=.6pt] (2.045,-5.295) rectangle ++(0.210,0.390);
+\path[fill=Hid!55!Canvas,rounded corners=.6pt] (0.365,-5.715) rectangle ++(0.210,0.390);
+\path[fill=Hid!55!Canvas,rounded corners=.6pt] (0.605,-5.715) rectangle ++(0.210,0.390);
+\path[fill=Hid!80!Canvas,rounded corners=.6pt] (0.845,-5.715) rectangle ++(0.210,0.390);
+\path[fill=Hid!30!Canvas,rounded corners=.6pt] (1.085,-5.715) rectangle ++(0.210,0.390);
+\path[fill=Hid!30!Canvas,rounded corners=.6pt] (1.325,-5.715) rectangle ++(0.210,0.390);
+\path[fill=Hid!55!Canvas,rounded corners=.6pt] (1.565,-5.715) rectangle ++(0.210,0.390);
+\path[fill=Hid!55!Canvas,rounded corners=.6pt] (1.805,-5.715) rectangle ++(0.210,0.390);
+\path[fill=Hid!80!Canvas,rounded corners=.6pt] (2.045,-5.715) rectangle ++(0.210,0.390);
+\draw[draw=Ink!55!Canvas,line width=.45pt] (0.305,-4.470) -- ++(-.06,0) -- ++(0,-1.260) -- ++(.06,0);
+\draw[draw=Ink!55!Canvas,line width=.45pt] (2.315,-4.470) -- ++(.06,0) -- ++(0,-1.260) -- ++(-.06,0);
+\node[font=\small,text=Ink,anchor=center,align=center,inner sep=0pt] at (1.310,-6.050) {$\widehat H$};
+\node[font=\scriptsize,text=Muted,anchor=center,align=center,inner sep=0pt] at (1.310,-6.430) {$K\times d$};
+\node[font=\Large,text=Ink,anchor=center,align=center,inner sep=0pt] at (2.900,-5.100) {$\times$};
+\path[fill=Wgt!55!Canvas,rounded corners=.6pt] (3.715,-4.365) rectangle ++(0.210,0.210);
+\path[fill=Wgt!55!Canvas,rounded corners=.6pt] (3.955,-4.365) rectangle ++(0.210,0.210);
+\path[fill=Wgt!80!Canvas,rounded corners=.6pt] (3.715,-4.605) rectangle ++(0.210,0.210);
+\path[fill=Wgt!80!Canvas,rounded corners=.6pt] (3.955,-4.605) rectangle ++(0.210,0.210);
+\path[fill=Wgt!80!Canvas,rounded corners=.6pt] (3.715,-4.845) rectangle ++(0.210,0.210);
+\path[fill=Wgt!30!Canvas,rounded corners=.6pt] (3.955,-4.845) rectangle ++(0.210,0.210);
+\path[fill=Wgt!30!Canvas,rounded corners=.6pt] (3.715,-5.085) rectangle ++(0.210,0.210);
+\path[fill=Wgt!55!Canvas,rounded corners=.6pt] (3.955,-5.085) rectangle ++(0.210,0.210);
+\path[fill=Wgt!30!Canvas,rounded corners=.6pt] (3.715,-5.325) rectangle ++(0.210,0.210);
+\path[fill=Wgt!55!Canvas,rounded corners=.6pt] (3.955,-5.325) rectangle ++(0.210,0.210);
+\path[fill=Wgt!55!Canvas,rounded corners=.6pt] (3.715,-5.565) rectangle ++(0.210,0.210);
+\path[fill=Wgt!80!Canvas,rounded corners=.6pt] (3.955,-5.565) rectangle ++(0.210,0.210);
+\path[fill=Wgt!55!Canvas,rounded corners=.6pt] (3.715,-5.805) rectangle ++(0.210,0.210);
+\path[fill=Wgt!30!Canvas,rounded corners=.6pt] (3.955,-5.805) rectangle ++(0.210,0.210);
+\path[fill=Wgt!80!Canvas,rounded corners=.6pt] (3.715,-6.045) rectangle ++(0.210,0.210);
+\path[fill=Wgt!55!Canvas,rounded corners=.6pt] (3.955,-6.045) rectangle ++(0.210,0.210);
+\draw[draw=Ink!55!Canvas,line width=.45pt] (3.655,-4.140) -- ++(-.06,0) -- ++(0,-1.920) -- ++(.06,0);
+\draw[draw=Ink!55!Canvas,line width=.45pt] (4.225,-4.140) -- ++(.06,0) -- ++(0,-1.920) -- ++(-.06,0);
+\node[font=\small,text=Ink,anchor=center,align=center,inner sep=0pt] at (3.940,-6.380) {$W_1^{\mathsf T}$};
+\node[font=\scriptsize,text=Muted,anchor=center,align=center,inner sep=0pt] at (3.940,-6.760) {$d\times m$};
+\node[draw=Ink!28!Canvas,fill=Ink!3!Canvas,rounded corners=2pt,font=\small,text width=1.380cm,align=center,inner sep=3pt,minimum height=0.850cm] at (5.800,-5.100) {$+b_1$; GELU};
+\begin{scope}[on background layer]
+\draw[-{Latex[length=1.8mm]},draw=Ink!80!Canvas,line width=.7pt] (4.320,-5.100) -- (4.850,-5.100);
+\end{scope}
+\begin{scope}[on background layer]
+\draw[-{Latex[length=1.8mm]},draw=Ink!80!Canvas,line width=.7pt] (6.750,-5.100) -- (7.200,-5.100);
+\end{scope}
+\path[fill=Hid!55!Canvas,rounded corners=.6pt] (7.365,-4.875) rectangle ++(0.210,0.390);
+\path[fill=Hid!55!Canvas,rounded corners=.6pt] (7.605,-4.875) rectangle ++(0.210,0.390);
+\path[fill=Hid!80!Canvas,rounded corners=.6pt] (7.365,-5.295) rectangle ++(0.210,0.390);
+\path[fill=Hid!80!Canvas,rounded corners=.6pt] (7.605,-5.295) rectangle ++(0.210,0.390);
+\path[fill=Hid!30!Canvas,rounded corners=.6pt] (7.365,-5.715) rectangle ++(0.210,0.390);
+\path[fill=Hid!30!Canvas,rounded corners=.6pt] (7.605,-5.715) rectangle ++(0.210,0.390);
+\draw[draw=Ink!55!Canvas,line width=.45pt] (7.305,-4.470) -- ++(-.06,0) -- ++(0,-1.260) -- ++(.06,0);
+\draw[draw=Ink!55!Canvas,line width=.45pt] (7.875,-4.470) -- ++(.06,0) -- ++(0,-1.260) -- ++(-.06,0);
+\node[font=\small,text=Ink,anchor=center,align=center,inner sep=0pt] at (7.590,-6.050) {$U$};
+\node[font=\scriptsize,text=Muted,anchor=center,align=center,inner sep=0pt] at (7.590,-6.430) {$K\times m$};
+\node[font=\Large,text=Ink,anchor=center,align=center,inner sep=0pt] at (8.500,-5.100) {$\times$};
+\path[fill=Wgt!55!Canvas,rounded corners=.6pt] (9.315,-5.085) rectangle ++(0.210,0.210);
+\path[fill=Wgt!80!Canvas,rounded corners=.6pt] (9.315,-5.325) rectangle ++(0.210,0.210);
+\draw[draw=Ink!55!Canvas,line width=.45pt] (9.255,-4.860) -- ++(-.06,0) -- ++(0,-0.480) -- ++(.06,0);
+\draw[draw=Ink!55!Canvas,line width=.45pt] (9.585,-4.860) -- ++(.06,0) -- ++(0,-0.480) -- ++(-.06,0);
+\node[font=\small,text=Ink,anchor=center,align=center,inner sep=0pt] at (9.420,-5.660) {$W_2^{\mathsf T}$};
+\node[font=\scriptsize,text=Muted,anchor=center,align=center,inner sep=0pt] at (9.420,-6.040) {$m\times1$};
+\node[font=\small,text=Ink,anchor=center,align=center,inner sep=0pt] at (10.400,-5.100) {$+b_2=$};
+\path[fill=Lgt!30!Canvas,rounded corners=.6pt] (11.315,-4.875) rectangle ++(0.210,0.390);
+\path[fill=Lgt!30!Canvas,rounded corners=.6pt] (11.315,-5.295) rectangle ++(0.210,0.390);
+\path[fill=Lgt!55!Canvas,rounded corners=.6pt] (11.315,-5.715) rectangle ++(0.210,0.390);
+\draw[draw=Ink!55!Canvas,line width=.45pt] (11.255,-4.470) -- ++(-.06,0) -- ++(0,-1.260) -- ++(.06,0);
+\draw[draw=Ink!55!Canvas,line width=.45pt] (11.585,-4.470) -- ++(.06,0) -- ++(0,-1.260) -- ++(-.06,0);
+\node[font=\small,text=Ink,anchor=center,align=center,inner sep=0pt] at (11.420,-6.050) {$v$};
+\node[font=\scriptsize,text=Muted,anchor=center,align=center,inner sep=0pt] at (11.420,-6.430) {$K\times1$};
+\node[draw=Ink!28!Canvas,fill=Ink!3!Canvas,rounded corners=2pt,font=\small,text width=1.630cm,align=center,inner sep=3pt,minimum height=0.850cm] at (13.275,-5.100) {squeeze};
+\begin{scope}[on background layer]
+\draw[-{Latex[length=1.8mm]},draw=Ink!80!Canvas,line width=.7pt] (11.700,-5.100) -- (12.200,-5.100);
+\end{scope}
+\begin{scope}[on background layer]
+\draw[-{Latex[length=1.8mm]},draw=Ink!80!Canvas,line width=.7pt] (14.350,-5.100) -- (14.900,-5.100);
+\end{scope}
+\path[fill=Lgt!30!Canvas,rounded corners=.6pt] (15.065,-4.875) rectangle ++(0.210,0.390);
+\path[fill=Lgt!55!Canvas,rounded corners=.6pt] (15.065,-5.295) rectangle ++(0.210,0.390);
+\path[fill=Lgt!55!Canvas,rounded corners=.6pt] (15.065,-5.715) rectangle ++(0.210,0.390);
+\draw[draw=Ink!55!Canvas,line width=.45pt] (15.005,-4.470) -- ++(-.06,0) -- ++(0,-1.260) -- ++(.06,0);
+\draw[draw=Ink!55!Canvas,line width=.45pt] (15.335,-4.470) -- ++(.06,0) -- ++(0,-1.260) -- ++(-.06,0);
+\node[font=\small,text=Ink,anchor=center,align=center,inner sep=0pt] at (15.170,-6.050) {$s$};
+\node[font=\scriptsize,text=Muted,anchor=center,align=center,inner sep=0pt] at (15.170,-6.430) {$K$};
+\node[draw=Ink!28!Canvas,fill=Ink!3!Canvas,rounded corners=2pt,font=\small,text width=2.780cm,align=center,inner sep=3pt,minimum height=0.850cm] at (17.950,-5.100) {$/\tau$; softmax / sigmoid};
+\begin{scope}[on background layer]
+\draw[-{Latex[length=1.8mm]},draw=Ink!80!Canvas,line width=.7pt] (15.450,-5.100) -- (16.300,-5.100);
+\end{scope}
+\begin{scope}[on background layer]
+\draw[-{Latex[length=1.8mm]},draw=Ink!80!Canvas,line width=.7pt] (19.600,-5.100) -- (20.200,-5.100);
+\end{scope}
+\path[fill=Lgt!80!Canvas,rounded corners=.6pt] (20.365,-4.875) rectangle ++(0.210,0.390);
+\path[fill=Lgt!80!Canvas,rounded corners=.6pt] (20.365,-5.295) rectangle ++(0.210,0.390);
+\path[fill=Lgt!30!Canvas,rounded corners=.6pt] (20.365,-5.715) rectangle ++(0.210,0.390);
+\draw[draw=Ink!55!Canvas,line width=.45pt] (20.305,-4.470) -- ++(-.06,0) -- ++(0,-1.260) -- ++(.06,0);
+\draw[draw=Ink!55!Canvas,line width=.45pt] (20.635,-4.470) -- ++(.06,0) -- ++(0,-1.260) -- ++(-.06,0);
+\node[font=\small,text=Ink,anchor=center,align=center,inner sep=0pt] at (20.470,-6.050) {$p$};
+\node[font=\scriptsize,text=Muted,anchor=center,align=center,inner sep=0pt] at (20.470,-6.430) {$K$};
+\node[anchor=north west,fill=Ink!3!Canvas,rounded corners=3pt,inner sep=8pt,font=\small,text width=21.400cm,align=left] (platefooter) at (0,-7.350) {\begin{tabular}{@{}p{2.2cm}@{\hspace{7pt}}p{18.8cm}@{}}\textbf{Axes} & \raggedright One question shown; batch $B$ omitted. $T$: tokens; $K$: valid candidates; $d=1024$, $m=256$. Tiles illustrate axis structure, not the literal dimensions.\tabularnewline[6pt]\textbf{Objects} & \raggedright $x$ and $P$ are integer IDs/positions; $H,\widehat H,U$ are continuous states; $W_1,W_2$ are learned weights; $s$ are raw scores and $p$ probabilities. Biases appear in the formula.\tabularnewline[6pt]\textbf{Mechanism} & \raggedright Choice example, \texttt{candidate\_scalar/list}: actual candidate-end tokens, no inserted markers. Noul instead selects the final Answer cue ($K=1$). Choice/score use masked softmax; noul/multi-label use sigmoid. No tree cache; LM head bypassed.\tabularnewline\end{tabular}};
+\node[font=\scriptsize,text=Muted,anchor=north,inner sep=0pt] at ($(platefooter.south)+(0,-.25)$) {MetisCraft: scalar-list model architecture $\cdot$ shichao};
+\end{tikzpicture}
+\end{document}

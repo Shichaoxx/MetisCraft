@@ -15,6 +15,7 @@
 
 <p align="center">
   <a href="README.md">English</a> · <b>简体中文</b><br>
+  <a href="docs/zh/tensor-analysis/introduction.md">引言</a> ·
   <a href="docs/zh/cookbook/first-model.md">开始使用</a> ·
   <a href="docs/zh/cookbook/index.md">Cookbook</a> ·
   <a href="docs/zh/tensor-analysis/index.md">原理与张量解析</a> ·
@@ -32,6 +33,8 @@
 | 政策迁移 · 300 题 | **99.33% · 298/300** | 100% | −0.67 个百分点 |
 
 **两项预定准确率验收均达标。** 单种子、同一批公开开发题；原始训练历史未恢复，校准可能恶化 NLL。[复现记录与限制](docs/reproductions/tev1.md) · [训练配方](recipes/tev1/README.md)。
+
+[模型架构图谱](docs/zh/tensor-analysis/architectures.md)：对照 MetisCraft、Tev1 与开源实现的 token、主干、读出和训练依据。
 
 ## 一条消息，两个判断
 
@@ -102,6 +105,8 @@ CUDA_VISIBLE_DEVICES='' OMP_NUM_THREADS=1 metiscraft train recipe.yaml
 [Cookbook](docs/zh/cookbook/index.md) · [原理与张量解析](docs/zh/tensor-analysis/index.md) · [五分钟技术导览](docs/zh/tensor-analysis/walkthrough.md) · [数据格式](docs/zh/data.md) · [训练与校准](docs/zh/training.md) · [预测与服务](docs/zh/serving.md) · [版本说明](CHANGELOG_zh.md)
 
 欢迎[贡献](CONTRIBUTING_zh.md)、[报告问题](https://github.com/Shichaoxx/MetisCraft/issues/new?template=bug_report.yml)与[提出建议](https://github.com/Shichaoxx/MetisCraft/issues/new?template=feature_request.yml)。
+
+[JevLike 引言：任务、数据与张量架构](docs/zh/tensor-analysis/introduction.md)
 
 ## 许可证
 

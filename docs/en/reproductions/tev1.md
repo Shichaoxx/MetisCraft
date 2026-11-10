@@ -6,6 +6,10 @@ The source is pinned to [togethercomputer/tev1@1dde778](https://github.com/toget
 
 ## Model architecture
 
+![Tev1-4B model architecture](../../tensor-analysis/figures/tev1-architecture.en.svg)
+
+[SVG](../../tensor-analysis/figures/tev1-architecture.en.svg) · [PDF](../../tensor-analysis/figures/tev1-architecture.en.pdf) · [TikZ](../../tensor-analysis/figures/tev1-architecture.en.tex)
+
 **Tev1 fine-tunes Qwen3.5-4B for decisions, predicting answer letters with its existing LM head.** The [upstream description](https://github.com/togethercomputer/tev1/blob/1dde7782382c9f49d627153759b8d1deab426ce0/README.md) documents LoRA supervised fine-tuning; the [pinned model card](https://huggingface.co/togethercomputer/Tev1-4B-experimental/blob/0b7becf017daa0e5eb222f8ce7483c8c8259c52f/README.md) states that it retains the standard next-token output head. MetisCraft's 4B reproduction uses the same readout family.
 
 | Component | Published architecture and this reproduction |

@@ -204,6 +204,28 @@ def main():
         svg = svg.replace('"DejaVu Sans", Arial', '"Noto Sans CJK SC", "WenQuanYi Zen Hei", Arial')
         (OUT / f"{name}-zh.svg").write_text(svg, encoding="utf-8")
 
+    # Same editable geometry in both themes; semantic accents remain distinct.
+    dark_palette = {
+        "#ffffff": "#18212c",
+        "#243438": "#e2eaf3",
+        "#edf6f3": "#203c3e",
+        "#b6d6cd": "#4d7c78",
+        "#087f78": "#83d8cd",
+        "#435e5b": "#b0cbc7",
+        "#698883": "#92b7b1",
+        "#f6faf9": "#22323e",
+        "#d2e3df": "#4c636b",
+        "#6a7577": "#acb9c4",
+        "#76571f": "#e3c58d",
+        "#546b6d": "#adbfca",
+    }
+    for name in ("pipeline", "pipeline-mobile", "judgments", "judgments-mobile"):
+        for suffix in ("", "-zh"):
+            svg = (OUT / f"{name}{suffix}.svg").read_text()
+            for before, after in dark_palette.items():
+                svg = svg.replace('"' + before + '"', '"' + after + '"')
+            (OUT / f"{name}{suffix}.dark.svg").write_text(svg)
+
 
 if __name__ == "__main__":
     main()
