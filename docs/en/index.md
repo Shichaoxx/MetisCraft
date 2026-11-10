@@ -7,6 +7,8 @@ Train, reproduce and deploy JevLike decision models. One recipe connects trainin
 [Get started](cookbook/first-model.md){ .md-button .md-button--primary }
 [Explore the Cookbook](cookbook/index.md){ .md-button }
 
+[Intro: JevLike, tasks, data and model architecture](tensor-analysis/introduction.md)
+
 </div>
 
 ## Tev1 4B reproduction

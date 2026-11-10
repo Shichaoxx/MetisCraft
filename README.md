@@ -15,6 +15,7 @@
 
 <p align="center">
   <b>English</b> · <a href="README_zh.md">简体中文</a><br>
+  <a href="docs/en/tensor-analysis/introduction.md">Intro</a> ·
   <a href="docs/en/cookbook/first-model.md">Get started</a> ·
   <a href="docs/en/cookbook/index.md">Cookbook</a> ·
   <a href="docs/en/tensor-analysis/index.md">Concepts & Tensors</a> ·

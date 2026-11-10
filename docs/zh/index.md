@@ -7,6 +7,8 @@
 [开始使用](cookbook/first-model.md){ .md-button .md-button--primary }
 [浏览 Cookbook](cookbook/index.md){ .md-button }
 
+[引言：JevLike、任务、数据与模型架构](tensor-analysis/introduction.md)
+
 </div>
 
 ## Tev1 4B 复现结果

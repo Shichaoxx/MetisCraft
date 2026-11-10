@@ -215,6 +215,7 @@ def main():
                     {"快速上手" if zh else "Quickstart": "quickstart.md"},
                 ]
             },
+            {"引言" if zh else "Intro": "tensor-analysis/introduction.md"},
             {
                 "Cookbook": [
                     {"阅读路线" if zh else "Choose a path": "cookbook/index.md"},
@@ -225,11 +226,6 @@ def main():
             },
             {
                 "原理与张量解析" if zh else "Concepts & Tensors": [
-                    {
-                        "0. 引言：什么是 JevLike"
-                        if zh
-                        else "0. Introduction to JevLike": "tensor-analysis/introduction.md"
-                    },
                     {
                         "从 System One 到 MetisCraft"
                         if zh
