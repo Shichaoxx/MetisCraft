@@ -15,6 +15,8 @@
 </div>
 </div>
 
+运行教程前，从 [GitHub 预发行版](https://github.com/Shichaoxx/MetisCraft/releases/tag/0.1.0rc1)下载 `0.1.0rc1` wheel，按[安装说明](../installation.md)安装。
+
 ## 选一条起步路线
 
 <div class="start-grid cookbook-paths" markdown="1">

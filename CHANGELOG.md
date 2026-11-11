@@ -1,11 +1,12 @@
 # Changelog
 
-## 0.1.0rc1 — Unreleased
+## 0.1.0rc1 — 2026-11-11
 
 This first public preview provides a recipe-based workflow for preparing data,
 training typed decision models, calibrating and evaluating probabilities, and
-serving the resulting artifacts. The candidate is not yet published to PyPI;
-its APIs and artifact formats may change.
+serving the resulting artifacts. The wheel, source distribution and SHA-256
+checksums are available in the
+[GitHub pre-release](https://github.com/Shichaoxx/MetisCraft/releases/tag/0.1.0rc1). APIs and artifact formats may change.
 
 ### Added
 
@@ -42,7 +43,7 @@ its APIs and artifact formats may change.
   failure, preserves caller-owned groups and keeps the original exception if
   teardown also fails. Two-rank CPU regressions cover model, training and
   evaluation failures.
-- Source installation consistently selects `release/0.1.0rc1`. The bilingual
+- Source installation uses the fixed `0.1.0rc1` tag. The bilingual
   compatibility reference defines tested Python/dependency environments, public
   interfaces, artifact loading and distributed lifecycle ownership.
 - Training validates split purposes and rejects shared fitting/evaluation inputs

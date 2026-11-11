@@ -7,6 +7,8 @@ Train, reproduce and deploy JevLike decision models. One recipe connects trainin
 [Get started](cookbook/first-model.md){ .md-button .md-button--primary }
 [Explore the Cookbook](cookbook/index.md){ .md-button }
 
+**0.1.0rc1 is available as a GitHub pre-release.** [Download distributions](https://github.com/Shichaoxx/MetisCraft/releases/tag/0.1.0rc1) · [Installation](installation.md)
+
 [Intro: JevLike, tasks, data and model architecture](tensor-analysis/introduction.md)
 
 </div>

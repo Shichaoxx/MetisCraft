@@ -5,12 +5,26 @@ environment is a suitable starting point. The examples below use a POSIX shell.
 CPU PyTorch is sufficient for the quickstart; real-model training needs a PyTorch
 build and hardware that support the chosen model.
 
-## From source
+## From a release-candidate wheel
 
-Install the `0.1.0rc1` preview from `release/0.1.0rc1`. The `main` branch tracks ongoing development. Check [GitHub releases](https://github.com/Shichaoxx/MetisCraft/releases) for published distributions:
+`0.1.0rc1` is available as a [GitHub pre-release](https://github.com/Shichaoxx/MetisCraft/releases/tag/0.1.0rc1). GitHub hosts the distribution files for this version.
+
+[Download wheel](https://github.com/Shichaoxx/MetisCraft/releases/download/0.1.0rc1/metiscraft-0.1.0rc1-py3-none-any.whl) · [Download source distribution](https://github.com/Shichaoxx/MetisCraft/releases/download/0.1.0rc1/metiscraft-0.1.0rc1.tar.gz) · [SHA256SUMS](https://github.com/Shichaoxx/MetisCraft/releases/download/0.1.0rc1/SHA256SUMS)
+
+Install an appropriate PyTorch build in an isolated Python environment, then run these commands from the download directory. The `serve` extra provides HTTP dependencies.
 
 ```bash
-git clone --branch release/0.1.0rc1 https://github.com/Shichaoxx/MetisCraft.git
+sha256sum -c SHA256SUMS --ignore-missing
+python -m pip install './metiscraft-0.1.0rc1-py3-none-any.whl[serve]'
+metiscraft --version
+```
+
+## From source
+
+Check out the fixed `0.1.0rc1` tag to build from the source used for this pre-release.
+
+```bash
+git clone --branch 0.1.0rc1 --depth 1 https://github.com/Shichaoxx/MetisCraft.git
 cd MetisCraft
 python3.11 -m venv .venv
 . .venv/bin/activate
@@ -25,18 +39,6 @@ Python 3.10 and 3.11 are the tested support range for this preview. The package'
 minimum requirement does not establish support for later Python versions or every
 dependency combination. See [compatibility and support](compatibility.md) for the
 validated environments, interface boundaries and artifact-loading policy.
-
-## From a release-candidate wheel
-
-If you have the built wheel, install it directly in your active environment:
-
-```bash
-python -m pip install './metiscraft-0.1.0rc1-py3-none-any.whl[serve]'
-metiscraft --version
-```
-
-This is a local wheel installation, not a claim that `pip install metiscraft`
-is available on PyPI. Check the [releases](https://github.com/Shichaoxx/MetisCraft/releases) for available versions.
 
 ## Optional dependencies
 
