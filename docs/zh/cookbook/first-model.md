@@ -6,7 +6,7 @@
 
 ## 开始前
 
-- 按[安装说明](../installation.md)安装包含 `serve` 扩展的包。
+- 从 [GitHub 预发行版](https://github.com/Shichaoxx/MetisCraft/releases/tag/0.1.0rc1)下载 `0.1.0rc1` wheel，按[安装说明](../installation.md)安装 `serve` 扩展。
 - 在已安装环境的 POSIX shell 中执行命令。包已在 Python 3.10 和 3.11 上检查。
 - 在源码目录之外选择一个新工作目录。生成的示例不需要下载模型，也不需要 GPU。
 

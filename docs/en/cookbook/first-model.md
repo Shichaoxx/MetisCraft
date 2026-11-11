@@ -6,7 +6,7 @@ This tutorial uses a tiny, randomly initialized Qwen3 and synthetic labels. You 
 
 ## Before you start
 
-- Complete [installation](../installation.md) with the `serve` extra.
+- Download the `0.1.0rc1` wheel from the [GitHub pre-release](https://github.com/Shichaoxx/MetisCraft/releases/tag/0.1.0rc1) and follow [installation](../installation.md) with the `serve` extra.
 - Use the installed environment in a POSIX shell. The package has been checked with Python 3.10 and 3.11.
 - Choose a new workspace outside the source checkout. The generated example needs no model download or GPU.
 

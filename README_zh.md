@@ -12,7 +12,7 @@
   <a href="https://github.com/Shichaoxx/MetisCraft/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/Shichaoxx/MetisCraft/actions/workflows/ci.yml/badge.svg?branch=main"></a>
   <a href="LICENSE"><img alt="Apache 2.0" src="https://img.shields.io/badge/license-Apache--2.0-087f78"></a>
   <a href="https://shichaoxx.github.io/MetisCraft/zh/installation/"><img alt="Python 3.10 与 3.11" src="https://img.shields.io/badge/python-3.10%20%7C%203.11-243438"></a>
-  <a href="https://shichaoxx.github.io/MetisCraft/zh/changelog/"><img alt="0.1.0rc1 公开预览" src="https://img.shields.io/badge/公开预览-0.1.0rc1-bd8c36"></a>
+  <a href="https://github.com/Shichaoxx/MetisCraft/releases/tag/0.1.0rc1"><img alt="0.1.0rc1 公开预览" src="https://img.shields.io/badge/公开预览-0.1.0rc1-bd8c36"></a>
 </p>
 
 <p align="center">
@@ -22,6 +22,7 @@
   <a href="https://shichaoxx.github.io/MetisCraft/zh/cookbook/">Cookbook</a> ·
   <a href="https://shichaoxx.github.io/MetisCraft/zh/tensor-analysis/">原理与张量解析</a> ·
   <a href="https://shichaoxx.github.io/MetisCraft/zh/">文档</a> ·
+  <a href="https://github.com/Shichaoxx/MetisCraft/releases/tag/0.1.0rc1">下载 0.1.0rc1</a> ·
   <a href="https://shichaoxx.github.io/MetisCraft/zh/contributing/">参与贡献</a>
 </p>
 
@@ -97,15 +98,13 @@ Tev1 使用 **Qwen3.5-4B 原有词表头**。MetisCraft 复现通过 LoRA 学习
 
 [兼容范围与支持约定](https://shichaoxx.github.io/MetisCraft/zh/compatibility/)明确 `0.1.0rc1` 已验证的依赖环境、接口与产物加载规则。
 
-使用 Python 3.10 或 3.11，并先为硬件安装合适的 PyTorch。当前可从源码安装：
+使用 Python 3.10 或 3.11，并安装适合硬件的 PyTorch。从 [GitHub 预发行版](https://github.com/Shichaoxx/MetisCraft/releases/tag/0.1.0rc1)下载[已验证的 wheel](https://github.com/Shichaoxx/MetisCraft/releases/download/0.1.0rc1/metiscraft-0.1.0rc1-py3-none-any.whl)，在下载目录安装。
 
 ```bash
-git clone --branch release/0.1.0rc1 https://github.com/Shichaoxx/MetisCraft.git
-cd MetisCraft
-python -m pip install '.[serve]'
+python -m pip install './metiscraft-0.1.0rc1-py3-none-any.whl[serve]'
 ```
 
-在源码目录之外运行：
+在新的工作目录运行示例。
 
 ```bash
 metiscraft init my-first-judge

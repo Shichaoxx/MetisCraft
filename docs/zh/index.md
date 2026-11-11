@@ -7,6 +7,8 @@
 [开始使用](cookbook/first-model.md){ .md-button .md-button--primary }
 [浏览 Cookbook](cookbook/index.md){ .md-button }
 
+**0.1.0rc1 已发布为 GitHub 预发行版。** [下载发行包](https://github.com/Shichaoxx/MetisCraft/releases/tag/0.1.0rc1) · [安装说明](installation.md)
+
 [引言：JevLike、任务、数据与模型架构](tensor-analysis/introduction.md)
 
 </div>
