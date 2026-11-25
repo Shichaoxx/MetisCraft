@@ -41,16 +41,14 @@ def binary_auc(scores: np.ndarray, labels: np.ndarray) -> float | None:
     if pos == 0 or neg == 0:
         return None
     order = scores.argsort(kind="mergesort")
-    ranks = np.empty(len(scores))
     sorted_scores = scores[order]
-    i = 0
-    while i < len(scores):
-        j = i
-        while j + 1 < len(scores) and sorted_scores[j + 1] == sorted_scores[i]:
-            j += 1
-        ranks[order[i : j + 1]] = (i + j) / 2 + 1
-        i = j + 1
-    return float((ranks[labels].sum() - pos * (pos + 1) / 2) / (pos * neg))
+    # Equal scores share the mean of their first and last one-based ranks.
+    breaks = np.flatnonzero(sorted_scores[1:] != sorted_scores[:-1]) + 1
+    boundaries = np.concatenate(([0], breaks, [len(scores)]))
+    mean_ranks = (boundaries[:-1] + 1 + boundaries[1:]) / 2
+    ranks = np.repeat(mean_ranks, np.diff(boundaries))
+    positive_rank_sum = ranks[labels[order]].sum()
+    return float((positive_rank_sum - pos * (pos + 1) / 2) / (pos * neg))
 
 
 def _f1(tp: float, fp: float, fn: float) -> float:

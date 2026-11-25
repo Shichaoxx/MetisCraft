@@ -256,6 +256,14 @@ def test_mixed_hard_soft_and_legacy_null_counts():
         json.dumps(actual, allow_nan=False)
 
 
+def test_binary_auc_counts_pairs_with_tied_scores():
+    labels = [True, False, True, False]
+    rows = [prediction(Record.model_validate(record("noul", labels=label))) for label in labels]
+    # The four positive/negative pairs yield one win, two ties and one loss.
+    assert metrics_for_kind("noul", rows, [[0.8], [0.2], [0.2], [0.8]])["auc"] == 0.5
+    assert metrics_for_kind("noul", rows, [[0.8], [0.8], [0.9], [0.1]])["auc"] == 0.875
+
+
 def test_one_class_auc_is_null_with_reason():
     rec = Record.model_validate(record("noul", labels=False))
     metrics = metrics_for_kind("noul", [prediction(rec)], [[0.2]])
