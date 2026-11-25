@@ -1,47 +1,35 @@
-<p align="center">
-  <a href="https://shichaoxx.github.io/MetisCraft/">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="docs/visuals/figures/wordmark-dark.svg">
-    <img src="docs/visuals/figures/wordmark-light.svg" alt="MetisCraft" width="320">
-  </picture>
-  </a>
-  <br><b>A toolkit for JevLike decision models.</b>
-</p>
+<h1><img src=".github/assets/metiscraft-cover.svg" alt="MetisCraft — the routing model selects security from six queues" width="100%"></h1>
 
-<p align="center">
-  <a href="https://github.com/Shichaoxx/MetisCraft/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/Shichaoxx/MetisCraft/actions/workflows/ci.yml/badge.svg?branch=main"></a>
-  <a href="LICENSE"><img alt="Apache 2.0" src="https://img.shields.io/badge/license-Apache--2.0-087f78"></a>
-  <a href="https://shichaoxx.github.io/MetisCraft/en/installation/"><img alt="Python 3.10 and 3.11" src="https://img.shields.io/badge/python-3.10%20%7C%203.11-243438"></a>
-  <a href="https://github.com/Shichaoxx/MetisCraft/releases/tag/v0.1.0"><img alt="0.1.0 release" src="https://img.shields.io/badge/release-0.1.0-bd8c36"></a>
-</p>
+**English** · [简体中文](README_zh.md)　 |　 [PyPI](https://pypi.org/project/metiscraft/) · [Release 0.1.0](https://github.com/Shichaoxx/MetisCraft/releases/tag/v0.1.0) · [CI](https://github.com/Shichaoxx/MetisCraft/actions/workflows/ci.yml)
 
-<p align="center">
-  README: <b>English</b> · <a href="README_zh.md">简体中文</a><br>
-  <a href="https://shichaoxx.github.io/MetisCraft/en/tensor-analysis/introduction/">Intro</a> ·
-  <a href="https://shichaoxx.github.io/MetisCraft/en/cookbook/first-model/">Get started</a> ·
-  <a href="https://shichaoxx.github.io/MetisCraft/en/cookbook/">Cookbook</a> ·
-  <a href="https://shichaoxx.github.io/MetisCraft/en/tensor-analysis/">Concepts & Tensors</a> ·
-  <a href="https://shichaoxx.github.io/MetisCraft/en/">Documentation</a> ·
-  <a href="https://github.com/Shichaoxx/MetisCraft/releases/tag/v0.1.0">Download 0.1.0</a> ·
-  <a href="https://shichaoxx.github.io/MetisCraft/en/contributing/">Contribute</a>
-</p>
+MetisCraft is a Python toolkit for training models that answer a question from a set of allowed answers. Given a report of a stolen card, one model can choose a support queue and separately estimate whether the case is urgent. A YAML recipe describes how to train, calibrate and evaluate that model. You can load the resulting artifact for batch prediction or serve it over HTTP.
 
-**Train, reproduce and deploy JevLike models.** One toolkit connects training, calibration, evaluation and serving. Reproduce an open recipe or build a decision model for your own labeled task.
+| Read | What you’ll find |
+| --- | --- |
+| [**JevLike research**](https://shichaoxx.github.io/MetisCraft/en/tensor-analysis/introduction/) | How a model scores candidate answers, and what we know about the open implementations. |
+| [**MetisCraft manual**](https://shichaoxx.github.io/MetisCraft/en/) | Installation, data formats, training recipes and serving interfaces. |
+| [**Cookbook**](https://shichaoxx.github.io/MetisCraft/en/cookbook/) | Follow a real prediction, train a first model on CPU or adapt the example to your own task. |
 
-## Tev1 4B, reproduced with MetisCraft
+## Train a first model on CPU
 
-| Evaluation set | MetisCraft 4B | Original Tev1 4B | Difference |
-|---|---:|---:|---:|
-| Main decisions · 1,000 questions | **87.3% · 873/1,000** | 88.0% | −0.70 pp |
-| Policy transfer · 300 questions | **99.33% · 298/300** | 100% | −0.67 pp |
+Start in a fresh Python 3.10 or 3.11 environment with a suitable PyTorch build. The example creates a tiny random model and synthetic data locally. Run these commands in a POSIX shell.
 
-**Both predeclared accuracy checks passed.** Single seed, the same public development questions; the original training history was not recovered, and calibration can worsen NLL. [Reproduction record and limits](https://shichaoxx.github.io/MetisCraft/en/reproductions/tev1/) · [Training recipe](https://shichaoxx.github.io/MetisCraft/en/recipes/tev1/) · [Model architecture atlas](https://shichaoxx.github.io/MetisCraft/en/tensor-analysis/architectures/).
+```bash
+python -m pip install 'metiscraft[serve]==0.1.0'
+metiscraft init my-first-judge
+cd my-first-judge
+python prepare.py
+metiscraft data import dataset.yaml --data-root ./data
+CUDA_VISIBLE_DEVICES='' OMP_NUM_THREADS=1 metiscraft train recipe.yaml
+```
 
-## One message. Two decisions.
+Open `report.md` in the run directory printed by training. The tutorial continues with evaluation, batch prediction and an HTTP request. [First model](https://shichaoxx.github.io/MetisCraft/en/cookbook/first-model/) · [Bring your own task](https://shichaoxx.github.io/MetisCraft/en/cookbook/own-task/) · [Installation and release wheels](https://shichaoxx.github.io/MetisCraft/en/installation/) · [Tested environments](https://shichaoxx.github.io/MetisCraft/en/compatibility/)
 
-> “My card was stolen this morning and there are two payments on it that I did not make.”
+## How the routing example answers
 
-An existing customer-routing model selects **security** and answers whether the message is urgent. This is an actual response excerpt from run `20261105-101057-30757bf7`, on a constructed message. A probability is not an accuracy score.
+> My card was stolen this morning and there are two payments on it that I did not make.
+
+The cover illustrates a recorded response to this example message. Out of six queues the trained model picked `security`. A separate question, `urgent`, returned the probability of a yes answer. Here is the excerpt from run `20261105-101057-30757bf7`.
 
 ```json
 {
@@ -50,89 +38,70 @@ An existing customer-routing model selects **security** and answers whether the 
 }
 ```
 
-[Full request and response](https://shichaoxx.github.io/MetisCraft/en/cookbook/decision/) · [Recipe and test results](https://shichaoxx.github.io/MetisCraft/en/recipes/banking77_support/). On the same run, queue accuracy is **97.8%**, versus a **24.7%** prior baseline (n=3,080). This is a teaching scenario, not a production deployment.
+On 3,080 held-out messages, the model chose the correct queue **97.8%** of the time. A baseline using training-set label frequencies scored **24.7%**. The queue and urgency labels in this teaching task come from a fixed mapping of Banking77 intents. [Full request and response](https://shichaoxx.github.io/MetisCraft/en/cookbook/decision/) · [Recipe and results](https://shichaoxx.github.io/MetisCraft/en/recipes/banking77_support/)
 
-## Four kinds of judgment. One workflow.
+### Which questions can I ask?
 
-| Judgment | A question you can ask | Python / batch | HTTP |
-|---|---|:---:|:---:|
-| Yes/no `noul` | Is this message urgent? | ✓ | ✓ |
-| Choice `choice` | Which team should handle it? | ✓ | ✓ |
-| Ordered score `score` | What severity level applies? | ✓ | ✓ |
-| Multiple labels `multi_label` | Which topics are present? | ✓ | — |
+| Answer type | Example question | Python / batch | HTTP |
+| --- | --- | :---: | :---: |
+| Yes/no · `noul` | Is this message urgent? | ✓ | ✓ |
+| Choice · `choice` | Which team should handle it? | ✓ | ✓ |
+| Ordered score · `score` | How severe is the issue? | ✓ | ✓ |
+| Multiple labels · `multi_label` | Which topics appear in this message? | ✓ | — |
 
-Choose answer-token logits or a candidate scalar head in your recipe. Train with LoRA, full or frozen backbones. Artifacts record configuration, data versions, base identity and evaluation results. Calibration uses held-out data; its benefit must be measured on your target distribution.
+A recipe can read logits for answer tokens or use a shared scalar head to score each candidate. Training supports LoRA, full fine-tuning and frozen backbones. Each run records the base model identity, data version, configuration and evaluation results. Temperature calibration uses a held-out split. [Data format](https://shichaoxx.github.io/MetisCraft/en/data/) · [Training and calibration](https://shichaoxx.github.io/MetisCraft/en/training/) · [Prediction and serving](https://shichaoxx.github.io/MetisCraft/en/serving/)
 
-## Inside a decision model
+<details>
+<summary>Inside the routing model · Qwen3-0.6B-Base and the scalar head</summary>
 
-One recorded customer-routing configuration combines **Qwen3-0.6B-Base + LoRA** with a shared **1024 → 256 → 1 scalar head**. In `list` layout, candidate-end hidden states are gathered from a causal sequence, scored and normalized over the defined answer space.
+The recorded configuration pairs LoRA with a shared **1024 → 256 → 1** head. In the `list` layout, candidates share one causal sequence. The head reads the hidden state at the end of each candidate, assigns a score and normalizes the scores over the allowed answers.
 
 <a href="https://shichaoxx.github.io/MetisCraft/en/tensor-analysis/architectures/">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="docs/tensor-analysis/figures/metiscraft-architecture.en.dark.svg">
-    <img src="docs/tensor-analysis/figures/metiscraft-architecture.en.svg" alt="MetisCraft scalar-list tensor architecture: tokens, hidden-state gather, shared MLP and probabilities" width="100%">
+    <img src="docs/tensor-analysis/figures/metiscraft-architecture.en.svg" alt="Tokens and candidate-end hidden states flow through the shared scalar head to produce answer probabilities" width="100%">
   </picture>
 </a>
 
-[Explore the architecture](https://shichaoxx.github.io/MetisCraft/en/tensor-analysis/architectures/) for tensor shapes, candidate visibility, numerical examples and source references.
+[Architecture atlas](https://shichaoxx.github.io/MetisCraft/en/tensor-analysis/architectures/) · [Five-minute tensor walkthrough](https://shichaoxx.github.io/MetisCraft/en/tensor-analysis/walkthrough/)
+
+</details>
+
+## Reproducing Tev1 4B
+
+| Public development set | MetisCraft 4B | Original Tev1 4B | Difference |
+| --- | ---: | ---: | ---: |
+| Main decisions · 1,000 questions | **87.3%** (873/1,000) | 88.0% | −0.70 pp |
+| Policy transfer · 300 questions | **99.33%** (298/300) | 100% | −0.67 pp |
+
+The reproduction met both predeclared accuracy targets with one random seed on the same public questions. The original training history is unavailable. Calibration can worsen negative log-likelihood even when accuracy holds. [Reproduction record](https://shichaoxx.github.io/MetisCraft/en/reproductions/tev1/) · [Training recipe](https://shichaoxx.github.io/MetisCraft/en/recipes/tev1/)
 
 <details>
-<summary><b>Tev1 4B: the answer-token reproduction architecture</b></summary>
+<summary>Inside Tev1 4B · Qwen3.5-4B and answer tokens</summary>
 
-Tev1 uses the existing **Qwen3.5-4B vocabulary head**. The MetisCraft reproduction trains LoRA with full-vocabulary letter/EOS completion targets, then selects answer-code logits at inference.
+The reproduction trains LoRA on letter and end-of-sequence targets using the full vocabulary head. At inference it selects the logits for the allowed answer codes. The reproduction record explains how this evaluation differs from the upstream constrained-generation protocol.
 
 <a href="https://shichaoxx.github.io/MetisCraft/en/reproductions/tev1/">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="docs/tensor-analysis/figures/tev1-architecture.en.dark.svg">
-    <img src="docs/tensor-analysis/figures/tev1-architecture.en.svg" alt="Tev1-4B hybrid backbone, vocabulary projection, answer-code gather and MetisCraft completion training" width="100%">
+    <img src="docs/tensor-analysis/figures/tev1-architecture.en.svg" alt="Tev1 backbone, vocabulary projection and answer-code selection" width="100%">
   </picture>
 </a>
 
-[Reproduction protocol and limits](https://shichaoxx.github.io/MetisCraft/en/reproductions/tev1/) distinguish the upstream constrained-generation protocol from direct-logit evaluation.
-
 </details>
 
-## Get started
+### Other recipes
 
-[Compatibility and support](https://shichaoxx.github.io/MetisCraft/en/compatibility/) defines the tested dependency environments, interfaces and artifact-loading rules for `0.1.0`.
+| Dataset | What the run covers |
+| --- | --- |
+| [Banking77](https://shichaoxx.github.io/MetisCraft/en/recipes/banking77/) | Two readouts compared under the same protocol. A matched encoder baseline is still open. |
+| [CLINC150](https://shichaoxx.github.io/MetisCraft/en/recipes/clinc150/) | **92.3%** accuracy on 5,500 test examples across 150 intents and one out-of-scope answer. The prior baseline scored 18.2%. |
+| [BoolQ](https://shichaoxx.github.io/MetisCraft/en/recipes/boolq/) · [SST-5](https://shichaoxx.github.io/MetisCraft/en/recipes/sst5/) · [GoEmotions](https://shichaoxx.github.io/MetisCraft/en/recipes/go_emotions/) | Yes/no, ordered scores and multiple labels. The published GoEmotions results predate the prior-shift fix. |
 
-Use Python 3.10 or 3.11 with a suitable PyTorch build. Download the [verified wheel](https://github.com/Shichaoxx/MetisCraft/releases/download/v0.1.0/metiscraft-0.1.0-py3-none-any.whl) from the [GitHub release](https://github.com/Shichaoxx/MetisCraft/releases/tag/v0.1.0) and install it from your download directory.
+[Ecosystem support matrix](https://shichaoxx.github.io/MetisCraft/en/support-matrix/) · [Known limitations](https://shichaoxx.github.io/MetisCraft/en/limitations/)
 
-```bash
-python -m pip install './metiscraft-0.1.0-py3-none-any.whl[serve]'
-```
+## Contributing
 
-Run the example in a fresh workspace.
+[Contributor guide](https://shichaoxx.github.io/MetisCraft/en/contributing/) · [Report a bug](https://github.com/Shichaoxx/MetisCraft/issues/new?template=bug_report.yml) · [Request a feature](https://github.com/Shichaoxx/MetisCraft/issues/new?template=feature_request.yml) · [Changelog](CHANGELOG.md)
 
-```bash
-metiscraft init my-first-judge
-cd my-first-judge
-python prepare.py
-metiscraft data import dataset.yaml --data-root ./data
-CUDA_VISIBLE_DEVICES='' OMP_NUM_THREADS=1 metiscraft train recipe.yaml
-```
-
-[Run your first model](https://shichaoxx.github.io/MetisCraft/en/cookbook/first-model/) includes installation, expected outputs, evaluation and HTTP calls. It uses a tiny random model and synthetic data: **no GPU or weight download required**. Then [bring your own task](https://shichaoxx.github.io/MetisCraft/en/cookbook/own-task/).
-
-## Recipes and results
-
-| Recipe | Recorded evidence | Boundary |
-|---|---|---|
-| [Customer routing](https://shichaoxx.github.io/MetisCraft/en/recipes/banking77_support/) | One model answers choice and yes/no questions | A teaching scenario derived from Banking77 |
-| [Banking77](https://shichaoxx.github.io/MetisCraft/en/recipes/banking77/) | Two readouts under one protocol | No matched encoder comparison yet |
-| [Tev1 4B](https://shichaoxx.github.io/MetisCraft/en/reproductions/tev1/) | 87.3% vs original 88.0%; transfer 99.33% vs 100% | Accuracy targets met; training-history and calibration limits remain |
-| [BoolQ](https://shichaoxx.github.io/MetisCraft/en/recipes/boolq/) · [SST-5](https://shichaoxx.github.io/MetisCraft/en/recipes/sst5/) · [GoEmotions](https://shichaoxx.github.io/MetisCraft/en/recipes/go_emotions/) | Recipes across judgment types | GoEmotions results predate the prior-shift fix; see the recipe |
-
-Every number links to a recipe or reproduction record. The [ecosystem matrix](https://shichaoxx.github.io/MetisCraft/en/support-matrix/) covers JevAny, ms-swift and other projects; [limitations](https://shichaoxx.github.io/MetisCraft/en/limitations/) distinguish software checks from model-quality evidence.
-
-## Documentation and community
-
-[Cookbook](https://shichaoxx.github.io/MetisCraft/en/cookbook/) · [Concepts & Tensors](https://shichaoxx.github.io/MetisCraft/en/tensor-analysis/) · [Five-minute walkthrough](https://shichaoxx.github.io/MetisCraft/en/tensor-analysis/walkthrough/) · [Data format](https://shichaoxx.github.io/MetisCraft/en/data/) · [Training](https://shichaoxx.github.io/MetisCraft/en/training/) · [Serving](https://shichaoxx.github.io/MetisCraft/en/serving/) · [Changelog](https://shichaoxx.github.io/MetisCraft/en/changelog/)
-
-[Contribute](https://shichaoxx.github.io/MetisCraft/en/contributing/), [report a bug](https://github.com/Shichaoxx/MetisCraft/issues/new?template=bug_report.yml) or [suggest a feature](https://github.com/Shichaoxx/MetisCraft/issues/new?template=feature_request.yml).
-
-[JevLike introduction: task, data and tensor architecture](https://shichaoxx.github.io/MetisCraft/en/tensor-analysis/introduction/)
-
-## License
-
-Code is [Apache-2.0](LICENSE). Datasets and base models retain their own terms; check metadata and the artifact `NOTICE` before distributing trained weights.
+The code is licensed under Apache 2.0. Datasets and base models have their own terms. Check the metadata and artifact `NOTICE` before distributing trained weights. [License](LICENSE)

@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 232" width="1120" height="232" role="img" aria-labelledby="title desc">
+  <title id="title">MetisCraft</title>
+  <desc id="desc">A message branches into six possible queues. The customer-routing model selects security.</desc>
+  <rect width="1120" height="232" rx="10" fill="#22221f"/>
+  <g transform="translate(49 101) skewY(-14)" fill="#d5aa92">
+    <rect x="0" y="9" width="10" height="32" rx="1.8"/>
+    <rect x="15" y="18" width="10" height="23" rx="1.8" opacity=".65"/>
+    <rect x="30" y="0" width="10" height="41" rx="1.8" opacity=".88"/>
+  </g>
+  <text x="111" y="146" fill="#f5f0e5" font-family="Georgia, 'Times New Roman', serif" font-size="91" letter-spacing="-2">MetisCraft</text>
+  <g fill="none" stroke="#77776d" stroke-width="1.5">
+    <path d="M665 106 C771 106 779 27 900 27 H960"/>
+    <path d="M665 106 C771 106 779 58 900 58 H960"/>
+    <path d="M665 106 C771 106 779 89 900 89 H960"/>
+    <path d="M665 106 C771 106 779 120 900 120 H960"/>
+    <path d="M665 106 C771 106 779 151 900 151 H960"/>
+  </g>
+  <g fill="#a2a096">
+    <circle cx="960" cy="27" r="2.6"/><circle cx="960" cy="58" r="2.6"/>
+    <circle cx="960" cy="89" r="2.6"/><circle cx="960" cy="120" r="2.6"/>
+    <circle cx="960" cy="151" r="2.6"/>
+  </g>
+  <path d="M665 106 C771 106 779 186 900 186 H960" fill="none" stroke="#e29b7f" stroke-width="3.8"/>
+  <path d="m960 181 5 5-5 5-5-5z" fill="#e29b7f"/>
+  <circle cx="665" cy="106" r="6" fill="#aac2c8"/>
+  <g fill="#c6c4b9" font-family="Menlo, Consolas, monospace" font-size="17">
+    <text x="645" y="111" text-anchor="end" fill="#e2dfd5">queue</text>
+    <text x="976" y="33">cards</text><text x="976" y="64">payments</text>
+    <text x="976" y="95">transfers</text><text x="976" y="126">top_up</text>
+    <text x="976" y="157">account</text>
+    <text x="976" y="192" fill="#f2ac90" font-weight="bold">security</text>
+  </g>
+</svg>
