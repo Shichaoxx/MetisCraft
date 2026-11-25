@@ -12,7 +12,7 @@
   <a href="https://github.com/Shichaoxx/MetisCraft/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/Shichaoxx/MetisCraft/actions/workflows/ci.yml/badge.svg?branch=main"></a>
   <a href="LICENSE"><img alt="Apache 2.0" src="https://img.shields.io/badge/license-Apache--2.0-087f78"></a>
   <a href="https://shichaoxx.github.io/MetisCraft/en/installation/"><img alt="Python 3.10 and 3.11" src="https://img.shields.io/badge/python-3.10%20%7C%203.11-243438"></a>
-  <a href="https://github.com/Shichaoxx/MetisCraft/releases/tag/0.1.0rc1"><img alt="0.1.0rc1 public preview" src="https://img.shields.io/badge/preview-0.1.0rc1-bd8c36"></a>
+  <a href="https://github.com/Shichaoxx/MetisCraft/releases/tag/v0.1.0"><img alt="0.1.0 release" src="https://img.shields.io/badge/release-0.1.0-bd8c36"></a>
 </p>
 
 <p align="center">
@@ -22,7 +22,7 @@
   <a href="https://shichaoxx.github.io/MetisCraft/en/cookbook/">Cookbook</a> ·
   <a href="https://shichaoxx.github.io/MetisCraft/en/tensor-analysis/">Concepts & Tensors</a> ·
   <a href="https://shichaoxx.github.io/MetisCraft/en/">Documentation</a> ·
-  <a href="https://github.com/Shichaoxx/MetisCraft/releases/tag/0.1.0rc1">Download 0.1.0rc1</a> ·
+  <a href="https://github.com/Shichaoxx/MetisCraft/releases/tag/v0.1.0">Download 0.1.0</a> ·
   <a href="https://shichaoxx.github.io/MetisCraft/en/contributing/">Contribute</a>
 </p>
 
@@ -94,12 +94,12 @@ Tev1 uses the existing **Qwen3.5-4B vocabulary head**. The MetisCraft reproducti
 
 ## Get started
 
-[Compatibility and support](https://shichaoxx.github.io/MetisCraft/en/compatibility/) defines the tested dependency environments, interfaces and artifact-loading rules for `0.1.0rc1`.
+[Compatibility and support](https://shichaoxx.github.io/MetisCraft/en/compatibility/) defines the tested dependency environments, interfaces and artifact-loading rules for `0.1.0`.
 
-Use Python 3.10 or 3.11 with a suitable PyTorch build. Download the [verified wheel](https://github.com/Shichaoxx/MetisCraft/releases/download/0.1.0rc1/metiscraft-0.1.0rc1-py3-none-any.whl) from the [GitHub pre-release](https://github.com/Shichaoxx/MetisCraft/releases/tag/0.1.0rc1) and install it from your download directory.
+Use Python 3.10 or 3.11 with a suitable PyTorch build. Download the [verified wheel](https://github.com/Shichaoxx/MetisCraft/releases/download/v0.1.0/metiscraft-0.1.0-py3-none-any.whl) from the [GitHub release](https://github.com/Shichaoxx/MetisCraft/releases/tag/v0.1.0) and install it from your download directory.
 
 ```bash
-python -m pip install './metiscraft-0.1.0rc1-py3-none-any.whl[serve]'
+python -m pip install './metiscraft-0.1.0-py3-none-any.whl[serve]'
 ```
 
 Run the example in a fresh workspace.

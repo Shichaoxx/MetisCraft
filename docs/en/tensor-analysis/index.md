@@ -74,7 +74,7 @@ The following values are **constructed arithmetic**, not a model-quality result.
 | `score` | Level distribution and modal level index | Level distribution and expected level index |
 | `multi_label` | Independent candidate probabilities and selected IDs | Not supported in this version |
 
-MetisCraft `0.1.0rc1` returns maximum option/level probability as HTTP `confidence`. TypeSafe's documented confidence statistics differ. The [training and calibration page](training-calibration.md#probability-score-and-confidence) gives the explicit comparison; no protocol change is implied by this chapter.
+MetisCraft `0.1.0` returns maximum option/level probability as HTTP `confidence`. TypeSafe's documented confidence statistics differ. The [training and calibration page](training-calibration.md#probability-score-and-confidence) gives the explicit comparison; no protocol change is implied by this chapter.
 
 ## Source map
 

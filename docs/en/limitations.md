@@ -1,7 +1,6 @@
 # Current limitations and evidence
 
-MetisCraft 0.1.0rc1 is a release candidate. Interfaces and artifact formats may
-change. A successful CPU quickstart establishes that the packaged workflow runs;
+A successful CPU quickstart establishes that the packaged workflow runs;
 its random model and synthetic data cannot establish model quality.
 
 ## Model evidence
@@ -37,7 +36,7 @@ encoder from these results.
 ## Software scope
 
 The [compatibility reference](compatibility.md) defines tested environments,
-public interfaces, artifact formats and process-group ownership for this candidate.
+public interfaces, artifact formats and process-group ownership in 0.1.0.
 
 - Two readouts are implemented; ranking is outside this release.
 - The HTTP endpoint supports three judgment types. Multi-label prediction uses

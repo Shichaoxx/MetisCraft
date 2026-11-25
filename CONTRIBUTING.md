@@ -5,8 +5,8 @@ judgment semantics or artifact formats before implementing them.
 
 ## Development setup
 
-Create a feature branch from the target pull request branch. For the current preview,
-use the available `release/0.1.0rc1` branch. In an isolated Python environment:
+Create a feature branch from `main` for your pull request. To reproduce the
+release, check out the `v0.1.0` tag. In an isolated Python environment:
 
 ```bash
 python -m pip install -e '.[dev,serve,reproduce]'
@@ -45,11 +45,11 @@ TypeSafe API outputs.
 Maintain the language pairs declared in `docs/public-pages.json`; English is the default.
 Use `src/metiscraft/templates/quickstart/README.md` as the command source for the
 exported quickstart. Keep documented commands aligned with the actual CLI, and
-distinguish software checks from evidence about model quality. Keep development plans and progress on `dev`, in separate commits from public code and documentation. Keep machine-specific information out of public files.
+distinguish software checks from evidence about model quality. Keep internal development plans and progress notes out of public pull requests. Keep machine-specific information out of public files.
 
 Write commit messages in English, starting with an imperative verb. A pull
 request should explain the behavior change, relevant checks and material
-limitations. Keep experimental claims tied to recorded runs. The default branch and release artifacts contain user-facing material; development notes remain on `dev`.
+limitations. Keep experimental claims tied to recorded runs. The default branch and release artifacts contain user-facing material.
 
 ## License
 

@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.1.0 — 2026-11-25
+
+The first MetisCraft release packages the training, calibration, evaluation and
+serving workflow introduced in the public preview. Binary AUC evaluation now
+groups tied scores in NumPy. The bilingual documentation adds a redesigned
+home page, light and dark reading themes, and updated workflow and judgment diagrams.
+
+Download the wheel, source distribution and SHA-256 checksums from the
+[0.1.0 release](https://github.com/Shichaoxx/MetisCraft/releases/tag/v0.1.0).
+The [compatibility guide](docs/en/compatibility.md) covers the tested Python
+versions, public interfaces and artifact formats.
+
 ## 0.1.0rc1 — 2026-11-11
 
 This first public preview provides a recipe-based workflow for preparing data,

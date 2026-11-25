@@ -1,7 +1,6 @@
 # 兼容范围与支持约定
 
-MetisCraft `0.1.0rc1` 是预览候选版。本页定义已验证范围、公开入口和加载规则，
-不表示已经承诺与后续候选版或稳定版 `0.1.0` 兼容。
+本页定义 MetisCraft 0.1.0 已验证的运行环境、公开接口和产物加载规则。
 
 ## 运行环境与依赖范围
 
@@ -32,14 +31,14 @@ Transformers 版本。复现结果时保存运行的 `env.json` 和准确的发�
 
 ## 公开接口
 
-| 接口 | 本候选版约定 |
+| 接口 | 本版本约定 |
 |---|---|
 | CLI | 可用选项以 `metiscraft --help` 及子命令帮助为准。配方采用校验后的 schema，未知字段会被拒绝。 |
 | Python | 文档入口为 `Record`、配方加载、`run_recipe`、`evaluate_artifact` 与 `Predictor.load`；内部辅助函数不属于扩展 API。 |
 | Record／JSONL | 在产物读出支持的前提下提供 `noul`、`choice`、`score`、`multi_label`；保留任务与候选 ID。 |
 | `/v1/systemone` | `noul`、`choice`、`score` 使用文档说明的请求和响应字段；多标签使用 Record／JSONL。 |
 
-本候选版 HTTP `confidence` 是选项／等级的最大概率，不等于 TypeSafe 归一化后的
+本版本 HTTP `confidence` 是选项／等级的最大概率，不等于 TypeSafe 归一化后的
 confidence 统计量。Record 的 `score` 决策取众数等级下标，HTTP `score` 返回
 零起始等级下标的期望。本次更新保留这些语义。详见[接口约定](interfaces.md)和
 [输出语义](tensor-analysis/training-calibration.md#概率分数与-confidence)。
@@ -72,10 +71,9 @@ confidence 统计量。Record 的 `score` 决策取众数等级下标，HTTP `sc
 核对两个 rank 的退出、通信组及 Gloo 线程释放。已经阻塞在集合通信中的 rank 仍可能
 依赖后端超时或进程启动器处理；不提供自动重试、弹性恢复或 GPU 容错保证。
 
-## 候选版之间的变化
+## 版本变更
 
-`0.1.0rc1` 仍处于预览阶段，后续候选版可能调整 API、配方字段或产物格式；变化及迁移
-说明记录在[版本变更](../../CHANGELOG_zh.md)。每次运行保存包版本、源码版本、配置、环境和封存
+API、配方字段和产物格式的变化及迁移说明记录在[版本变更](../../CHANGELOG_zh.md)。每次运行保存包版本、源码版本、配置、环境和封存
 基座。不能假定未来的包会静默迁移旧产物；不支持的格式应明确报错。
 
 [English](../en/compatibility.md)

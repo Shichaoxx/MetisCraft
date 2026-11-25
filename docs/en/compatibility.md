@@ -1,8 +1,7 @@
 # Compatibility and support
 
-MetisCraft `0.1.0rc1` is a preview candidate. This page defines its tested scope,
-public entry points and loading rules. It does not establish compatibility with a
-future release candidate or a stable `0.1.0` release.
+This page defines the tested environments, public interfaces and artifact loading rules
+for MetisCraft 0.1.0.
 
 ## Runtime and dependency scope
 
@@ -36,14 +35,14 @@ environment. Installing MetisCraft does not download weights or datasets.
 
 ## Public interfaces
 
-| Interface | Candidate contract |
+| Interface | 0.1.0 contract |
 |---|---|
 | CLI | `metiscraft --help` and each command's help define the available options. Recipes use the validated schema; unknown fields fail validation. |
 | Python | `Record`, recipe loading, `run_recipe`, `evaluate_artifact` and `Predictor.load` are the documented entry points. Internal helper functions are not an extension API. |
 | Record / JSONL | `noul`, `choice`, `score` and `multi_label` are supported subject to the artifact's readout. Preserve task and candidate IDs. |
 | `/v1/systemone` | `noul`, `choice` and `score` use the documented request and response fields. Multi-label prediction uses Record / JSONL. |
 
-For this candidate, HTTP `confidence` is the maximum option/level probability;
+In 0.1.0, HTTP `confidence` is the maximum option/level probability;
 it is not TypeSafe's normalized confidence statistic. Record `score` decisions
 use the modal level index, while HTTP `score` returns the expected zero-based
 level index. These semantics are retained in this update. See
@@ -86,10 +85,9 @@ exception has been handled. A rank blocked in an in-flight collective can still
 depend on its backend timeout or process launcher. There is no automatic retry,
 elastic recovery or GPU fault-tolerance guarantee.
 
-## Changes between candidates
+## Version changes
 
-Version `0.1.0rc1` remains a preview: later candidates may change APIs, recipe
-fields or artifact formats. Changes and migration instructions belong in the
+Version changes to APIs, recipes and artifact formats are recorded in the
 [changelog](../../CHANGELOG.md). Preserve the package version, source revision,
 configuration, environment and sealed base alongside each run. Do not assume a
 future package can silently migrate an artifact; unsupported formats fail

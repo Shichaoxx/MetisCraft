@@ -15,7 +15,7 @@ See a decision. Run the example. Bring your own data.
 </div>
 </div>
 
-Before running a tutorial, download the `0.1.0rc1` wheel from the [GitHub pre-release](https://github.com/Shichaoxx/MetisCraft/releases/tag/0.1.0rc1) and follow the [installation guide](../installation.md).
+Before running a tutorial, download the `0.1.0` wheel from the [GitHub release](https://github.com/Shichaoxx/MetisCraft/releases/tag/v0.1.0) and follow the [installation guide](../installation.md).
 
 ## Choose a starting point
 

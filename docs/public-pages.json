@@ -91,7 +91,7 @@
     "docs/publishing.md",
     "docs/research"
   ],
-  "version": "0.1.0rc1",
+  "version": "0.1.0",
   "language_pairs": {
     "index": {
       "en": "docs/en/index.md",

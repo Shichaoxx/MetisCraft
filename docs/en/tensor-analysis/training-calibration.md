@@ -78,7 +78,7 @@ The [CPU verification script](../../../scripts/verify_tensor_examples.py) fits a
 
 ### Probability, score and confidence
 
-For MetisCraft `0.1.0rc1`:
+For MetisCraft `0.1.0`:
 
 - `probabilities` is the post-correction, post-temperature distribution.
 - Record `decision` for `score` is the modal level index. HTTP `score` is the expectation \(\sum_i i p_i\), with zero-based level indices.

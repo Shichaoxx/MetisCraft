@@ -4,7 +4,7 @@
 
 ## 开发环境
 
-从 PR 的目标分支创建功能分支；当前预览版可用的基线是 `release/0.1.0rc1`。在独立 Python 环境中执行：
+从 `main` 创建功能分支并发起 PR。复现正式版时，检出标签 `v0.1.0`。在独立 Python 环境中执行：
 
 ```bash
 python -m pip install -e '.[dev,serve,reproduce]'
@@ -28,9 +28,9 @@ CUDA_VISIBLE_DEVICES='' OMP_NUM_THREADS=1 python -m pytest
 
 ## 文档与审阅
 
-维护 `docs/public-pages.json` 声明的语言配对，英文为默认语言。导出教程的命令以 `src/metiscraft/templates/quickstart/README.md` 为准；命令须与 CLI 一致，工程检查与真实模型效果分别报告。研发计划和进度在 `dev` 维护，与公共代码和文档分开提交；公开文件不含机器特定信息。
+维护 `docs/public-pages.json` 声明的语言配对，英文为默认语言。导出教程的命令以 `src/metiscraft/templates/quickstart/README.md` 为准；命令须与 CLI 一致，工程检查与真实模型效果分别报告。内部研发计划和进度记录保留在公开 PR 之外。公开文件不含机器特定信息。
 
-提交消息使用英文祈使句。PR 应说明行为变化、相关验证和实质限制；实验结论链接到运行记录。默认分支与发行包面向使用者，研发记录保留在 `dev`。
+提交消息使用英文祈使句。PR 应说明行为变化、相关验证和实质限制；实验结论链接到运行记录。默认分支与发行包面向使用者。
 
 ## 许可证
 

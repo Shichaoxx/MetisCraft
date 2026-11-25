@@ -78,7 +78,7 @@ completion 训练使用
 
 ### 概率、分数与 confidence
 
-MetisCraft `0.1.0rc1` 的语义如下：
+MetisCraft `0.1.0` 的语义如下：
 
 - `probabilities` 是修正并应用温度后的分布。
 - 等级题的 Record `decision` 是概率最大的等级下标；HTTP `score` 是期望 \(\sum_i i p_i\)，等级下标从零开始。

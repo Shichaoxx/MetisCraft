@@ -74,7 +74,7 @@ Softmax 通过分母耦合候选概率。逐候选 sigmoid 没有和为一的约
 | `score` | 等级分布及众数等级索引 | 等级分布及期望等级索引 |
 | `multi_label` | 各候选概率及选中 ID | 当前版本不支持 |
 
-MetisCraft `0.1.0rc1` 的 HTTP `confidence` 为最大选项／等级概率；TypeSafe 官方定义的 confidence 统计量有所不同。[训练与校准](training-calibration.md#概率分数与-confidence)给出明确对照，本章不改变接口协议。
+MetisCraft `0.1.0` 的 HTTP `confidence` 为最大选项／等级概率；TypeSafe 官方定义的 confidence 统计量有所不同。[训练与校准](training-calibration.md#概率分数与-confidence)给出明确对照，本章不改变接口协议。
 
 ## 源码与依据
 

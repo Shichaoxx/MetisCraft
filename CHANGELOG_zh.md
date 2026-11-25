@@ -1,5 +1,15 @@
 # 版本变更
 
+## 0.1.0 — 2026-11-25
+
+MetisCraft 首个正式版收录了公开预览版中的训练、校准、评测和推理服务流程。
+二分类 AUC 现在用 NumPy 批量计算并列分数的平均秩。中英文文档更新了首页、
+浅色和深色阅读主题，以及工作流和判断类型示意图。
+
+[0.1.0 正式版](https://github.com/Shichaoxx/MetisCraft/releases/tag/v0.1.0)提供 wheel、
+源码发行包和 SHA-256 校验文件。[兼容范围](docs/zh/compatibility.md)列出已验证的
+Python 版本、公开接口与产物格式。
+
 ## 0.1.0rc1 — 2026-11-11
 
 首个公开预览以配方连接数据准备、类型化决策模型训练、概率校准与评测，以及产物服务。[GitHub 预发行版](https://github.com/Shichaoxx/MetisCraft/releases/tag/0.1.0rc1)提供 wheel、源码发行包和 SHA-256 校验文件。API 与产物格式仍可能变化。

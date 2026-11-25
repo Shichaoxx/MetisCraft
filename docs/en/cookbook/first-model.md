@@ -6,7 +6,7 @@ This tutorial uses a tiny, randomly initialized Qwen3 and synthetic labels. You 
 
 ## Before you start
 
-- Download the `0.1.0rc1` wheel from the [GitHub pre-release](https://github.com/Shichaoxx/MetisCraft/releases/tag/0.1.0rc1) and follow [installation](../installation.md) with the `serve` extra.
+- Download the `0.1.0` wheel from the [GitHub release](https://github.com/Shichaoxx/MetisCraft/releases/tag/v0.1.0) and follow [installation](../installation.md) with the `serve` extra.
 - Use the installed environment in a POSIX shell. The package has been checked with Python 3.10 and 3.11.
 - Choose a new workspace outside the source checkout. The generated example needs no model download or GPU.
 
@@ -106,7 +106,7 @@ If you inspect `/health` while the service is running, `status: "ok"`, `calibrat
 
 ## A recorded CPU response
 
-This full HTTP response was recorded from the installed wheel on Python 3.11. Your floating-point values may differ; check the shape and option IDs. It is a random-model workflow example, not a business-quality result.
+This full HTTP response was recorded with the 0.1.0rc1 wheel on Python 3.11. Your floating-point values may differ; check the shape and option IDs. It is a random-model workflow example, not a business-quality result.
 
 ```json
 {

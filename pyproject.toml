@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "metiscraft"
-version = "0.1.0rc1"
+version = "0.1.0"
 description = "A toolkit for training, reproducing, calibrating and serving JevLike decision models."
 dynamic = ["readme"]
 license = "Apache-2.0"
@@ -13,7 +13,7 @@ requires-python = ">=3.10"
 authors = [{ name = "shichao" }]
 keywords = ["decision model", "calibration", "llm", "classification", "judge"]
 classifiers = [
-  "Development Status :: 3 - Alpha",
+  "Development Status :: 5 - Production/Stable",
   "Intended Audience :: Science/Research",
   "Programming Language :: Python :: 3",
   "Topic :: Scientific/Engineering :: Artificial Intelligence",
