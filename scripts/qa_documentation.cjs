@@ -74,7 +74,10 @@ function ensure(ok, detail) { if (!ok) report.failures.push(detail); }
     await page.waitForFunction(() => document.body.dataset.mdColorScheme === 'slate');
     await page.emulateMedia({colorScheme: 'light'});
     await page.waitForFunction(() => document.body.dataset.mdColorScheme === 'default');
-    await theme('slate');
+    const automatic = page.locator('input[name="__palette"][data-md-color-scheme="auto"]');
+    await automatic.focus();
+    await automatic.press('Enter');
+    await page.waitForFunction(() => document.body.dataset.mdColorScheme === 'slate');
     await page.reload();
     await page.waitForFunction(() => document.body.dataset.mdColorScheme === 'slate');
     await page.getByRole('button', {name: 'Select language'}).hover();
@@ -83,7 +86,7 @@ function ensure(ok, detail) { if (!ok) report.failures.push(detail); }
     await page.waitForFunction(() => document.body.dataset.mdColorScheme === 'slate');
     await selectPalette('auto');
     await page.waitForFunction(() => document.body.dataset.mdColorScheme === 'default');
-    report.interactions.push('System preference changes, shared manual choice on reload and language switch, return to system');
+    report.interactions.push('System preference changes, keyboard selection, shared choice on reload and language switch, return to system');
     for (const route of Object.keys(mapping)) {
       if(['themes','candidate'].includes(args.mode)) continue;
       if(args.mode==='interactions' && !route.includes('/recipes/tev1/')) continue;
