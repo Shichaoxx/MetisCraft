@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://shichaoxx.github.io/MetisCraft/en/">
+  <a href="https://shichaoxx.github.io/MetisCraft/">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="docs/visuals/figures/wordmark-dark.svg">
     <img src="docs/visuals/figures/wordmark-light.svg" alt="MetisCraft" width="320">
