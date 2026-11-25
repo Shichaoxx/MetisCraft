@@ -28,7 +28,7 @@ CUDA_VISIBLE_DEVICES='' OMP_NUM_THREADS=1 python -m pytest
 
 ## 文档与审阅
 
-维护 `docs/public-pages.json` 声明的语言配对，英文为默认语言。导出教程的命令以 `src/metiscraft/templates/quickstart/README.md` 为准；命令须与 CLI 一致，工程检查与真实模型效果分别报告。内部研发计划和进度记录保留在公开 PR 之外。公开文件不含机器特定信息。
+维护 `docs/public-pages.json` 声明的语言配对。网站根地址默认打开简体中文首页。导出教程的命令以 `src/metiscraft/templates/quickstart/README.md` 为准；命令须与 CLI 一致，工程检查与真实模型效果分别报告。内部研发计划和进度记录保留在公开 PR 之外。公开文件不含机器特定信息。
 
 提交消息使用英文祈使句。PR 应说明行为变化、相关验证和实质限制；实验结论链接到运行记录。默认分支与发行包面向使用者。
 

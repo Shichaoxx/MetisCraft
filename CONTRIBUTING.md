@@ -42,7 +42,7 @@ TypeSafe API outputs.
 
 ## Documentation and review
 
-Maintain the language pairs declared in `docs/public-pages.json`; English is the default.
+Maintain the language pairs declared in `docs/public-pages.json`. The site root opens in Simplified Chinese.
 Use `src/metiscraft/templates/quickstart/README.md` as the command source for the
 exported quickstart. Keep documented commands aligned with the actual CLI, and
 distinguish software checks from evidence about model quality. Keep internal development plans and progress notes out of public pull requests. Keep machine-specific information out of public files.

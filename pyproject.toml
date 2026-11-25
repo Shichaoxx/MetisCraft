@@ -42,7 +42,7 @@ metiscraft = "metiscraft.cli:main"
 
 [project.urls]
 Repository = "https://github.com/Shichaoxx/MetisCraft"
-Documentation = "https://shichaoxx.github.io/MetisCraft/en/"
+Documentation = "https://shichaoxx.github.io/MetisCraft/"
 Issues = "https://github.com/Shichaoxx/MetisCraft/issues"
 Changelog = "https://github.com/Shichaoxx/MetisCraft/blob/main/CHANGELOG.md"
 

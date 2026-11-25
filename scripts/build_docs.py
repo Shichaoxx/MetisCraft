@@ -514,9 +514,9 @@ pymdownx.arithmatex.generic = true
         encoding="utf-8",
     )
     (SITE / "index.html").write_text(
-        '<!doctype html><html lang="en"><meta charset="utf-8">'
-        '<meta http-equiv="refresh" content="0; url=en/"><title>MetisCraft</title>'
-        '<a href="en/">English</a> · <a href="zh/">简体中文</a></html>',
+        '<!doctype html><html lang="zh-CN"><meta charset="utf-8">'
+        '<meta http-equiv="refresh" content="0; url=zh/"><title>MetisCraft</title>'
+        '<a href="zh/" lang="zh-CN">简体中文</a> · <a href="en/" lang="en">English</a></html>',
         encoding="utf-8",
     )
     print(f"Documentation built: {SITE}")
