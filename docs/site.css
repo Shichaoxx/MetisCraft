@@ -1,15 +1,131 @@
-:root {
-  --md-primary-fg-color: #087f78;
-  --md-accent-fg-color: #bd8c36;
-  --md-text-font: ui-sans-serif, system-ui, "Noto Sans CJK SC", sans-serif;
-  --md-code-font: ui-monospace, "DejaVu Sans Mono", monospace;
+/* Shared by the English and Chinese Zensical sites. Search uses RGB channels
+   inside its shadow root, so the surfaces below take their color from them. */
+:root, [data-md-color-scheme="default"] {
+  --color-foreground: 20 20 19;
+  --color-background: 250 249 245;
+  --color-background-subtle: 240 238 230;
+  --color-backdrop: 250 249 245;
+  --metis-surface: #fff;
+  --metis-code: #edebe3;
+  --metis-rule: #dedbd2;
+  --metis-muted: #68665e;
+  --metis-accent: #c96442;
+  --metis-link: #a2492f;
+  --metis-on-accent: #fffdf8;
+  --metis-tint: #f4e8df;
+  --metis-sage: #4d6339;
+  --metis-blue: #3b5d7b;
 }
-[data-md-color-scheme="slate"] { --md-primary-fg-color: #238e85; }
+@media screen {
+  [data-md-color-scheme="slate"] {
+    --color-foreground: 250 249 245;
+    --color-background: 20 20 19;
+    --color-background-subtle: 28 28 26;
+    --color-backdrop: 20 20 19;
+    --metis-surface: #242422;
+    --metis-code: #1a1a18;
+    --metis-rule: #3e3c36;
+    --metis-muted: #b0aea5;
+    --metis-accent: #d97757;
+    --metis-link: #e39a80;
+    --metis-on-accent: #231a16;
+    --metis-tint: #382c26;
+    --metis-sage: #aec392;
+    --metis-blue: #9cbdd8;
+  }
+}
+:root, body[data-md-color-scheme] {
+  --metis-ink: rgb(var(--color-foreground));
+  --metis-paper: rgb(var(--color-background));
+  --metis-panel: rgb(var(--color-background-subtle));
+  --metis-display-font: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia,
+    "Songti SC", "Noto Serif CJK SC", serif;
+  --md-text-font: system-ui, -apple-system, "PingFang SC", "Noto Sans CJK SC", sans-serif;
+  --md-code-font: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --md-default-fg-color: var(--metis-ink);
+  --md-default-fg-color--light: var(--metis-muted);
+  --md-default-fg-color--lighter: color-mix(in srgb, var(--metis-muted) 55%, var(--metis-paper));
+  --md-default-fg-color--lightest: var(--metis-rule);
+  --md-default-bg-color: var(--metis-paper);
+  --md-default-bg-color--light: var(--metis-paper);
+  --md-primary-fg-color: var(--metis-link);
+  --md-primary-bg-color: var(--metis-on-accent);
+  --md-accent-fg-color: var(--metis-link);
+  --md-accent-fg-color--transparent: var(--metis-tint);
+  --md-typeset-color: var(--metis-ink);
+  --md-typeset-a-color: var(--metis-link);
+  --md-typeset-mark-color: var(--metis-tint);
+  --md-typeset-table-color: var(--metis-rule);
+  --md-typeset-table-color--light: var(--metis-panel);
+  --md-admonition-bg-color: var(--metis-surface);
+  --md-code-bg-color: var(--metis-code);
+  --md-code-bg-color--light: var(--metis-code);
+  --md-code-fg-color: var(--metis-ink);
+  --md-code-hl-color: var(--metis-sage);
+  --md-code-hl-color--light: var(--metis-tint);
+  --md-code-hl-special-color: var(--metis-link);
+  --md-code-hl-number-color: var(--metis-link);
+  --md-code-hl-function-color: var(--metis-link);
+  --md-code-hl-string-color: var(--metis-sage);
+  --md-code-hl-keyword-color: var(--metis-blue);
+  --md-code-hl-constant-color: var(--metis-blue);
+  --md-code-hl-comment-color: var(--metis-muted);
+}
 .md-grid { max-width: 76rem; }
-.md-typeset h1 { font-weight: 700; letter-spacing: -.035em; }
-.md-typeset h2 { font-weight: 650; letter-spacing: -.02em; }
 .md-typeset { line-height: 1.75; }
-.md-typeset img { border-radius: .6rem; }
+.md-typeset h1, .md-typeset h2 {
+  font-family: var(--metis-display-font);
+  font-weight: 600;
+  color: var(--metis-ink);
+  text-wrap: balance;
+}
+.md-typeset h1 { font-size: clamp(1.85rem, 3.6vw, 2.65rem); letter-spacing: -.035em; line-height: 1.14; }
+.md-typeset h2 { font-size: 1.4rem; letter-spacing: -.018em; }
+:lang(zh) .md-typeset h1, :lang(zh) .md-typeset h2 { letter-spacing: 0; line-height: 1.36; }
+.md-typeset h3 { color: var(--metis-ink); }
+.md-typeset a { text-underline-offset: .17em; }
+.md-typeset img { border-radius: .2rem; }
+.md-typeset hr { border-color: var(--metis-rule); }
+.md-header { background: var(--metis-paper); box-shadow: 0 1px 0 var(--metis-rule); }
+.md-header .md-header__title { color: var(--metis-ink); }
+.md-header__topic:first-child { font-family: var(--metis-display-font); font-size: 1.1rem; }
+.md-search__button {
+  color: var(--metis-muted);
+  background: var(--metis-panel);
+  border: 1px solid var(--metis-rule);
+  border-radius: .2rem;
+}
+.md-search__button:hover, .md-search__button:focus-visible { color: var(--metis-ink); background: var(--metis-panel); }
+@media screen and (max-width: 76.234375em) {
+  .md-sidebar--primary { background-color: var(--metis-panel); }
+}
+@media screen and (min-width: 76.25em) {
+  .md-sidebar--primary .md-sidebar__scrollwrap { border-inline-end: 1px solid var(--metis-rule); }
+}
+.md-nav--secondary .md-nav__title { color: var(--metis-muted); }
+.md-nav--secondary .md-nav__item .md-nav__link--active {
+  color: var(--metis-link);
+  box-shadow: inset 2px 0 var(--metis-accent);
+}
+.md-footer-meta { border-top: 1px solid var(--metis-rule); background: var(--metis-panel); }
+.md-typeset .highlight pre > code { border: 1px solid var(--metis-rule); border-radius: .25rem; }
+.md-code__button { color: var(--metis-muted); }
+.md-typeset table:not([class]) { background: var(--metis-surface); font-size: .72rem; }
+.md-typeset table:not([class]) th { background: var(--metis-panel); }
+.md-typeset .admonition, .md-typeset details { background: var(--metis-surface); }
+.md-typeset :is(.admonition, details):is(.note, .info) { border-color: var(--metis-blue); }
+.md-typeset :is(.admonition, details):is(.tip, .success) { border-color: var(--metis-sage); }
+.md-typeset :is(.admonition, details):is(.warning, .caution) { border-color: var(--metis-accent); }
+body :is(a, button, input, summary, [tabindex]):focus-visible {
+  outline: 2px solid var(--metis-link);
+  outline-offset: 3px;
+}
+.md-header .md-header__button:focus-visible,
+.md-header__option .md-option:focus-visible + label:not([hidden]),
+.md-nav__toggle:focus-visible ~ .md-nav__link[for] {
+  outline: 2px solid var(--metis-link);
+  outline-offset: -2px;
+}
 .md-typeset .cookbook-guide {
   display: grid;
   grid-template-columns: 160px minmax(0, 1fr);
@@ -18,8 +134,8 @@
   margin: 1.4rem 0 1.8rem;
   padding: 1.25rem 1.5rem;
   border: 1px solid var(--md-default-fg-color--lightest);
-  border-radius: .65rem;
-  background: var(--md-code-bg-color);
+  border-radius: .25rem;
+  background: var(--metis-surface);
 }
 .md-typeset .cookbook-guide .cookbook-avatar {
   display: flex;
@@ -44,21 +160,19 @@
 .md-typeset .cookbook-paths { margin-bottom: 1.8rem; }
 .md-typeset .cookbook-paths > div { display: flex; flex-direction: column; }
 .md-typeset .cookbook-paths > div > p:last-child { margin-top: auto; padding-top: .5rem; }
-.md-typeset table:not([class]) { font-size: .72rem; }
 .md-header__button.md-logo img { border-radius: .25rem; }
 @media (max-width: 600px) {
   .md-typeset .cookbook-guide { grid-template-columns: 88px minmax(0, 1fr); gap: 1rem; padding: 1rem; }
   .md-typeset .cookbook-guide .cookbook-avatar { width: 88px; height: 88px; }
   .md-typeset .cookbook-guide h2 { font-size: 1rem; }
   .md-typeset .cookbook-guide-copy > p { font-size: .8rem; line-height: 1.65; }
-  .md-typeset h1 { font-size: 1.8rem; }
 }
 @media (max-width: 600px) {
   .md-typeset table:not([class]) { min-width: 32rem; }
   .md-typeset table:not([class]) td:first-child code { white-space: nowrap; }
 }
 
-/* Product pages use the same neutral, teal and warm-gold hierarchy as the README. */
+/* Shared product-page components. */
 .home-lead { max-width: 48rem; font-size: 1.1rem; margin-bottom: 2rem; }
 .md-typeset .md-button { border-radius: .35rem; font-size: .85rem; margin: .25rem .5rem .25rem 0; }
 .decision-result { border-left: 4px solid var(--md-primary-fg-color); padding: 1rem 1.25rem; background: var(--md-code-bg-color); border-radius: 0 .5rem .5rem 0; }

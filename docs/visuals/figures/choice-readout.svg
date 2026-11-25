@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 335 156">
+  <title>Recorded queue choice for a stolen-card report</title>
+  <!-- Field names and queue IDs are shared by both translations. -->
+  <g id="readout" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="14">
+    <g fill="none" stroke="var(--metis-muted, #68665e)" stroke-width="1.1">
+      <path d="M60 77 C112 77 123 15 204 15 H242"/>
+      <path d="M60 77 C120 77 139 40 204 40 H242"/>
+      <path d="M60 77 C127 77 154 65 204 65 H242"/>
+      <path d="M60 77 C127 77 154 90 204 90 H242"/>
+      <path d="M60 77 C120 77 139 115 204 115 H242"/>
+    </g>
+    <g fill="var(--metis-muted, #68665e)">
+      <circle cx="242" cy="15" r="2.3"/>
+      <circle cx="242" cy="40" r="2.3"/>
+      <circle cx="242" cy="65" r="2.3"/>
+      <circle cx="242" cy="90" r="2.3"/>
+      <circle cx="242" cy="115" r="2.3"/>
+      <text x="253" y="19">cards</text>
+      <text x="253" y="44">payments</text>
+      <text x="253" y="69">transfers</text>
+      <text x="253" y="94">top_up</text>
+      <text x="253" y="119">account</text>
+    </g>
+    <path d="M60 77 C112 77 123 140 204 140 H242" fill="none"
+          stroke="var(--metis-link, #a84b30)" stroke-width="2.8"/>
+    <g fill="var(--metis-link, #a84b30)">
+      <path d="M242 135 l5 5 -5 5 -5 -5z"/>
+      <text x="253" y="144" font-weight="bold">security</text>
+    </g>
+    <circle cx="60" cy="77" r="5" fill="var(--metis-blue, #486c80)"/>
+    <text x="2" y="81" fill="var(--metis-ink, #141413)" font-weight="bold">queue</text>
+  </g>
+</svg>

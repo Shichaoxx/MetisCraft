@@ -352,6 +352,7 @@ def main():
             "extra_css": [
                 PREFIX + "assets/site.css",
                 PREFIX + "assets/documentation.css",
+                PREFIX + "assets/home.css",
                 PREFIX + "assets/katex/katex.min.css",
             ],
             "extra_javascript": [
@@ -371,20 +372,28 @@ logo = "/MetisCraft/assets/docs/visuals/figures/mark.svg"
 favicon = "/MetisCraft/assets/docs/visuals/figures/mark.svg"
 features = ["content.code.copy", "navigation.top", "search.highlight"]
 [[project.theme.palette]]
-media = "(prefers-color-scheme: light)"
-scheme = "default"
-primary = "teal"
-accent = "amber"
+media = "(prefers-color-scheme)"
+scheme = "auto"
+primary = "custom"
+accent = "custom"
 toggle.icon = "lucide/moon"
 toggle.name = "Dark mode"
 [[project.theme.palette]]
 media = "(prefers-color-scheme: dark)"
 scheme = "slate"
-primary = "teal"
-accent = "amber"
+primary = "custom"
+accent = "custom"
 toggle.icon = "lucide/sun"
 toggle.name = "Light mode"
+[[project.theme.palette]]
+media = "(prefers-color-scheme: light)"
+scheme = "default"
+primary = "custom"
+accent = "custom"
+toggle.icon = "lucide/monitor"
+toggle.name = "Use system theme"
 [project.extra]
+scope = "/MetisCraft/"
 alternate = [
  { name = "English", link = "/MetisCraft/en/", lang = "en" },
  { name = "简体中文", link = "/MetisCraft/zh/", lang = "zh" }
@@ -406,6 +415,7 @@ pymdownx.arithmatex.generic = true
             config = (
                 config.replace('toggle.name = "Dark mode"', 'toggle.name = "深色主题"')
                 .replace('toggle.name = "Light mode"', 'toggle.name = "浅色主题"')
+                .replace('toggle.name = "Use system theme"', 'toggle.name = "跟随系统"')
                 .replace(
                     'toc.permalink_title = "Permanent link"', 'toc.permalink_title = "章节链接"'
                 )

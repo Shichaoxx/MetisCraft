@@ -1,98 +1,86 @@
-# JevLike 模型工具包
+---
+hide:
+  - toc
+---
 
-<div class="home-lead" markdown="1">
+<div class="home-hero" markdown="1">
+<div class="home-intro" markdown="1">
 
-训练、复现与部署 JevLike 判断模型。一份配方，连接训练、校准、评测和服务。
+# *JevLike* 模型工具包
+
+训练、复现与部署类型化判断模型。一份配方，串起训练、校准、评测和服务。
+
+<div class="home-actions" markdown="1">
 
 [开始使用](cookbook/first-model.md){ .md-button .md-button--primary }
-[浏览 Cookbook](cookbook/index.md){ .md-button }
+[浏览 Cookbook](cookbook/index.md)
 
-**0.1.0rc1 已发布为 GitHub 预发行版。** [下载发行包](https://github.com/Shichaoxx/MetisCraft/releases/tag/0.1.0rc1) · [安装说明](installation.md)
+</div>
 
-[引言：JevLike、任务、数据与模型架构](tensor-analysis/introduction.md)
+[0.1.0 正式版](https://github.com/Shichaoxx/MetisCraft/releases/tag/v0.1.0) · [安装说明](installation.md)
 
+</div>
+<div class="home-specimen" markdown="1">
+
+## 从一条真实响应开始
+
+<blockquote lang="en">My card was stolen this morning and there are two payments on it that I did not make.</blockquote>
+
+<svg class="choice-readout" viewBox="0 0 335 156" role="img" aria-label="模型从六个客服队列中选出了安全团队 security。"><use href="../visuals/figures/choice-readout.svg#readout"></use></svg>
+
+<div class="specimen-caption" markdown="1">
+
+这条银行卡被盗的消息是为演示编写的，队列选择来自客服分流模型的实测响应。[查看请求与响应](cookbook/decision.md)
+
+</div>
+
+<details class="specimen-probabilities"><summary>查看模型给出的概率</summary>
+<dl><dt>queue.confidence</dt><dd>0.9999995054983101</dd><dt>urgent.noul</dt><dd>0.9999314182034214</dd></dl>
+</details>
+
+</div>
 </div>
 
 ## Tev1 4B 复现结果
 
-<div class="reproduction-results" markdown="1">
-
+<div class="home-results" markdown="1">
 <div markdown="1">
 
-<span class="result-label">主决策集 · 1,000 题</span>
+### 主决策集
 
 **87.3%**
 
-873/1,000 答对 · 原版 Tev1 **88.0%**
+1,000 题中答对 873 题 · 原版 Tev1 **88.0%**
 
 </div>
 <div markdown="1">
 
-<span class="result-label">政策迁移 · 300 题</span>
+### 政策迁移
 
 **99.33%**
 
-298/300 答对 · 原版 Tev1 **100%**
+300 题中答对 298 题 · 原版 Tev1 **100%**
 
 </div>
 </div>
 
-两项预定准确率验收均达标。单种子、同一批公开开发题；原始训练历史未恢复，校准可能恶化 NLL。
+两项预先设定的准确率指标均达标。复现实验采用单个随机种子，在同一批公开开发题上评测。我们未取得原始训练记录，校准可能使负对数似然变差。
 
 [复现记录与限制](../reproductions/tev1.md) · [训练配方](../../recipes/tev1/README.md)
 
-## 从一条真实响应开始
-
-> My card was stolen this morning and there are two payments on it that I did not make.
-
-<div class="decision-result" markdown="1">
-
-**security** · 转交安全团队
-
-`confidence: 0.9999995054983101` · `urgent: 0.9999314182034214`
-
-来自已记录的客服分流模型：人工构造消息、真实模型响应。概率不是准确率。
-
-[查看完整案例](cookbook/decision.md) →
-
-</div>
-
 ## 从这里开始
 
-<div class="start-grid" markdown="1">
+<div class="home-paths" markdown="1">
 
-<div markdown="1">
+- [认识一次判断](cookbook/decision.md) · 读懂六个客服队列的预测概率和独立的紧急程度判断。
+- [跑通第一个模型](cookbook/first-model.md) · 在 CPU 上完成示例，无需下载权重。
+- [接入自己的任务](cookbook/own-task.md) · 替换数据和基座模型，沿用同一条训练与部署路径。
 
-### 01 · 看见效果
-
-输入如何变成带概率的判断，结果依据在哪里。
-
-[认识一次判断](cookbook/decision.md)
-
-</div>
-<div markdown="1">
-
-### 02 · 跑通流程
-
-无需 GPU 或下载权重，完成第一个 CPU 示例。
-
-[跑通第一个模型](cookbook/first-model.md)
-
-</div>
-<div markdown="1">
-
-### 03 · 接入任务
-
-替换数据和基座，沿用同一条训练与部署路径。
-
-[接入自己的任务](cookbook/own-task.md)
-
-</div>
 </div>
 
 ## 判断有类型，过程有依据
 
-是非、选择、等级和多标签通过 Python／批量预测使用。HTTP `/v1/systemone` 支持前三种。
+Python 和批量预测支持是非、选择、等级和多标签判断。HTTP `/v1/systemone` 支持前三种。
 
 [配方与真实结果](limitations.md) · [数据格式](data.md) · [训练与校准](training.md) · [预测与服务](serving.md)
 
@@ -103,6 +91,4 @@
 
 ## 理解计算机制
 
-[原理与张量解析](tensor-analysis/index.md)从 System One 契约展开答案 token 和标量头计算；[五分钟技术导览](tensor-analysis/walkthrough.md)串联矢量图、数值例与源码依据。
-
-[什么是 JevLike？任务、数据与架构](tensor-analysis/introduction.md)
+从 [JevLike 的任务、数据与模型架构](tensor-analysis/introduction.md)入门。[原理与张量解析](tensor-analysis/index.md)从 System One 契约展开答案 token 和标量头计算。[五分钟技术导览](tensor-analysis/walkthrough.md)串联矢量图、数值例与源码依据。

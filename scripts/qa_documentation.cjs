@@ -49,16 +49,41 @@ function ensure(ok, detail) { if (!ok) report.failures.push(detail); }
       await page.evaluate(()=>window.renderMetisMath());
       await page.evaluate(()=>document.fonts.ready);
     }
-    async function theme(mode) {
-      const input=page.locator('input[data-md-color-scheme="'+mode+'"]');
-      if (await input.count()) {
-        const current=await page.locator("body").getAttribute("data-md-color-scheme");
-        if(current!==mode) await page.locator('label[for="'+await input.getAttribute("id")+'"]').click();
+    async function selectPalette(scheme) {
+      const palette = page.locator('form[data-md-component="palette"]');
+      const current = palette.locator('label:not([hidden])');
+      // The visible control advances to the next native radio (System, Dark, Light).
+      for (let i = 0; i < 3; i++) {
+        const selected = await current.evaluate(label => label.previousElementSibling.dataset.mdColorScheme);
+        if (selected === scheme) return;
+        await current.click();
+        await page.waitForFunction(last =>
+          document.querySelector('[data-md-component="palette"] label:not([hidden])')
+            ?.previousElementSibling.dataset.mdColorScheme !== last, selected);
       }
-      else await page.evaluate(m=>document.body.setAttribute('data-md-color-scheme',m),mode);
-      await page.waitForFunction(m=>document.body.getAttribute('data-md-color-scheme')===m,mode);
-      await page.waitForFunction(m=>document.querySelector('link[rel="icon"]').href.includes(m==='slate'?'mark-dark.svg':'mark-light.svg'),mode);
+      throw new Error('Failed to select palette ' + scheme);
     }
+    async function theme(mode) {
+      await selectPalette(mode);
+      await page.waitForFunction(m => document.body.dataset.mdColorScheme === m, mode);
+      await page.waitForFunction(m =>
+        document.querySelector('link[rel="icon"]').href.includes(m === 'slate' ? 'mark-dark.svg' : 'mark-light.svg'), mode);
+    }
+    await page.emulateMedia({colorScheme: 'dark'});
+    await go('/MetisCraft/en/cookbook/');
+    await page.waitForFunction(() => document.body.dataset.mdColorScheme === 'slate');
+    await page.emulateMedia({colorScheme: 'light'});
+    await page.waitForFunction(() => document.body.dataset.mdColorScheme === 'default');
+    await theme('slate');
+    await page.reload();
+    await page.waitForFunction(() => document.body.dataset.mdColorScheme === 'slate');
+    await page.getByRole('button', {name: 'Select language'}).hover();
+    await page.locator('a[hreflang="zh"]').click();
+    await page.waitForURL(url => url.pathname === '/MetisCraft/zh/cookbook/');
+    await page.waitForFunction(() => document.body.dataset.mdColorScheme === 'slate');
+    await selectPalette('auto');
+    await page.waitForFunction(() => document.body.dataset.mdColorScheme === 'default');
+    report.interactions.push('System preference changes, shared manual choice on reload and language switch, return to system');
     for (const route of Object.keys(mapping)) {
       if(['themes','candidate'].includes(args.mode)) continue;
       if(args.mode==='interactions' && !route.includes('/recipes/tev1/')) continue;
@@ -106,7 +131,12 @@ function ensure(ok, detail) { if (!ok) report.failures.push(detail); }
           await go(route);await theme(mode);
           const expected=mode==='slate'?'dark':'light';
           await page.waitForFunction(t=>[...document.querySelectorAll('[data-metis-theme]')].every(n=>n.dataset.metisTheme===t),expected);
-          await page.evaluate(async()=>{for(const img of document.querySelectorAll('img[data-metis-portrait]'))await img.decode();});
+          await page.evaluate(async () => {
+            for (const img of document.querySelectorAll('img[data-metis-portrait]')) {
+              img.loading = 'eager';
+              await img.decode();
+            }
+          });
           const facts=await page.evaluate(()=>({
             controls:document.querySelectorAll('[data-metis-outfit-choice],.metis-wardrobe-controls').length,
             scroll:document.documentElement.scrollWidth,

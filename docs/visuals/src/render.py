@@ -1,5 +1,6 @@
 """Render MetisCraft's editable SVG identity and explanatory figures (stdlib only)."""
 
+from dataclasses import dataclass
 from html import escape
 from pathlib import Path
 
@@ -7,7 +8,9 @@ OUT = Path(__file__).resolve().parents[1] / "figures"
 INK, TEAL = "#243438", "#087f78"
 
 
-def text(x, y, value, size=20, color=INK, weight=400, **attrs):
+def text(x, y, value, size=20, color=INK, weight=400, css_class=None, **attrs):
+    if css_class:
+        attrs["class"] = css_class
     extra = " ".join(f'{k.replace("_", "-")}="{v}"' for k, v in attrs.items())
     return (
         f'<text x="{x}" y="{y}" font-size="{size}" fill="{color}" '
@@ -77,154 +80,163 @@ def main():
     body += text(94, 553, "github.com/Shichaoxx/MetisCraft", 21, "#546b6d")
     save("social-preview", 1200, 630, "MetisCraft repository preview", body, "#f6faf9")
 
-    body = text(32, 46, "One recipe, from data to decisions", 30, INK, 650)
-    stages = [
-        ("Data", "Validate splits"),
-        ("Train", "Fit a readout"),
-        ("Calibrate", "Fit temperature"),
-        ("Evaluate", "Compare results"),
-        ("Serve", "Load & answer"),
-    ]
-    for i, (name, detail) in enumerate(stages):
-        x = 32 + i * 235
-        body += f'<rect x="{x}" y="88" width="202" height="104" rx="12" '
-        body += 'fill="#edf6f3" stroke="#b6d6cd"/>'
-        body += text(x + 17, 127, name, 25, TEAL, 650)
-        body += text(x + 17, 161, detail, 18, "#435e5b")
-        if i < 4:
-            body += f'<path d="M{x + 209} 140 H{x + 227} m-5 -5 l5 5 -5 5" '
-            body += 'fill="none" stroke="#698883" stroke-width="2"/>'
-    body += text(32, 242, "Recorded along the way", 16, TEAL, 650)
-    body += text(270, 242, "Configuration · data version · model identity · metrics", 16)
-    save(
-        "pipeline",
-        1200,
-        276,
-        "Data, training, calibration, evaluation and serving",
-        body,
-        "#ffffff",
-    )
-    body = text(32, 48, "From data to decisions", 28, INK, 650)
-    for i, (name, detail) in enumerate(stages):
-        y = 82 + i * 120
-        body += f'<rect x="32" y="{y}" width="416" height="92" rx="12" '
-        body += 'fill="#edf6f3" stroke="#b6d6cd"/>'
-        body += text(52, y + 37, name, 28, TEAL, 650)
-        body += text(52, y + 68, detail, 21, "#435e5b")
-        if i < 4:
-            body += f'<path d="M240 {y + 98} v16 m-5 -5 l5 5 5 -5" '
-            body += 'fill="none" stroke="#698883" stroke-width="2"/>'
-    body += text(32, 704, "Configuration · data · model · metrics", 20, TEAL)
-    save("pipeline-mobile", 480, 738, "Data to decisions, vertical overview", body, "#ffffff")
+    for suffix, palette in PALETTES.items():
+        for lang in ("en", "zh"):
+            for mobile in (False, True):
+                variant = ("-mobile" if mobile else "") + ("-zh" if lang == "zh" else "") + suffix
+                draw_pipeline("pipeline" + variant, palette, lang, mobile)
+                draw_judgments("judgments" + variant, palette, lang, mobile)
 
-    body = text(32, 46, "Four ways to ask a decision model", 30, INK, 650)
-    cards = [
-        ("Yes / no", "noul", "Does this need a human?", "P(yes) = 0.85"),
-        ("Choice", "choice", "Which team should handle it?", "billing: 0.70 · support: 0.30"),
-        ("Ordered score", "score", "How urgent is this request?", "P(level 1), …, P(level 5)"),
-        ("Multiple labels", "multi_label", "Which topics are present?", "P(payments), P(cards), …"),
-    ]
-    for i, (name, kind, query, output) in enumerate(cards):
-        x, y = 32 + (i % 2) * 590, 80 + (i // 2) * 176
-        body += f'<rect x="{x}" y="{y}" width="558" height="152" rx="12" '
-        body += 'fill="#f6faf9" stroke="#d2e3df"/>'
-        body += text(x + 22, y + 35, name, 23, TEAL, 650)
-        body += text(x + 350, y + 34, kind, 15, "#6a7577")
-        body += text(x + 22, y + 77, query, 20)
-        body += text(x + 22, y + 119, output, 20, "#76571f", 500)
-    body += text(
-        32,
-        456,
-        "Illustrative outputs, not benchmark results. Each type has its own probability semantics.",
-        16,
-        "#546b6d",
-    )
-    save("judgments", 1200, 486, "Four judgment types, with illustrative outputs", body, "#ffffff")
-    body = text(28, 44, "Four types of judgment", 28, INK, 650)
-    for i, (name, kind, query, output) in enumerate(cards):
-        y = 76 + i * 186
-        body += f'<rect x="24" y="{y}" width="432" height="166" rx="12" '
-        body += 'fill="#f6faf9" stroke="#d2e3df"/>'
-        body += text(44, y + 36, name, 25, TEAL, 650)
-        body += text(44, y + 65, kind, 17, "#6a7577")
-        body += text(44, y + 103, query, 21)
-        body += text(44, y + 139, output, 21, "#76571f", 500)
-    body += text(28, 846, "Illustrative outputs, not benchmark results.", 18, "#546b6d")
-    body += text(28, 875, "Probability semantics differ by type.", 18, "#546b6d")
-    save("judgments-mobile", 480, 904, "Four judgment types, vertical examples", body, "#ffffff")
 
-    # Both languages share geometry and typography; only editorial labels differ.
-    labels_zh = {
-        "One recipe, from data to decisions": "一份配方，从数据到判断",
-        "Data, training, calibration, evaluation and serving": "数据、训练、校准、评测与服务",
-        "Data to decisions, vertical overview": "从数据到判断：纵向流程",
-        "From data to decisions": "从数据到判断",
-        "Recorded along the way": "全流程记录",
-        "Configuration · data version · model identity · metrics": (
-            "配置 · 数据版本 · 模型身份 · 指标"
-        ),
-        "Configuration · data · model · metrics": "配置 · 数据 · 模型 · 指标",
-        "Validate splits": "校验数据划分",
-        "Fit a readout": "训练读出",
-        "Fit temperature": "拟合温度",
-        "Compare results": "比较结果",
-        "Load & answer": "加载与判断",
-        "Data": "数据",
-        "Train": "训练",
-        "Calibrate": "校准",
-        "Evaluate": "评测",
-        "Serve": "服务",
-        "Four judgment types, with illustrative outputs": "四种判断类型及构造示例",
-        "Four judgment types, vertical examples": "四种判断类型：纵向示例",
-        "Four ways to ask a decision model": "向判断模型提出四类问题",
-        "Four types of judgment": "四种判断类型",
-        "Yes / no": "是非判断",
-        "Choice": "选择判断",
-        "Ordered score": "等级判断",
-        "Multiple labels": "多标签判断",
-        "Does this need a human?": "需要人工处理吗？",
-        "Which team should handle it?": "应该交给哪个团队？",
-        "How urgent is this request?": "请求的紧急程度是几级？",
-        "Which topics are present?": "包含哪些主题？",
-        (
-            "Illustrative outputs, not benchmark results. "
-            "Each type has its own probability semantics."
-        ): "构造输出示例，并非评测结果。不同类型采用各自的概率语义。",
-        "Illustrative outputs, not benchmark results.": "构造输出示例，并非评测结果。",
-        "Probability semantics differ by type.": "概率语义因类型而异。",
-        "P(yes) = 0.85": "P(是) = 0.85",
-        "billing: 0.70 · support: 0.30": "账单: 0.70 · 支持: 0.30",
-        "P(level 1), …, P(level 5)": "P(等级 1), …, P(等级 5)",
-        "P(payments), P(cards), …": "P(支付), P(卡片), …",
-    }
-    for name in ("pipeline", "pipeline-mobile", "judgments", "judgments-mobile"):
-        svg = (OUT / f"{name}.svg").read_text(encoding="utf-8")
-        for source, translated in sorted(labels_zh.items(), key=lambda item: -len(item[0])):
-            svg = svg.replace(f">{escape(source)}<", f">{escape(translated)}<")
-        svg = svg.replace('"DejaVu Sans", Arial', '"Noto Sans CJK SC", "WenQuanYi Zen Hei", Arial')
-        (OUT / f"{name}-zh.svg").write_text(svg, encoding="utf-8")
+@dataclass(frozen=True)
+class Palette:
+    paper: str
+    ink: str
+    muted: str
+    rule: str
+    blue: str
+    clay: str
+    sage: str
 
-    # Same editable geometry in both themes; semantic accents remain distinct.
-    dark_palette = {
-        "#ffffff": "#18212c",
-        "#243438": "#e2eaf3",
-        "#edf6f3": "#203c3e",
-        "#b6d6cd": "#4d7c78",
-        "#087f78": "#83d8cd",
-        "#435e5b": "#b0cbc7",
-        "#698883": "#92b7b1",
-        "#f6faf9": "#22323e",
-        "#d2e3df": "#4c636b",
-        "#6a7577": "#acb9c4",
-        "#76571f": "#e3c58d",
-        "#546b6d": "#adbfca",
-    }
-    for name in ("pipeline", "pipeline-mobile", "judgments", "judgments-mobile"):
-        for suffix in ("", "-zh"):
-            svg = (OUT / f"{name}{suffix}.svg").read_text()
-            for before, after in dark_palette.items():
-                svg = svg.replace('"' + before + '"', '"' + after + '"')
-            (OUT / f"{name}{suffix}.dark.svg").write_text(svg)
+
+PALETTES = {
+    "": Palette("#FAF9F5", "#24231F", "#625F56", "#C4BEB1", "#375A75", "#924428", "#4F653A"),
+    ".dark": Palette("#1C1C1A", "#FAF9F5", "#BCB9AE", "#655F54", "#9BC1DF", "#ECA388", "#B0C596"),
+}
+
+# A distinct glyph and a real run output identify each stage in grayscale, too.
+STAGES = [
+    ("Data", "数据", "Validate splits", "校验数据划分", "data.json"),
+    ("Train", "训练", "Fit a readout", "训练读出", "artifact/"),
+    ("Calibrate", "校准", "Fit temperature", "拟合温度", "calibration/"),
+    ("Evaluate", "评测", "Compare results", "比较结果", "eval/metrics.json"),
+    ("Serve", "服务", "Load and answer", "加载并作答", "/v1/systemone"),
+]
+GLYPHS = [
+    "M-13 -11 H13 V11 H-13 Z M-13 -4 H13 M-13 3 H13 M-4 -11 V11",
+    "M0 -13 L15 -6 0 1 -15 -6 Z M-15 0 L0 7 15 0 M-15 6 L0 13 15 6",
+    "M-13 -8 H-7 M-1 -8 H13 M-7 -11 H-1 V-5 H-7 Z M-13 7 H3 M9 7 H13 M3 4 H9 V10 H3 Z",
+    "M-13 -12 V12 H14 M-7 7 V1 H-3 V7 Z M0 7 V-4 H4 V7 Z M7 7 V-10 H11 V7 Z",
+    "M-13 -10 H2 V10 H-13 Z M-6 0 H15 M10 -5 L15 0 10 5",
+]
+SERIF = 'Georgia, "Songti SC", "Noto Serif CJK SC", serif'
+MONO = 'ui-monospace, "SFMono-Regular", Consolas, monospace'
+
+
+def draw_pipeline(name, p, lang, mobile):
+    zh = lang == "zh"
+    width, height = (360, 504) if mobile else (950, 228)
+    title = "一份配方，从数据到判断" if zh else "One recipe, from data to decisions"
+    if mobile:
+        title = "从数据到判断" if zh else "From data to decisions"
+    body = f"<style>text.heading {{font-family: {SERIF}}} text.file {{font-family: {MONO}}}</style>"
+    body += text(22, 40, title, 23 if mobile else 28, p.ink, 500, css_class="heading")
+    colors = (p.blue, p.clay, p.sage, p.sage, p.clay)
+    for i, (en, cn, detail, detail_zh, artifact) in enumerate(STAGES):
+        x, y = (46, 90 + 90 * i) if mobile else (58 + 184 * i, 100)
+        if i < len(STAGES) - 1:
+            if mobile:
+                arrow = f"M{x} {y + 24} v41 m-4 -5 4 5 4 -5"
+            else:
+                arrow = f"M{x + 29} {y} h126 m-6 -4 6 4 -6 4"
+            body += f'<path d="{arrow}" fill="none" stroke="{p.muted}" stroke-width="1.5"/>'
+        body += (
+            f'<g transform="translate({x} {y})" fill="none" stroke="{colors[i]}" '
+            f'stroke-linecap="round" stroke-linejoin="round">'
+            f'<circle r="21" stroke-width="1"/><path d="{GLYPHS[i]}" stroke-width="1.8"/></g>'
+        )
+        left = x + 43 if mobile else x - 26
+        top = y - 5 if mobile else y + 55
+        body += text(left, top, cn if zh else en, 20, p.ink, 600)
+        body += text(left, top + 25, detail_zh if zh else detail, 17, p.muted)
+        body += text(left, top + 47, artifact, 15, colors[i], 500, css_class="file")
+    save(name, width, height, title, body, p.paper)
+
+
+JUDGMENTS = [
+    (
+        "Yes / no",
+        "是非判断",
+        "noul",
+        "Does this need a human?",
+        "需要人工处理吗？",
+        "P(yes) = 0.85",
+        "P(是) = 0.85",
+    ),
+    (
+        "Choice",
+        "选择判断",
+        "choice",
+        "Which team should handle it?",
+        "应该交给哪个团队？",
+        "billing 0.70 · support 0.30",
+        "账单 0.70 · 支持 0.30",
+    ),
+    (
+        "Ordered score",
+        "等级判断",
+        "score",
+        "How urgent is this request?",
+        "请求的紧急程度是几级？",
+        "P(level 1), …, P(level 5)",
+        "P(等级 1), …, P(等级 5)",
+    ),
+    (
+        "Multiple labels",
+        "多标签判断",
+        "multi_label",
+        "Which topics are present?",
+        "包含哪些主题？",
+        "P(payments), P(cards), …",
+        "P(支付), P(卡片), …",
+    ),
+]
+
+
+def draw_judgments(name, p, lang, mobile):
+    zh = lang == "zh"
+    width, height = (360, 556) if mobile else (950, 433)
+    title = "向判断模型提出四类问题" if zh else "Four types of judgment"
+    body = f"<style>text.heading {{font-family: {SERIF}}} text.kind {{font-family: {MONO}}}</style>"
+    body += text(22, 40, title, 23 if mobile else 28, p.ink, 500, css_class="heading")
+    if not mobile:
+        for x, en, cn in [
+            (24, "Type", "判断类型"),
+            (262, "Question", "问题"),
+            (595, "Example output", "构造输出示例"),
+        ]:
+            body += text(x, 84, cn if zh else en, 16, p.muted, 600)
+    for i, (en, cn, kind, query, query_zh, output, output_zh) in enumerate(JUDGMENTS):
+        y = 65 + i * 111 if mobile else 99 + i * 72
+        body += f'<path d="M22 {y} H{width - 22}" stroke="{p.rule}"/>'
+        body += text(24, y + 29, cn if zh else en, 20, p.ink, 600)
+        body += text(
+            width - 24 if mobile else 24,
+            y + (28 if mobile else 54),
+            kind,
+            15,
+            p.clay,
+            css_class="kind",
+            text_anchor="end" if mobile else "start",
+        )
+        body += text(
+            24 if mobile else 262,
+            y + (59 if mobile else 41),
+            query_zh if zh else query,
+            17,
+            p.muted,
+        )
+        body += text(
+            24 if mobile else 595,
+            y + (86 if mobile else 41),
+            output_zh if zh else output,
+            18,
+            p.blue,
+            550,
+        )
+    note = "示例用于说明各类型的概率含义。" if zh else "Illustrative probabilities for each type."
+    body += text(24, height - 20, note, 16, p.muted)
+    save(name, width, height, title, body, p.paper)
 
 
 if __name__ == "__main__":

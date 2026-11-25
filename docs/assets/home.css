@@ -1,0 +1,202 @@
+/* Allow the bilingual landing page to use the full width of the reading column. */
+.md-content__inner:has(.home-hero) {
+  container-type: inline-size;
+}
+
+.home-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(1.5rem, 4cqw, 4rem);
+  padding-block: clamp(1.25rem, 4cqw, 3rem);
+  border-block-end: 1px solid var(--metis-rule);
+}
+
+.md-typeset .home-intro h1 {
+  max-width: 12ch;
+  margin: 0;
+  font-family: var(--metis-display-font);
+  font-size: clamp(2.5rem, 5.8cqw, 4.6rem);
+  font-weight: 500;
+  letter-spacing: -.055em;
+  line-height: 1.04;
+  color: var(--metis-ink);
+  text-wrap: balance;
+}
+
+.home-intro h1 em {
+  color: var(--metis-link);
+  font-weight: inherit;
+}
+
+:lang(zh) .home-intro h1 {
+  max-width: 9em;
+  line-height: 1.15;
+  letter-spacing: -.035em;
+}
+
+.md-typeset .home-intro > p:first-of-type {
+  max-width: 36ch;
+  margin-block: 1rem 1.2rem;
+  color: var(--metis-muted);
+  font-size: clamp(.85rem, 1.8cqw, 1.08rem);
+  line-height: 1.65;
+}
+
+.md-typeset .home-actions p {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .5rem 1rem;
+  margin-block: 0;
+  font-size: .8rem;
+}
+
+.md-typeset .home-actions .md-button {
+  margin: 0;
+  padding: .5rem 1rem;
+  border-radius: .25rem;
+}
+
+.md-typeset .home-intro > p:last-child {
+  margin: 1rem 0 0;
+  color: var(--metis-muted);
+  font-size: .7rem;
+}
+
+.md-typeset .home-specimen {
+  padding: clamp(1rem, 2.6cqw, 1.75rem);
+  border: 1px solid var(--metis-rule);
+  border-top: 2px solid var(--metis-accent);
+  background: var(--metis-panel);
+}
+
+.md-typeset .home-specimen h2 {
+  margin: 0;
+  font: 600 .7rem/1.45 var(--md-text-font);
+  letter-spacing: .015em;
+  color: var(--metis-muted);
+}
+
+.md-typeset .home-specimen blockquote {
+  margin: .6rem 0 .8rem;
+  padding: 0;
+  border: 0;
+  color: var(--metis-ink);
+  font-family: var(--metis-display-font);
+  font-size: clamp(1rem, 2.25cqw, 1.45rem);
+  font-style: italic;
+  line-height: 1.32;
+}
+
+.choice-readout {
+  display: block;
+  width: 100%;
+  max-width: 24rem;
+  height: auto;
+  margin-inline: auto;
+}
+
+.md-typeset .specimen-caption {
+  margin-top: .8rem;
+  padding-top: .65rem;
+  border-top: 1px solid var(--metis-rule);
+  color: var(--metis-muted);
+  font-size: .72rem;
+  line-height: 1.55;
+}
+
+.md-typeset .specimen-caption p { margin: 0; }
+
+.home-results {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.25rem;
+  padding-block: .7rem 1.1rem;
+  border-bottom: 1px solid var(--metis-rule);
+}
+
+.home-results > div + div {
+  border-inline-start: 1px solid var(--metis-rule);
+  padding-inline-start: clamp(1rem, 3cqw, 2rem);
+}
+
+.md-typeset .home-results h3 {
+  margin: 0;
+  font: 600 .75rem/1.4 var(--md-text-font);
+  letter-spacing: normal;
+}
+
+.md-typeset .home-results p {
+  margin: .3rem 0 0;
+  color: var(--metis-muted);
+  font-size: .75rem;
+}
+
+.md-typeset .home-results p:first-of-type strong {
+  font-family: var(--metis-display-font);
+  font-size: clamp(2.2rem, 6cqw, 4rem);
+  font-weight: 500;
+  letter-spacing: -.055em;
+  line-height: 1.1;
+  color: var(--metis-link);
+}
+
+.md-typeset .home-paths ul { margin: 0; list-style: none; }
+
+.md-typeset .home-paths li {
+  margin: 0;
+  padding: .75rem 0;
+  border-top: 1px solid var(--metis-rule);
+}
+
+@container (max-width: 39rem) {
+  .home-hero { grid-template-columns: minmax(0, 1fr); }
+  .md-typeset .home-intro h1 { max-width: 16ch; }
+  .md-typeset .home-intro > p:first-of-type { max-width: 48ch; }
+}
+
+@container (max-width: 23rem) {
+  .home-results { grid-template-columns: minmax(0, 1fr); gap: .8rem; }
+  .home-results > div + div {
+    padding: .8rem 0 0;
+    border-inline-start: 0;
+    border-top: 1px solid var(--metis-rule);
+  }
+}
+
+.md-typeset .specimen-probabilities {
+  margin: .4rem 0 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  color: var(--metis-muted);
+  background: none;
+  font-size: .72rem;
+}
+
+.md-typeset .specimen-probabilities summary {
+  display: list-item;
+  margin: 0;
+  padding: .25rem 0;
+  border-radius: 0;
+  background: none;
+  color: var(--metis-link);
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.md-typeset .specimen-probabilities summary::before,
+.md-typeset .specimen-probabilities summary::after { display: none; }
+
+.md-typeset .specimen-probabilities dl {
+  margin: .35rem 0 0;
+  font-family: var(--md-code-font);
+  font-size: .66rem;
+  line-height: 1.5;
+}
+
+.md-typeset .specimen-probabilities dt,
+.md-typeset .specimen-probabilities dd { margin: 0; }
+.md-typeset .specimen-probabilities dd + dt { margin-top: .25rem; }

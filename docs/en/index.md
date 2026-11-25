@@ -1,93 +1,81 @@
-# A toolkit for JevLike models.
+---
+hide:
+  - toc
+---
 
-<div class="home-lead" markdown="1">
+<div class="home-hero" markdown="1">
+<div class="home-intro" markdown="1">
 
-Train, reproduce and deploy JevLike decision models. One recipe connects training, calibration, evaluation and serving.
+# A toolkit for *JevLike* models.
+
+Train, reproduce and deploy typed decision models. One recipe connects training, calibration, evaluation and serving.
+
+<div class="home-actions" markdown="1">
 
 [Get started](cookbook/first-model.md){ .md-button .md-button--primary }
-[Explore the Cookbook](cookbook/index.md){ .md-button }
+[Explore the Cookbook](cookbook/index.md)
 
-**0.1.0rc1 is available as a GitHub pre-release.** [Download distributions](https://github.com/Shichaoxx/MetisCraft/releases/tag/0.1.0rc1) · [Installation](installation.md)
+</div>
 
-[Intro: JevLike, tasks, data and model architecture](tensor-analysis/introduction.md)
+[0.1.0 release](https://github.com/Shichaoxx/MetisCraft/releases/tag/v0.1.0) · [Installation](installation.md)
 
+</div>
+<div class="home-specimen" markdown="1">
+
+## Start with a recorded decision
+
+<blockquote lang="en">My card was stolen this morning and there are two payments on it that I did not make.</blockquote>
+
+<svg class="choice-readout" viewBox="0 0 335 156" role="img" aria-label="Of six support queues, the model chose security."><use href="../visuals/figures/choice-readout.svg#readout"></use></svg>
+
+<div class="specimen-caption" markdown="1">
+
+A constructed message scored by the customer-routing model. [Inspect the request and response](cookbook/decision.md)
+
+</div>
+
+<details class="specimen-probabilities"><summary>Recorded probabilities</summary>
+<dl><dt>queue.confidence</dt><dd>0.9999995054983101</dd><dt>urgent.noul</dt><dd>0.9999314182034214</dd></dl>
+</details>
+
+</div>
 </div>
 
 ## Tev1 4B reproduction
 
-<div class="reproduction-results" markdown="1">
-
+<div class="home-results" markdown="1">
 <div markdown="1">
 
-<span class="result-label">Main decisions · 1,000 questions</span>
+### Main decisions
 
 **87.3%**
 
-873/1,000 correct · original Tev1 **88.0%**
+873 of 1,000 correct · Original Tev1 **88.0%**
 
 </div>
 <div markdown="1">
 
-<span class="result-label">Policy transfer · 300 questions</span>
+### Policy transfer
 
 **99.33%**
 
-298/300 correct · original Tev1 **100%**
+298 of 300 correct · Original Tev1 **100%**
 
 </div>
 </div>
 
-Both predeclared accuracy checks passed. Single seed, the same public development questions; original training history is unavailable and calibration can worsen NLL.
+Both predeclared accuracy checks passed on the same public development questions with a single seed. The original training history is unavailable, and calibration can worsen negative log-likelihood.
 
 [Reproduction record and limits](reproductions/tev1.md) · [Training recipe](../../recipes/tev1/README_en.md)
 
-## Start with a recorded decision
-
-> My card was stolen this morning and there are two payments on it that I did not make.
-
-<div class="decision-result" markdown="1">
-
-**security** · Route to the security team
-
-`confidence: 0.9999995054983101` · `urgent: 0.9999314182034214`
-
-A constructed message, answered by a recorded customer-routing model. Probabilities are not accuracy scores.
-
-[Open the full example](cookbook/decision.md) →
-
-</div>
-
 ## Choose your next step
 
-<div class="start-grid" markdown="1">
+<div class="home-paths" markdown="1">
 
-<div markdown="1">
+- [Understand a decision](cookbook/decision.md) — Inspect all six queue probabilities and the separate urgency prediction.
+- [Run your first model](cookbook/first-model.md) — Complete a CPU example without downloading weights.
+- [Bring your own task](cookbook/own-task.md) — Replace the data and base model, keeping the same training and serving path.
 
-### 01 · See a decision
-
-See the input, the typed output and the evidence behind it.
-
-[Understand a decision](cookbook/decision.md)
-
-</div>
-<div markdown="1">
-
-### 02 · Run the workflow
-
-Run your first CPU example without a GPU or weight download.
-
-[Run your first model](cookbook/first-model.md)
-
-</div>
-<div markdown="1">
-
-### 03 · Bring your task
-
-Replace the data and base model, keeping the same training and serving path.
-
-[Bring your own task](cookbook/own-task.md)
-
-</div>
 </div>
 
 ## Typed judgments. Recorded evidence.
@@ -103,6 +91,4 @@ Use yes/no, choice, ordered score and multiple labels through Python or batch pr
 
 ## Understand the computation
 
-Follow [Concepts & Tensors](tensor-analysis/index.md) from the System One contract to answer-token and scalar-head readouts. The [five-minute technical walkthrough](tensor-analysis/walkthrough.md) connects editable vector figures, numerical examples and source references.
-
-[What is JevLike? Task, data and architecture](tensor-analysis/introduction.md)
+Start with [JevLike tasks, data and model architecture](tensor-analysis/introduction.md). Follow [Concepts & Tensors](tensor-analysis/index.md) from the System One contract to answer-token and scalar-head readouts. The [five-minute walkthrough](tensor-analysis/walkthrough.md) connects editable vector figures, numerical examples and source references.
