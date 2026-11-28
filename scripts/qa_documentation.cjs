@@ -11,13 +11,14 @@ if (!args.module || !args.browser || !args.site || !args.output) {
   throw new Error('Required: --module PLAYWRIGHT --browser CHROMIUM --site SITE --output DIRECTORY');
 }
 const { chromium } = require(path.resolve(args.module));
+const prefix = process.env.METIS_SITE_PREFIX || '/MetisCraft/';
 const site = path.resolve(args.site), output = path.resolve(args.output);
 fs.mkdirSync(output, { recursive: true });
 const types = {'.html':'text/html', '.js':'application/javascript', '.css':'text/css', '.svg':'image/svg+xml', '.png':'image/png', '.webp':'image/webp', '.woff2':'font/woff2', '.woff':'font/woff', '.ttf':'font/ttf', '.json':'application/json', '.pdf':'application/pdf', '.tex':'text/plain'};
 const server = http.createServer((req, res) => {
   const url = new URL(req.url, 'http://127.0.0.1');
-  if (!url.pathname.startsWith('/MetisCraft/')) { res.writeHead(404).end(); return; }
-  let target = path.resolve(site, decodeURIComponent(url.pathname.slice('/MetisCraft/'.length)));
+  if (!url.pathname.startsWith(prefix)) { res.writeHead(404).end(); return; }
+  let target = path.resolve(site, decodeURIComponent(url.pathname.slice(prefix.length)));
   if (!target.startsWith(site + path.sep) && target !== site) {res.writeHead(403).end();return;}
   if (fs.existsSync(target) && fs.statSync(target).isDirectory()) target = path.join(target,'index.html');
   if (!fs.existsSync(target)) {res.writeHead(404).end();return;}
@@ -70,7 +71,7 @@ function ensure(ok, detail) { if (!ok) report.failures.push(detail); }
         document.querySelector('link[rel="icon"]').href.includes(m === 'slate' ? 'mark-dark.svg' : 'mark-light.svg'), mode);
     }
     await page.emulateMedia({colorScheme: 'dark'});
-    await go('/MetisCraft/en/cookbook/');
+    await go(prefix + 'en/cookbook/');
     await page.waitForFunction(() => document.body.dataset.mdColorScheme === 'slate');
     await page.emulateMedia({colorScheme: 'light'});
     await page.waitForFunction(() => document.body.dataset.mdColorScheme === 'default');
@@ -82,15 +83,66 @@ function ensure(ok, detail) { if (!ok) report.failures.push(detail); }
     await page.waitForFunction(() => document.body.dataset.mdColorScheme === 'slate');
     await page.getByRole('button', {name: 'Select language'}).hover();
     await page.locator('a[hreflang="zh"]').click();
-    await page.waitForURL(url => url.pathname === '/MetisCraft/zh/cookbook/');
+    await page.waitForURL(url => url.pathname === prefix + 'zh/cookbook/');
     await page.waitForFunction(() => document.body.dataset.mdColorScheme === 'slate');
     await selectPalette('auto');
     await page.waitForFunction(() => document.body.dataset.mdColorScheme === 'default');
     report.interactions.push('System preference changes, keyboard selection, shared choice on reload and language switch, return to system');
+    for (const lang of ['zh', 'en']) {
+      const root = prefix + lang + '/';
+      await go(root);
+      const entrances = await page.locator('.home-actions a').evaluateAll(
+        links => links.map(link => new URL(link.href).pathname)
+      );
+      ensure(JSON.stringify(entrances) === JSON.stringify(
+        ['jevlike/', 'metiscraft/', 'cookbook/'].map(section => root + section)
+      ), lang + ' home links to the three section entrances in order');
+      const answers = page.locator('.specimen-decisions dd');
+      ensure(await answers.count() === 2 && await answers.first().isVisible() &&
+        await answers.last().isVisible(), lang + ' both routing decisions are visible');
+      await page.locator('.md-content a[href*="/jevlike/tev1/#"]').click();
+      await page.waitForURL(url => url.pathname === root + 'jevlike/tev1/' && Boolean(url.hash));
+      ensure(await page.evaluate(() => Boolean(location.hash &&
+        document.getElementById(decodeURIComponent(location.hash.slice(1))))),
+        lang + ' Tev1 home link opens the item-level comparison');
+
+      await go(root + 'tensor-analysis/readout-comparison/#candidate-edit');
+      const experiment = page.locator('.candidate-edit');
+      const recorded = JSON.parse(fs.readFileSync(
+        path.join(site, 'assets/docs/examples/candidate-edit.json'), 'utf8'
+      ));
+      for (const name of ['scalar_pairs', 'scalar_list', 'answer_token']) {
+        const radio = experiment.locator('input[value="' + name + '"]');
+        await radio.focus();
+        await radio.press('Space');
+        const displayed = await experiment.locator('[data-score]').allTextContents();
+        const expected = recorded.scores[name].delta.map(value => Number(value.toFixed(6)));
+        ensure(displayed.length === expected.length && displayed.every((value, i) =>
+          Number(value.trim().replace('−', '-')) === expected[i]), lang + ' recorded scores for ' + name);
+      }
+
+      await go(root + 'jevlike/candidate-scores/');
+      const example = page.locator('.score-experiment');
+      const choice = example.locator('[data-probability="choice"]');
+      const independent = example.locator('dd').last();
+      ensure(await example.isVisible() && await choice.textContent() === '75.0%',
+        lang + ' initial choice probability');
+      await example.getByRole('slider').press('End');
+      ensure(await choice.textContent() === '13.0%' && (await independent.textContent()).trim() === '75.0%',
+        lang + ' changing B affects choice A but leaves the independent label fixed');
+    }
+    report.interactions.push('Three direct section links and interactive score example in both languages');
+    report.interactions.push('Visible support decisions, Tev1 comparison anchor and keyboard readout selection in both languages');
     for (const route of Object.keys(mapping)) {
       if(['themes','candidate'].includes(args.mode)) continue;
       if(args.mode==='interactions' && !route.includes('/recipes/tev1/')) continue;
       await go(route);
+      // Images inside closed notes and below the fold start loading on demand.
+      await page.evaluate(async () => {
+        const images = [...document.querySelectorAll('.md-content img')];
+        for (const image of images) image.loading = 'eager';
+        await Promise.allSettled(images.map(image => image.decode()));
+      });
       const facts=await page.evaluate(()=>({
         math:document.querySelectorAll('.arithmatex').length,
         failedMath:[...document.querySelectorAll('.arithmatex')].filter(n=>n.dataset.mathRendered!=='true').length,
@@ -110,7 +162,7 @@ function ensure(ok, detail) { if (!ok) report.failures.push(detail); }
     for (const lang of ['en','zh']) for (const width of [1440,390]) for (const mode of ['default','slate']) {
       await page.setViewportSize({width,height:1080});
       for (const slug of slugs) {
-        const route='/MetisCraft/'+lang+'/'+slug;
+        const route=prefix+lang+'/'+slug;
         await go(route);await theme(mode);
         await page.evaluate(async()=>{await Promise.all([...document.querySelectorAll('.md-content img')].map(i=>{i.loading='eager';return i.decode();}));});
         const facts=await page.evaluate(()=>({width:innerWidth,scroll:document.documentElement.scrollWidth,images:[...document.querySelectorAll('.md-content img')].every(n=>n.complete&&n.naturalWidth),mathErrors:document.querySelectorAll('.math-render-error').length,logo:document.querySelector('.md-logo img')?.src,favicon:document.querySelector('link[rel="icon"]').href}));
@@ -123,12 +175,12 @@ function ensure(ok, detail) { if (!ok) report.failures.push(detail); }
     }
     }
     // A stale manual preference must never override the page's actual theme.
-    await go('/MetisCraft/en/cookbook/');
+    await go(prefix + 'en/cookbook/');
     await page.evaluate(()=>localStorage.setItem('metiscraft.metis-outfit','gown'));
     for(const lang of ['en','zh']) for(const width of [1440,390]) {
       await page.setViewportSize({width,height:1080});
       for(const slug of (args.mode==='candidate'?['','first-model/']:['','decision/','first-model/','own-task/'])) {
-        const route='/MetisCraft/'+lang+'/cookbook/'+slug;
+        const route=prefix+lang+'/cookbook/'+slug;
         let lightGeometry;
         for(const mode of ['default','slate']) {
           await go(route);await theme(mode);
@@ -172,7 +224,7 @@ function ensure(ok, detail) { if (!ok) report.failures.push(detail); }
     ensure((await page.locator('img[data-metis-portrait]').getAttribute('src')).endsWith('metis-guide-night.webp'),'Theme-only portrait after reload');
     report.interactions.push('Theme-only portraits ignore old manual preference and preserve size across 32 layouts');
     await page.setViewportSize({width:1440,height:1080});
-    await go('/MetisCraft/en/tensor-analysis/scalar-heads/');await theme('default');
+    await go(prefix + 'en/tensor-analysis/scalar-heads/');await theme('default');
     const figure=page.locator('.md-content img[data-figure-ready]').first();
     await figure.scrollIntoViewIfNeeded();await figure.press('Enter');
     ensure(await page.locator('#metis-figure-dialog').evaluate(n=>n.open),'Figure keyboard open');
@@ -219,15 +271,15 @@ function ensure(ok, detail) { if (!ok) report.failures.push(detail); }
     await page.evaluate(()=>window.scrollTo(0,0));
     await page.getByRole('button',{name:'Select language'}).hover();
     await page.locator('a[hreflang="zh"]').click();
-    await page.waitForURL(url=>url.pathname==='/MetisCraft/zh/tensor-analysis/scalar-heads/');report.interactions.push('Same-page language switch');
+    await page.waitForURL(url=>url.pathname===prefix + 'zh/tensor-analysis/scalar-heads/');report.interactions.push('Same-page language switch');
     for(const anchor of ['记号','①-lm-head-答案-token','③-逐候选标量头','未完成']) {
-      await page.goto(origin+'/MetisCraft/zh/readouts/#'+encodeURIComponent(anchor),{waitUntil:'load'});
-      await page.waitForURL(url=>url.pathname==='/MetisCraft/zh/tensor-analysis/readout-comparison/');
+      await page.goto(origin+prefix + 'zh/readouts/#'+encodeURIComponent(anchor),{waitUntil:'load'});
+      await page.waitForURL(url=>url.pathname===prefix + 'zh/tensor-analysis/readout-comparison/');
       ensure(decodeURIComponent(new URL(page.url()).hash.slice(1))===anchor,'Legacy fragment retained '+anchor);
       ensure(await page.evaluate(id=>Boolean(document.getElementById(id)),anchor),'Legacy anchor exists '+anchor);
       report.interactions.push('Legacy anchor '+anchor);
     }
-    await go('/MetisCraft/en/tensor-analysis/answer-token/');
+    await go(prefix + 'en/tensor-analysis/answer-token/');
     const search=page.locator('.md-search__button');
     if(await search.count()) await search.click(); else await page.keyboard.press('Control+k');
     await page.waitForTimeout(250);
@@ -240,12 +292,12 @@ function ensure(ok, detail) { if (!ok) report.failures.push(detail); }
       fs.writeFileSync(path.join(output,'search-inspection.json'),JSON.stringify(searchFacts,null,2));
       ensure(searchFacts.dialogs.some(n=>n.text.toLowerCase().includes('scalar')),'Search scalar results');report.interactions.push('Search scalar results');await page.keyboard.press('Escape');}
     else ensure(false,'Search input missing');
-    await page.setViewportSize({width:320,height:900});await go('/MetisCraft/zh/tensor-analysis/scalar-heads/');
+    await page.setViewportSize({width:320,height:900});await go(prefix + 'zh/tensor-analysis/scalar-heads/');
     ensure(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),'320px overflow');report.interactions.push('320px narrow layout');
     const retina=await browser.newContext({viewport:{width:1440,height:1080},deviceScaleFactor:2});
     await retina.route('**/*',route=>route.request().url().startsWith(origin)?route.continue():route.abort());
     const rp=await retina.newPage();
-    await rp.goto(origin+'/MetisCraft/zh/tensor-analysis/answer-token/');
+    await rp.goto(origin+prefix + 'zh/tensor-analysis/answer-token/');
     await rp.waitForFunction(()=>window.renderMetisMath && document.querySelector('.md-content img[data-figure-ready]'));
     const ri=rp.locator('.md-content img[data-figure-ready]').first();await ri.scrollIntoViewIfNeeded();await ri.click();
     ensure(await rp.locator('#metis-figure-dialog').evaluate(n=>n.open),'2x vector enlargement');

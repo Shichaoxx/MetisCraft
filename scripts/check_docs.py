@@ -8,10 +8,10 @@ from html.parser import HTMLParser
 from pathlib import Path
 from urllib.parse import unquote, urljoin, urlsplit
 
+from build_docs import ORIGIN, PREFIX
+
 ROOT = Path(__file__).resolve().parents[1]
 SITE = ROOT / "build/documentation/site"
-ORIGIN = "https://shichaoxx.github.io"
-PREFIX = "/MetisCraft/"
 
 
 class Links(HTMLParser):
@@ -40,7 +40,10 @@ def main():
         current = ORIGIN + PREFIX + source.relative_to(SITE).as_posix()
         for link in page.links:
             url = urlsplit(urljoin(current, link))
-            if url.netloc != urlsplit(ORIGIN).netloc or not url.path.startswith(PREFIX):
+            if url.netloc != urlsplit(ORIGIN).netloc:
+                continue
+            if not url.path.startswith(PREFIX):
+                errors.append(f"{source.relative_to(SITE)}: outside site path {link}")
                 continue
             target = SITE / unquote(url.path.removeprefix(PREFIX))
             if target.is_dir():
@@ -56,7 +59,10 @@ def main():
         current = ORIGIN + PREFIX + source.relative_to(SITE).as_posix()
         for link in re.findall(r"url\(['\"]?([^)'\"\s]+)", source.read_text(encoding="utf-8")):
             url = urlsplit(urljoin(current, link))
-            if url.netloc != urlsplit(ORIGIN).netloc or not url.path.startswith(PREFIX):
+            if url.netloc != urlsplit(ORIGIN).netloc:
+                continue
+            if not url.path.startswith(PREFIX):
+                errors.append(f"{source.relative_to(SITE)}: outside site path {link}")
                 continue
             count += 1
             target = SITE / unquote(url.path.removeprefix(PREFIX))

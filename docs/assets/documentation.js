@@ -1,5 +1,6 @@
 (function () {
   "use strict";
+  const brandDirectory = new URL("docs/visuals/figures/", document.currentScript.src);
   function isDarkTheme() {
     const scheme = document.body?.getAttribute("data-md-color-scheme") || document.documentElement.getAttribute("data-md-color-scheme");
     if (scheme) return scheme === "slate";
@@ -10,7 +11,7 @@
   }
   function syncBrand() {
     const dark = isDarkTheme();
-    const src = "/MetisCraft/assets/docs/visuals/figures/mark-" + (dark ? "dark" : "light") + ".svg";
+    const src = new URL(dark ? "mark-dark.svg" : "mark-light.svg", brandDirectory).href;
     document.querySelectorAll(".md-logo img").forEach(function (img) { img.src = src; });
     document.querySelectorAll('link[rel~="icon"]').forEach(function (icon) { icon.href = src; });
   }

@@ -1,29 +1,14 @@
 # Cookbook
 
-From a recorded response to a decision model of your own.
+Inspect a recorded support decision, train a model on a CPU or examine a reproduction run. Follow the [installation guide](../installation.md) before starting a training tutorial.
 
-<div class="cookbook-guide" data-metis-theme="light" data-metis-light-src="../../visuals/figures/metis-guide-chibi.webp" data-metis-light-full-src="../../visuals/figures/metis-guide-chibi.png" data-metis-dark-src="../../visuals/figures/metis-guide-night.webp" data-metis-dark-full-src="../../visuals/figures/metis-guide-night.png" data-metis-light-alt="Metis in her academy outfit, holding a star-chart book" data-metis-dark-alt="Metis in her night outfit, holding a star-chart book" markdown="1">
-
-<figure class="cookbook-avatar"><a data-metis-full href="../../visuals/figures/metis-guide-chibi.png" target="_blank" rel="noopener" aria-label="View Metis's illustration in a new tab"><img data-metis-portrait loading="lazy" decoding="async" src="../../visuals/figures/metis-guide-chibi.webp" alt="Metis in her academy outfit, holding a star-chart book" width="160" height="160"></a></figure>
-
-<div class="cookbook-guide-copy" markdown="1">
-
-## Metis · Your guide
-
-See a decision. Run the example. Bring your own data.
-
-</div>
-</div>
-
-Before running a tutorial, download the `0.1.0` wheel from the [GitHub release](https://github.com/Shichaoxx/MetisCraft/releases/tag/v0.1.0) and follow the [installation guide](../installation.md).
-
-## Choose a starting point
+## Tutorials { #choose-a-starting-point }
 
 <div class="start-grid cookbook-paths" markdown="1">
 
 <div markdown="1">
 
-### 01 · See a decision
+### Customer routing { #01--see-a-decision }
 
 Follow a customer message through two decisions, with the full request, recorded response and evaluation evidence.
 
@@ -32,7 +17,7 @@ Follow a customer message through two decisions, with the full request, recorded
 </div>
 <div markdown="1">
 
-### 02 · Run your first model
+### CPU training { #02--run-your-first-model }
 
 No GPU or weight download. Use a tiny random model to learn training, calibration, evaluation and HTTP calls.
 
@@ -41,7 +26,7 @@ No GPU or weight download. Use a tiny random model to learn training, calibratio
 </div>
 <div markdown="1">
 
-### 03 · Bring your own task
+### Custom tasks { #03--bring-your-own-task }
 
 Replace the labels and pretrained base, then produce an artifact you can load, evaluate and serve.
 
@@ -50,13 +35,26 @@ Replace the labels and pretrained base, then produce an artifact you can load, e
 </div>
 </div>
 
-## From a question to an application
+## Experiment recipes and results { #from-a-question-to-an-application }
 
-Define the possible answers, collect examples with labels, and keep separate data for training, calibration and evaluation. A recipe produces an artifact you can load in Python, predict with in batch, or serve over HTTP. Your application decides what action to take from that answer.
+[Banking77 customer routing](../../../recipes/banking77_support/README_en.md) derives queue and urgency labels from 77 original intents and documents the data splits, training commands and held-out results. The [GoEmotions recipe](../../../recipes/go_emotions/README_en.md) trains a multi-label model: one text can have several emotion labels.
 
-For customer routing, this might mean sending a message to the security queue and escalating cases likely to be urgent. The [recorded example](decision.md) shows both decisions, along with a comparison to a baseline that does not read the message.
+The [Tev1 4B reproduction](../reproductions/tev1.md) documents both evaluation sets, compares results with the authors’ numbers and describes differences in training and calibration. The [training recipe](../../../recipes/tev1/README_en.md) gives the steps for a new run.
 
-## Reference when you need it
+<div class="cookbook-guide" data-metis-theme="light" data-metis-light-src="../../visuals/figures/metis-guide-chibi.webp" data-metis-light-full-src="../../visuals/figures/metis-guide-chibi.png" data-metis-dark-src="../../visuals/figures/metis-guide-night.webp" data-metis-dark-full-src="../../visuals/figures/metis-guide-night.png" data-metis-light-alt="Metis in her academy outfit, holding a star-chart book" data-metis-dark-alt="Metis in her night outfit, holding a star-chart book" markdown="1">
+
+<figure class="cookbook-avatar"><a data-metis-full href="../../visuals/figures/metis-guide-chibi.png" target="_blank" rel="noopener" aria-label="View Metis's illustration in a new tab"><img data-metis-portrait loading="lazy" decoding="async" src="../../visuals/figures/metis-guide-chibi.webp" alt="Metis in her academy outfit, holding a star-chart book" width="160" height="160"></a></figure>
+
+<div class="cookbook-guide-copy" markdown="1">
+
+## Metis’s note on experiment logs { #metis--your-guide }
+
+Open `report.md` in the run directory after training. For the same metrics in machine-readable form, look in `eval/metrics.json`.
+
+</div>
+</div>
+
+## Manual and reference { #reference-when-you-need-it }
 
 - [Installation](../installation.md) and [supported scope](../limitations.md).
 - [Runtime, interface and artifact compatibility](../compatibility.md).

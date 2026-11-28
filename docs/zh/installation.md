@@ -26,6 +26,18 @@ python -m pip install './metiscraft-0.1.0-py3-none-any.whl[serve]'
 metiscraft --version
 ```
 
+<details markdown="1">
+<summary>小墨便签 · 检查当前安装版本</summary>
+
+<aside class="metis-reading-note" data-metis-theme="light" data-metis-light-src="../visuals/figures/metis-guide-chibi.webp" data-metis-light-full-src="../visuals/figures/metis-guide-chibi.png" data-metis-dark-src="../visuals/figures/metis-guide-night.webp" data-metis-dark-full-src="../visuals/figures/metis-guide-night.png" data-metis-light-alt="穿着学院装、抱着星图书的小墨" data-metis-dark-alt="穿着夜间衣装、抱着星图书的小墨" aria-label="小墨阅读提示" markdown="1">
+
+<figure class="metis-reading-avatar"><a data-metis-full href="../visuals/figures/metis-guide-chibi.png" target="_blank" rel="noopener" aria-label="在新标签页查看小墨插图"><img data-metis-portrait loading="lazy" decoding="async" src="../visuals/figures/metis-guide-chibi.webp" alt="穿着学院装、抱着星图书的小墨" width="120" height="120"></a></figure>
+
+<div class="metis-reading-copy"><p>在刚才安装软件的终端运行 <code>metiscraft --version</code>。按本页命令安装时，预期输出是 <code>metiscraft 0.1.0</code>。如果版本不同，运行 <code>python -m pip show metiscraft</code>，核对 <code>Version</code> 和 <code>Location</code> 是否对应当前虚拟环境。</p></div>
+</aside>
+
+</details>
+
 ## 从源码安装
 
 从固定的 `v0.1.0` 标签获取与本次发行对应的源码。

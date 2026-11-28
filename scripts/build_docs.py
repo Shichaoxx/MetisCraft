@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import os
 import re
 import shutil
 import subprocess
@@ -13,7 +14,12 @@ from urllib.parse import quote, unquote, urlsplit
 ROOT = Path(__file__).resolve().parents[1]
 BUILD = ROOT / "build" / "documentation"
 SITE = BUILD / "site"
-PREFIX = "/MetisCraft/"
+ORIGIN = "https://shichaoxx.github.io"
+DEFAULT_PREFIX = "/MetisCraft/"
+# Set METIS_SITE_PREFIX to build and validate the same sources under another Pages path.
+PREFIX = os.environ.get("METIS_SITE_PREFIX", DEFAULT_PREFIX)
+if not re.fullmatch(r"/(?:[A-Za-z0-9_-][A-Za-z0-9._-]*/)*", PREFIX):
+    raise ValueError("METIS_SITE_PREFIX must be a slash-delimited Pages path, e.g. /Metis/review/")
 SOURCE_REF = "91259c6d07ece19248a02a4b56b43dd3a77d81e5"
 REPO = f"https://github.com/Shichaoxx/MetisCraft/blob/{SOURCE_REF}/"
 
@@ -70,6 +76,138 @@ def page_url(path):
     return PREFIX + path.as_posix().rstrip("/") + "/"
 
 
+def site_navigation(lang):
+    def item(chinese, english, target):
+        return {chinese if lang == "zh" else english: target}
+
+    return [
+        item("首页", "Home", "index.md"),
+        {
+            "1. JevLike": [
+                item("决策模型研究", "Decision model research", "jevlike/index.md"),
+                item(
+                    "基础原理",
+                    "Foundations",
+                    [
+                        item(
+                            "任务与答案空间",
+                            "Tasks and answer spaces",
+                            "tensor-analysis/introduction.md",
+                        ),
+                        item("接口与输出语义", "Contracts and outputs", "tensor-analysis/index.md"),
+                        item(
+                            "张量、轴与索引",
+                            "Tensors, axes and indices",
+                            "tensor-analysis/notation.md",
+                        ),
+                    ],
+                ),
+                item(
+                    "方法与开源实现",
+                    "Methods and implementations",
+                    [
+                        item("架构图谱", "Architecture atlas", "tensor-analysis/architectures.md"),
+                        item(
+                            "答案 token 与固定槽位",
+                            "Answer tokens and fixed slots",
+                            "tensor-analysis/architectures-token.md",
+                        ),
+                        item(
+                            "标量、指针与联合头",
+                            "Scalar, pointer and joint heads",
+                            "tensor-analysis/architectures-structured.md",
+                        ),
+                        {"Tev1-4B": "jevlike/tev1.md"},
+                        {"JevForge": "jevlike/jevforge.md"},
+                        {"Kev-4B": "jevlike/kev.md"},
+                        item(
+                            "编码器与逐对重排",
+                            "Encoders and pair rerankers",
+                            "tensor-analysis/architectures-encoders.md",
+                        ),
+                        item(
+                            "答案 token 读出",
+                            "Answer-token readout",
+                            "tensor-analysis/answer-token.md",
+                        ),
+                        item("标量头读出", "Scalar readouts", "tensor-analysis/scalar-heads.md"),
+                    ],
+                ),
+                item(
+                    "综合比较",
+                    "Comparative analysis",
+                    [
+                        item(
+                            "候选打分与概率",
+                            "Candidate scores and probabilities",
+                            "jevlike/candidate-scores.md",
+                        ),
+                        item(
+                            "读出机制比较",
+                            "Comparing readouts",
+                            "tensor-analysis/readout-comparison.md",
+                        ),
+                        item(
+                            "训练、校准与输出",
+                            "Training, calibration and outputs",
+                            "tensor-analysis/training-calibration.md",
+                        ),
+                        item("实现与证据矩阵", "Implementations and evidence", "support-matrix.md"),
+                    ],
+                ),
+            ]
+        },
+        {
+            "2. MetisCraft": [
+                item("开发手册", "Developer manual", "metiscraft/index.md"),
+                item("安装", "Installation", "installation.md"),
+                item("快速开始", "Quickstart", "quickstart.md"),
+                item("模型与产物", "Model and artifacts", "metiscraft/model-and-artifacts.md"),
+                item("数据与配方", "Data and recipes", "data.md"),
+                item("训练与校准", "Training and calibration", "training.md"),
+                item("预测与服务", "Prediction and serving", "serving.md"),
+                item(
+                    "技术参考",
+                    "Reference",
+                    [
+                        item("接口约定", "Interface contracts", "interfaces.md"),
+                        item("配方字段", "Recipe fields", "cookbook/recipe-reference.md"),
+                        item("兼容范围", "Compatibility", "compatibility.md"),
+                        item("验证范围", "Evidence and limitations", "limitations.md"),
+                        item("贡献指南", "Contribution guide", "contributing.md"),
+                        item("版本说明", "Changelog", "changelog.md"),
+                    ],
+                ),
+            ]
+        },
+        {
+            "3. Cookbook": [
+                item("实验与教程", "Experiments and tutorials", "cookbook/index.md"),
+                item("客服分流示例", "Support routing example", "cookbook/decision.md"),
+                item("CPU 快速开始", "First model on CPU", "cookbook/first-model.md"),
+                item("自定义任务", "Custom tasks", "cookbook/own-task.md"),
+                item("张量计算示例", "Tensor walkthrough", "tensor-analysis/walkthrough.md"),
+                item("建模原则", "Modeling principles", "cookbook/principles.md"),
+                item("实践建议", "Best practices", "cookbook/best-practices.md"),
+                item(
+                    "结果与复现",
+                    "Results and reproductions",
+                    [
+                        item("Tev1 复现", "Tev1 reproduction", "reproductions/tev1.md"),
+                        {"Banking77": "recipes/banking77/index.md"},
+                        item("客服分流", "Customer routing", "recipes/banking77_support/index.md"),
+                        {"BoolQ": "recipes/boolq/index.md"},
+                        {"CLINC150": "recipes/clinc150/index.md"},
+                        {"GoEmotions": "recipes/go_emotions/index.md"},
+                        {"SST-5": "recipes/sst5/index.md"},
+                        item("Tev1 训练配方", "Tev1 training recipe", "recipes/tev1/index.md"),
+                    ],
+                ),
+            ]
+        },
+    ]
+
+
 def main():
     if BUILD.exists():
         shutil.rmtree(BUILD)  # Only this script's ignored, reproducible build output.
@@ -92,6 +230,8 @@ def main():
 
     def rewrite(value, source):
         url = urlsplit(value)
+        if not url.scheme and not url.netloc and value.startswith(DEFAULT_PREFIX):
+            return PREFIX + value.removeprefix(DEFAULT_PREFIX)
         if url.scheme or url.netloc or not url.path or url.path.startswith("/"):
             return value
         target = (source.parent / unquote(url.path)).resolve()
@@ -186,6 +326,8 @@ def main():
     for source in sources:
         dest = mapping[source.resolve()]
         content = source.read_text(encoding="utf-8")
+        # Keep copyable tutorial commands on the same deployment as their data.
+        content = content.replace(ORIGIN + DEFAULT_PREFIX, ORIGIN + PREFIX)
         content = re.sub(
             r"(!?\[[^\]\n]*\]\()([^\s)]+)(\))",
             lambda m, source=source: m[1] + rewrite(m[2], source) + m[3],
@@ -207,142 +349,14 @@ def main():
 
     for lang in ("en", "zh"):
         zh = lang == "zh"
-        nav = [
-            {
-                "0. Intro": [
-                    {
-                        "什么是 JevLike" if zh else "What is JevLike?": (
-                            "tensor-analysis/introduction.md"
-                        )
-                    },
-                    {
-                        "架构导览" if zh else "Architecture guide": (
-                            "tensor-analysis/architectures.md"
-                        )
-                    },
-                    {
-                        "开源实现" if zh else "Open implementations": [
-                            {
-                                "答案 token 与固定槽位" if zh else "Answer tokens & fixed slots": (
-                                    "tensor-analysis/architectures-token.md"
-                                )
-                            },
-                            {
-                                "标量、指针与联合头" if zh else "Scalar, pointer & joint heads": (
-                                    "tensor-analysis/architectures-structured.md"
-                                )
-                            },
-                            {
-                                "编码器与逐对重排" if zh else "Encoders & pair rerankers": (
-                                    "tensor-analysis/architectures-encoders.md"
-                                )
-                            },
-                        ]
-                    },
-                    {
-                        "五分钟技术导览" if zh else "Five-minute walkthrough": (
-                            "tensor-analysis/walkthrough.md"
-                        )
-                    },
-                ]
-            },
-            {
-                "1. 开始使用" if zh else "1. Get started": [
-                    {"概览" if zh else "Overview": "index.md"},
-                    {"安装" if zh else "Installation": "installation.md"},
-                    {"快速上手" if zh else "Quickstart": "quickstart.md"},
-                ]
-            },
-            {
-                "2. Cookbook": [
-                    {"阅读路线" if zh else "Choose a path": "cookbook/index.md"},
-                    {"认识一次判断" if zh else "Understand a decision": "cookbook/decision.md"},
-                    {"跑通第一个模型" if zh else "Your first model": "cookbook/first-model.md"},
-                    {"接入自己的任务" if zh else "Your own task": "cookbook/own-task.md"},
-                    {"数据与配方" if zh else "Data & recipes": "data.md"},
-                    {"训练与校准" if zh else "Train & calibrate": "training.md"},
-                    {"预测与服务" if zh else "Predict & serve": "serving.md"},
-                ]
-            },
-            {
-                "3. 原理与张量解析" if zh else "3. Concepts & Tensors": [
-                    {
-                        "从 System One 到 MetisCraft"
-                        if zh
-                        else "System One to MetisCraft": "tensor-analysis/index.md"
-                    },
-                    {
-                        "张量、轴与索引"
-                        if zh
-                        else "Tensors, axes & indices": "tensor-analysis/notation.md"
-                    },
-                    {
-                        "答案 token 读出"
-                        if zh
-                        else "Answer-token readout": "tensor-analysis/answer-token.md"
-                    },
-                    {
-                        "标量头读出"
-                        if zh
-                        else "Scalar-head readouts": "tensor-analysis/scalar-heads.md"
-                    },
-                    {
-                        "训练、校准与输出" if zh else "Training, calibration & output": (
-                            "tensor-analysis/training-calibration.md"
-                        )
-                    },
-                    {
-                        "七类读出对照"
-                        if zh
-                        else "Seven readout mechanisms": "tensor-analysis/readout-comparison.md"
-                    },
-                ]
-            },
-            {
-                "4. 结果与复现" if zh else "4. Results & reproductions": [
-                    {"验证范围" if zh else "Evidence & limitations": "limitations.md"},
-                    {"Tev1": "reproductions/tev1.md"},
-                    {"支持矩阵" if zh else "Ecosystem support": "support-matrix.md"},
-                    {
-                        "配方结果" if zh else "Recipe results": [
-                            {"Banking77": "recipes/banking77/index.md"},
-                            {
-                                "客服分流" if zh else "Customer routing": (
-                                    "recipes/banking77_support/index.md"
-                                )
-                            },
-                            {"BoolQ": "recipes/boolq/index.md"},
-                            {"CLINC150": "recipes/clinc150/index.md"},
-                            {"GoEmotions": "recipes/go_emotions/index.md"},
-                            {"SST-5": "recipes/sst5/index.md"},
-                            {"Tev1": "recipes/tev1/index.md"},
-                        ]
-                    },
-                ]
-            },
-            {
-                "5. 参考" if zh else "5. Reference": [
-                    {"兼容范围" if zh else "Compatibility": "compatibility.md"},
-                    {"原理" if zh else "Principles": "cookbook/principles.md"},
-                    {"最佳实践" if zh else "Best practices": "cookbook/best-practices.md"},
-                    {"接口约定" if zh else "Interface contracts": "interfaces.md"},
-                    {"配方字段" if zh else "Recipe fields": "cookbook/recipe-reference.md"},
-                ]
-            },
-            {
-                "6. 参与贡献" if zh else "6. Contribute": [
-                    {"贡献指南" if zh else "Contribution guide": "contributing.md"},
-                    {"版本说明" if zh else "Changelog": "changelog.md"},
-                ]
-            },
-        ]
+        nav = site_navigation(lang)
         project = {
-            "site_name": "MetisCraft",
-            "site_url": f"https://shichaoxx.github.io/MetisCraft/{lang}/",
+            "site_name": "Metis",
+            "site_url": f"{ORIGIN}{PREFIX}{lang}/",
             "site_description": (
-                "JevLike 模型工具包：训练、复现、校准与服务。"
+                "JevLike 决策模型研究、MetisCraft 开发手册与可复现实验。"
                 if zh
-                else "A JevLike model toolkit. Train, reproduce, calibrate and serve."
+                else "JevLike model research, the MetisCraft manual and reproducible experiments."
             ),
             "docs_dir": f"sources/{lang}",
             "site_dir": f"site/{lang}",
@@ -368,8 +382,8 @@ def main():
 [project.theme]
 language = "LANG"
 font = false
-logo = "/MetisCraft/assets/docs/visuals/figures/mark.svg"
-favicon = "/MetisCraft/assets/docs/visuals/figures/mark.svg"
+logo = "SITE_PREFIXassets/docs/visuals/figures/mark.svg"
+favicon = "SITE_PREFIXassets/docs/visuals/figures/mark.svg"
 features = ["content.code.copy", "navigation.top", "search.highlight"]
 [[project.theme.palette]]
 media = "(prefers-color-scheme)"
@@ -393,10 +407,10 @@ accent = "custom"
 toggle.icon = "lucide/monitor"
 toggle.name = "Use system theme"
 [project.extra]
-scope = "/MetisCraft/"
+scope = "SITE_PREFIX"
 alternate = [
- { name = "English", link = "/MetisCraft/en/", lang = "en" },
- { name = "简体中文", link = "/MetisCraft/zh/", lang = "zh" }
+ { name = "English", link = "SITE_PREFIXen/", lang = "en" },
+ { name = "简体中文", link = "SITE_PREFIXzh/", lang = "zh" }
 ]
 [project.markdown_extensions]
 admonition = {}
@@ -410,7 +424,7 @@ pymdownx.superfences = {}
 pymdownx.details = {}
 pymdownx.tasklist.custom_checkbox = true
 pymdownx.arithmatex.generic = true
-""".replace('language = "LANG"', f'language = "{lang}"')
+""".replace('language = "LANG"', f'language = "{lang}"').replace("SITE_PREFIX", PREFIX)
         if zh:
             config = (
                 config.replace('toggle.name = "Dark mode"', 'toggle.name = "深色主题"')
@@ -515,7 +529,7 @@ pymdownx.arithmatex.generic = true
     )
     (SITE / "index.html").write_text(
         '<!doctype html><html lang="zh-CN"><meta charset="utf-8">'
-        '<meta http-equiv="refresh" content="0; url=zh/"><title>MetisCraft</title>'
+        '<meta http-equiv="refresh" content="0; url=zh/"><title>Metis</title>'
         '<a href="zh/" lang="zh-CN">简体中文</a> · <a href="en/" lang="en">English</a></html>',
         encoding="utf-8",
     )

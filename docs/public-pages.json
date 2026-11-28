@@ -2,6 +2,20 @@
   "pages": [
     "docs/en/index.md",
     "docs/zh/index.md",
+    "docs/en/jevlike/index.md",
+    "docs/zh/jevlike/index.md",
+    "docs/en/jevlike/candidate-scores.md",
+    "docs/zh/jevlike/candidate-scores.md",
+    "docs/en/jevlike/tev1.md",
+    "docs/zh/jevlike/tev1.md",
+    "docs/en/jevlike/jevforge.md",
+    "docs/zh/jevlike/jevforge.md",
+    "docs/en/jevlike/kev.md",
+    "docs/zh/jevlike/kev.md",
+    "docs/en/metiscraft/index.md",
+    "docs/zh/metiscraft/index.md",
+    "docs/en/metiscraft/model-and-artifacts.md",
+    "docs/zh/metiscraft/model-and-artifacts.md",
     "docs/en/installation.md",
     "docs/en/compatibility.md",
     "docs/zh/installation.md",
@@ -96,6 +110,34 @@
     "index": {
       "en": "docs/en/index.md",
       "zh": "docs/zh/index.md"
+    },
+    "jevlike/index": {
+      "en": "docs/en/jevlike/index.md",
+      "zh": "docs/zh/jevlike/index.md"
+    },
+    "jevlike/candidate-scores": {
+      "en": "docs/en/jevlike/candidate-scores.md",
+      "zh": "docs/zh/jevlike/candidate-scores.md"
+    },
+    "jevlike/tev1": {
+      "en": "docs/en/jevlike/tev1.md",
+      "zh": "docs/zh/jevlike/tev1.md"
+    },
+    "jevlike/jevforge": {
+      "en": "docs/en/jevlike/jevforge.md",
+      "zh": "docs/zh/jevlike/jevforge.md"
+    },
+    "jevlike/kev": {
+      "en": "docs/en/jevlike/kev.md",
+      "zh": "docs/zh/jevlike/kev.md"
+    },
+    "metiscraft/index": {
+      "en": "docs/en/metiscraft/index.md",
+      "zh": "docs/zh/metiscraft/index.md"
+    },
+    "metiscraft/model-and-artifacts": {
+      "en": "docs/en/metiscraft/model-and-artifacts.md",
+      "zh": "docs/zh/metiscraft/model-and-artifacts.md"
     },
     "installation": {
       "en": "docs/en/installation.md",

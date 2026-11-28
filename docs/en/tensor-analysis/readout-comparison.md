@@ -6,6 +6,58 @@
 
 Where does each candidate score come from, and which inputs can influence it? Readout families differ in the representations they select, the interactions they permit and the axis they normalize. The taxonomy describes mechanisms, not a ranking or a checkpoint compatibility promise.
 
+## Which scores change when you edit the middle option? { #candidate-edit }
+
+Keep the three candidate IDs and their order fixed. Change the middle description from `green` to `red`. Both words occupy one token in the teaching vocabulary. Each readout runs twice with its weights held fixed.
+
+<figure class="candidate-edit" hidden>
+  <figcaption>Change in raw score <small>after − before</small></figcaption>
+  <fieldset>
+    <legend>Readout</legend>
+    <label><input type="radio" name="readout" value="scalar_pairs" data-note="Each candidate has its own input row. Only the second row receives the new word." checked><span>Separate rows</span></label>
+    <label><input type="radio" name="readout" value="scalar_list" data-note="The first score is read before the edit. The second and third are read after the model has seen it."><span>One sequence</span></label>
+    <label><input type="radio" name="readout" value="answer_token" data-note="The model reads the entire question before scoring the three answer tokens."><span>Answer tokens</span></label>
+  </fieldset>
+  <div class="candidate-edit-flow">
+    <div class="candidate-edit-word"><span>Middle option · beta</span><b><span data-before></span> → <span data-after></span></b></div>
+    <svg class="candidate-edit-branches" aria-hidden="true" viewBox="0 0 120 90" preserveAspectRatio="none">
+      <path d="M0 45 C45 45 65 15 120 15"/>
+      <path d="M0 45 H120"/>
+      <path d="M0 45 C45 45 65 75 120 75"/>
+    </svg>
+    <dl class="candidate-edit-results">
+      <div><dt>alpha</dt><dd data-score></dd></div>
+      <div><dt>beta</dt><dd data-score></dd></div>
+      <div><dt>gamma</dt><dd data-score></dd></div>
+    </dl>
+  </div>
+  <p class="candidate-edit-note" aria-live="polite" aria-atomic="true"></p>
+</figure>
+<script src="/MetisCraft/assets/candidate-edit.js" defer></script>
+
+<details class="candidate-edit-table" open markdown="1">
+<summary>Compare raw score changes across all three readouts</summary>
+
+| MetisCraft readout | First (alpha) | Second (beta, edited) | Third (gamma) |
+| --- | ---: | ---: | ---: |
+| Answer token | −0.007902 | −0.010722 | +0.006189 |
+| Scalar list | 0 | +0.050229 | +0.000818 |
+| Scalar pairs | 0 | +0.053930 | 0 |
+
+Answer tokens are scored at the end of the prompt, after all options. Scalar list reads the candidates in sequence and scores the first before it sees the edit. Scalar pairs encodes each candidate separately, so only the middle score changes.
+
+</details>
+
+For a single-choice question, all three layouts normalize across candidates with softmax. If the edited option changes the denominator, even a candidate with the same raw score can receive a different probability.
+
+This MetisCraft experiment ran on a CPU with a randomly initialized two-layer Qwen3 of hidden width 32 and seed `20261109`. These differences measure the effect of one input edit. To reproduce them, run the command below in a checkout with the runtime and HTTP dependencies installed and find `candidate-edit` in the report. <a id="candidate-edit-data" href="../../examples/candidate-edit.json">Raw scores, environment and full-precision differences</a> · [Verification script](../../../scripts/verify_tensor_examples.py)
+
+```bash
+python scripts/verify_tensor_examples.py --output tensor-checks.json
+```
+
+## Seven readout families at a glance
+
 ![Comparison of seven decision-readout mechanisms](../../tensor-analysis/figures/readout-overview.en.svg)
 
 [SVG](../../tensor-analysis/figures/readout-overview.en.svg) · [PDF](../../tensor-analysis/figures/readout-overview.en.pdf) · [TikZ](../../tensor-analysis/figures/readout-overview.en.tex)

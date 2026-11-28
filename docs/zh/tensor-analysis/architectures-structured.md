@@ -6,56 +6,11 @@
 
 ## JevForge：每条候选路径输出一个独立标量
 
-参考版本为 JevForge 源码 `039badb`，以及 `AndeyTait/JevForge-0.8B` 的 `5ca7c08` 发布版本。发布配置使用 Qwen3.5-0.8B，隐藏宽度 1,024，共 24 层，其中 18 层为线性注意力、6 层为完整注意力。
-
-每条输入行包含状态、一个问题和一个候选。原生渲染格式为 `<|oj:state|> … <|oj:question|> … candidate … <|oj:answer|>`。编码器将问题前缀复制到各候选路径，再对 \(R\) 条路径右侧补齐。模型读取每条路径最后一个真实 token，即末尾答案标记结束处的表示。共享头为 `Linear(1024,1024) → GELU → Linear(1024,1)`，两个线性层均含偏置。
-
-![JevForge 的独立候选路径与标量头](../../tensor-analysis/figures/architecture-jevforge.zh.svg)
-
-[SVG](../../tensor-analysis/figures/architecture-jevforge.zh.svg) · [Dark SVG](../../tensor-analysis/figures/architecture-jevforge.zh.dark.svg) · [PDF](../../tensor-analysis/figures/architecture-jevforge.zh.pdf) · [TikZ](../../tensor-analysis/figures/architecture-jevforge.zh.tex)
-
-\[
-I:[R,T]\ \longrightarrow\ H:[R,T,1024]
-\ \xrightarrow{\mathrm{gather}}\ U:[R,1024]
-\ \xrightarrow{\mathrm{MLP}}\ z:[R]
-\ \xrightarrow{\text{按 owner 分组}}\ (z_b:[K_b])_b.
-\]
-
-对于真实 token 掩码 \(A:[R,T]\)，读出位置为 \(t_r=\sum_t A_{r,t}-1\)，因此 \(U_r=H_{r,t_r,:}\)。整数 owner 索引将标量归回所属问题。推理使用 \(p_b=\operatorname{softmax}(z_b/\tau_{\mathrm{type}})\)。某个候选的原始分数依赖其自身输入行；分类分母则使其概率与其他候选耦合。源码将独立行批量执行，不能据此认定实现了共享前缀的树注意力内核。
-
-固定发布版的训练脚本使用目标分布交叉熵，加上 \(0.5\sum_k(p_{b,k}-y_{b,k})^2\)；前 12 步仅更新头，随后开启主干更新。MetisCraft 的 [scalar-pairs 布局](scalar-heads.md) 可以表达对应的独立行机制。其默认 scalar-list 将全部候选放在同一因果序列中，已有 0.6B 运行配方使用 `1024 → 256 → 1` 头。这些机制对应关系并不提供 JevForge 检查点加载能力。
-
-固定来源：[提示编码](https://github.com/zwliJay/jev-forge/blob/039badbafc242b4f8105a59e27f789320efe6e9c/jevforge/encode.py#L24-L66)、[标量头与 token gather](https://github.com/zwliJay/jev-forge/blob/039badbafc242b4f8105a59e27f789320efe6e9c/jevforge/model.py#L20-L49)、[发布版主干配置](https://huggingface.co/AndeyTait/JevForge-0.8B/blob/5ca7c0861a0d9b72629a7bc40130a8f154c4840f/backbone/config.json)、[发布版训练目标](https://huggingface.co/AndeyTait/JevForge-0.8B/blob/5ca7c0861a0d9b72629a7bc40130a8f154c4840f/training-code/train_curated_v3.py#L70-L80)。
+每个候选有独立的输入行。模型从该行末尾取一个标量，同题候选的概率再按各自分数共同决定。[JevForge 的逐候选打分](../jevlike/jevforge.md)给出完整架构图、增删候选算例及发布版温度。
 
 ## Kev：用决策 query 指向候选结束位置
 
-参考版本为 Kev 源码 `2074cc4`，以及 `jaredpalmer/kev-4b` 的 `6cfce5c`。发布配置指定 Qwen3.5-4B-Base `1001bb4`，隐藏宽度 2,560，共 32 层，使用 rank-16 LoRA。主干含 24 层线性注意力与 8 层完整注意力。
-
-逻辑输入是在状态后追加问题分支：`<q> instruction <opt> option </opt> … <decide>`。此混合主干为每个问题执行一条因果行，其中包含状态与该问题的完整分支。指针头分别读取最终 `<decide>` 的表示，以及各候选闭合 `</opt>` 的表示，再通过两个独立的带偏置线性层，将宽度从 2,560 投影到 \(d_p=256\)。
-
-![Kev 的问题行与指针读出](../../tensor-analysis/figures/architecture-kev.zh.svg)
-
-[SVG](../../tensor-analysis/figures/architecture-kev.zh.svg) · [Dark SVG](../../tensor-analysis/figures/architecture-kev.zh.dark.svg) · [PDF](../../tensor-analysis/figures/architecture-kev.zh.pdf) · [TikZ](../../tensor-analysis/figures/architecture-kev.zh.tex)
-
-\[
-\begin{aligned}
-H&:[B,T,2560]
- \xrightarrow{\mathrm{gather}}
- D:[B,2560],\ E:[R,2560],\\
-Q&=DW_q^{\mathsf T}+b_q:[B,256],\qquad
-K=EW_k^{\mathsf T}+b_k:[R,256],\\
-z_r&=\frac{\langle K_r,Q_{g(r)}\rangle}{\sqrt{256}},
-\qquad p_b=\operatorname{softmax}(z_b/\tau).
-\end{aligned}
-\]
-
-其中 \(g(r)\) 是候选 \(r\) 所属问题的整数索引。点积收缩宽度轴，最终 softmax 归一化候选轴。指针头不对投影向量做 L2 归一化。\(1/\sqrt{256}\) 属于指针打分，而 \(\tau\) 是另外的推理温度。
-
-在一条行内，后面的候选可以读取前面的候选，决策标记可以读取全部候选；不同问题保持隔离。同一源码也为适合的纯注意力主干提供 packed 分块因果掩码：位置 \(i\) 的 query 仅能读取满足 \(j\leq i\)、且属于状态或同一问题的 key。可选的候选隔离会继续限制候选跨度的可见性，并重置其位置编号；固定的混合主干 Kev-4B 路径拒绝该设置，因此其主架构图应采用问题行。
-
-训练代码在每题候选上计算硬标签或软目标交叉熵。发布配置中，所检查阶段的辅助损失开关权重均为零。存储的温度只在评估模式应用；本页未读取权重以确认其数值。MetisCraft 当前读出没有实现该指针头及其检查点格式；支持 Kev 需要补齐两类位置 gather、指针参数与检查点加载路径。
-
-固定来源：[编码、指针头与行布局分派](https://github.com/jaredpalmer/kev/blob/2074cc44256200bb37540103fa4572901faa10f3/kev/model.py)、[基座配置](https://huggingface.co/Qwen/Qwen3.5-4B-Base/blob/1001bb4d826a52d1f399e183466143f4da7b741b/config.json)、[发布版训练配置](https://huggingface.co/jaredpalmer/kev-4b/blob/6cfce5c2fa4b4bd64026336ab649c5ca78857d52/training_config.json)、[候选损失](https://github.com/jaredpalmer/kev/blob/2074cc44256200bb37540103fa4572901faa10f3/kev/train.py#L41-L61)。
+Kev 在题末读取一个决策向量，与各个候选结束标记的表示配对打分。逐题行、指针参数、架构图与固定源码见[Kev-4B 的指针读出](../jevlike/kev.md)。
 
 ## Clef：证据路由、字段交互与门控联合打分
 

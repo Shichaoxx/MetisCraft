@@ -6,6 +6,58 @@
 
 每个候选的分数从哪里来，哪些输入能够影响它？读出机制的差别在于选择什么表示、允许哪些交互，以及沿哪条轴归一化。这套分类用于解释机制，不是排名或检查点兼容承诺。
 
+## 只改第二个选项，谁的分数会变？ { #candidate-edit }
+
+三选题的候选 ID 和顺序都固定，只把第二项的描述从 `green` 改成 `red`。两个词在教学词表中都占一个 token。每种读出用同一组权重跑两遍，比较替换前后的原始分数。
+
+<figure class="candidate-edit" hidden>
+  <figcaption>原始分数变化 <small>替换后 − 替换前</small></figcaption>
+  <fieldset>
+    <legend>读出方式</legend>
+    <label><input type="radio" name="readout" value="scalar_pairs" data-note="每个候选单独编码，只有第二行读到了新词。" checked><span>候选分行</span></label>
+    <label><input type="radio" name="readout" value="scalar_list" data-note="读到第一项末尾时，模型还没有见到新词。第二、三项在新词之后取分。"><span>候选依次拼接</span></label>
+    <label><input type="radio" name="readout" value="answer_token" data-note="读完整道题之后，才从词表中取出三个答案的分数。"><span>答案 token</span></label>
+  </fieldset>
+  <div class="candidate-edit-flow">
+    <div class="candidate-edit-word"><span>第二项 · beta</span><b><span data-before></span> → <span data-after></span></b></div>
+    <svg class="candidate-edit-branches" aria-hidden="true" viewBox="0 0 120 90" preserveAspectRatio="none">
+      <path d="M0 45 C45 45 65 15 120 15"/>
+      <path d="M0 45 H120"/>
+      <path d="M0 45 C45 45 65 75 120 75"/>
+    </svg>
+    <dl class="candidate-edit-results">
+      <div><dt>alpha</dt><dd data-score></dd></div>
+      <div><dt>beta</dt><dd data-score></dd></div>
+      <div><dt>gamma</dt><dd data-score></dd></div>
+    </dl>
+  </div>
+  <p class="candidate-edit-note" aria-live="polite" aria-atomic="true"></p>
+</figure>
+<script src="/MetisCraft/assets/candidate-edit.js" defer></script>
+
+<details class="candidate-edit-table" open markdown="1">
+<summary>对照三种读出的原始分数变化</summary>
+
+| MetisCraft 读出 | 第一项（alpha） | 第二项（beta，改动处） | 第三项（gamma） |
+| --- | ---: | ---: | ---: |
+| 答案 token | −0.007902 | −0.010722 | +0.006189 |
+| 标量 list | 0 | +0.050229 | +0.000818 |
+| 标量 pairs | 0 | +0.053930 | 0 |
+
+答案 token 在题末取分，可以读到全部选项。标量 list 在同一条序列里按顺序取分，第一项看不到改动的第二项。标量 pairs 对每个候选单独编码，因此只有第二项的分数变化。
+
+</details>
+
+三种布局最终都在同一道单选题的候选间做 softmax。只要第二项改变了分母，原始分数相同的候选也可能得到不同的概率。
+
+这是 MetisCraft 在 CPU 上用两层、隐藏宽度 32 的随机 Qwen3 做的计算实验，种子为 `20261109`。图中的差值只衡量这次输入改动对分数的影响。复算时在安装了项目运行与 HTTP 依赖的源码目录执行以下命令，在报告中查找 `candidate-edit`。<a id="candidate-edit-data" href="../../examples/candidate-edit.json">原始分数、环境与完整精度差值</a> · [核验程序](../../../scripts/verify_tensor_examples.py)
+
+```bash
+python scripts/verify_tensor_examples.py --language zh --output tensor-checks.json
+```
+
+## 七类读出一览
+
 ![七类判断读出机制比较](../../tensor-analysis/figures/readout-overview.zh.svg)
 
 [SVG](../../tensor-analysis/figures/readout-overview.zh.svg) · [PDF](../../tensor-analysis/figures/readout-overview.zh.pdf) · [TikZ](../../tensor-analysis/figures/readout-overview.zh.tex)

@@ -43,19 +43,47 @@
   line-height: 1.65;
 }
 
-.md-typeset .home-actions p {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: .5rem 1rem;
-  margin-block: 0;
-  font-size: .8rem;
+/* The full row is a link, including its section name and description. */
+.md-typeset .home-actions {
+  display: grid;
+  max-width: 21rem;
+  border-bottom: 1px solid var(--metis-rule);
 }
 
-.md-typeset .home-actions .md-button {
-  margin: 0;
-  padding: .5rem 1rem;
-  border-radius: .25rem;
+.md-typeset .home-actions a {
+  display: grid;
+  grid-template-columns: minmax(max-content, 1fr) auto 1em;
+  align-items: center;
+  gap: .65rem;
+  min-height: 2.35rem;
+  padding: .35rem .3rem .35rem 0;
+  border-top: 1px solid var(--metis-rule);
+  color: var(--metis-ink);
+  text-decoration: none;
+}
+
+.home-actions strong {
+  font: 500 clamp(1.1rem, 2.6cqw, 1.5rem)/1.15 var(--metis-display-font);
+}
+
+.home-actions span {
+  color: var(--metis-muted);
+  font-size: .74rem;
+}
+
+.home-actions a::after {
+  content: "";
+  width: .45rem;
+  height: .45rem;
+  justify-self: end;
+  border-block-start: 1.5px solid var(--metis-link);
+  border-inline-end: 1.5px solid var(--metis-link);
+  transform: rotate(45deg);
+}
+
+.md-typeset .home-actions a:is(:hover, :focus-visible) {
+  color: var(--metis-link);
+  background: var(--metis-tint);
 }
 
 .md-typeset .home-intro > p:last-child {
@@ -95,6 +123,27 @@
   max-width: 24rem;
   height: auto;
   margin-inline: auto;
+}
+
+.md-typeset .specimen-decisions {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: .2rem .8rem;
+  margin: .75rem 0 0;
+  font-size: .8rem;
+  line-height: 1.55;
+}
+
+.md-typeset .specimen-decisions dt {
+  margin: 0;
+  font-weight: 400;
+  color: var(--metis-muted);
+}
+
+.md-typeset .specimen-decisions dd {
+  margin: 0;
+  font-weight: 600;
+  color: var(--metis-ink);
 }
 
 .md-typeset .specimen-caption {

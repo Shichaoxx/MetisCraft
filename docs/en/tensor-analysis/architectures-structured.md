@@ -6,56 +6,11 @@ Let \(B\) be the number of questions, \(K_b\) the candidate count for question \
 
 ## JevForge: an independent scalar for each candidate path
 
-The reference is JevForge source `039badb` and the `AndeyTait/JevForge-0.8B` release at `5ca7c08`. The release contains a Qwen3.5-0.8B configuration with hidden width 1,024 and 24 layers: 18 linear-attention layers and six full-attention layers.
-
-Each input row contains the state, one question and one candidate. The native renderer produces `<|oj:state|> … <|oj:question|> … candidate … <|oj:answer|>`. It copies the question prefix into each candidate path, then right-pads the \(R\) paths. The model gathers the last real token of each path, at the end of the answer marker. The head is a shared `Linear(1024,1024) → GELU → Linear(1024,1)`, with biases in both linear layers.
-
-![JevForge independent candidate paths and scalar head](../../tensor-analysis/figures/architecture-jevforge.en.svg)
-
-[SVG](../../tensor-analysis/figures/architecture-jevforge.en.svg) · [Dark SVG](../../tensor-analysis/figures/architecture-jevforge.en.dark.svg) · [PDF](../../tensor-analysis/figures/architecture-jevforge.en.pdf) · [TikZ](../../tensor-analysis/figures/architecture-jevforge.en.tex)
-
-\[
-I:[R,T]\ \longrightarrow\ H:[R,T,1024]
-\ \xrightarrow{\mathrm{gather}}\ U:[R,1024]
-\ \xrightarrow{\mathrm{MLP}}\ z:[R]
-\ \xrightarrow{\mathrm{group\ by\ owner}}\ (z_b:[K_b])_b.
-\]
-
-For the real-token mask \(A:[R,T]\), the readout position is \(t_r=\sum_t A_{r,t}-1\), so \(U_r=H_{r,t_r,:}\). An integer owner index assigns each scalar to its question. Inference applies \(p_b=\operatorname{softmax}(z_b/\tau_{\mathrm{type}})\). A candidate's raw score depends on its own row; the categorical denominator couples its probability to the other candidates. The implementation batches independent rows and does not establish a shared-prefix tree-attention kernel.
-
-The pinned release training script uses target-distribution cross-entropy plus \(0.5\sum_k(p_{b,k}-y_{b,k})^2\). It enables backbone updates after 12 head-only steps. MetisCraft's [scalar-pairs layout](scalar-heads.md) expresses the corresponding independent-row mechanism. Its default scalar-list layout instead places all candidates in one causal sequence, and the recorded 0.6B recipe uses a `1024 → 256 → 1` head. These correspondences do not supply a JevForge checkpoint loader.
-
-Pinned sources: [prompt encoding](https://github.com/zwliJay/jev-forge/blob/039badbafc242b4f8105a59e27f789320efe6e9c/jevforge/encode.py#L24-L66), [scalar head and token gather](https://github.com/zwliJay/jev-forge/blob/039badbafc242b4f8105a59e27f789320efe6e9c/jevforge/model.py#L20-L49), [release backbone configuration](https://huggingface.co/AndeyTait/JevForge-0.8B/blob/5ca7c0861a0d9b72629a7bc40130a8f154c4840f/backbone/config.json), [release training objective](https://huggingface.co/AndeyTait/JevForge-0.8B/blob/5ca7c0861a0d9b72629a7bc40130a8f154c4840f/training-code/train_curated_v3.py#L70-L80).
+Each candidate has its own input row. The model reads one scalar from its final hidden state, then normalizes the scores within a question. [How JevForge scores a candidate](../jevlike/jevforge.md) traces the architecture, works through adding an option and documents the released temperatures.
 
 ## Kev: a decision query points to option-end representations
 
-The reference is Kev source `2074cc4` and `jaredpalmer/kev-4b` at `6cfce5c`. Its release configuration selects Qwen3.5-4B-Base at `1001bb4`, with hidden width 2,560, 32 layers and rank-16 LoRA. The backbone has 24 linear-attention layers and eight full-attention layers.
-
-The logical input is a state followed by question branches: `<q> instruction <opt> option </opt> … <decide>`. This hybrid backbone runs one causal row per question, containing the state and that question's complete branch. The pointer gathers the final `<decide>` representation and each candidate's closing `</opt>` representation. Two separate biased linear projections map their width from 2,560 to \(d_p=256\).
-
-![Kev question rows and pointer readout](../../tensor-analysis/figures/architecture-kev.en.svg)
-
-[SVG](../../tensor-analysis/figures/architecture-kev.en.svg) · [Dark SVG](../../tensor-analysis/figures/architecture-kev.en.dark.svg) · [PDF](../../tensor-analysis/figures/architecture-kev.en.pdf) · [TikZ](../../tensor-analysis/figures/architecture-kev.en.tex)
-
-\[
-\begin{aligned}
-H&:[B,T,2560]
- \xrightarrow{\mathrm{gather}}
- D:[B,2560],\ E:[R,2560],\\
-Q&=DW_q^{\mathsf T}+b_q:[B,256],\qquad
-K=EW_k^{\mathsf T}+b_k:[R,256],\\
-z_r&=\frac{\langle K_r,Q_{g(r)}\rangle}{\sqrt{256}},
-\qquad p_b=\operatorname{softmax}(z_b/\tau).
-\end{aligned}
-\]
-
-Here \(g(r)\) is the integer question owner of candidate \(r\). The width axis is contracted by the dot product; the candidate axis is normalized by the final softmax. The head does not L2-normalize its projected vectors. The factor \(1/\sqrt{256}\) belongs to pointer scoring, while \(\tau\) is a separate inference temperature.
-
-Within a row, a later option can read earlier options and the decision marker can read every option. Questions remain isolated. The same source supports a packed block-causal mask for suitable attention-only backbones: a query at \(i\) can read key \(j\) when \(j\leq i\) and the key belongs to the state or the same question. Optional option isolation further restricts option-span visibility and resets their position IDs; the pinned hybrid Kev-4B path rejects that setting. Its primary architecture should therefore show question rows.
-
-The training code implements hard-label or soft-target cross-entropy over a question's candidates. The release configuration records zero weights for the auxiliary loss switches in the inspected stage. A stored temperature is applied only in evaluation mode; its numeric weight value was not inspected here. MetisCraft's current readouts do not implement this pointer head or its checkpoint format. Supporting Kev would require the two-position gather, pointer parameters and checkpoint loading path.
-
-Pinned sources: [encoding, pointer head and row dispatch](https://github.com/jaredpalmer/kev/blob/2074cc44256200bb37540103fa4572901faa10f3/kev/model.py), [base configuration](https://huggingface.co/Qwen/Qwen3.5-4B-Base/blob/1001bb4d826a52d1f399e183466143f4da7b741b/config.json), [release training configuration](https://huggingface.co/jaredpalmer/kev-4b/blob/6cfce5c2fa4b4bd64026336ab649c5ca78857d52/training_config.json), [candidate loss](https://github.com/jaredpalmer/kev/blob/2074cc44256200bb37540103fa4572901faa10f3/kev/train.py#L41-L61).
+Kev pairs one decision vector at the end of each question with its option-end representations. The [Kev-4B pointer readout](../jevlike/kev.md) covers the question rows, projections and architecture diagram with links to pinned source lines.
 
 ## Clef: evidence routing, field interaction and a gated joint score
 

@@ -24,6 +24,8 @@ Tev1-4B belongs to a different readout family: a **32-layer Qwen3.5-4B hybrid ba
 
 The [reproduction record](../reproductions/tev1.md) reports **873/1,000 (87.3%)** on main and **298/300 (99.33%)** on transfer, versus published 88.0% and 100%. It also documents the upstream constrained-generation protocol, direct-logit reproduction, answer agreement, calibration limits and unavailable historical settings. This is accuracy reproduction under disclosed conditions; it does not recover the original training job or weights.
 
+The [Tev1-4B readout study](../jevlike/tev1.md) traces the training targets, decoding protocols and per-item answers.
+
 ## Open implementations by actual computation
 
 The following entries are **pinned-source architecture inspections**, not additional MetisCraft reproductions. Each chapter specifies its selected checkpoint or source mode, shapes, training evidence and unresolved publication details.
@@ -35,8 +37,8 @@ The following entries are **pinned-source architecture inspections**, not additi
 | d3 | Independent 255-slot matrix; full-attention bidirectional, DeltaNet causal | [Fixed slots](architectures-token.md#d3) |
 | d3-ultra | Independent slot matrix; prefix-state reuse and question suffixes | [Fixed slots](architectures-token.md#d3-ultra) |
 | mammoth-1 | Existing LM head, slot-ID gather and block-bidirectional full-attention | [Slot LM](architectures-token.md#mammoth-1) |
-| JevForge | Independent candidate rows; shared `1024 → 1024 → 1` scalar MLP | [Scalar head](architectures-structured.md) |
-| Kev-4B | Question rows; decision/option projections and scaled pointer dot product | [Pointer](architectures-structured.md) |
+| JevForge | Independent candidate rows; shared `1024 → 1024 → 1` scalar MLP | [Scalar head](../jevlike/jevforge.md) |
+| Kev-4B | Question rows; decision/option projections and scaled pointer dot product | [Kev-4B pointer readout](../jevlike/kev.md) |
 | Clef | Option-memory routing, field interaction, lexical prior and gated joint score | [Joint schema](architectures-structured.md) |
 | JevAny | Native pointer and direct-token paths; backbone-dependent row/packed dispatch | [Native readouts](architectures-structured.md) |
 | GLiClass | Joint bidirectional text/label context; two projectors and dot product | [Dynamic labels](architectures-encoders.md#gliclass) |

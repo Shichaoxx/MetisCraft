@@ -289,6 +289,45 @@ def run_checks(language: str = "en") -> dict:
         three_probabilities=p3,
     )
 
+    # Keep IDs, code assignments and sequence lengths fixed. Only B's text changes.
+    before_edit = record("choice", 3)
+    assert before_edit.question.options is not None
+    before_edit.question.options[1].text = "green"
+    after_edit = before_edit.model_copy(deep=True)
+    assert after_edit.question.options is not None
+    after_edit.question.options[1].text = "red"
+    score_changes = {}
+    for name, readout, collate in (
+        ("answer_token", answer, col),
+        ("scalar_list", listed, list_col),
+        ("scalar_pairs", paired, pair_col),
+    ):
+        before_batch = collate([before_edit])
+        after_batch = collate([after_edit])
+        assert before_batch["input_ids"].shape == after_batch["input_ids"].shape
+        assert (before_batch["input_ids"] != after_batch["input_ids"]).sum().item() == 1
+        with torch.no_grad():
+            before = readout(before_batch)[0]
+            after = readout(after_batch)[0]
+        delta = after - before
+        if name == "scalar_list":
+            close(delta[0], 0.0)  # A precedes the edited candidate.
+        if name == "scalar_pairs":
+            close(delta[[0, 2]], [0.0, 0.0])  # Each untouched row has the same inputs.
+        score_changes[name] = {
+            "before": before.tolist(),
+            "after": after.tolist(),
+            "delta": delta.tolist(),
+        }
+    passed(
+        "candidate-edit",
+        "Changing only the middle option traces which raw scores can see its text.",
+        "仅替换中间选项的文本，记录三个读出路径的原始分数变化。",
+        candidate_ids=["alpha", "beta", "gamma"],
+        replacement={"from": "green", "to": "red"},
+        scores=score_changes,
+    )
+
     completion_col = Collator(tok, answer.readout, 256, completion=True)
     completion_data = completion_col(rows)
     with torch.no_grad():

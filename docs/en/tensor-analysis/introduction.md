@@ -1,10 +1,10 @@
-# 0. Introduction: JevLike decision models
+# JevLike tasks and answer spaces { #0-introduction-jevlike-decision-models }
 
 A customer message can require several decisions before any reply is written: which team should receive it, whether it is urgent, and which topics it mentions. A decision model makes the answer space explicit and returns values that a program can inspect, evaluate and calibrate. MetisCraft is a toolkit for training and serving these models on labeled tasks.
 
-This introduction defines the task and data, explains **MetisCraft's shared architecture**, and then instantiates its model core with the recorded Banking77-derived customer-routing recipe. Tev1's answer-token reproduction is a separate architecture and evidence record.
+This chapter follows a customer-routing task from the source labels to its answers, then compares two ways to read decisions from a model. The support recipe scores candidate representations. The Tev1 reproduction reads scores for answer tokens.
 
-## 1. What does JevLike mean?
+## Definition and scope { #1-what-does-jevlike-mean }
 
 Here, **JevLike** describes models that take shared state and typed questions and produce decisions over defined answer spaces. It is a working description of a model family, not a claim that every project shares Jev's internal architecture. The [official System One contract](https://docs.typesafe.ai/api/system-one) specifies named questions and corresponding answers; it does not establish the private implementation behind the service.
 
@@ -16,9 +16,9 @@ p_\theta(y=k\mid x,q,\mathcal C),\qquad k\in\{1,\ldots,K\},
 
 where \(x\) is the state, \(q\) is the instruction, and \(\mathcal C\) supplies the candidate IDs and meanings. Yes/no and multi-label questions instead represent one or more Bernoulli events. MetisCraft implements four Record judgment types: `noul`, `choice`, `score` and `multi_label`; HTTP `/v1/systemone` supports the first three.
 
-The inspected implementations score a finite answer space without generating a rationale token by token at inference. Sequence count, model-call batches and autoregressive decode steps are different quantities: a `pairs` readout needs multiple candidate sequences, even when batched into one call. The interface alone guarantees neither a specific latency nor calibrated confidence. See [contract and output semantics](index.md) and the [official confidence definition](https://docs.typesafe.ai/confidence).
+The support model in this chapter scores its answers in a forward pass. Another possible design generates a rationale before reading an answer distribution. Compare the number of input sequences and the number of sequential decoding steps separately. For example, `pairs` can encode several candidate sequences in one batched call. Latency and probability quality each require measurement. [Readout comparison](readout-comparison.md) · [Output contract](index.md)
 
-## 2. The task: route a message and identify urgency
+## Support queues and urgency { #2-the-task-route-a-message-and-identify-urgency }
 
 The teaching task asks two questions about each message:
 
@@ -39,7 +39,7 @@ For the constructed demonstration message below, the saved model response select
 
 These are outputs from run `20261105-101057-30757bf7`, not invented teaching probabilities. The message was written for the demonstration and is **not a held-out dataset example**. One response does not measure task accuracy; the [recorded decision](../cookbook/decision.md) includes the full request, response and comparison with a prior baseline.
 
-## 3. Data: from intent labels to typed supervision
+## From intent labels to training examples { #3-data-from-intent-labels-to-typed-supervision }
 
 The application uses [`PolyAI/banking77`](https://huggingface.co/datasets/PolyAI/banking77/tree/1846984189f2bc0ac51c6fc3a600fa9e1714e0c6) at revision `1846984189f2bc0ac51c6fc3a600fa9e1714e0c6`, under **CC-BY-4.0**. The `label_mapping@1` converter maps 77 source intents to six queues and a binary urgency label. These business labels are derived teaching labels, not original human annotations of urgency.
 
@@ -88,7 +88,7 @@ This is a metadata excerpt of an original test Record. Its message is different,
 
 The evaluator compares the prediction with the target; the model's prompt receives only the input and question. The frozen test labels do not fit the model or temperature.
 
-## 4. Invocation: the caller supplies no target label
+## Request and response { #4-invocation-the-caller-supplies-no-target-label }
 
 After installing the toolkit and obtaining a trained artifact, start the service in one terminal:
 
@@ -106,57 +106,23 @@ curl -fsS http://127.0.0.1:8000/v1/systemone \
 
 The request contains `model`, `state` and named `questions`; it contains no `supervision`. The saved [response JSON](../../examples/support-response.json) comes from the recorded trained artifact above. A newly trained model may produce different numbers. Model preparation and stopping the server are covered by the [CPU tutorial](../cookbook/first-model.md) and [serving guide](../serving.md); the random CPU model verifies the workflow, not this application's quality.
 
-## 5. MetisCraft's architecture
+## Where candidate scores come from { #5-metiscrafts-architecture }
 
-MetisCraft organizes a typed decision model around **shared contracts and a configurable model core**. The architecture connects data, tensor construction, readouts, objectives and artifact loading, so that training and applications agree on what each score means.
+<a id="shared-model-core"></a>
 
-![MetisCraft customer-routing model: candidate-end hidden rows and shared scalar MLP](../../tensor-analysis/figures/metiscraft-architecture.en.svg)
+The support model reads a vector at the end of each candidate and scores it with a shared scalar head. A pointer readout can also take one decision vector for the whole question and pair it with each candidate vector. To compare them, identify the positions that supply the scores and the options that enter each question’s denominator. [Candidate scores and probabilities](../jevlike/candidate-scores.md)
 
-[Light SVG](../../tensor-analysis/figures/metiscraft-architecture.en.svg) · [Dark SVG](../../tensor-analysis/figures/metiscraft-architecture.en.dark.svg) · [PDF](../../tensor-analysis/figures/metiscraft-architecture.en.pdf) · [Editable TikZ](../../tensor-analysis/figures/metiscraft-architecture.en.tex)
+<a id="training-and-deployment-meet-at-the-artifact"></a>
 
-### Shared model core
+To trace a MetisCraft Record through to a prediction, see the manual’s [model core](../metiscraft/model-and-artifacts.md#shared-model-core) and [training artifacts and deployment](../metiscraft/model-and-artifacts.md#training-and-deployment-meet-at-the-artifact).
 
-1. **Record and recipe contracts.** A `Record` separates input, answer definitions, supervision, task ID and provenance. The recipe selects the base, tuning method, readout, objective and split roles. HTTP requests are adapted to the same Record contract.
-2. **Prompt construction and collation.** `PromptBuilder` defines which input tokens represent each candidate. `Collator` pads sequences and constructs token IDs, padding masks, answer codes or candidate-position indices. Answer-token and scalar-list paths use one sequence per question; scalar-pairs uses one per candidate.
-3. **DecisionModel.** A replaceable pretrained decoder returns hidden states. The selected readout is **one of three paths**, not an ensemble: answer-token vocabulary projection and code gather; scalar-list candidate gather and a shared MLP; or scalar-pairs scoring and scatter back to question/candidate columns.
-4. **Typed scores and probabilities.** Candidate masks distinguish valid columns. Judgment semantics determine categorical softmax or event-wise sigmoid. Prior correction and task/type temperature selection are shared by evaluation and prediction.
-
-Let \(N\) count encoded sequences, \(B\) count questions and \(R=\sum_bK_b\). The common interface is
-
-\[
-X,A\in\mathbb{Z}^{N\times T}\;\longrightarrow\;
-H\in\mathbb{R}^{N\times T\times d}\;\longrightarrow\;
-S\in\mathbb{R}^{B\times K_{\max}}.
-\]
-
-Here \(N=B\) for answer-token/list and \(N=R\) for pairs. Padding-mask values are binary; IDs and positions are integers, while hidden states and scores are floating point. Invalid score columns carry no answer meaning and are excluded before normalization. For `noul`, the answer-token path reduces yes/no vocabulary scores to their logit difference.
-
-### Training and deployment meet at the artifact
-
-Supervision enters CE/BCE losses for the configured judgment type. Gradients update the selected LoRA, full-model and/or readout parameters. Answer-token `completion` is a distinct training path: it produces full-vocabulary logits \([B,2,V]\) to predict answer code and EOS; it does not train CE on the candidate-score tensor shown in the main path.
-
-Training seals model/adapter parameters, an optional scalar head, configuration, verified base identity and checksums. Calibration is stored separately and bound to that artifact's hash; a mismatched calibration is rejected. `Predictor.load` reconstructs the selected model and uses the same collation, correction and temperature semantics for Python, batch and HTTP. Evaluation compares predictions with dev/test targets and records raw, calibrated and prior results.
-
-This is the toolkit's architectural contribution: task contracts and interchangeable readouts stay connected to a traceable train-to-service path. Qwen3 is one concrete backbone choice within that core. The [implementation boundaries](../limitations.md) distinguish these implemented components from researched mechanisms.
-
-The separate [engineering workflow diagram](../../tensor-analysis/figures/metiscraft-workflow.en.svg) connects Records, collation, losses, sealed artifacts and serving. It complements the neural model plate; it does not specify a new backbone.
-
-| Architectural boundary | Source |
-|---|---|
-| Data and configuration | [`Record`](../../../src/metiscraft/data/contract.py), [`Recipe`](../../../src/metiscraft/config.py) |
-| Tensor construction and model paths | [`PromptBuilder`](../../../src/metiscraft/modeling/prompts.py), [`Collator`](../../../src/metiscraft/train/collate.py), [`DecisionModel`](../../../src/metiscraft/modeling/model.py) |
-| Training, evaluation and sealing | [`pipeline`](../../../src/metiscraft/pipeline.py), [`trace`](../../../src/metiscraft/trace.py) |
-| Loading, calibration routing and output | [`Predictor`](../../../src/metiscraft/serve/predictor.py), [`judgments`](../../../src/metiscraft/judgments/__init__.py) |
-
-## 6. Instantiate the architecture: customer routing
+## The customer-routing model { #6-instantiate-the-architecture-customer-routing }
 
 The customer-routing recipe uses **Qwen3-0.6B-Base + LoRA + a scalar readout in `list` layout**. The [pinned base configuration](https://huggingface.co/Qwen/Qwen3-0.6B-Base/blob/da87bfb608c14b7cf20ba1ce41287e8de496c0cd/config.json) specifies 28 causal decoder layers and hidden width \(d=1024\). The [Qwen3 implementation](https://github.com/huggingface/transformers/blob/v4.51.3/src/transformers/models/qwen3/modeling_qwen3.py) exposes RMSNorm, grouped-query attention, a gated MLP and residual connections. The recipe adapts linear modules with LoRA \(r=16\), \(\alpha=32\), and adds one shared `1024 → 256 → 1` head. The vocabulary output head is bypassed on this path.
 
-The model plate above instantiates this recipe. The [model architecture atlas](architectures.md) compares it with Tev1 and the inspected open implementations.
+The shapes and equations below describe this support recipe. The [model diagram in the manual](../metiscraft/model-and-artifacts.md) locates the candidate positions and shows the tensor shapes. The [architecture atlas](architectures.md) documents where other implementations read their scores.
 
-
-
-### Objects and axes
+### Tensor dimensions { #objects-and-axes }
 
 | Object | Shape | What one entry represents |
 |---|---|---|
@@ -169,7 +135,7 @@ The model plate above instantiates this recipe. The [model architecture atlas](a
 
 For **one request with queue and urgency**, \(B=2\), \(K_{\max}=6\). The queue row has six valid columns; the urgency row has one. \(T\) varies with tokenization and padding; the recipe's maximum input length is 384. A `noul` row selects the final answer-cue position, not six option positions.
 
-### The computation and why it works
+### Candidate positions and the scalar head { #the-computation-and-why-it-works }
 
 The prompt places state and question before the ordered candidates. A causal decoder contextualizes the sequence. The `positions` tensor selects each candidate-end vector, and the **same learned MLP** scores every selected vector:
 
@@ -188,27 +154,24 @@ A queue score becomes a probability through softmax over **its six valid candida
 
 In `list`, later candidates can attend to earlier candidates. They are not independent pair encodings. Conversely, a single request's two questions become two sequences; the current implementation does not share their encoded state through a tree cache. These distinctions explain information flow, not measured acceleration.
 
-### A numerical illustration
+### Numerical example { #a-numerical-illustration }
 
 For three constructed scores \([0,1,2]\) and \(\tau=1\), softmax gives \([0.090031,0.244728,0.665241]\). A target at index 2 contributes CE \(-\log(0.665241)\approx0.407606\). For a constructed urgency logit \(2\), sigmoid gives \(0.880797\). These illustrate the operators; they are not predictions from the recorded model.
 
 The [CPU tensor verifier](../../../scripts/verify_tensor_examples.py) checks the implemented gather, MLP, masks, normalization and HTTP conversion against explicit calculations using a tiny random model. It downloads no weights and does not establish task accuracy.
 
-## 7. Architecture, results and reading route
+## Experimental results { #7-architecture-results-and-reading-route }
 
-On the recorded 3,080-message test set, queue accuracy is **97.8%** versus a **24.7%** prior baseline, and urgency accuracy is **98.6%** versus **87.0%**. These are public-data teaching results with derived labels, not a production deployment claim. See the [full run conditions](../../../recipes/banking77_support/README_en.md).
+Across 3,080 test messages, queue accuracy was **97.8%** against a **24.7%** baseline using training-label frequencies alone. Urgency accuracy was **98.6%** against **87.0%** for the baseline. Both tasks were scored against labels derived from Banking77 intents. [Full run conditions](../../../recipes/banking77_support/README_en.md)
 
-**Tev1 is different:** its reproduced 4B model uses Qwen3.5's hybrid backbone and the existing LM vocabulary head to read answer-token logits. It does not use the scalar head shown above. Its [architecture and tensor walkthrough](../reproductions/tev1.md#model-architecture) separates the 87.3% / 99.33% accuracy results from training and calibration limits.
+### The answer-token readout in Tev1 { #tev1-reproduction-a-different-model-path }
 
-Continue with [System One and MetisCraft](index.md) → [tensors and indexing](notation.md) → [scalar layouts](scalar-heads.md) / [answer-token readout](answer-token.md). For a runnable application, open the [Cookbook](../cookbook/index.md).
-
-
-### Tev1 reproduction: a different model path
+The Tev1 reproduction uses a 32-layer Qwen3.5-4B hybrid backbone. Its vocabulary head supplies the answer-token scores. Training uses rank-8 LoRA with the answer letter and EOS as completion targets. The reproduction reached 87.3% accuracy on the main decision set and 99.33% on policy transfer. These benchmarks use different data and targets from the support task. [Tev1 architecture, evaluation conditions and limits](../reproductions/tev1.md#model-architecture)
 
 ![Tev1 model architecture](../../tensor-analysis/figures/tev1-architecture.en.svg)
 
 [SVG](../../tensor-analysis/figures/tev1-architecture.en.svg) · [PDF](../../tensor-analysis/figures/tev1-architecture.en.pdf) · [TikZ](../../tensor-analysis/figures/tev1-architecture.en.tex)
 
-The reproduction uses the 32-layer Qwen3.5-4B hybrid backbone and its original LM head, with LoRA r=8 and letter/EOS completion training. It does not use the scalar MLP above. The [Tev1 record](../reproductions/tev1.md) documents the upstream protocol, reproduction differences and 87.3% / 99.33% results. Continue to the [per-project model atlas](architectures.md).
+For the two computation paths, see [answer tokens](answer-token.md), [scalar layouts](scalar-heads.md) and the [architecture atlas](architectures.md). To run a task, open the [Cookbook](../cookbook/index.md).
 
 [中文](../../zh/tensor-analysis/introduction.md)

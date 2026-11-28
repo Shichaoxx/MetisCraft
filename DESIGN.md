@@ -1,8 +1,7 @@
 # MetisCraft documentation design
 
 The English and Chinese sites use a warm paper ground for daytime reading and
-charcoal for dark mode. Keep the three-plane MetisCraft mark and the existing
-Cookbook illustrations. The website's reading palette is defined in
+charcoal for dark mode. Keep the three-plane MetisCraft mark, numbered sidebar and header transitions. The website's reading palette is defined in
 [site.css](docs/site.css).
 
 | Role | CSS token | Use |
@@ -18,6 +17,14 @@ serif for body text and monospace for literal fields and commands. Keep CJK
 fallbacks in each stack. Pair every reported result with its denominator,
 comparison and limitations. Distinguish a prediction's probability from accuracy
 over a dataset.
+
+Metis opens in Chinese. The three home links lead directly to JevLike research,
+the MetisCraft software manual and Cookbook experiments. Existing articles keep
+their published addresses. Keep implementation research tied to the inspected
+versions and link experimental results to the run or reproduction record.
+
+Use the small day and night versions of 小墨 for an occasional tutorial note.
+The character reference archive belongs in developer materials.
 
 The two home pages share [home.css](docs/assets/home.css) and the same section
 order. For diagrams, give each stage a readable label, keep the mobile reading

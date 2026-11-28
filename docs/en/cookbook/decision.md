@@ -1,8 +1,8 @@
 # Understand a decision
 
-A support team needs two answers: **which queue should receive this message, and is it urgent?** MetisCraft lets you express both as typed questions and train a model to answer them from the same message.
+A customer reports a stolen card and two unfamiliar payments. The message was written for this example. In the recorded response, the model selects the security team (`security`) from six queues. The `urgent` field gives the model’s probability of answering yes to “Could the customer lose money or access to their account if this message waits until tomorrow?”
 
-**Goal:** read a complete request and response, then distinguish a convincing example from evidence of model quality. You do not need to install or run anything for this guide.
+You can compare the request and response below without installing MetisCraft. Section 3 reports accuracy on a separate set of 3,080 held-out messages. It measures how often the model’s answers match labels derived from Banking77 intents using a fixed mapping.
 
 ## 1. Define the question and its answers
 

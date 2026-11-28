@@ -11,7 +11,7 @@ from html import unescape
 from pathlib import Path
 from urllib.parse import unquote, urljoin, urlsplit
 
-from build_docs import legacy_destination, public_destinations
+from build_docs import PREFIX, legacy_destination, public_destinations
 
 
 def route(name, destinations=None):
@@ -190,7 +190,6 @@ def main():
                         "assets/documentation.js" in text,
                         f"Same-page language and figure controls absent: {name}",
                     )
-        prefix = "/MetisCraft/"
         for lang in ("en", "zh"):
             choices = [site / lang / "search.json", site / lang / "search/search_index.json"]
             indexes = [p for p in choices if p.is_file()]
@@ -205,12 +204,12 @@ def main():
                     if not isinstance(location, str):
                         check(False, f"search location missing: {entry.get('title')}")
                         continue
-                    url = urlsplit(urljoin(f"https://audit.invalid{prefix}{lang}/", location))
-                    rel = unquote(url.path.removeprefix(prefix))
+                    url = urlsplit(urljoin(f"https://audit.invalid{PREFIX}{lang}/", location))
+                    rel = unquote(url.path.removeprefix(PREFIX))
                     rel = rel if rel.endswith(".html") else rel.rstrip("/") + "/index.html"
                     check(
                         url.netloc == "audit.invalid"
-                        and url.path.startswith(prefix)
+                        and url.path.startswith(PREFIX)
                         and rel in actual
                         and rel in expected,
                         f"unapproved search target: {location}",

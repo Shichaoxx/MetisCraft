@@ -24,6 +24,8 @@ Tev1-4B 属于另一种读出结构：**32 层 Qwen3.5-4B 混合主干**后接�
 
 [复现记录](../../reproductions/tev1.md)给出主集 **873/1,000（87.3%）**、迁移集 **298/300（99.33%）**，上游报告分别为 88.0%、100%。该记录同时说明上游约束生成与本次直接读 logits 的协议差异、答案一致率、校准限制及缺失的历史设置。这是在公开条件下达到准确率判据，不代表恢复原始训练任务或权重。
 
+[Tev1-4B 的答案读出](../jevlike/tev1.md)逐项核对训练目标、解码协议和逐题答案。
+
 ## 按实际计算组织的开源实现
 
 以下条目是**固定源码架构核查**，不计为额外的 MetisCraft 复现实验。各章分别列明所选权重或源码模式、张量形状、训练依据及尚未公开的细节。
@@ -35,8 +37,8 @@ Tev1-4B 属于另一种读出结构：**32 层 Qwen3.5-4B 混合主干**后接�
 | d3 | 独立 255 槽矩阵；full-attention 双向，DeltaNet 因果 | [固定槽位](architectures-token.md#d3) |
 | d3-ultra | 独立槽矩阵；复用前缀状态并分叉问题后缀 | [固定槽位](architectures-token.md#d3-ultra) |
 | mammoth-1 | 原始 LM 头、槽 ID gather、块内双向 full-attention | [Slot LM](architectures-token.md#mammoth-1) |
-| JevForge | 独立候选行；共享 `1024 → 1024 → 1` 标量 MLP | [标量头](architectures-structured.md) |
-| Kev-4B | 逐题行；decision／候选投影和缩放 pointer 点积 | [指针头](architectures-structured.md) |
+| JevForge | 独立候选行；共享 `1024 → 1024 → 1` 标量 MLP | [标量头](../jevlike/jevforge.md) |
+| Kev-4B | 逐题行；decision／候选投影和缩放 pointer 点积 | [Kev-4B 的指针读出](../jevlike/kev.md) |
 | Clef | 候选 memory 路由、字段交互、词面先验及门控联合打分 | [联合 schema](architectures-structured.md) |
 | JevAny | Native pointer／token 两路；依主干分派 row／packed | [Native 读出](architectures-structured.md) |
 | GLiClass | 文本与标签联合双向编码；两套投影器后点积 | [动态标签](architectures-encoders.md#gliclass) |
